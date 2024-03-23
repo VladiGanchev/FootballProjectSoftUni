@@ -1,4 +1,4 @@
-﻿using FootballProjectSoftUni.Data;
+﻿using FootballProjectSoftUni.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

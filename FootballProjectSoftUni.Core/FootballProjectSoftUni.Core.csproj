@@ -10,4 +10,16 @@
     <ProjectReference Include="..\FootballProjectSoftUni.Infrastructure\FootballProjectSoftUni.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Contracts\Coach\" />
+    <Folder Include="Contracts\Tournament\" />
+    <Folder Include="Contracts\Team\" />
+    <Folder Include="Contracts\Referee\" />
+    <Folder Include="Services\City\" />
+    <Folder Include="Services\Coach\" />
+    <Folder Include="Services\Tournament\" />
+    <Folder Include="Services\Team\" />
+    <Folder Include="Services\Referee\" />
+  </ItemGroup>
+
 </Project>

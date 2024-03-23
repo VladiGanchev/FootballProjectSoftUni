@@ -5,6 +5,10 @@ VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootballProjectSoftUni", "FootballProjectSoftUni\FootballProjectSoftUni.csproj", "{A2557DE5-0241-4751-8E09-5232298FF5C9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballProjectSoftUni.Core", "FootballProjectSoftUni.Core\FootballProjectSoftUni.Core.csproj", "{AF71EE4B-D39C-49A3-BCB2-38B6B3F39A35}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballProjectSoftUni.Infrastructure", "FootballProjectSoftUni.Infrastructure\FootballProjectSoftUni.Infrastructure.csproj", "{CF9D520B-68E3-485B-9A40-72C64C3410AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{A2557DE5-0241-4751-8E09-5232298FF5C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2557DE5-0241-4751-8E09-5232298FF5C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2557DE5-0241-4751-8E09-5232298FF5C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF71EE4B-D39C-49A3-BCB2-38B6B3F39A35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF71EE4B-D39C-49A3-BCB2-38B6B3F39A35}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF71EE4B-D39C-49A3-BCB2-38B6B3F39A35}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF71EE4B-D39C-49A3-BCB2-38B6B3F39A35}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF9D520B-68E3-485B-9A40-72C64C3410AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF9D520B-68E3-485B-9A40-72C64C3410AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF9D520B-68E3-485B-9A40-72C64C3410AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF9D520B-68E3-485B-9A40-72C64C3410AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,53 @@
-﻿<ul class="navbar-nav flex-grow-1">
+﻿@using System.Security.Claims;
+<ul class="navbar-nav flex-grow-1">
     <li class="nav-item">
         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="City" asp-action="All">Cities</a>
+    </li>
+    @{
+        if (User.Identity.IsAuthenticated)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var adminId = "b565dfbb-dde1-4280-b641-092286cba2cd";
+
+            if (userId == adminId)
+            {
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-dark" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Admin Dashboard
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                        <li>
+                            <a class="dropdown-item" asp-area="" asp-controller="Tournament" asp-action="AddTournamentToCity">Add Tournament</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-area="" asp-controller="City" asp-action="AddCity">Add City</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-area="" asp-controller="City" asp-action="DeleteCity">Delete City</a>
+                        </li>
+                    </ul>
+                </li>
+            }
+            else
+            {
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-dark" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Tournaments To Participate
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                        <li>
+                            <a class="dropdown-item" asp-area="" asp-controller="Referee" asp-action="AllTournamentsToReferee">As Referee</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-area="" asp-controller="Coach" asp-action="AllTournamentsToParticipateAsCoach">As Coach</a>
+                        </li>
+                    </ul>
+                </li>
+            }
+        }
+    }
 </ul>

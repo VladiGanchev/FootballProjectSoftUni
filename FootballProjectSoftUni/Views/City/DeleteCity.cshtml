@@ -1,0 +1,25 @@
+﻿@using FootballProjectSoftUni.Core.Models.City;
+@model List<CityViewModel>
+
+<form asp-action="Delete" method="post">
+    <div class="form-group">
+        <label>Select City to Delete:</label>
+        <select name="cityId" id="cityId" class="form-control">
+            <option value="">-- Select City --</option>
+            @foreach (var city in Model)
+            {
+                <option value="@city.Id">@city.Name</option>
+            }
+        </select>
+    </div>
+    <a id="deleteButton" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Delete City</a>
+</form>
+
+<script>
+    // Актуализиране на връзката при промяна в падащото меню
+    document.getElementById('cityId').addEventListener('change', function () {
+        var selectedCityId = this.value;
+        var deleteButton = document.getElementById('deleteButton');
+        deleteButton.href = '/City/DeleteConfirmed/' + selectedCityId;
+    });
+</script>

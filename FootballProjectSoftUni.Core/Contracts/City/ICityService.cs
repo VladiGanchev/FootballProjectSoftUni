@@ -9,11 +9,11 @@ namespace FootballProjectSoftUni.Core.Contracts.City
 {
     public interface ICityService
     {
-        Task<IEnumerable<CityViewModel>> All(int? page);
-        Task<bool> AddCity(CityViewModel model);
-        Task<IEnumerable<CityViewModel>> DeleteCity();
-        Task<DeleteCityViewModel> DeleteConfirmed(CityViewModel model, int id);
-        Task<bool> DeleteConfirmed(int id);
-        Task<IEnumerable<CityViewModel>> Search(string searchString);
+        Task<IEnumerable<CityViewModel>> AllCitiesAsync(int? page);
+        Task<IEnumerable<CityViewModel>> AllCitiesAsync();
+        Task AddCityAsync(CityViewModel model);
+        Task<DeleteCityViewModel> FindTownAsync(CityViewModel model, int id);
+        Task<IEnumerable<CityViewModel>> SearchAsync(string searchString);
+        Task<bool> DeleteCityAsync(int id);
     }
 }

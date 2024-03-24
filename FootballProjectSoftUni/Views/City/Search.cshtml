@@ -1,0 +1,24 @@
+﻿@using FootballProjectSoftUni.Core.Models.City;
+@model List<CityViewModel>
+
+<h2 class="text-center">City</h2>
+
+<div class="row">
+    @if (Model.Any())
+    {
+        @foreach (var city in Model)
+        {
+            <div class="card col-4" style="width: 20rem;">
+                <div class="card-body">
+                    <h5 class="card-title mt-1">@city.Name</h5>
+                    <img class="card-img-top" src="@city.ImageUrl" alt="City Image">
+                </div>
+                <a asp-controller="Tournament" asp-action="CityTournaments" asp-route-id="@city.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Tournaments</a>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-center">No city found matching the search criteria.</p>
+    }
+</div>

@@ -1,0 +1,62 @@
+﻿@using FootballProjectSoftUni.Core.Models.City;
+@using X.PagedList;
+@model IPagedList<CityViewModel>
+
+<div class="container">
+    <div class="row justify-content-between mb-3">
+        <div class="col-md-9"></div> <!-- Празен колон с ширина половината от горната колона, за да позиционираме търсачката от дясно -->
+        <div class="col-md-3 text-right">
+            <form method="get" action="@Url.Action("Search")">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="searchString" placeholder="Search cities">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="submit">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@{
+    ViewData["Title"] = "Cities";
+}
+
+<h2 class="text-center">@ViewBag.Title</h2>
+
+<div class="row">
+    @foreach (var city in Model)
+    {
+        <div class="card col-4" style="width: 20rem; ">
+            <div class="card-body">
+                <h5 class="card-title mt-1">@city.Name</h5>
+                <img class="card-img-top" src="@city.ImageUrl" alt="City Image">
+            </div>
+            <a asp-controller="Tournament" asp-action="CityTournaments" asp-route-id="@city.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Tournaments</a>
+        </div>
+    }
+</div>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        @{
+            var nextPage = Model.PageNumber + 1;
+            var previousPage = Model.PageNumber - 1;
+        }
+
+        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+            <a class="page-link" href="@Url.Action("All", new { page = previousPage })" tabindex="-1">Previous</a>
+        </li>
+
+        @for (int i = 1; i <= Model.PageCount; i++)
+        {
+            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                <a class="page-link" href="@Url.Action("All", new { page = i })">@i</a>
+            </li>
+        }
+
+        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+            <a class="page-link" href="@Url.Action("All", new { page = nextPage })">Next</a>
+        </li>
+    </ul>
+</nav>

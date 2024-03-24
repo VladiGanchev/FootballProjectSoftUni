@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\City\" />
     <Folder Include="Views\Coach\" />
     <Folder Include="Views\Tournament\" />
     <Folder Include="Views\Team\" />

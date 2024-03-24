@@ -1,7 +1,6 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.City;
 using FootballProjectSoftUni.Core.Services.City;
 using FootballProjectSoftUni.Infrastructure.Data;
-using FootballProjectSoftUni.Infrastructure.Data.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,7 +21,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddDbContext<ApplicationDbContext>(options =>
                  options.UseSqlServer(connectionString));
 
-            services.AddScoped<IRepository, Repository>();
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -34,7 +32,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services
                 .AddDefaultIdentity<IdentityUser>(options =>
                 {
-                    options.SignIn.RequireConfirmedAccount = true;
+                    options.SignIn.RequireConfirmedAccount = false;
                     options.Password.RequireDigit = false;
                     options.Password.RequireUppercase = false;
                     options.Password.RequireLowercase = false;

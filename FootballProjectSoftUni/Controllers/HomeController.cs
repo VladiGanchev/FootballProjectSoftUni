@@ -15,6 +15,11 @@ namespace FootballProjectSoftUni.Controllers
 
         public IActionResult Index()
         {
+            if(User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("All", "City");
+            }
+
             return View();
         }
 

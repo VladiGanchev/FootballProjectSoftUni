@@ -1,0 +1,47 @@
+﻿@using FootballProjectSoftUni.Core.Models.Tournament;
+@using FootballProjectSoftUni.Infrastructure.Data.Enums;
+@model DetailsViewModel
+@{
+    ViewBag.Title = "Tournament Details";
+}
+
+
+<h2 class="text-center">@ViewBag.Title</h2>
+<hr />
+
+<div class="row">
+    <div class="card w-100">
+        <div class="card-body">
+            <h3 class="card-title text-center">@Model.Description</h3>
+            <p class="mb-0"><span class="fw-bold">Starting Time: </span>@Model.StartDate</p>
+            <p class="mb-0"><span class="fw-bold">Ending Time: </span>@Model.EndDate</p>
+            <p class="mb-0"><span class="fw-bold">Created On: </span>@Model.CreatedOn</p>
+            <p class="mb-0"><span class="fw-bold">Number Of Teams: </span>@Model.NumberOfTeams</p>
+            <p class="mb-0"><span class="fw-bold">Referee: </span>@Model.RefereeName</p>
+            @{
+                if (Model.StartDate > DateTime.Now)
+                {
+                    <p class="mb-0"><span class="fw-bold">Status: </span>@TournamentStatus.Upcoming</p>
+                }
+                else if (DateTime.Now > Model.StartDate && DateTime.Now < Model.EndDate)
+                {
+                    <p class="mb-0"><span class="fw-bold">Status: </span>@TournamentStatus.Started</p>
+                }
+                else if (DateTime.Now > Model.EndDate)
+                {
+                    <p class="mb-0"><span class="fw-bold">Status: </span>@TournamentStatus.Finished</p>
+                }
+            }
+
+            <a asp-controller="Tournament" asp-action="CityTournaments" asp-route-id="@Model.CityId" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Back to All Tournaments</a>
+
+        </div>
+
+
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+

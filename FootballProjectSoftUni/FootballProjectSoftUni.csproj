@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="Views\Coach\" />
-    <Folder Include="Views\Tournament\" />
     <Folder Include="Views\Team\" />
     <Folder Include="Views\Referee\" />
   </ItemGroup>

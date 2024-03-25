@@ -33,6 +33,11 @@ namespace FootballProjectSoftUni.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCity(CityViewModel model)
         {
+            if (ModelState.IsValid == false)
+            {
+                return View(model);
+            }
+
             await cityService.AddCityAsync(model);
 
             return RedirectToAction(nameof(All));
@@ -68,7 +73,7 @@ namespace FootballProjectSoftUni.Controllers
 
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-           await cityService.DeleteCityAsync(id);
+            await cityService.DeleteCityAsync(id);
 
             return RedirectToAction(nameof(All));
         }

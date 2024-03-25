@@ -40,6 +40,6 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
 
         public string Organiser { get; set; } = string.Empty;
 
-        public ICollection<CityViewModel> Cities { get; set; } = new List<CityViewModel>();
+        public IEnumerable<CityViewModel> Cities { get; set; } = new List<CityViewModel>();
     }
 }

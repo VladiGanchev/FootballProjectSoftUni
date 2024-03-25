@@ -1,5 +1,7 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.City;
+using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Services.City;
+using FootballProjectSoftUni.Core.Services.Tournament;
 using FootballProjectSoftUni.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<ICityService, CityService>();
+            services.AddScoped<ITournamentService, TournamentService>();
 
             return services;
         }

@@ -1,0 +1,47 @@
+﻿@using FootballProjectSoftUni.Core.Models.Tournament;
+@using FootballProjectSoftUni.Infrastructure.Data.Enums;
+@model IEnumerable<TournamentViewModel>
+
+@{
+    ViewData["Title"] = "Tournaments To Participate As Coach";
+}
+
+<hr />
+
+<h2 class="text-center">@ViewBag.Title</h2>
+
+<div class="text-center row">
+    @foreach (var e in Model)
+    {
+        <div class="card col-4" style="width: 20rem; ">
+            <div class="card-body">
+                <img class="card-img-top" src=@e.ImageUrl alt="Ad Image">
+                <p class="mb-0"><span class="fw-bold">City: @e.CityName</span></p>
+                <p class="mb-0"><span class="fw-bold">Start Date: </span>@e.StartDate</p>
+                <p class="mb-0"><span class="fw-bold">End Date: </span>@e.EndDate</p>
+                <p class="mb-0"><span class="fw-bold">Number Of Teams: </span>@($"{e.NumberOfTeams} / 16")</p>
+
+                @{
+                    if (e.StartDate > DateTime.Now)
+                    {
+                        <p class="mb-0"><span class="fw-bold">Status: </span>@TournamentStatus.Upcoming</p>
+                    }
+                    else if (DateTime.Now > e.StartDate && DateTime.Now < e.EndDate)
+                    {
+                        <p class="mb-0"><span class="fw-bold">Status: </span>@TournamentStatus.Started</p>
+                    }
+                    else if (DateTime.Now > e.EndDate)
+                    {
+                        <p class="mb-0"><span class="fw-bold">Status: </span>@TournamentStatus.Finished</p>
+                    }
+                }
+
+
+
+            </div>
+
+            <a asp-controller="Coach" asp-action="LeaveTournament" asp-route-id="@e.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Leave Tournament</a>
+
+        </div>
+    }
+</div>

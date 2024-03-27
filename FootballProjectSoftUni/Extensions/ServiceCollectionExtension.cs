@@ -1,6 +1,12 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.City;
+using FootballProjectSoftUni.Core.Contracts.Coach;
+using FootballProjectSoftUni.Core.Contracts.Referee;
+using FootballProjectSoftUni.Core.Contracts.Team;
 using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Services.City;
+using FootballProjectSoftUni.Core.Services.Coach;
+using FootballProjectSoftUni.Core.Services.Referee;
+using FootballProjectSoftUni.Core.Services.Team;
 using FootballProjectSoftUni.Core.Services.Tournament;
 using FootballProjectSoftUni.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
@@ -14,6 +20,9 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<ITournamentService, TournamentService>();
+            services.AddScoped<ICoachService, CoachService>();
+            services.AddScoped<ITeamService, TeamService>();
+            services.AddScoped<IRefereeService, RefereeService>();
 
             return services;
         }

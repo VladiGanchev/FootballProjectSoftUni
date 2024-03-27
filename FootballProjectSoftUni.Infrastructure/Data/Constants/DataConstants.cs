@@ -20,7 +20,7 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Constants
         public const int RefereeExperienceMinYears = 2;
 
         public const int CoachExperienceMinYears = 1;
-        public const string CoachExperienceErrorMessage = "The coach experience must be more than {1} years.";
+        public const string CoachExperienceErrorMessage = "The coach experience must be at least {1} year.";
 
         public const string RequireErrorMessage = "The field {0} is required.";
 

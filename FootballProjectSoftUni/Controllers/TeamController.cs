@@ -6,6 +6,7 @@ using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Security.Claims;
+using FootballProjectSoftUni.Extensions;
 
 namespace FootballProjectSoftUni.Controllers
 {
@@ -23,7 +24,7 @@ namespace FootballProjectSoftUni.Controllers
         [HttpGet]
         public async Task<IActionResult> JoinTeam(int id)
         {
-            var userId = GetUserId();
+            string userId = User.Id();
 
             var error = await teamService.CheckForErrorsAsync(id, userId);
 
@@ -53,7 +54,7 @@ namespace FootballProjectSoftUni.Controllers
         [HttpPost]
         public async Task<IActionResult> JoinTeam(TeamRegistrationViewModel viewModel, int id)
         {
-            var userId = GetUserId();
+            var userId = User.Id();
 
             var result = await teamService.JoinTeamAsync(viewModel, id, userId);
 
@@ -81,11 +82,5 @@ namespace FootballProjectSoftUni.Controllers
             return RedirectToAction("CityTournaments", "Tournament", new { id = cityId });
 
         }
-
-        public string GetUserId()
-        {
-            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-        }
-
     }
 }

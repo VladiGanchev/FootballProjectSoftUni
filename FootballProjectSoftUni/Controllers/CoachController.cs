@@ -2,6 +2,7 @@
 using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Models.Coach;
 using FootballProjectSoftUni.Core.Services.Tournament;
+using FootballProjectSoftUni.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -34,7 +35,7 @@ namespace FootballProjectSoftUni.Controllers
                 return View(model);
             }
 
-            string userId = GetUserId();
+            string userId = User.Id();
 
             await coachService.BecomeCoachAsync(model, userId);
             return RedirectToAction("All", "City");
@@ -43,7 +44,7 @@ namespace FootballProjectSoftUni.Controllers
         [HttpGet]
         public async Task<IActionResult> AllTournamentsToParticipateAsCoach()
         {
-            string userId = GetUserId();
+            string userId = User.Id();
 
 
             var tournaments = await coachService.GetAllTournamentsToParticipateAsCoachAsync(userId);
@@ -53,7 +54,7 @@ namespace FootballProjectSoftUni.Controllers
         [HttpGet]
         public async Task<IActionResult> LeaveTournament(int id)
         {
-            var userId = GetUserId();
+            var userId = User.Id();
 
             var result = await coachService.LeaveTournamentAsync(id, userId);
 
@@ -68,11 +69,6 @@ namespace FootballProjectSoftUni.Controllers
 
             return RedirectToAction("CityTournaments", "Tournament", new { id = cityId });
 
-        }
-
-        public string GetUserId()
-        {
-            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
         }
     }
 }

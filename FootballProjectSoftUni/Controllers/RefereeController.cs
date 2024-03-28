@@ -1,6 +1,7 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Referee;
 using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Models.Referee;
+using FootballProjectSoftUni.Extensions;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
@@ -23,7 +24,7 @@ namespace FootballProjectSoftUni.Controllers
         [HttpGet]
         public async Task<IActionResult> BecomeReferee(int id)
         {
-            string userId = GetUserId();
+            string userId = User.Id();
 
             var result = await refereeService.CheckForErrorsAsync(id, userId);
 
@@ -73,7 +74,7 @@ namespace FootballProjectSoftUni.Controllers
                 return View(model);
             }
 
-            var userId = GetUserId();
+            var userId = User.Id();
 
             var result = await refereeService.CreateRefereeToTournamentAsync(model, id, userId, birthdate);
 
@@ -89,7 +90,7 @@ namespace FootballProjectSoftUni.Controllers
         [HttpGet]
         public async Task<IActionResult> AllTournamentsToReferee()
         {
-            var userId = GetUserId();
+            var userId = User.Id();
 
             var model = await refereeService.GetTournamentsAsync(userId);
 
@@ -99,7 +100,7 @@ namespace FootballProjectSoftUni.Controllers
         [HttpGet]
         public async Task<IActionResult> LeaveTournament(int id)
         {
-            var userId = GetUserId();
+            var userId = User.Id();
 
             var result = await refereeService.LeaveTournamentAsync(id, userId);
 
@@ -116,12 +117,6 @@ namespace FootballProjectSoftUni.Controllers
             return RedirectToAction("CityTournaments", "Tournament", new { id = cityId });
 
         }
-
-        private string GetUserId()
-        {
-            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
-        }
-
         public static int CalculateAge(DateTime birthdate)
         {
             DateTime today = DateTime.Today;

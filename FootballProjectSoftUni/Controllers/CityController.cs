@@ -62,7 +62,7 @@ namespace FootballProjectSoftUni.Controllers
 
             if (town == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             return View(town);

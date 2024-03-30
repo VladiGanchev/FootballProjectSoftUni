@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FootballProjectSoftUni.Core.Contracts;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FootballProjectSoftUni.Core.Models.Tournament
 {
-    public class DetailsViewModel
+    public class DetailsViewModel : ITournamentModel
     {
         public int Id { get; set; }
 

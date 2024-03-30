@@ -1,4 +1,5 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Tournament;
+using FootballProjectSoftUni.Core.Extensions;
 using FootballProjectSoftUni.Core.Models.City;
 using FootballProjectSoftUni.Core.Models.Tournament;
 using FootballProjectSoftUni.Core.Services.Tournament;
@@ -78,11 +79,16 @@ namespace FootballProjectSoftUni.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id, string information)
         {
             var tournament = await service.GetTournamentDetailsAsync(id);
 
             if (tournament == null)
+            {
+                return BadRequest();
+            }
+
+            if (information != tournament.GetInformation())
             {
                 return BadRequest();
             }

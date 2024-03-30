@@ -29,7 +29,7 @@
 
             </div>
 
-            <a asp-controller="Tournament" asp-action="Details" asp-route-id="@e.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Tournament Details</a>
+            <a asp-controller="Tournament" asp-action="Details" asp-route-id="@e.Id" asp-route-information="@e.GetInformation()" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Tournament Details</a>
 
             @{
                 if (User.Identity.IsAuthenticated)

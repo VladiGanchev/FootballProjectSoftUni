@@ -60,6 +60,7 @@ namespace FootballProjectSoftUni.Core.Services.Referee
                   StartDate = x.Tournament.StartDate,
                   CityName = x.Tournament.TournamentCities.FirstOrDefault().City.Name,
                   EndDate = x.Tournament.EndDate,
+                  Description = x.Tournament.Description,
                   Status = x.Tournament.Status.ToString(),
                   NumberOfTeams = x.Tournament.NumberOfTeams,
                   ImageUrl = x.Tournament.ImageUrl,

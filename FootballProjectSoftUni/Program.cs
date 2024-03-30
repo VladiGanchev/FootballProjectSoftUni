@@ -32,9 +32,19 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "Tournament Details",
+        pattern: "/Tournament/Details/{id}/{information}",
+        defaults: new { Controller = "Tournament", Action = "Details"}
+        );
+    endpoints.MapDefaultControllerRoute();
+    //app.MapControllerRoute(
+    //    name: "default",
+    //    pattern: "{controller=Home}/{action=Index}/{id?}");
+    app.MapRazorPages();
+});
+
 
 app.Run();

@@ -200,6 +200,7 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 Id = x.TournamentId,
                 StartDate = x.Tournament.StartDate,
                 EndDate = x.Tournament.EndDate,
+                Description = x.Tournament.Description,
                 RefereeId = x.Tournament.RefereeId,
                 Status = x.Tournament.Status.ToString(),
                 NumberOfTeams = x.Tournament.NumberOfTeams,

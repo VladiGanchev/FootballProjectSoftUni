@@ -3,12 +3,14 @@ using FootballProjectSoftUni.Core.Models.City;
 using FootballProjectSoftUni.Core.Models.Tournament;
 using FootballProjectSoftUni.Core.Services.Tournament;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using static FootballProjectSoftUni.Infrastructure.Data.Constants.DataConstants;
 
 namespace FootballProjectSoftUni.Controllers
 {
+    [Authorize]
     public class TournamentController : Controller
     {
         private readonly ITournamentService service;
@@ -18,6 +20,7 @@ namespace FootballProjectSoftUni.Controllers
             service = _service;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> CityTournaments(int id)
         {
@@ -73,6 +76,7 @@ namespace FootballProjectSoftUni.Controllers
             return RedirectToAction("All", "City");
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {

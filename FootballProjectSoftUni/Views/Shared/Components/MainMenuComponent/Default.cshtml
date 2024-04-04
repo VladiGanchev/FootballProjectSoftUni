@@ -1,4 +1,5 @@
 ﻿@using System.Security.Claims;
+@using FootballProjectSoftUni.Extensions;
 <ul class="navbar-nav flex-grow-1">
     <li class="nav-item">
         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -9,10 +10,10 @@
     @{
         if (User.Identity.IsAuthenticated)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var adminId = "e18907e0-947d-4e47-894a-c627618c6de4";
+            // var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // var adminId = "b270f890-e476-45f9-92ed-14f2c5776026";
 
-            if (userId == adminId)
+            if (User.IsAdmin())
             {
 
                 <li class="nav-item dropdown">

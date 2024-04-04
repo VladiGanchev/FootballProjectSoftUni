@@ -1,5 +1,6 @@
 ﻿@using FootballProjectSoftUni.Core.Models.Tournament;
 @using System.Security.Claims;
+@using FootballProjectSoftUni.Extensions;
 @if (TempData["ErrorMessage"] != null)
 {
     <div class="alert alert-danger" role="alert">
@@ -34,10 +35,10 @@
             @{
                 if (User.Identity.IsAuthenticated)
                 {
-                    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    var adminId = "e18907e0-947d-4e47-894a-c627618c6de4";
+                    // var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    // var adminId = "e18907e0-947d-4e47-894a-c627618c6de4";
 
-                    if (userId == adminId)
+                    if (User.IsAdmin())
                     {
                         <a asp-controller="Tournament" asp-action="Edit" asp-route-id="@e.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Edit</a>
 

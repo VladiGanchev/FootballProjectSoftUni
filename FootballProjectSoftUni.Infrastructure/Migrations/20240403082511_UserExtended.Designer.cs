@@ -4,6 +4,7 @@ using FootballProjectSoftUni.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballProjectSoftUni.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240403082511_UserExtended")]
+    partial class UserExtended
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,26 +97,6 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "600bafb9-a73d-4489-a387-643c2b8ae96c",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "c2d48cd2-ae50-43b4-ac63-cbfaccf52cc7",
-                            Email = "admin@mail.com",
-                            EmailConfirmed = false,
-                            FirstName = "Great",
-                            LastName = "Admin",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@MAIL.COM",
-                            NormalizedUserName = "ADMIN@MAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAELflBitQKHDj2uELfn18f0NnlhBKC5t8R9Y8vApn//TRul8IpIyvZrA/BOk+l73KWg==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "9b1c2b75-ad12-4844-9ac5-5be0de24c5fa",
-                            TwoFactorEnabled = false,
-                            UserName = "admin@mail.com"
-                        });
                 });
 
             modelBuilder.Entity("FootballProjectSoftUni.Infrastructure.Data.Models.City", b =>

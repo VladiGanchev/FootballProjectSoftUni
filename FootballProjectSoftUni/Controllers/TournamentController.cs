@@ -3,6 +3,7 @@ using FootballProjectSoftUni.Core.Extensions;
 using FootballProjectSoftUni.Core.Models.City;
 using FootballProjectSoftUni.Core.Models.Tournament;
 using FootballProjectSoftUni.Core.Services.Tournament;
+using FootballProjectSoftUni.Extensions;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +41,11 @@ namespace FootballProjectSoftUni.Controllers
         [HttpGet]
         public async Task<IActionResult> AddTournamentToCity()
         {
+            if (User.IsAdmin() == false)
+            {
+                return Unauthorized();
+            }
+
             var tournament = new AddTournamentFormViewModel();
 
             var cities = await service.GetCitiesAsync();
@@ -52,6 +58,11 @@ namespace FootballProjectSoftUni.Controllers
 
         public async Task<IActionResult> AddTournamentToCity(AddTournamentFormViewModel model, int cityId)
         {
+            if (User.IsAdmin() == false)
+            {
+                return Unauthorized();
+            }
+
             DateTime start = DateTime.Now;
             DateTime end = DateTime.Now;
 
@@ -99,6 +110,11 @@ namespace FootballProjectSoftUni.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
+            if (User.IsAdmin() == false)
+            {
+                return Unauthorized();
+            }
+
             var tournament = await service.FindTournamentAsync(id);
 
             if (tournament == null)
@@ -115,6 +131,11 @@ namespace FootballProjectSoftUni.Controllers
 
         public async Task<IActionResult> Edit(EditViewModel model)
         {
+            if (User.IsAdmin() == false)
+            {
+                return Unauthorized();
+            }
+
             DateTime start = DateTime.Now;
             DateTime end = DateTime.Now;
             
@@ -156,7 +177,12 @@ namespace FootballProjectSoftUni.Controllers
 
         public async Task<IActionResult> Delete(int id)
         {
-           var result = await service.DeleteTournamentAsync(id);
+            if (User.IsAdmin() == false)
+            {
+                return Unauthorized();
+            }
+
+            var result = await service.DeleteTournamentAsync(id);
 
             if (result == false)
             {

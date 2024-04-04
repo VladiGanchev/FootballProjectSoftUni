@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FootballProjectSoftUni.Infrastructure.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -70,6 +70,23 @@ namespace FootballProjectSoftUni.Infrastructure.Data
                .OnDelete(DeleteBehavior.Restrict);
 
             builder.ApplyConfiguration(new CityConfiguration());
+
+
+            var AdminUser = new ApplicationUser()
+            {
+                Id = "600bafb9-a73d-4489-a387-643c2b8ae96c",
+                UserName = "admin@mail.com",
+                NormalizedUserName = "ADMIN@MAIL.COM",
+                Email = "admin@mail.com",
+                NormalizedEmail = "ADMIN@MAIL.COM",
+                FirstName = "Great",
+                LastName = "Admin"
+            };
+
+            var hasher = new PasswordHasher<ApplicationUser>();
+            AdminUser.PasswordHash = hasher.HashPassword(AdminUser , "admin123");
+
+            builder.Entity<ApplicationUser>().HasData(AdminUser);
 
             base.OnModelCreating(builder);
         }

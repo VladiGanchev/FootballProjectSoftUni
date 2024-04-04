@@ -19,4 +19,8 @@
     <ProjectReference Include="..\FootballProjectSoftUni.Core\FootballProjectSoftUni.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Identity\Data\" />
+  </ItemGroup>
+
 </Project>

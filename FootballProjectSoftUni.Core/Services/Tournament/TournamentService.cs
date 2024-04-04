@@ -270,7 +270,7 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 NumberOfTeams = 0,
                 ImageUrl = model.ImageUrl,
                 Status = FootballProjectSoftUni.Infrastructure.Data.Enums.TournamentStatus.Upcoming,
-                OrganiserId = "e18907e0-947d-4e47-894a-c627618c6de4",
+                OrganiserId = "600bafb9-a73d-4489-a387-643c2b8ae96c",
                 RefereeId = null
 
             };

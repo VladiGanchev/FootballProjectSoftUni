@@ -29,7 +29,7 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
         public string OrganiserId { get; set; } = string.Empty;//не се използва а сега
 
         [Required]
-        public IdentityUser Organiser { get; set; } = null!;//не се използва а сега
+        public ApplicationUser Organiser { get; set; } = null!;//не се използва а сега
 
         [Range(TournamentNumnerOfTeamsMinLength, TournamentNumnerOfTeamsMaxLength)]
         public int NumberOfTeams { get; set; }

@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Security.Claims;
 using FootballProjectSoftUni.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FootballProjectSoftUni.Controllers
 {
+    [Authorize]
     public class TeamController : Controller
     {
         private readonly ITeamService teamService;

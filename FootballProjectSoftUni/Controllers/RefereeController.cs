@@ -3,6 +3,7 @@ using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Models.Referee;
 using FootballProjectSoftUni.Extensions;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Security.Claims;
@@ -10,6 +11,7 @@ using static FootballProjectSoftUni.Infrastructure.Data.Constants.DataConstants;
 
 namespace FootballProjectSoftUni.Controllers
 {
+    [Authorize]
     public class RefereeController : Controller
     {
         private readonly IRefereeService refereeService;

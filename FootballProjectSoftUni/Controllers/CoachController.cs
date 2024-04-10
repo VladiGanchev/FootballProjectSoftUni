@@ -1,13 +1,16 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Coach;
 using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Models.Coach;
+using FootballProjectSoftUni.Core.Services.Referee;
 using FootballProjectSoftUni.Core.Services.Tournament;
 using FootballProjectSoftUni.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace FootballProjectSoftUni.Controllers
 {
+    [Authorize]
     public class CoachController : Controller
     {
         private readonly ICoachService coachService;
@@ -21,8 +24,20 @@ namespace FootballProjectSoftUni.Controllers
         }
 
         [HttpGet]
-        public IActionResult BecomeCoach()
+        public async Task<IActionResult> BecomeCoach()
         {
+            var userId = User.Id();
+
+            var result = await coachService.CheckForErrorsAsync(userId);
+
+            if (result != null)
+            {
+                ModelState.AddModelError("", result.Message);
+                TempData["ErrorMessage"] = result.Message;
+
+                return RedirectToAction("All", "City");
+            }
+
             var model = new CoachViewModel();
             return View(model);
         }

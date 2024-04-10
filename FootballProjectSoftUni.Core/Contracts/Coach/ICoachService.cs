@@ -1,4 +1,5 @@
 ﻿using FootballProjectSoftUni.Core.Models.Coach;
+using FootballProjectSoftUni.Core.Models.ServiceError;
 using FootballProjectSoftUni.Core.Models.Tournament;
 using System;
 using System.Collections.Generic;
@@ -13,5 +14,7 @@ namespace FootballProjectSoftUni.Core.Contracts.Coach
         Task BecomeCoachAsync(CoachViewModel model, string id);
         Task<IEnumerable<TournamentViewModel>> GetAllTournamentsToParticipateAsCoachAsync(string id);
         Task<bool> LeaveTournamentAsync(int id, string Id);
+        Task<ServiceError> CheckForErrorsAsync(string userId);
+
     }
 }

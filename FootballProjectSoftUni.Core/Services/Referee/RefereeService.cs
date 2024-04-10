@@ -47,6 +47,18 @@ namespace FootballProjectSoftUni.Core.Services.Referee
                 };
             }
 
+            var tournament = await context.Tournaments.Where(x => x.Id == tournamentId).FirstOrDefaultAsync();
+
+
+
+            if (tournament.RefereeId != null)
+            {
+                return new ServiceError()
+                {
+                    Message = "You cannot apply as a referee for this tournament because there is already registered referee."
+                };
+            }
+
             return null;
         }
 

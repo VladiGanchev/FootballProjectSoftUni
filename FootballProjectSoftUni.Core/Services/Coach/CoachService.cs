@@ -1,5 +1,6 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Coach;
 using FootballProjectSoftUni.Core.Models.Coach;
+using FootballProjectSoftUni.Core.Models.ServiceError;
 using FootballProjectSoftUni.Core.Models.Tournament;
 using FootballProjectSoftUni.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,21 @@ namespace FootballProjectSoftUni.Core.Services.Coach
 
             context.Coaches.Add(coach);
             await context.SaveChangesAsync();
+        }
+
+        public async Task<ServiceError> CheckForErrorsAsync(string userId)
+        {
+            var isAlreadyACoach = await context.Coaches.AnyAsync(x => x.Id == userId);
+
+            if (isAlreadyACoach == true)
+            {
+                return new ServiceError()
+                {
+                    Message = "You have already registered as a coach."
+                };
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<TournamentViewModel>> GetAllTournamentsToParticipateAsCoachAsync(string id)

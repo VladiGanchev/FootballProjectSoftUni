@@ -5,9 +5,11 @@ VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootballProjectSoftUni", "FootballProjectSoftUni\FootballProjectSoftUni.csproj", "{A2557DE5-0241-4751-8E09-5232298FF5C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballProjectSoftUni.Core", "FootballProjectSoftUni.Core\FootballProjectSoftUni.Core.csproj", "{AF71EE4B-D39C-49A3-BCB2-38B6B3F39A35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootballProjectSoftUni.Core", "FootballProjectSoftUni.Core\FootballProjectSoftUni.Core.csproj", "{AF71EE4B-D39C-49A3-BCB2-38B6B3F39A35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballProjectSoftUni.Infrastructure", "FootballProjectSoftUni.Infrastructure\FootballProjectSoftUni.Infrastructure.csproj", "{CF9D520B-68E3-485B-9A40-72C64C3410AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootballProjectSoftUni.Infrastructure", "FootballProjectSoftUni.Infrastructure\FootballProjectSoftUni.Infrastructure.csproj", "{CF9D520B-68E3-485B-9A40-72C64C3410AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballProjectSoftUni.Tests", "FootballProjectSoftUni.Tests\FootballProjectSoftUni.Tests.csproj", "{CC56FC39-1038-431F-96F1-CC2C6EA07C54}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{CF9D520B-68E3-485B-9A40-72C64C3410AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF9D520B-68E3-485B-9A40-72C64C3410AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF9D520B-68E3-485B-9A40-72C64C3410AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC56FC39-1038-431F-96F1-CC2C6EA07C54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC56FC39-1038-431F-96F1-CC2C6EA07C54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC56FC39-1038-431F-96F1-CC2C6EA07C54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC56FC39-1038-431F-96F1-CC2C6EA07C54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

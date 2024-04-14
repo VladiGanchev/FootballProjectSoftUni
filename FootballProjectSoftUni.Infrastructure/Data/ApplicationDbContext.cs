@@ -8,9 +8,20 @@ namespace FootballProjectSoftUni.Infrastructure.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        private bool _seedDb;
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, bool seed = true)
             : base(options)
         {
+            if (Database.IsRelational())
+            {
+                Database.Migrate();
+            }
+            else
+            {
+                Database.EnsureCreated();
+            }
+
+            _seedDb = seed;
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -69,24 +80,28 @@ namespace FootballProjectSoftUni.Infrastructure.Data
                 .WithMany(x => x.TournamentParticipants)
                .OnDelete(DeleteBehavior.Restrict);
 
-            builder.ApplyConfiguration(new CityConfiguration());
-
-
-            var AdminUser = new ApplicationUser()
+            if (_seedDb)
             {
-                Id = "600bafb9-a73d-4489-a387-643c2b8ae96c",
-                UserName = "admin@mail.com",
-                NormalizedUserName = "ADMIN@MAIL.COM",
-                Email = "admin@mail.com",
-                NormalizedEmail = "ADMIN@MAIL.COM",
-                FirstName = "Great",
-                LastName = "Admin"
-            };
+                builder.ApplyConfiguration(new CityConfiguration());
 
-            var hasher = new PasswordHasher<ApplicationUser>();
-            AdminUser.PasswordHash = hasher.HashPassword(AdminUser , "admin123");
 
-            builder.Entity<ApplicationUser>().HasData(AdminUser);
+                var AdminUser = new ApplicationUser()
+                {
+                    Id = "600bafb9-a73d-4489-a387-643c2b8ae96c",
+                    UserName = "admin@mail.com",
+                    NormalizedUserName = "ADMIN@MAIL.COM",
+                    Email = "admin@mail.com",
+                    NormalizedEmail = "ADMIN@MAIL.COM",
+                    FirstName = "Great",
+                    LastName = "Admin"
+                };
+
+                var hasher = new PasswordHasher<ApplicationUser>();
+                AdminUser.PasswordHash = hasher.HashPassword(AdminUser, "admin123");
+
+                builder.Entity<ApplicationUser>().HasData(AdminUser);
+            }
+
 
             base.OnModelCreating(builder);
         }

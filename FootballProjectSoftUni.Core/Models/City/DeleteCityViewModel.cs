@@ -9,8 +9,8 @@ namespace FootballProjectSoftUni.Core.Models.City
     public class DeleteCityViewModel
     {
         public int Id { get; set; }
-        public string Name { get; internal set; } = string.Empty;
-        public string ImageUrl { get; internal set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
 
         public IEnumerable<CityViewModel> Cities { get; set; } = new List<CityViewModel>();
     }

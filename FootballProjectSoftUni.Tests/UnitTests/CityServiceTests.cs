@@ -27,14 +27,11 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         [Test]
         public async Task FindTownAsync_ShouldReturnCorrectCity_WhenCityExists()
         {
-            // Arrange
             var expectedCityName = "Благоевград";
             var cityViewModel = new CityViewModel { Name = expectedCityName };
 
-            // Act
             var result = await _cityService.FindTownAsync(cityViewModel, 1);
 
-            // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(expectedCityName, result.Name);
         }
@@ -42,13 +39,10 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         [Test]
         public async Task FindTownAsync_ShouldReturnNull_WhenCityDoesntExists()
         {
-            // Arrange
             CityViewModel cityViewModel = null;
 
-            // Act
             var result = await _cityService.FindTownAsync(cityViewModel, 30);
 
-            // Assert
             Assert.IsNull(result);
         }
 
@@ -101,24 +95,19 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         [Test]
         public async Task AllCitiesAsyncWithPageShouldReturnCorrectCities()
         {
-            // Подгответе данни за тестване
-            var pageSize = 8; // Брой градове на страница
-            var pageNumber = 2; // Номер на страницата
+            var pageSize = 8; 
+            var pageNumber = 2; 
 
-            // Извикайте метода за получаване на градове с определена страница
             var citiesOnPage = await _cityService.AllCitiesAsync(pageNumber);
 
-            // Пресметнете индексите на първия и последния град на страницата
             var startIndex = (pageNumber - 1) * pageSize;
             var endIndex = startIndex + pageSize - 1;
 
-            // Извлечете градовете от базата данни, които се очакват да бъдат на страницата
             var expectedCities = await _data.Cities.OrderBy(c => c.Id)
                                                     .Skip(startIndex)
                                                     .Take(pageSize)
                                                     .ToListAsync();
 
-            // Сравнете броя и данните на градовете, върнати от метода, с очакваните градове
             Assert.AreEqual(expectedCities.Count(), citiesOnPage.Count());
             Assert.IsTrue(expectedCities.Select(c => c.Name).SequenceEqual(citiesOnPage.Select(c => c.Name)));
             Assert.IsTrue(expectedCities.Select(c => c.ImageUrl).SequenceEqual(citiesOnPage.Select(c => c.ImageUrl)));
@@ -135,7 +124,6 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 
             Assert.IsTrue(result);
 
-            // Проверете дали градът е изтрит от базата данни
             var deletedCity = await _data.Cities.FindAsync(cityIdToDelete);
             Assert.IsNull(deletedCity);
 

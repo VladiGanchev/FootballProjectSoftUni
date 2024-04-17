@@ -670,16 +670,13 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             {
                 TeamName = "omryzna mi",
                 TournamentId = tournament.Id,
-                Players = CreatePlayerModelsWithRightDateFormat()
+                Players = CreatePlayerModelsWithRightDateFormatButWrongAge()
             };
 
             var result = await _teamService.JoinTeamAsync(teamModel, tournament.Id, coach.Id);
 
             Assert.AreEqual(result.Message, "Players must be at least 18 years old to participate.");
         }
-
-
-
 
         private List<PlayerViewModel> CreatePlayerModelsWithWrongDateFormat()
         {
@@ -752,7 +749,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             return models;
         }
 
-        private List<PlayerViewModel> CreatePlayerModelsWithRightDateFormat()
+        private List<PlayerViewModel> CreatePlayerModelsWithRightDateFormatButWrongAge()
         {
             List<PlayerViewModel> models = new List<PlayerViewModel>();
 
@@ -822,5 +819,78 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 
             return models;
         }
+
+        private List<PlayerViewModel> CreatePlayerModelsWithRightDateFormat()
+        {
+            List<PlayerViewModel> models = new List<PlayerViewModel>();
+
+            var model1 = new PlayerViewModel()
+            {
+                Name = "1",
+                BirthDate = "19/03/2004 12:32",
+                
+            };
+            var model2 = new PlayerViewModel()
+            {
+                Name = "2",
+                BirthDate = "19/03/2004 12:32"
+            };
+            var model3 = new PlayerViewModel()
+            {
+                Name = "3",
+                BirthDate = "19/03/2004 12:32"
+            };
+            var model4 = new PlayerViewModel()
+            {
+                Name = "4",
+                BirthDate = "19/03/2004 12:32"
+            };
+            var model5 = new PlayerViewModel()
+            {
+                Name = "5",
+                BirthDate = "19/03/2004 12:32"
+            };
+            var model6 = new PlayerViewModel()
+            {
+                Name = "6",
+                BirthDate = "19/03/2004 12:32"
+            };
+            var model7 = new PlayerViewModel()
+            {
+                Name = "7",
+                BirthDate = "19/03/2004 12:32"
+            };
+            var model8 = new PlayerViewModel()
+            {
+                Name = "8",
+                BirthDate = "19/03/2004 12:32"
+            };
+            var model9 = new PlayerViewModel()
+            {
+                Name = "9",
+                BirthDate = "19/03/2004 12:32"
+            };
+            var model10 = new PlayerViewModel()
+            {
+                Name = "10",
+                BirthDate = "19/03/2004 12:32"
+            };
+
+            models.Add(model1);
+            models.Add(model2);
+            models.Add(model3);
+            models.Add(model4);
+            models.Add(model5);
+            models.Add(model6);
+            models.Add(model7);
+            models.Add(model8);
+            models.Add(model9);
+            models.Add(model10);
+
+
+
+            return models;
+        }
+
     }
 }

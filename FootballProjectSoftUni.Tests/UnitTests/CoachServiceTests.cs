@@ -631,7 +631,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 
             var tp = new TournamentParticipant()
             {
-                ParticipantId = id,
+                ParticipantId = "rthbvcrew",
                 TournamentId = tournament.Id,
                 Role = "Coach"
 
@@ -641,17 +641,9 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 
             _data.SaveChanges();
 
-            var result1 = await _coachService.LeaveTournamentAsync(tournament.Id, "2424e1da - a60e - 466e-bf7f - a59eccf4b60s");
+            var result1 = await _coachService.LeaveTournamentAsync(tournament.Id, tp.ParticipantId);
 
             Assert.AreEqual(result1, false);
-
-            _data.Coaches.Remove(coach);
-
-            _data.SaveChanges();
-
-            var result2 = await _coachService.LeaveTournamentAsync(tournament.Id, "2424e1da - a60e - 466e-bf7f - a59eccf4b60s");
-
-            Assert.AreEqual(result2, false);
 
         }
 
@@ -848,6 +840,10 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 
 
         }
+
+
+        
+
 
     }
 

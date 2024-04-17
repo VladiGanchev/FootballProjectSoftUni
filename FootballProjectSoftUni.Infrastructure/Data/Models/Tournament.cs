@@ -26,10 +26,10 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
         public string Description { get; set; } = string.Empty;
 
         [Required]
-        public string OrganiserId { get; set; } = string.Empty;//не се използва а сега
+        public string OrganiserId { get; set; } = string.Empty;
 
         [Required]
-        public ApplicationUser Organiser { get; set; } = null!;//не се използва а сега
+        public ApplicationUser Organiser { get; set; } = null!;
 
         [Range(TournamentNumnerOfTeamsMinLength, TournamentNumnerOfTeamsMaxLength)]
         public int NumberOfTeams { get; set; }

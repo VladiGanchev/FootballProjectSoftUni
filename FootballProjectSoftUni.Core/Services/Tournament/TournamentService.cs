@@ -25,20 +25,20 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
             data = _data;
         }
 
-        public async Task<AddTournamentFormViewModel> AddTournamentToCityAsync(AddTournamentFormViewModel model, int cityId)
-        {
+        //public async Task<AddTournamentFormViewModel> AddTournamentToCityAsync(AddTournamentFormViewModel model, int cityId)
+        //{
 
-            var cities = await data.Cities.Select(x => new CityViewModel()
-            {
-                Id = x.Id,
-                Name = x.Name
-            })
-                .ToListAsync();
+        //    var cities = await data.Cities.Select(x => new CityViewModel()
+        //    {
+        //        Id = x.Id,
+        //        Name = x.Name
+        //    })
+        //        .ToListAsync();
 
-            model.Cities = cities;
+        //    model.Cities = cities;
 
-            return model;
-        }
+        //    return model;
+        //}
 
         public async Task<bool> DeleteTournamentAsync(int id)
         {
@@ -209,14 +209,13 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
 
             }).ToListAsync();
 
-            // Update tournament status based on current date
             foreach (var tournament in cityTournaments)
             {
                 UpdateTournamentStatus(tournament);
 
             }
 
-            // Save changes to update tournament status in the database
+            
             await data.SaveChangesAsync();
 
             return cityTournaments;

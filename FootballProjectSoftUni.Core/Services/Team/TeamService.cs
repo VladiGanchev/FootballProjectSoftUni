@@ -189,7 +189,6 @@ namespace FootballProjectSoftUni.Core.Services.Team
 
             await context.SaveChangesAsync();
 
-            // tournament.NumberOfTeams = tournament.TournamentTeams.Count();
 
             tournament.NumberOfTeams = await context.TournamentsTeams.Where(tt => tt.TournamentId == tournament.Id).CountAsync();
 

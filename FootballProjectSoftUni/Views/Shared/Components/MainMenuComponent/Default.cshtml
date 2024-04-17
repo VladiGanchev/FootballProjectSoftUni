@@ -10,8 +10,6 @@
     @{
         if (User.Identity.IsAuthenticated)
         {
-            // var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            // var adminId = "b270f890-e476-45f9-92ed-14f2c5776026";
 
             if (User.IsAdmin())
             {

@@ -18,7 +18,6 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    // app.UseDeveloperExceptionPage();
     app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
     app.UseMigrationsEndPoint();
 }
@@ -45,9 +44,6 @@ app.UseEndpoints(endpoints =>
         defaults: new { Controller = "Tournament", Action = "Details"}
         );
     endpoints.MapDefaultControllerRoute();
-    //app.MapControllerRoute(
-    //    name: "default",
-    //    pattern: "{controller=Home}/{action=Index}/{id?}");
     app.MapRazorPages();
 });
 

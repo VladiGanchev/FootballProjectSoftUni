@@ -125,7 +125,7 @@ namespace FootballProjectSoftUni.Controllers
             int age = today.Year - birthdate.Year;
             if (birthdate.Date > today.AddYears(-age))
             {
-                age--; // Намаляме възрастта с едно, ако рожденният ден вече е минал през тази година
+                age--; 
             }
             return age;
         }

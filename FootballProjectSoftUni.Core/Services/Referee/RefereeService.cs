@@ -145,7 +145,6 @@ namespace FootballProjectSoftUni.Core.Services.Referee
                 return false;
             }
 
-            // Вземете града, към който принадлежи турнира
             var cityId = tournament.TournamentCities.FirstOrDefault()?.CityId;
 
 

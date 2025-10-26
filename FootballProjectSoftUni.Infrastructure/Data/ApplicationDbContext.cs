@@ -85,6 +85,7 @@ namespace FootballProjectSoftUni.Infrastructure.Data
                 builder.ApplyConfiguration(new CityConfiguration());
 
                 //comment
+                //new comment
                 var AdminUser = new ApplicationUser()
                 {
                     Id = "600bafb9-a73d-4489-a387-643c2b8ae96c",

@@ -1,6 +1,8 @@
-﻿using FootballProjectSoftUni.Core.Contracts.Tournament;
+﻿using FootballProjectSoftUni.Core.Contracts.Notification;
+using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Extensions;
 using FootballProjectSoftUni.Core.Models.City;
+using FootballProjectSoftUni.Core.Models.Notification;
 using FootballProjectSoftUni.Core.Models.Tournament;
 using FootballProjectSoftUni.Core.Services.Tournament;
 using FootballProjectSoftUni.Extensions;
@@ -16,10 +18,14 @@ namespace FootballProjectSoftUni.Controllers
     public class TournamentController : Controller
     {
         private readonly ITournamentService service;
+        private readonly INotificationService notificationService;
 
-        public TournamentController(ITournamentService _service)
+        public TournamentController(
+            ITournamentService _service,
+            INotificationService _notificationService)
         {
             service = _service;
+            notificationService = _notificationService;
         }
 
         [AllowAnonymous]
@@ -84,6 +90,13 @@ namespace FootballProjectSoftUni.Controllers
             }
 
             await service.AddTournamentToCityAsync(model, cityId, start, end);
+
+            var city = await service.FindCityAsync(cityId);
+            if (city != null)
+            {
+                string message = $"Създаден е нов турнир в {city.Name}! Регистрирай се сега.";
+                await notificationService.CreateNotificationForCityCoachesAsync(cityId, message);
+            }
 
             return RedirectToAction("All", "City");
         }

@@ -70,7 +70,7 @@ namespace FootballProjectSoftUni.Core.Services.City
 
             if (city == null)
             {
-                return null; ;
+                return null;
             }
 
             var deleteCityViewModel = new DeleteCityViewModel
@@ -202,6 +202,23 @@ namespace FootballProjectSoftUni.Core.Services.City
             await data.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<List<BestTeamViewModel>> GetBestTeamsAsync(int cityId)
+        {
+            var bestTeams = await data.CityBestTeams
+                .Where(cb => cb.CityId == cityId)
+                .OrderByDescending(cb => cb.WinsInCity)
+                .Select(cb => new BestTeamViewModel
+                {
+                    TeamId = cb.Team.Id,
+                    TeamName = cb.Team.Name,
+                    CoachName = cb.Team.Coach.Name,
+                    WinsInCity = cb.WinsInCity
+                })
+                .ToListAsync();
+
+            return bestTeams;
         }
     }
 }

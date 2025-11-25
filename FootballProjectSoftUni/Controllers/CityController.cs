@@ -21,7 +21,6 @@ namespace FootballProjectSoftUni.Controllers
         [HttpGet]
         public async Task<IActionResult> All(int? page)
         {
-
             var cities = await cityService.AllCitiesAsync(page);
             return View(cities);
         }
@@ -113,6 +112,14 @@ namespace FootballProjectSoftUni.Controllers
             var cities = await cityService.SearchAsync(searchString);
 
             return View(cities);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetBestTeams(int id)
+        {
+            var bestTeams = await cityService.GetBestTeamsAsync(id);
+            return View(bestTeams);
         }
     }
 }

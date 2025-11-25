@@ -18,5 +18,7 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
         public string ImageUrl { get; set; } = string.Empty;
 
         public IEnumerable<TournamentCity> CityTournamnets { get; set; } = new List<TournamentCity>();
+
+        public ICollection<CityBestTeam> BestTeams { get; set; } = new List<CityBestTeam>();
     }
 }

@@ -1,0 +1,32 @@
+﻿@model IEnumerable<FootballProjectSoftUni.Core.Models.Notification.NotificationViewModel>
+
+@{
+    ViewData["Title"] = "Your Notifications";
+}
+
+<h2 class="mb-4">Your Notifications</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        You have no notifications yet.
+    </div>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var notification in Model)
+        {
+            <div class="list-group-item d-flex justify-content-between align-items-center @(notification.IsRead ? "bg-light" : "bg-white")">
+                <div>
+                    <p class="mb-1">@notification.Message</p>
+                    <small class="text-muted">@notification.CreatedOn.ToLocalTime().ToString("g")</small>
+                </div>
+                @if (!notification.IsRead)
+                {
+                    <span class="badge bg-primary">New</span>
+                }
+            </div>
+        }
+    </div>
+}

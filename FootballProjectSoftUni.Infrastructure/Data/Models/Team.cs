@@ -22,10 +22,10 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
         [Required]
         public Coach Coach { get; set; } = null!;
 
-
         public ICollection<TournamentTeam> TeamTournaments { get; set; } = new List<TournamentTeam>();
         public ICollection<Player> Players { get; set; } = new List<Player>();
-
+        public ICollection<CityBestTeam> BestCities { get; set; } = new List<CityBestTeam>();
+        public int WinsCount { get; set; } = 0;
 
     }
 }

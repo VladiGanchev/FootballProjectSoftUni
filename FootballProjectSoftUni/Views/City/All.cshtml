@@ -39,6 +39,7 @@
                 <img class="card-img-top" src="@city.ImageUrl" alt="City Image">
             </div>
             <a asp-controller="Tournament" asp-action="CityTournaments" asp-route-id="@city.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Tournaments</a>
+            <a asp-controller="City" asp-action="GetBestTeams" asp-route-id="@city.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">City Leaders</a>
         </div>
     }
 </div>

@@ -53,6 +53,20 @@ namespace FootballProjectSoftUni.Infrastructure.Data
                 .WithMany(x => x.TeamTournaments)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<CityBestTeam>()
+                .HasKey(x => new { x.CityId, x.TeamId });
+
+            builder.Entity<CityBestTeam>()
+                .HasOne(x => x.City)
+                .WithMany(x => x.BestTeams)
+                .HasForeignKey(x => x.CityId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<CityBestTeam>()
+                .HasOne(x => x.Team)
+                .WithMany(x => x.BestCities)
+                .HasForeignKey(x => x.TeamId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Team>()
                .HasMany(x => x.Players)
@@ -84,8 +98,6 @@ namespace FootballProjectSoftUni.Infrastructure.Data
             {
                 builder.ApplyConfiguration(new CityConfiguration());
 
-                //comment
-                //new comment
                 var AdminUser = new ApplicationUser()
                 {
                     Id = "600bafb9-a73d-4489-a387-643c2b8ae96c",
@@ -116,5 +128,7 @@ namespace FootballProjectSoftUni.Infrastructure.Data
         public DbSet<TournamentCity> TournamentsCities { get; set; }
         public DbSet<TournamentParticipant> TournamentsParticipants { get; set; }
         public DbSet<TournamentTeam> TournamentsTeams { get; set; }
+        public DbSet<CityBestTeam> CityBestTeams { get; set; }
+        public DbSet<Notification> Notifications { get; set; } 
     }
 }

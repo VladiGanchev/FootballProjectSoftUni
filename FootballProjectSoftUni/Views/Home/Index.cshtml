@@ -1,10 +1,40 @@
-﻿@{
+﻿@model FootballProjectSoftUni.Core.Models.Home.HomeViewModel
+
+@{
     ViewData["Title"] = "Tournament Galaxy";
 }
 
-<div class="text-center">
+<div class="text-center mt-5">
     <h1 class="index-page-greeting">Tournament Galaxy</h1>
     <p>Welcome to our Website for Football Tournaments!</p>
 
-    <img src="https://fcdynamo.com/img/4ed49bb5-4123-4d5c-b5ce-7e6b1d5aa1e9/3fd4154410720ba54ec935ce9e460a191210.jpg?fm=jpg&q=80&fit=max&crop=900%2C506%2C0%2C0" style="width: 75vh" />
+    <img src="https://fcdynamo.com/img/4ed49bb5-4123-4d5c-b5ce-7e6b1d5aa1e9/3fd4154410720ba54ec935ce9e460a191210.jpg?fm=jpg&q=80&fit=max&crop=900%2C506%2C0%2C0"
+         style="width: 75vh; border-radius: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.2);" />
+
+    <div class="mt-5">
+        <h3>Our Achievements</h3>
+        <hr class="w-25 mx-auto" />
+
+        <div class="d-flex justify-content-center gap-4 flex-wrap mt-4">
+            <div class="stat-card p-3 border rounded-3 shadow-sm bg-light" style="width: 200px;">
+                <h4 class="text-primary">@Model.TournamentsCount</h4>
+                <p>Tournaments Organized</p>
+            </div>
+
+            <div class="stat-card p-3 border rounded-3 shadow-sm bg-light" style="width: 200px;">
+                <h4 class="text-success">@Model.TeamsCount</h4>
+                <p>Teams Participated</p>
+            </div>
+
+            <div class="stat-card p-3 border rounded-3 shadow-sm bg-light" style="width: 200px;">
+                <h4 class="text-danger">@Model.PlayersCount</h4>
+                <p>Players Registered</p>
+            </div>
+
+            <div class="stat-card p-3 border rounded-3 shadow-sm bg-light" style="width: 200px;">
+                <h4 class="text-warning">@Model.YearOfFoundation</h4>
+                <p>Year of Foundation</p>
+            </div>
+        </div>
+    </div>
 </div>

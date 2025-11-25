@@ -20,6 +20,7 @@ namespace FootballProjectSoftUni.Controllers
         [HttpGet]
         public async Task<IActionResult> All(int? page)
         {
+            //test
             await notificationService.MarkAllAsReadAsync(User.Id());
             var notifications = await notificationService.AllNotificationsAsync(User.Id());
             return View(notifications);

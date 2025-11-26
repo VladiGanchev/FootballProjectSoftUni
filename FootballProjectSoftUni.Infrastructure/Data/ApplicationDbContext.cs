@@ -130,5 +130,6 @@ namespace FootballProjectSoftUni.Infrastructure.Data
         public DbSet<TournamentTeam> TournamentsTeams { get; set; }
         public DbSet<CityBestTeam> CityBestTeams { get; set; }
         public DbSet<Notification> Notifications { get; set; } 
+        public DbSet<Partner> Partners { get; set; } 
     }
 }

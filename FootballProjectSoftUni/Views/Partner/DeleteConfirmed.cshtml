@@ -1,0 +1,33 @@
+﻿@using FootballProjectSoftUni.Core.Models.Partner
+@model PartnerViewModel
+
+<h2 class="text-center">Delete Partner</h2>
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+
+        <div class="card shadow">
+            <div class="card-body text-center">
+
+                <img src="@Model.ImageUrl" class="img-fluid mb-3"
+                     style="max-height:150px; object-fit:contain;" />
+
+                <h3 class="card-title">@Model.Name</h3>
+                <p class="text-danger mt-3">
+                    Are you sure you want to delete this partner?
+                </p>
+
+            </div>
+
+            <div class="card-footer text-center">
+                <form asp-action="DeleteConfirmed" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                    <a asp-action="All" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>

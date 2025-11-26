@@ -1,0 +1,26 @@
+﻿@model IEnumerable<FootballProjectSoftUni.Core.Models.Partner.PartnerViewModel>
+
+@{
+    ViewData["Title"] = "Our Partners";
+}
+
+<h2 class="text-center mb-4">Our Partners</h2>
+
+<div class="row justify-content-center">
+    @foreach (var partner in Model)
+    {
+        <div class="col-6 col-md-3 col-lg-2 text-center mb-4">
+            <div class="card border-0 shadow-sm">
+                <img src="@partner.ImageUrl" class="card-img-top p-2" alt="@partner.Name" style="height:120px; object-fit:contain;">
+                <div class="card-body p-2">
+                    <h6 class="card-title">@partner.Name</h6>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <p class="text-center text-muted">There are no partners added yet.</p>
+}

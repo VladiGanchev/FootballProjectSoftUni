@@ -1,0 +1,32 @@
+﻿@using FootballProjectSoftUni.Core.Models.Partner;
+@model List<PartnerViewModel>
+
+<h2 class="text-center">Delete Partner</h2>
+<hr />
+
+<form asp-action="DeleteConfirmed" method="get">
+    <div class="form-group">
+        <label>Select Partner to Delete:</label>
+
+        <select name="id" id="partnerId" class="form-control">
+            <option value="">-- Select Partner --</option>
+            @foreach (var partner in Model)
+            {
+                <option value="@partner.Id">@partner.Name</option>
+            }
+        </select>
+    </div>
+
+    <a id="deleteButton" class="btn btn-warning mt-3 w-100 p-3 fw-bold">
+        Delete Partner
+    </a>
+</form>
+
+<script>
+    // Update the button link when selecting a partner
+    document.getElementById('partnerId').addEventListener('change', function () {
+        var selectedId = this.value;
+        var deleteButton = document.getElementById('deleteButton');
+        deleteButton.href = '/Partner/DeleteConfirmed?id=' + selectedId;
+    });
+</script>

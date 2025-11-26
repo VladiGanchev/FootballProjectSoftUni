@@ -218,7 +218,7 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
             
             await data.SaveChangesAsync();
 
-            return cityTournaments;
+            return cityTournaments.Where(x => x.Status != TournamentStatus.Finished.ToString());
         }
 
         public async Task<DetailsViewModel> GetTournamentDetailsAsync(int id)

@@ -2,6 +2,7 @@
 using FootballProjectSoftUni.Core.Contracts.Coach;
 using FootballProjectSoftUni.Core.Contracts.Home;
 using FootballProjectSoftUni.Core.Contracts.Notification;
+using FootballProjectSoftUni.Core.Contracts.Partner;
 using FootballProjectSoftUni.Core.Contracts.Referee;
 using FootballProjectSoftUni.Core.Contracts.Team;
 using FootballProjectSoftUni.Core.Contracts.Tournament;
@@ -9,6 +10,7 @@ using FootballProjectSoftUni.Core.Services.City;
 using FootballProjectSoftUni.Core.Services.Coach;
 using FootballProjectSoftUni.Core.Services.Home;
 using FootballProjectSoftUni.Core.Services.Notification;
+using FootballProjectSoftUni.Core.Services.Partner;
 using FootballProjectSoftUni.Core.Services.Referee;
 using FootballProjectSoftUni.Core.Services.Team;
 using FootballProjectSoftUni.Core.Services.Tournament;
@@ -30,6 +32,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IRefereeService, RefereeService>();
             services.AddScoped<IHomeService, HomeService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IPartnerService, PartnerService>();
 
             return services;
         }

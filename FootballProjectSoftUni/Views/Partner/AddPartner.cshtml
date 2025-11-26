@@ -1,0 +1,51 @@
+﻿@model FootballProjectSoftUni.Core.Models.Partner.PartnerViewModel
+
+@{
+    ViewData["Title"] = "Add Partner";
+}
+
+<h2 class="text-center mb-4">Add New Partner</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+
+        <form method="post">
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label fw-bold"></label>
+                <input asp-for="Name" class="form-control" placeholder="Partner name..." />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ImageUrl" class="form-label fw-bold"></label>
+                <input asp-for="ImageUrl" class="form-control" placeholder="Image URL..." id="imageInput" />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+            </div>
+
+            <!-- Image Preview -->
+            <div class="text-center mb-3">
+                <img id="previewImage" src="" class="img-fluid rounded shadow" style="max-height:150px; display:none;" />
+            </div>
+
+            <button class="btn btn-primary w-100">Add Partner</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Preview image when user types an URL
+        document.getElementById("imageInput").addEventListener("input", function () {
+            const img = document.getElementById("previewImage");
+            const url = this.value;
+
+            if (url && url.startsWith("http")) {
+                img.src = url;
+                img.style.display = "block";
+            } else {
+                img.style.display = "none";
+            }
+        });
+    </script>
+}

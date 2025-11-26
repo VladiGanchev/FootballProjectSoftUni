@@ -7,6 +7,9 @@
     <li class="nav-item">
         <a class="nav-link text-dark" asp-area="" asp-controller="City" asp-action="All">Cities</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Partner" asp-action="All">Partners</a>
+    </li>
     @{
         if (User.Identity.IsAuthenticated)
         {
@@ -27,6 +30,12 @@
                         </li>
                         <li>
                             <a class="dropdown-item" asp-area="" asp-controller="City" asp-action="DeleteCity">Delete City</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-area="" asp-controller="Partner" asp-action="AddPartner">Add Partner</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-area="" asp-controller="Partner" asp-action="DeletePartner">Delete Partner</a>
                         </li>
                     </ul>
                 </li>

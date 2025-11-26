@@ -20,7 +20,10 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     @await Component.InvokeAsync(nameof(MainMenuComponent))
-                    @await Component.InvokeAsync(nameof(NotificationComponent))
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        @await Component.InvokeAsync(nameof(NotificationComponent))
+                    }
                     <partial name="_LoginPartial" />
                 </div>
 

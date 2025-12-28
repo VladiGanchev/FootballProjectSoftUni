@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace FootballProjectSoftUni.Core.Contracts.Message
 {
@@ -14,7 +15,7 @@ namespace FootballProjectSoftUni.Core.Contracts.Message
         Task<int> ReplyAsync(int parentMessageId, string userId, string subject, string content);
         Task<ReplyFormViewModel> GetReplyModelAsync(int messageId, string currentUserId);
 
-        Task<IEnumerable<SentMessageViewModel>> GetSentMessagesAsync(string currentUserId); // 👈 НОВО
+        Task<IPagedList<SentMessageViewModel>> GetSentMessagesAsync(string currentUserId, int pageNumber, int pageSize);
     }
 
 }

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace FootballProjectSoftUni.Core.Services.Message
 {
@@ -81,7 +82,7 @@ namespace FootballProjectSoftUni.Core.Services.Message
             {
                 UserId = parent.UserId,
                 ParentMessageId = parent.Id,
-                Subject = subjectToUse,   
+                Subject = subjectToUse,
                 Content = content,
                 IsFromAdmin = fromAdmin,
                 CreatedOn = DateTime.UtcNow
@@ -94,7 +95,7 @@ namespace FootballProjectSoftUni.Core.Services.Message
             {
                 UserId = receiverId,
                 ContactMessageId = reply.Id,
-                Message = subjectToUse,  
+                Message = subjectToUse,
                 IsRead = false,
                 CreatedOn = DateTime.UtcNow
             });
@@ -118,8 +119,8 @@ namespace FootballProjectSoftUni.Core.Services.Message
                 throw new UnauthorizedAccessException("Нямате достъп до това съобщение.");
 
             bool isSender =
-                (message.IsFromAdmin && isAdmin) ||                
-                (!message.IsFromAdmin && message.UserId == currentUserId); 
+                (message.IsFromAdmin && isAdmin) ||
+                (!message.IsFromAdmin && message.UserId == currentUserId);
 
             bool canReply = !isSender;
 
@@ -155,7 +156,8 @@ namespace FootballProjectSoftUni.Core.Services.Message
             return admins.First().Id;
         }
 
-        public async Task<IEnumerable<SentMessageViewModel>> GetSentMessagesAsync(string currentUserId)
+
+        public async Task<IPagedList<SentMessageViewModel>> GetSentMessagesAsync(string currentUserId, int pageNumber, int pageSize)
         {
             bool isAdmin = await IsAdminAsync(currentUserId);
 
@@ -179,10 +181,11 @@ namespace FootballProjectSoftUni.Core.Services.Message
                     Preview = m.Content.Length > 50 ? m.Content.Substring(0, 50) + "..." : m.Content,
                     CreatedOn = m.CreatedOn,
                     ToName = isAdmin
-                        ? (m.User.FirstName + " " + m.User.LastName)          
-                        : "Админ"                                             
+                        ? (m.User.FirstName + " " + m.User.LastName)
+                        : "Админ"
                 })
-                .ToListAsync();
+                .ToPagedListAsync(pageNumber, pageSize);
         }
+
     }
 }

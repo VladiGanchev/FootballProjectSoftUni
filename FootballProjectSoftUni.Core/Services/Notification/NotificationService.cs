@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace FootballProjectSoftUni.Core.Services.Notification
 {
@@ -19,7 +20,7 @@ namespace FootballProjectSoftUni.Core.Services.Notification
         {
             data = _data;
         }
-        public async Task<IEnumerable<NotificationViewModel>> AllNotificationsAsync(string userId)
+        public async Task<IPagedList<NotificationViewModel>> AllNotificationsAsync(string userId, int pageNumber, int pageSize)
         {
             return await data.Notifications
                 .Where(n => n.UserId == userId)
@@ -35,11 +36,11 @@ namespace FootballProjectSoftUni.Core.Services.Notification
                     ContactMessageId = n.ContactMessageId,
                     FromName = n.ContactMessage != null
                         ? (n.ContactMessage.IsFromAdmin
-                            ? "Админ" 
-                            : n.ContactMessage.User.FirstName + " " + n.ContactMessage.User.LastName) 
+                            ? "Админ"
+                            : n.ContactMessage.User.FirstName + " " + n.ContactMessage.User.LastName)
                         : null
                 })
-                .ToListAsync();
+                .ToPagedListAsync(pageNumber, pageSize);
         }
 
         public async Task CreateNotificationForCityCoachesAsync(int cityId, string message)
@@ -87,6 +88,20 @@ namespace FootballProjectSoftUni.Core.Services.Notification
 
                 await data.SaveChangesAsync();
             }
+        }
+
+        public async Task DeleteAsync(int id, string userId)
+        {
+            var notification = await data.Notifications
+                .FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
+
+            if (notification == null)
+            {
+                return;
+            }
+
+            data.Notifications.Remove(notification);
+            await data.SaveChangesAsync();
         }
     }
 }

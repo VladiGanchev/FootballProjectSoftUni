@@ -10,42 +10,54 @@ using Microsoft.AspNetCore.Mvc;
 namespace FootballProjectSoftUni.Controllers
 {
     [Authorize]
-public class NotificationController : Controller
-{
-    private readonly INotificationService notificationService;
-    private readonly IContactMessageService messageService;
-
-    public NotificationController(
-        INotificationService _notificationService,
-        IContactMessageService _messageService)
+    public class NotificationController : Controller
     {
-        notificationService = _notificationService;
-        messageService = _messageService;
-    }
+        private readonly INotificationService notificationService;
+        private readonly IContactMessageService messageService;
 
-    [HttpGet]
-    public async Task<IActionResult> All(string box = "inbox")
-    {
-        var userId = User.Id();
-
-        await notificationService.MarkAllAsReadAsync(userId);
-
-        var model = new NotificationAllPageViewModel
+        public NotificationController(
+            INotificationService _notificationService,
+            IContactMessageService _messageService)
         {
-            Box = box
-        };
-
-        if (box == "sent")
-        {
-            model.SentMessages = await messageService.GetSentMessagesAsync(userId);
-        }
-        else
-        {
-            model.Notifications = await notificationService.AllNotificationsAsync(userId);
+            notificationService = _notificationService;
+            messageService = _messageService;
         }
 
-        return View(model);
-    }
-}
+        [HttpGet]
+        public async Task<IActionResult> All(string box = "inbox", int? page = 1)
+        {
+            var userId = User.Id();
+            await notificationService.MarkAllAsReadAsync(userId);
 
+            int pageNumber = page ?? 1;
+            int pageSize = 10;
+
+            var model = new NotificationAllPageViewModel
+            {
+                Box = box
+            };
+
+            if (box == "sent")
+            {
+                model.SentMessages = await messageService.GetSentMessagesAsync(userId, pageNumber, pageSize);
+            }
+            else
+            {
+                model.Notifications = await notificationService.AllNotificationsAsync(userId, pageNumber, pageSize);
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id, string box = "inbox", int? page = 1)
+        {
+            var userId = User.Id();
+
+            await notificationService.DeleteAsync(id, userId);
+
+            return RedirectToAction(nameof(All), new { box, page });
+        }
+    }
 }

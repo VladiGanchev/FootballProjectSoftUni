@@ -24,12 +24,20 @@ namespace FootballProjectSoftUni.Core.Services.Notification
             return await data.Notifications
                 .Where(n => n.UserId == userId)
                 .OrderByDescending(n => n.CreatedOn)
+                .Include(n => n.ContactMessage)
+                    .ThenInclude(cm => cm.User)
                 .Select(n => new NotificationViewModel
                 {
                     Id = n.Id,
                     Message = n.Message,
                     CreatedOn = n.CreatedOn,
-                    IsRead = n.IsRead
+                    IsRead = n.IsRead,
+                    ContactMessageId = n.ContactMessageId,
+                    FromName = n.ContactMessage != null
+                        ? (n.ContactMessage.IsFromAdmin
+                            ? "Админ" 
+                            : n.ContactMessage.User.FirstName + " " + n.ContactMessage.User.LastName) 
+                        : null
                 })
                 .ToListAsync();
         }

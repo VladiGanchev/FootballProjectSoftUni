@@ -24,5 +24,10 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
         public bool IsRead { get; set; } = false;
 
         public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+
+        public int? ContactMessageId { get; set; }
+
+        [ForeignKey(nameof(ContactMessageId))]
+        public ContactMessage? ContactMessage { get; set; }
     }
 }

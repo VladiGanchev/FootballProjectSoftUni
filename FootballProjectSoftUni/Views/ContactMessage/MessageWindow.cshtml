@@ -1,0 +1,34 @@
+﻿@using FootballProjectSoftUni.Core.Models.Message
+@model ReplyFormViewModel
+
+<h3>Съобщение</h3>
+<hr />
+
+<div class="mb-2">
+    <strong>Тема:</strong> @Model.Subject
+</div>
+
+@if (!string.IsNullOrWhiteSpace(Model.PreviousMessageText))
+{
+    <div class="p-3 bg-white border rounded mb-3">
+        <strong>Предишно съобщение:</strong>
+        <p>@Model.PreviousMessageText</p>
+    </div>
+}
+<div class="p-3 bg-light border rounded mb-3">
+    <strong>Получен отговор:</strong>
+    <p>@Model.CurrentMessageText</p>
+</div>
+
+
+@if (Model.CanReply)
+{
+    <div class="text-end">
+        <a asp-controller="ContactMessage"
+           asp-action="Reply"
+           asp-route-messageId="@Model.ParentMessageId"
+           class="btn btn-primary">
+            Отговори
+        </a>
+    </div>
+}

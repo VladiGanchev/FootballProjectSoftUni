@@ -37,8 +37,12 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; @DateTime.Today.Year - FootballProjectSoftUni
+        <div class="container d-flex justify-content-between align-items-center">
+            <span>&copy; @DateTime.Today.Year - FootballProjectSoftUni</span>
+
+            <a asp-controller="ContactMessage" asp-action="Create" class="text-decoration-none">
+                Свържи се с организаторите
+            </a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

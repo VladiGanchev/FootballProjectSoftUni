@@ -1,32 +1,116 @@
-﻿@model IEnumerable<FootballProjectSoftUni.Core.Models.Notification.NotificationViewModel>
+﻿@using FootballProjectSoftUni.Core.Models.Notification
+@model NotificationAllPageViewModel
 
 @{
-    ViewData["Title"] = "Your Notifications";
+    ViewData["Title"] = "Известия и съобщения";
 }
 
-<h2 class="mb-4">Your Notifications</h2>
+<h2 class="mb-3">Известия и съобщения</h2>
 
-@if (!Model.Any())
+<div class="mb-3">
+    <a asp-controller="Notification"
+       asp-action="All"
+       asp-route-box="inbox"
+       class="btn @(Model.Box == "inbox" ? "btn-primary" : "btn-outline-primary") me-2">
+        📥 Входящи
+    </a>
+
+    <a asp-controller="Notification"
+       asp-action="All"
+       asp-route-box="sent"
+       class="btn @(Model.Box == "sent" ? "btn-primary" : "btn-outline-primary")">
+        📤 Изпратени
+    </a>
+</div>
+
+<hr />
+
+@if (Model.Box == "sent")
 {
-    <div class="alert alert-info">
-        You have no notifications yet.
-    </div>
+    <h4>Изпратени съобщения</h4>
+
+    @if (!Model.SentMessages.Any())
+    {
+        <div class="alert alert-light">Нямате изпратени съобщения.</div>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var msg in Model.SentMessages)
+            {
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <a asp-controller="ContactMessage"
+                           asp-action="OpenMessage"
+                           asp-route-messageId="@msg.Id"
+                           class="fw-bold text-primary text-decoration-none">
+                            @msg.Subject
+                        </a>
+
+                        <div class="text-muted small">
+                            Изпратено към: @msg.ToName
+                        </div>
+
+                        <small class="text-muted">
+                            @msg.CreatedOn.ToLocalTime().ToString("g")
+                        </small>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 }
 else
 {
-    <div class="list-group">
-        @foreach (var notification in Model)
-        {
-            <div class="list-group-item d-flex justify-content-between align-items-center @(notification.IsRead ? "bg-light" : "bg-white")">
-                <div>
-                    <p class="mb-1">@notification.Message</p>
-                    <small class="text-muted">@notification.CreatedOn.ToLocalTime().ToString("g")</small>
+    <h4>Входящи нотификации</h4>
+
+    @if (!Model.Notifications.Any())
+    {
+        <div class="alert alert-info">
+            Нямате нотификации.
+        </div>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var notification in Model.Notifications)
+            {
+                <div class="list-group-item d-flex justify-content-between align-items-center @(notification.IsRead ? "bg-light" : "bg-white")">
+                    <div>
+                        @if (notification.ContactMessageId != null)
+                        {
+                            <a asp-controller="ContactMessage"
+                               asp-action="OpenMessage"
+                               asp-route-messageId="@notification.ContactMessageId"
+                               class="fw-bold text-primary text-decoration-none">
+                                @notification.Message
+                            </a>
+
+                            @* Показваме "Получено от" само за чат нотификации *@
+                            @if (!string.IsNullOrWhiteSpace(notification.FromName))
+                            {
+                                <div class="text-muted small">
+                                    Получено от: @notification.FromName
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <span>@notification.Message</span>
+                        }
+
+                        <small class="text-muted d-block mt-1">
+                            @notification.CreatedOn.ToLocalTime().ToString("g")
+                        </small>
+                    </div>
+
+                    @if (!notification.IsRead)
+                    {
+                        <span class="badge bg-primary">New</span>
+                    }
                 </div>
-                @if (!notification.IsRead)
-                {
-                    <span class="badge bg-primary">New</span>
-                }
-            </div>
-        }
-    </div>
+            }
+        </div>
+    }
 }
+

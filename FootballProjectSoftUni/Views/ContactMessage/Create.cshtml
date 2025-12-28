@@ -1,0 +1,26 @@
+﻿@using FootballProjectSoftUni.Core.Models.Message
+@model ContactFormViewModel
+
+<h2 class="text-center">Свържи се с организаторите</h2>
+<hr />
+
+<form asp-action="Create" method="post" class="w-50 mx-auto">
+
+    <div class="mb-3">
+        <label asp-for="Subject" class="form-label">Тема</label>
+        <input asp-for="Subject" class="form-control" />
+        <span asp-validation-for="Subject" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Content" class="form-label">Вашето съобщение</label>
+        <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success w-100">Изпрати</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

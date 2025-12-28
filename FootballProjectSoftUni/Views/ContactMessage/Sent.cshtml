@@ -1,0 +1,39 @@
+﻿@using FootballProjectSoftUni.Core.Models.ContactMessage
+@using FootballProjectSoftUni.Core.Models.Message
+@model IEnumerable<MessageListViewModel>
+
+<h2>Изпратени съобщения</h2>
+<hr />
+
+@if (!Model.Any())
+{
+    <p class="text-muted">Нямате получени съобщения.</p>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Тема</th>
+                <th>Преглед</th>
+                <th>Дата</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var msg in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-controller="ContactMessage"
+                           asp-action="OpenMessage"
+                           asp-route-messageId="@msg.Id">
+                            @msg.Subject
+                        </a>
+                    </td>
+                    <td>@msg.Preview</td>
+                    <td>@msg.CreatedOn.ToLocalTime().ToString("g")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

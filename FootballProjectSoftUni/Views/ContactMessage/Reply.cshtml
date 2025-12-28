@@ -1,0 +1,35 @@
+﻿@using FootballProjectSoftUni.Core.Models.Message
+@model ReplyFormViewModel
+
+<h3 class="text-center">Отговор на съобщение</h3>
+<hr />
+
+<form asp-action="Reply" method="post" class="w-50 mx-auto">
+    <input type="hidden" asp-for="ParentMessageId" />
+
+    <div class="mb-3">
+        <label asp-for="Subject" class="form-label">Тема</label>
+        <input asp-for="Subject" class="form-control" />
+        <span asp-validation-for="Subject" class="text-danger"></span>
+    </div>
+
+    <div class="border p-3 rounded bg-light mb-2">
+        <strong>Последно съобщение:</strong>
+        <p>@Model.CurrentMessageText</p>
+    </div>
+
+
+    <div class="mb-3">
+        <label asp-for="Content" class="form-label">Вашият отговор</label>
+        <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Изпрати отговор</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+

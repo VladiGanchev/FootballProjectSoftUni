@@ -25,6 +25,11 @@
         else if (Model.Role == "Coach")
         {
             <span>Coach</span>
+            <form asp-action="RemoveCoachRole" method="post" style="display:inline">
+                <button type="submit" class="btn btn-sm btn-outline-danger ms-2">
+                    Спри да бъдеш треньор
+                </button>
+            </form>
         }
         else
         {

@@ -10,9 +10,6 @@
     <li class="nav-item">
         <a class="nav-link text-dark" asp-area="" asp-controller="Partner" asp-action="All">Partners</a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-controller="Referee" asp-action="Referees">Referees</a>
-    </li>
     @{
         if (User.Identity.IsAuthenticated)
         {
@@ -59,6 +56,10 @@
                     </ul>
                 </li>
             }
+
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-controller="Referee" asp-action="Referees">Referees</a>
+            </li>
         }
     }
 </ul>

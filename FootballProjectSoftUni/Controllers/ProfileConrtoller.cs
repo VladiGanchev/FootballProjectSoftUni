@@ -1,4 +1,5 @@
-﻿using FootballProjectSoftUni.Core.Models.Profile;
+﻿using FootballProjectSoftUni.Core.Contracts.Coach;
+using FootballProjectSoftUni.Core.Models.Profile;
 using FootballProjectSoftUni.Infrastructure.Data;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -14,11 +15,16 @@ namespace FootballProjectSoftUni.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly ICoachService coachService;
 
-        public ProfileController(ApplicationDbContext _context, UserManager<ApplicationUser> _userManager)
+        public ProfileController(
+            ApplicationDbContext _context,
+            UserManager<ApplicationUser> _userManager,
+            ICoachService _coachService)
         {
             context = _context;
             userManager = _userManager;
+            coachService = _coachService;
         }
 
         [HttpGet]
@@ -43,13 +49,23 @@ namespace FootballProjectSoftUni.Controllers
             if (isCoach)
             {
                 var coach = await context.Coaches
-                    .Include(c => c.Team)
                     .FirstOrDefaultAsync(c => c.Id == userId);
 
                 if (coach != null)
                 {
-                    model.Experience = int.Parse(coach.Experience);
-                    model.TeamName = coach.Team?.Name;
+                    // ако Experience в Coach е string
+                    model.Experience = int.TryParse(coach.Experience, out var exp)
+                        ? exp
+                        : 0;
+
+                    // ако има отбор, вземи името му отделно
+                    if (coach.TeamId != null)
+                    {
+                        model.TeamName = await context.Teams
+                            .Where(t => t.Id == coach.TeamId)
+                            .Select(t => t.Name)
+                            .FirstOrDefaultAsync();
+                    }
                 }
             }
 
@@ -107,6 +123,17 @@ namespace FootballProjectSoftUni.Controllers
             }
 
             // след това се връщаме към профила
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveCoachRole()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            await coachService.RemoveCoachRoleAsync(userId);
+
             return RedirectToAction(nameof(Index));
         }
 

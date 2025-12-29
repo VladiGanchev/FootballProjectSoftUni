@@ -16,5 +16,7 @@ namespace FootballProjectSoftUni.Core.Contracts.Coach
         Task<bool> LeaveTournamentAsync(int id, string Id);
         Task<ServiceError> CheckForErrorsAsync(string userId);
 
+        Task<bool> RemoveCoachRoleAsync(string userId);
+
     }
 }

@@ -103,5 +103,21 @@ namespace FootballProjectSoftUni.Core.Services.Notification
             data.Notifications.Remove(notification);
             await data.SaveChangesAsync();
         }
+
+        public async Task CreateNotificationForUserAsync(string userId, string message)
+        {
+            var notification = new FootballProjectSoftUni.Infrastructure.Data.Models.Notification
+            {
+                UserId = userId,
+                Message = message,
+                CreatedOn = DateTime.UtcNow,
+                IsRead = false,
+                ContactMessageId = null // това си остава null, защото не е свързано с ContactMessage
+            };
+
+            await data.Notifications.AddAsync(notification);
+            await data.SaveChangesAsync();
+        }
+
     }
 }

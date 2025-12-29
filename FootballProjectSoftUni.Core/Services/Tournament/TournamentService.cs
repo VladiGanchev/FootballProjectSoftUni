@@ -55,17 +55,17 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
 
             if (tournament.RefereeId != null)
             {
-                var referee = await data.Referees.Where(x => x.TournamentId == id).FirstOrDefaultAsync();
+                var referee = await data.Referees
+                    .FirstOrDefaultAsync(x => x.Id == tournament.RefereeId);
 
-                if (referee == null)
+                if (referee != null)
                 {
-                    return false;
+                    referee.TournamentId = null; 
                 }
 
-                data.Referees.Remove(referee);
+                tournament.RefereeId = null;
 
                 await data.SaveChangesAsync();
-
             }
 
             var city = tournament.TournamentCities.FirstOrDefault(x => x.TournamentId == id);

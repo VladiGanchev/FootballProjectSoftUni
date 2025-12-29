@@ -29,40 +29,82 @@ namespace FootballProjectSoftUni.Core.Services.Message
             roleManager = _roleManager;
         }
 
-        public async Task<int> SendInitialAsync(string userId, string subject, string content)
+        public async Task<int> SendInitialAsync(string userId, string subject, string content, string? receiverUserId = null)
         {
             if (string.IsNullOrWhiteSpace(content) || string.IsNullOrWhiteSpace(subject))
             {
                 throw new ArgumentException("Subject and content are required.");
             }
 
-            var message = new ContactMessage
+            // Ако няма подаден receiver → старият сценарий: потребител пише на админ
+            if (receiverUserId == null)
             {
-                UserId = userId,
-                Subject = subject,
-                Content = content,
-                IsFromAdmin = false,
-                ParentMessageId = null,
-                CreatedOn = DateTime.UtcNow
-            };
+                var message = new ContactMessage
+                {
+                    UserId = userId,           // собственик на нишката е потребителят
+                    Subject = subject,
+                    Content = content,
+                    IsFromAdmin = false,
+                    ParentMessageId = null,
+                    CreatedOn = DateTime.UtcNow
+                };
 
-            await data.ContactMessages.AddAsync(message);
-            await data.SaveChangesAsync();
+                await data.ContactMessages.AddAsync(message);
+                await data.SaveChangesAsync();
 
-            var notification = new FootballProjectSoftUni.Infrastructure.Data.Models.Notification
+                var notification = new FootballProjectSoftUni.Infrastructure.Data.Models.Notification
+                {
+                    UserId = await GetAdminIdAsync(),   // получател е админът
+                    ContactMessageId = message.Id,
+                    Message = subject,
+                    CreatedOn = DateTime.UtcNow,
+                    IsRead = false
+                };
+
+                await data.Notifications.AddAsync(notification);
+                await data.SaveChangesAsync();
+
+                return message.Id;
+            }
+            else
             {
-                UserId = await GetAdminIdAsync(),
-                ContactMessageId = message.Id,
-                Message = subject,
-                CreatedOn = DateTime.UtcNow,
-                IsRead = false
-            };
+                // НОВО: админ пише директно на конкретен потребител (рефер)
+                // userId тук е изпращачът (админ), receiverUserId – реферът
+                bool isAdmin = await IsAdminAsync(userId);
+                if (!isAdmin)
+                {
+                    throw new InvalidOperationException("Only admin can send initial message to specific user.");
+                }
 
-            await data.Notifications.AddAsync(notification);
-            await data.SaveChangesAsync();
+                var message = new ContactMessage
+                {
+                    UserId = receiverUserId,   // нишката "принадлежи" на рефера
+                    Subject = subject,
+                    Content = content,
+                    IsFromAdmin = true,
+                    ParentMessageId = null,
+                    CreatedOn = DateTime.UtcNow
+                };
 
-            return message.Id;
+                await data.ContactMessages.AddAsync(message);
+                await data.SaveChangesAsync();
+
+                var notification = new FootballProjectSoftUni.Infrastructure.Data.Models.Notification
+                {
+                    UserId = receiverUserId,   // нотификацията отива при рефера
+                    ContactMessageId = message.Id,
+                    Message = subject,
+                    CreatedOn = DateTime.UtcNow,
+                    IsRead = false
+                };
+
+                await data.Notifications.AddAsync(notification);
+                await data.SaveChangesAsync();
+
+                return message.Id;
+            }
         }
+
 
         public async Task<int> ReplyAsync(int parentMessageId, string userId, string subject, string content)
         {

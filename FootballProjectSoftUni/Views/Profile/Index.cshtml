@@ -1,0 +1,55 @@
+﻿@model FootballProjectSoftUni.Core.Models.Profile.ProfileViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<h2>My Profile</h2>
+
+<div class="card p-3 mt-3">
+
+    <p><strong>Име:</strong> @Model.FirstName @Model.LastName</p>
+    <p><strong>Email:</strong> @Model.Email</p>
+
+    <p>
+        <strong>Роля:</strong>
+        @if (Model.Role == "Referee")
+        {
+            <span>Referee</span>
+            <form asp-action="RemoveRefereeRole" method="post" style="display:inline">
+                <button type="submit" class="btn btn-sm btn-outline-danger ms-2">
+                    Спри да бъдеш рефер
+                </button>
+            </form>
+        }
+        else if (Model.Role == "Coach")
+        {
+            <span>Coach</span>
+        }
+        else
+        {
+            <span>Нямаш роля все още</span>
+        }
+    </p>
+
+    @if (Model.Experience != null)
+    {
+        <p><strong>Опит:</strong> @Model.Experience години</p>
+    }
+
+    @if (Model.TeamName != null)
+    {
+        <p><strong>Отбор:</strong> @Model.TeamName</p>
+    }
+
+    @if (Model.RefereeTournamentsCount != null)
+    {
+        <p><strong>Турнири като съдия:</strong> @Model.RefereeTournamentsCount</p>
+    }
+
+    @if (Model.RefereeRating != null)
+    {
+        <p><strong>Оценка:</strong> @Model.RefereeRating.Value.ToString("0.00") / 5</p>
+    }
+
+</div>

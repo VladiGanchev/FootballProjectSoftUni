@@ -47,6 +47,17 @@ namespace FootballProjectSoftUni.Core.Services.Coach
                 };
             }
 
+            var referee = await context.Referees
+                .FirstOrDefaultAsync(r => r.Id == userId);
+
+            if (referee != null)
+            {
+                return new ServiceError()
+                {
+                    Message = "You cannot become a coach because you are already registered as a referee in the system."
+                };
+            }
+
             return null;
         }
 

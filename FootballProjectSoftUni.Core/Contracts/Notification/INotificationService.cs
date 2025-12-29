@@ -15,5 +15,6 @@ namespace FootballProjectSoftUni.Core.Contracts.Notification
         Task CreateNotificationForCityCoachesAsync(int cityId, string message);
         Task MarkAllAsReadAsync(string userId);
         Task DeleteAsync(int id, string userId);
+        Task CreateNotificationForUserAsync(string userId, string message);
     }
 }

@@ -13,9 +13,11 @@ namespace FootballProjectSoftUni.Core.Contracts.Referee
     {
         Task<ServiceError> CheckForErrorsAsync(int tournamentId, string userId);
         Task<bool> CreateRefereeToTournamentAsync(RefereeFormViewMOdel model, int id, string userId, DateTime birthdate);
-
         Task<IEnumerable<TournamentViewModel>> GetTournamentsAsync(string id);
-
         Task<bool> LeaveTournamentAsync(int id, string userId);
+        Task<IEnumerable<RefereeListItemViewModel>> GetAllRefereesWithRatingsAsync(string userId);
+        Task RateRefereeAsync(string refereeId, string userId, int rating);
+        Task<bool> AssignExistingRefereeToTournamentAsync(string userId, int tournamentId);
+        Task<FootballProjectSoftUni.Infrastructure.Data.Models.Referee?> GetRefereeByUserIdAsync(string userId);
     }
 }

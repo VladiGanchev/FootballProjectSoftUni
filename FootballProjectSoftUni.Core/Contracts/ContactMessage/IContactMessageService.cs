@@ -11,7 +11,7 @@ namespace FootballProjectSoftUni.Core.Contracts.Message
 {
     public interface IContactMessageService
     {
-        Task<int> SendInitialAsync(string userId, string subject, string content);
+        Task<int> SendInitialAsync(string userId, string subject, string content, string? receiverUserId = null);
         Task<int> ReplyAsync(int parentMessageId, string userId, string subject, string content);
         Task<ReplyFormViewModel> GetReplyModelAsync(int messageId, string currentUserId);
 

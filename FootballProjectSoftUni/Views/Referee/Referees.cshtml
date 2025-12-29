@@ -1,0 +1,53 @@
+﻿@using FootballProjectSoftUni.Extensions
+@model IEnumerable<FootballProjectSoftUni.Core.Models.Referee.RefereeListItemViewModel>
+
+<h2>Referees</h2>
+
+@if (User.IsAdmin())
+{
+    <a asp-action="Invite" class="btn btn-primary mb-3">Покани рефер</a>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Име</th>
+            <th>Опит (години)</th>
+            <th>Брой Турнири</th>
+            <th>Средна оценка</th>
+            <th>Оцени</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var r in Model)
+    {
+        <tr>
+            <td>@r.Name</td>
+            <td>@r.Experience</td>
+            <td>@r.TournamentsCount</td>
+            <td>
+                @if (r.AverageRating.HasValue)
+                {
+                    @r.AverageRating.Value.ToString("0.00") @: / 5
+                }
+                else
+                {
+                    <span>Няма оценки</span>
+                }
+            </td>
+            <td>
+                <form asp-action="Rate" method="post" class="d-flex">
+                    <input type="hidden" name="refereeId" value="@r.Id" />
+                    <select name="rating" class="form-select form-select-sm w-auto">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-success ms-2">Запази</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

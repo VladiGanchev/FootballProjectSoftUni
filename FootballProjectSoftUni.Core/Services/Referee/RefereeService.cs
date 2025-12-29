@@ -24,10 +24,11 @@ namespace FootballProjectSoftUni.Core.Services.Referee
 
         public async Task<ServiceError> CheckForErrorsAsync(int tournamentId, string userId)
         {
-            var tp = await context.TournamentsParticipants.Where(x => x.ParticipantId == userId
-                && x.TournamentId == tournamentId
-                && x.Role == "Coach")
-               .FirstOrDefaultAsync();
+            var tp = await context.TournamentsParticipants
+                .Where(x => x.ParticipantId == userId
+                            && x.TournamentId == tournamentId
+                            && x.Role == "Coach")
+                .FirstOrDefaultAsync();
 
             if (tp != null)
             {
@@ -37,9 +38,27 @@ namespace FootballProjectSoftUni.Core.Services.Referee
                 };
             }
 
-            var isRefereeToAnotherTournament = await context.Referees.Where(x => x.Id == userId).FirstOrDefaultAsync();
+            var coach = await context.Coaches
+                .FirstOrDefaultAsync(c => c.Id == userId);
 
-            if (isRefereeToAnotherTournament != null)
+            if (coach != null)
+            {
+                return new ServiceError()
+                {
+                    Message = "You cannot become a referee because you are already registered as a coach in the system."
+                };
+            }
+
+            // 🔴 ТУК ПРАВИМ ПРОМЯНАТА:
+            // Искаме да спрем само ако е рефер в ДРУГ АКТИВЕН турнир
+            var activeRefereeInAnotherTournament = await context.Referees
+                .AnyAsync(r =>
+                    r.Id == userId &&
+                    r.TournamentId != null &&       // има активен турнир
+                    r.TournamentId != tournamentId  // и не е същият турнир
+                );
+
+            if (activeRefereeInAnotherTournament)
             {
                 return new ServiceError()
                 {
@@ -47,9 +66,9 @@ namespace FootballProjectSoftUni.Core.Services.Referee
                 };
             }
 
-            var tournament = await context.Tournaments.Where(x => x.Id == tournamentId).FirstOrDefaultAsync();
-
-
+            var tournament = await context.Tournaments
+                .Where(x => x.Id == tournamentId)
+                .FirstOrDefaultAsync();
 
             if (tournament.RefereeId != null)
             {
@@ -61,6 +80,7 @@ namespace FootballProjectSoftUni.Core.Services.Referee
 
             return null;
         }
+
 
         public async Task<IEnumerable<TournamentViewModel>> GetTournamentsAsync(string userId)
         {
@@ -82,23 +102,43 @@ namespace FootballProjectSoftUni.Core.Services.Referee
             return tournaments;
         }
 
-        public async Task<bool> CreateRefereeToTournamentAsync(RefereeFormViewMOdel model, int id, string userId, DateTime birthdate)
+        public async Task<bool> CreateRefereeToTournamentAsync(
+     RefereeFormViewMOdel model,
+     int id,
+     string userId,
+     DateTime birthdate)
         {
-            var referee = new FootballProjectSoftUni.Infrastructure.Data.Models.Referee()
-            {
-                Id = userId,
-                Name = model.Name,
-                Birthdate = birthdate,
-                Experience = model.Experience,
-                TournamentId = id
-            };
+            // 1. Опитваме да намерим вече съществуващ рефер
+            var referee = await context.Referees
+                .FirstOrDefaultAsync(r => r.Id == userId);
 
-            context.Referees.Add(referee);
+            if (referee == null)
+            {
+                // 2. Ако НЯМА рефер – създаваме нов
+                referee = new FootballProjectSoftUni.Infrastructure.Data.Models.Referee()
+                {
+                    Id = userId,
+                    Name = model.Name,
+                    Birthdate = birthdate,
+                    Experience = model.Experience,
+                    RefereedTournamentsCount = 0 // стартово
+                };
+
+                context.Referees.Add(referee);
+            }
+
+            // 3. Увеличаваме общия брой турнири, в които е бил съдия
+            referee.RefereedTournamentsCount++;
+
+            // 4. Задаваме текущия турнир, в който ще бъде съдия сега
+            referee.TournamentId = id;
 
             await context.SaveChangesAsync();
 
-
-            var tournament = await context.Tournaments.Where(x => x.Id == id).FirstOrDefaultAsync();
+            // 5. Обновяваме самия турнир
+            var tournament = await context.Tournaments
+                .Where(x => x.Id == id)
+                .FirstOrDefaultAsync();
 
             if (tournament == null)
             {
@@ -110,6 +150,7 @@ namespace FootballProjectSoftUni.Core.Services.Referee
 
             await context.SaveChangesAsync();
 
+            // 6. Добавяме запис в TournamentsParticipants (роля Referee)
             TournamentParticipant tp = new TournamentParticipant()
             {
                 ParticipantId = userId,
@@ -118,7 +159,6 @@ namespace FootballProjectSoftUni.Core.Services.Referee
             };
 
             context.TournamentsParticipants.Add(tp);
-
             await context.SaveChangesAsync();
 
             return true;
@@ -154,7 +194,7 @@ namespace FootballProjectSoftUni.Core.Services.Referee
 
             if (referee != null)
             {
-                context.Referees.Remove(referee);
+                referee.TournamentId = null;
             }
 
             tournament.RefereeId = null;
@@ -163,5 +203,132 @@ namespace FootballProjectSoftUni.Core.Services.Referee
 
             return true;
         }
+
+        public async Task<IEnumerable<RefereeListItemViewModel>> GetAllRefereesWithRatingsAsync(string userId)
+        {
+            var referees = await context.Referees
+                .Include(r => r.Ratings)
+                .ToListAsync();
+
+            var result = referees
+                .Select(r =>
+                {
+                    double? avg = null;
+                    if (r.Ratings != null && r.Ratings.Any())
+                    {
+                        avg = r.Ratings.Average(rr => rr.Value);
+                    }
+
+                    return new RefereeListItemViewModel
+                    {
+                        Id = r.Id,
+                        Name = r.Name,
+                        Experience = r.Experience,
+                        TournamentsCount = r.RefereedTournamentsCount,
+                        AverageRating = avg
+                    };
+                })
+                .ToList();
+
+            return result;
+        }
+
+        public async Task RateRefereeAsync(string refereeId, string userId, int rating)
+        {
+            if (rating < 1 || rating > 5)
+            {
+                throw new ArgumentException("Rating must be between 1 and 5.");
+            }
+
+            var referee = await context.Referees
+                .FirstOrDefaultAsync(r => r.Id == refereeId);
+
+            if (referee == null)
+            {
+                throw new ArgumentException("Invalid referee.");
+            }
+
+            var existing = await context.RefereesRatings
+                .FirstOrDefaultAsync(r => r.RefereeId == refereeId && r.UserId == userId);
+
+            if (existing == null)
+            {
+                var newRating = new RefereeRating
+                {
+                    RefereeId = refereeId,
+                    UserId = userId,
+                    Value = rating
+                };
+
+                context.RefereesRatings.Add(newRating);
+            }
+            else
+            {
+                existing.Value = rating;
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<bool> AssignExistingRefereeToTournamentAsync(string userId, int tournamentId)
+        {
+            var referee = await context.Referees
+                .FirstOrDefaultAsync(r => r.Id == userId);
+
+            if (referee == null)
+            {
+                return false;
+            }
+
+            var tournament = await context.Tournaments
+                .FirstOrDefaultAsync(t => t.Id == tournamentId);
+
+            if (tournament == null)
+            {
+                return false;
+            }
+
+            // допълнителна защита – да няма вече съдия
+            if (tournament.RefereeId != null)
+            {
+                return false;
+            }
+
+            // увеличаваме броя турнири, в които е участвал
+            referee.RefereedTournamentsCount++;
+
+            // закачаме го към този турнир
+            referee.TournamentId = tournamentId;
+            tournament.RefereeId = referee.Id;
+            tournament.Referee = referee;
+
+            // ако няма запис в TournamentsParticipants – добавяме
+            var existingTp = await context.TournamentsParticipants
+                .FirstOrDefaultAsync(tp => tp.ParticipantId == userId
+                                           && tp.TournamentId == tournamentId
+                                           && tp.Role == "Referee");
+
+            if (existingTp == null)
+            {
+                var tp = new TournamentParticipant
+                {
+                    ParticipantId = userId,
+                    TournamentId = tournamentId,
+                    Role = "Referee"
+                };
+
+                context.TournamentsParticipants.Add(tp);
+            }
+
+            await context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<Infrastructure.Data.Models.Referee?> GetRefereeByUserIdAsync(string userId)
+        {
+            return await context.Referees
+                .FirstOrDefaultAsync(r => r.Id == userId);
+        }
+
     }
 }

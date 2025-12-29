@@ -4,6 +4,7 @@ using FootballProjectSoftUni.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballProjectSoftUni.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251229164048_MakeRefereeTournamentOptional")]
+    partial class MakeRefereeTournamentOptional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,7 +103,7 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                         {
                             Id = "600bafb9-a73d-4489-a387-643c2b8ae96c",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "951a91a9-94c3-486b-8771-35e7f419de57",
+                            ConcurrencyStamp = "5214a1d9-d1d6-425a-b540-6cfbccdd18f1",
                             Email = "admin@mail.com",
                             EmailConfirmed = false,
                             FirstName = "Great",
@@ -109,9 +111,9 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@MAIL.COM",
                             NormalizedUserName = "ADMIN@MAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEPFZ/ywgJOqU0uyFI2nfr96NIo9q+/xisg3VIXdKFArID0tTXv7pCEO1JtKILs1JzQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEIis27cBsMyOAgqUffOR19sogp/zVXDx1X8VBKpTiKBwYAxi8pMdb1Cp3HokKr2RDw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "82a4193c-b2ee-4af2-baaa-de3c70046ab5",
+                            SecurityStamp = "5dec83e8-d36d-4827-851c-84dfddcf31d6",
                             TwoFactorEnabled = false,
                             UserName = "admin@mail.com"
                         });
@@ -485,13 +487,13 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("TournamentId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("TournamentId")
-                        .IsUnique()
-                        .HasFilter("[TournamentId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Referees");
                 });
@@ -862,7 +864,8 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                     b.HasOne("FootballProjectSoftUni.Infrastructure.Data.Models.Tournament", "Tournament")
                         .WithOne("Referee")
                         .HasForeignKey("FootballProjectSoftUni.Infrastructure.Data.Models.Referee", "TournamentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Tournament");
                 });

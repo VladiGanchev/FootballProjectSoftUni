@@ -112,6 +112,16 @@ namespace FootballProjectSoftUni.Infrastructure.Data
                 .HasForeignKey(n => n.ContactMessageId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<RefereeRating>()
+        .HasIndex(rr => new { rr.RefereeId, rr.UserId })
+        .IsUnique();
+
+            builder.Entity<RefereeRating>()
+                .HasOne(rr => rr.Referee)
+                .WithMany(r => r.Ratings)
+                .HasForeignKey(rr => rr.RefereeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
             if (_seedDb)
             {
@@ -151,6 +161,7 @@ namespace FootballProjectSoftUni.Infrastructure.Data
         public DbSet<Notification> Notifications { get; set; } 
         public DbSet<Partner> Partners { get; set; }
         public DbSet<ContactMessage> ContactMessages { get; set; }
+        public DbSet<RefereeRating> RefereesRatings { get; set; } = null!;
 
     }
 }

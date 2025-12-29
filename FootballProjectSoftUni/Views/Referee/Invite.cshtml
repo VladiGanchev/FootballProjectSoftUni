@@ -1,0 +1,32 @@
+﻿@model FootballProjectSoftUni.Core.Models.Referee.RefereeInviteFormViewModel
+
+<h3 class="text-center">Покани рефер</h3>
+<hr />
+
+<form asp-action="Invite" method="post" class="w-50 mx-auto">
+    <div class="mb-3">
+        <label class="form-label">Рефер</label>
+        <select asp-for="RefereeId" asp-items="Model.Referees" class="form-select">
+            <option value="">-- избери рефер --</option>
+        </select>
+        <span asp-validation-for="RefereeId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Subject" class="form-label">Тема</label>
+        <input asp-for="Subject" class="form-control" />
+        <span asp-validation-for="Subject" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Content" class="form-label">Съобщение</label>
+        <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Изпрати поканата</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

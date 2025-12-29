@@ -21,9 +21,11 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
         [Required]
         public int Experience { get; set; }
 
-        [Required]
-        public int TournamentId { get; set; }
-        [Required]
-        public Tournament Tournament { get; set; } = null!;
+        public int? TournamentId { get; set; }
+        public Tournament? Tournament { get; set; } = null!;
+
+        public ICollection<RefereeRating> Ratings { get; set; } = new List<RefereeRating>();
+
+        public int RefereedTournamentsCount { get; set; }
     }
 }

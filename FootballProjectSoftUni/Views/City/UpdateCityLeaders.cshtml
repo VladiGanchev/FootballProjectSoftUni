@@ -1,0 +1,39 @@
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
+@model FootballProjectSoftUni.Core.Models.City.UpdateCityBestTeamViewModel
+
+@{
+    ViewBag.Title = "Update City Leaders";
+}
+
+<h2 class="text-center">@ViewBag.Title</h2>
+<hr />
+
+<form asp-action="UpdateCityLeaders" method="post" class="w-50 mx-auto">
+    <div class="mb-3">
+        <label asp-for="CityId" class="form-label">City</label>
+        <select asp-for="CityId"
+                class="form-select"
+                asp-items="@(new SelectList(Model.Cities, "Id", "Name"))">
+            <option value="">-- Select city --</option>
+        </select>
+        <span asp-validation-for="CityId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="TeamId" class="form-label">Team</label>
+        <select asp-for="TeamId"
+                class="form-select"
+                asp-items="@(new SelectList(Model.Teams, "Id", "Name"))">
+            <option value="">-- Select team --</option>
+        </select>
+        <span asp-validation-for="TeamId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success w-100">
+        Add Win (+1)
+    </button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

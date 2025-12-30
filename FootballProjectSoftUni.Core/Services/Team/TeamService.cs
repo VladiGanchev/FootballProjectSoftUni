@@ -101,22 +101,112 @@ namespace FootballProjectSoftUni.Core.Services.Team
 
         public async Task<ServiceError> JoinTeamAsync(TeamRegistrationViewModel viewModel, int id, string userId)
         {
+            // 1) Намираме коуча
+            var coach = await context.Coaches
+                .FirstOrDefaultAsync(c => c.Id == userId);
 
-            int teamId;
+            if (coach == null)
+            {
+                return new ServiceError()
+                {
+                    Message = "You need to become a coach to join a team."
+                };
+            }
 
+            // 2) Намираме турнира (ползваме го навсякъде по-надолу)
+            var tournament = await context.Tournaments
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (tournament == null)
+            {
+                return new ServiceError()
+                {
+                    Message = "BadRequest Message"
+                };
+            }
+
+            // 3) Ако коучът вече има отбор -> само го закачаме към турнира
+            if (coach.TeamId != null)
+            {
+                var teamId = coach.TeamId.Value;
+
+                var existingTournamentTeam = await context.TournamentsTeams
+                    .FirstOrDefaultAsync(tt => tt.TournamentId == id && tt.TeamId == teamId);
+
+                var addedTeamToTournament = false;
+
+                if (existingTournamentTeam == null)
+                {
+                    var tournamentTeam = new TournamentTeam
+                    {
+                        TournamentId = id,
+                        TeamId = teamId
+                    };
+
+                    context.TournamentsTeams.Add(tournamentTeam);
+                    addedTeamToTournament = true;
+                }
+
+                var existingParticipation = await context.TournamentsParticipants
+                    .FirstOrDefaultAsync(tp => tp.TournamentId == id
+                                            && tp.ParticipantId == userId
+                                            && tp.Role == "Coach");
+
+                if (existingParticipation == null)
+                {
+                    var tp = new TournamentParticipant()
+                    {
+                        ParticipantId = userId,
+                        TournamentId = id,
+                        Role = "Coach"
+                    };
+
+                    context.TournamentsParticipants.Add(tp);
+                }
+
+                // ✅ Първо записваме новите TournamentTeam/TournamentParticipant
+                await context.SaveChangesAsync();
+
+                // ✅ Ако реално сме добавили нов отбор към турнира – обновяваме NumberOfTeams
+                if (addedTeamToTournament)
+                {
+                    tournament.NumberOfTeams = await context.TournamentsTeams
+                        .Where(tt => tt.TournamentId == tournament.Id)
+                        .CountAsync();
+
+                    await context.SaveChangesAsync();
+                }
+
+                return null;
+            }
+
+            // 4) Коуч НЯМА отбор
+            // ако viewModel == null -> значи сме дошли от GET и просто искаме да разберем това
+            if (viewModel == null)
+            {
+                return new ServiceError()
+                {
+                    // специално съобщение за вътрешно ползване в контролера
+                    Message = "NO_TEAM_YET"
+                };
+            }
+
+            // 5) Коуч няма отбор И има подадена форма -> създаваме отбор + играчи (старото поведение)
+
+            int teamIdNew;
             var players = new List<Player>();
 
             foreach (var playerViewModel in viewModel.Players)
             {
-                DateTime birthdate = DateTime.Now;
+                DateTime birthdate;
 
-                if (!DateTime.TryParseExact(playerViewModel.BirthDate, RequiredDateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out birthdate))
+                if (!DateTime.TryParseExact(playerViewModel.BirthDate, RequiredDateTimeFormat,
+                    CultureInfo.InvariantCulture, DateTimeStyles.None, out birthdate))
                 {
                     return new ServiceError()
                     {
                         Message = $"Invalid date, format must be {RequiredDateTimeFormat}"
                     };
-
                 }
 
                 var today = DateTime.Today;
@@ -150,61 +240,53 @@ namespace FootballProjectSoftUni.Core.Services.Team
             var team = new FootballProjectSoftUni.Infrastructure.Data.Models.Team
             {
                 Name = viewModel.TeamName,
-                Players = players, 
+                Players = players,
                 CoachId = userId,
-                Coach = await context.Coaches.Where(x => x.Id == userId).FirstOrDefaultAsync()
+                Coach = coach // вече го имаме
             };
 
             context.Teams.Add(team);
             await context.SaveChangesAsync();
 
-            teamId = team.Id;
+            teamIdNew = team.Id;
 
             foreach (var player in players)
             {
-                player.TeamId = teamId;
+                player.TeamId = teamIdNew;
             }
 
             await context.SaveChangesAsync();
 
-            var tournament = await context.Tournaments.Where(x => x.Id == id).FirstOrDefaultAsync();
-
-            if (tournament == null)
-            {
-                return new ServiceError()
-                {
-                    Message = "BadRequest Message"
-                };
-            }
-
-            var tournamentTeam = new TournamentTeam
+            var tournamentTeamNew = new TournamentTeam
             {
                 TournamentId = id,
                 TeamId = team.Id
             };
 
-            context.TournamentsTeams.Add(tournamentTeam);
+            context.TournamentsTeams.Add(tournamentTeamNew);
 
-
-
-            await context.SaveChangesAsync();
-
-
-            tournament.NumberOfTeams = await context.TournamentsTeams.Where(tt => tt.TournamentId == tournament.Id).CountAsync();
-
-
-            var tp = new TournamentParticipant()
+            var tpNew = new TournamentParticipant()
             {
                 ParticipantId = userId,
                 TournamentId = id,
                 Role = "Coach"
             };
 
-            context.TournamentsParticipants.Add(tp);
+            context.TournamentsParticipants.Add(tpNew);
+
+            // записваме новия team–tournament и участието на коуча
+            await context.SaveChangesAsync();
+
+            // обновяваме броя на отборите
+            tournament.NumberOfTeams = await context.TournamentsTeams
+                .Where(tt => tt.TournamentId == tournament.Id)
+                .CountAsync();
 
             await context.SaveChangesAsync();
 
             return null;
         }
+
+
     }
 }

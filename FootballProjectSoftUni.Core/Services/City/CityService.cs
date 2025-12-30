@@ -1,8 +1,9 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.City;
 using FootballProjectSoftUni.Core.Models.City;
 using FootballProjectSoftUni.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -220,5 +221,55 @@ namespace FootballProjectSoftUni.Core.Services.City
 
             return bestTeams;
         }
+
+        public async Task<UpdateCityBestTeamViewModel> GetUpdateCityBestTeamFormAsync()
+        {
+            var cities = await data.Cities
+                .Select(c => new CityDropdownViewModel
+                {
+                    Id = c.Id,
+                    Name = c.Name
+                })
+                .ToListAsync();
+
+            var teams = await data.Teams
+                .Select(t => new TeamDropdownViewModel
+                {
+                    Id = t.Id,
+                    Name = t.Name
+                })
+                .ToListAsync();
+
+            return new UpdateCityBestTeamViewModel
+            {
+                Cities = cities,
+                Teams = teams
+            };
+        }
+
+        public async Task IncrementTeamWinsInCityAsync(int cityId, int teamId)
+        {
+            var entry = await data.CityBestTeams
+                .FirstOrDefaultAsync(cb => cb.CityId == cityId && cb.TeamId == teamId);
+
+            if (entry == null)
+            {
+                entry = new CityBestTeam
+                {
+                    CityId = cityId,
+                    TeamId = teamId,
+                    WinsInCity = 1
+                };
+
+                data.CityBestTeams.Add(entry);
+            }
+            else
+            {
+                entry.WinsInCity += 1;
+            }
+
+            await data.SaveChangesAsync();
+        }
+
     }
 }

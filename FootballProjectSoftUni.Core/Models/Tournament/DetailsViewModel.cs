@@ -36,5 +36,7 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
 
         public int CityId { get; set; }
 
+        public IEnumerable<string> ParticipantTeams { get; set; } = new List<string>();
+
     }
 }

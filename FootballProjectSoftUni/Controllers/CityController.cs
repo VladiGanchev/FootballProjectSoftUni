@@ -121,5 +121,44 @@ namespace FootballProjectSoftUni.Controllers
             var bestTeams = await cityService.GetBestTeamsAsync(id);
             return View(bestTeams);
         }
+
+        [Authorize] // по желание можеш да сложиш и проверка за Admin с IsAdmin()
+        [HttpGet]
+        public async Task<IActionResult> UpdateCityLeaders()
+        {
+            if (!User.IsAdmin())
+            {
+                return Unauthorized();
+            }
+
+            var model = await cityService.GetUpdateCityBestTeamFormAsync();
+            return View(model);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> UpdateCityLeaders(UpdateCityBestTeamViewModel model)
+        {
+            if (!User.IsAdmin())
+            {
+                return Unauthorized();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                // трябва да върнем пак списъците за dropdown-ите
+                var refill = await cityService.GetUpdateCityBestTeamFormAsync();
+                model.Cities = refill.Cities;
+                model.Teams = refill.Teams;
+
+                return View(model);
+            }
+
+            await cityService.IncrementTeamWinsInCityAsync(model.CityId, model.TeamId);
+
+            // по желание – пренасочваме към класацията на този град
+            return RedirectToAction("GetBestTeams", new { id = model.CityId });
+        }
+
     }
 }

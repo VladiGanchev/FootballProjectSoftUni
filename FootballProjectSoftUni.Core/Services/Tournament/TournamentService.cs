@@ -228,6 +228,7 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                .Include(t => t.TournamentCities)
                    .ThenInclude(tc => tc.City)
                 .Include(t => t.TournamentTeams)
+                .ThenInclude(tt => tt.Team)
            .FirstOrDefaultAsync(t => t.Id == id);
 
             if (needed == null)
@@ -248,7 +249,11 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 CreatedOn = needed.CreatedOn,
                 Status = needed.Status.ToString(),
                 NumberOfTeams = needed.NumberOfTeams,
-                CityId = cityId
+                CityId = cityId,
+                ParticipantTeams = needed.TournamentTeams
+                    .Where(tt => tt.Team != null)
+                    .Select(tt => tt.Team.Name)
+                    .ToList()
 
             };
 

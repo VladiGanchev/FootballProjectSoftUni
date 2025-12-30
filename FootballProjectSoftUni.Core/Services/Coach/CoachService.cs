@@ -83,10 +83,10 @@ namespace FootballProjectSoftUni.Core.Services.Coach
 
         public async Task<bool> LeaveTournamentAsync(int tournamentId, string userId)
         {
-
             var tp = await context.TournamentsParticipants
-                .Where(x => x.ParticipantId == userId && x.TournamentId == tournamentId && x.Role == "Coach")
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(x => x.ParticipantId == userId
+                                          && x.TournamentId == tournamentId
+                                          && x.Role == "Coach");
 
             if (tp == null)
             {
@@ -94,11 +94,9 @@ namespace FootballProjectSoftUni.Core.Services.Coach
             }
 
             context.TournamentsParticipants.Remove(tp);
-            await context.SaveChangesAsync();
 
             var coach = await context.Coaches
-                .Where(x => x.Id == userId)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(x => x.Id == userId);
 
             if (coach == null)
             {
@@ -107,62 +105,36 @@ namespace FootballProjectSoftUni.Core.Services.Coach
 
             var teamId = coach.TeamId;
 
-            coach.TeamId = null;
-            await context.SaveChangesAsync();
-
-            var players = await context.Players
-                .Where(x => x.TeamId == teamId)
-                .ToListAsync();
-
-            context.Players.RemoveRange(players);
-            await context.SaveChangesAsync();
-
-            var tournamentTeam = await context.TournamentsTeams
-                .Where(x => x.TournamentId == tournamentId && x.TeamId == teamId)
-                .FirstOrDefaultAsync();
-
-            if (tournamentTeam == null)
+            if (teamId != null)
             {
-                return false;
+                var tournamentTeam = await context.TournamentsTeams
+                    .FirstOrDefaultAsync(x => x.TournamentId == tournamentId
+                                           && x.TeamId == teamId);
+
+                if (tournamentTeam != null)
+                {
+                    context.TournamentsTeams.Remove(tournamentTeam);
+                }
             }
 
-            context.TournamentsTeams.Remove(tournamentTeam);
-            await context.SaveChangesAsync();
-
-            var team = await context.Teams
-                .Where(x => x.Id == teamId)
-                .FirstOrDefaultAsync();
-
-            if (team == null)
-            {
-                return false;
-            }
-
-            var cityBestTeams = await context.CityBestTeams
-    .Where(cbt => cbt.TeamId == teamId)
-    .ToListAsync();
-
-            if (cityBestTeams.Any())
-            {
-                context.CityBestTeams.RemoveRange(cityBestTeams);
-            }
-
-            context.Teams.Remove(team);
             await context.SaveChangesAsync();
 
             var tournament = await context.Tournaments
-                .Include(t => t.TournamentCities)
-                .ThenInclude(tc => tc.City)
                 .FirstOrDefaultAsync(t => t.Id == tournamentId);
 
-            tournament.NumberOfTeams = await context.TournamentsTeams
-                .Where(tt => tt.TournamentId == tournament.Id)
-                .CountAsync();
+            if (tournament != null)
+            {
+                tournament.NumberOfTeams = await context.TournamentsTeams
+                    .Where(tt => tt.TournamentId == tournament.Id)
+                    .CountAsync();
 
-            await context.SaveChangesAsync();
+                await context.SaveChangesAsync();
+            }
 
             return true;
         }
+
+
 
         public async Task<bool> RemoveCoachRoleAsync(string userId)
         {

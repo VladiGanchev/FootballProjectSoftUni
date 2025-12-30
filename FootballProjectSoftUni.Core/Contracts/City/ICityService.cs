@@ -16,5 +16,7 @@ namespace FootballProjectSoftUni.Core.Contracts.City
         Task<IEnumerable<CityViewModel>> SearchAsync(string searchString);
         Task<bool> DeleteCityAsync(int id);
         Task<List<BestTeamViewModel>> GetBestTeamsAsync(int cityId);
+        Task<UpdateCityBestTeamViewModel> GetUpdateCityBestTeamFormAsync();
+        Task IncrementTeamWinsInCityAsync(int cityId, int teamId);
     }
 }

@@ -253,7 +253,9 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 ParticipantTeams = needed.TournamentTeams
                     .Where(tt => tt.Team != null)
                     .Select(tt => tt.Team.Name)
-                    .ToList()
+                    .ToList(),
+                Prize = needed.Prize,
+                ParticipationFee = needed.ParticipationFee
 
             };
 
@@ -275,7 +277,9 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 ImageUrl = model.ImageUrl,
                 Status = FootballProjectSoftUni.Infrastructure.Data.Enums.TournamentStatus.Upcoming,
                 OrganiserId = "600bafb9-a73d-4489-a387-643c2b8ae96c",
-                RefereeId = null
+                RefereeId = null,
+                Prize = model.Prize,
+                ParticipationFee = model.ParticipationFee
 
             };
 

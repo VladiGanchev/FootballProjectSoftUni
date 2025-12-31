@@ -38,5 +38,8 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
 
         public IEnumerable<string> ParticipantTeams { get; set; } = new List<string>();
 
+        public decimal Prize { get; set; }
+        public decimal ParticipationFee { get; set; }
+
     }
 }

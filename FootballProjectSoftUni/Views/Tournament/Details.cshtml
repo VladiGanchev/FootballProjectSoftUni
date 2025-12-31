@@ -18,6 +18,9 @@
             <p class="mb-0"><span class="fw-bold">Created On: </span>@Model.CreatedOn</p>
             <p class="mb-0"><span class="fw-bold">Number Of Teams: </span>@Model.NumberOfTeams</p>
             <p class="mb-0"><span class="fw-bold">Referee: </span>@Model.RefereeName</p>
+            <p class="mb-0"><span class="fw-bold">Participation Fee: </span>@Model.ParticipationFee.ToString("C2", new System.Globalization.CultureInfo("de-DE"))</p>
+            <p class="mb-0"><span class="fw-bold">Prize: </span>@Model.Prize.ToString("C2", new System.Globalization.CultureInfo("de-DE"))</p>
+
             @{
                 if (Model.StartDate > DateTime.Now)
                 {

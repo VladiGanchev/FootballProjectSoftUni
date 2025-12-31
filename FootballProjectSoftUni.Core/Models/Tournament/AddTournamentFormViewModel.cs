@@ -18,7 +18,6 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
         [Required(ErrorMessage = RequireErrorMessage)]
         public string StartDate { get; set; } = string.Empty;
 
-
         [Required(ErrorMessage = RequireErrorMessage)]
 
         public string EndDate { get; set; } = string.Empty;
@@ -41,5 +40,13 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
         public string Organiser { get; set; } = string.Empty;
 
         public IEnumerable<CityViewModel> Cities { get; set; } = new List<CityViewModel>();
+
+        [Required(ErrorMessage = RequireErrorMessage)]
+        [Range(0, double.MaxValue, ErrorMessage = "Prize must be a positive number.")]
+        public decimal Prize { get; set; }
+
+        [Required(ErrorMessage = RequireErrorMessage)]
+        [Range(0, double.MaxValue, ErrorMessage = "Participation fee must be a positive number.")]
+        public decimal ParticipationFee { get; set; }
     }
 }

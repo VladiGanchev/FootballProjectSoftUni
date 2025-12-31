@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,7 +54,11 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
 
         public IEnumerable<TournamentParticipant> TournamentParticipants { get; set; } = new List<TournamentParticipant>();
 
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Prize { get; set; }
 
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal ParticipationFee { get; set; }
 
 
 

@@ -193,6 +193,18 @@ namespace FootballProjectSoftUni.Core.Services.Team
 
             // 5) Коуч няма отбор И има подадена форма -> създаваме отбор + играчи (старото поведение)
 
+            var nameExists = await context.Teams
+                .AnyAsync(t => t.Name.ToLower() == viewModel.TeamName); // ако искаш case-insensitive: t.Name.ToLower() == viewModel.TeamName.ToLower()
+
+            if (nameExists)
+            {
+                return new ServiceError()
+                {
+                    Message = "A Team with the same name already exists"
+                };
+            }
+
+
             int teamIdNew;
             var players = new List<Player>();
 

@@ -1,0 +1,61 @@
+﻿@using FootballProjectSoftUni.Extensions
+@model List<string>
+
+@{
+    ViewBag.Title = "Tournament Gallery";
+    int tournamentId = ViewBag.TournamentId;
+    bool isAdmin = User.Identity.IsAuthenticated && User.IsAdmin();
+}
+
+<h2 class="text-center">@ViewBag.Title</h2>
+<hr />
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (Model == null || !Model.Any())
+{
+    <p class="text-center">No images yet.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var img in Model)
+        {
+            <div class="col-4 mb-3 text-center">
+                <img src="@img" class="img-fluid rounded shadow mb-2" />
+
+                @if (isAdmin)
+                {
+                    // Взимаме само името на файла от URL-а
+                    var fileName = System.IO.Path.GetFileName(img);
+
+                    <form asp-controller="Gallery"
+                          asp-action="DeletePicture"
+                          method="post"
+                          class="mt-1">
+                        <input type="hidden" name="id" value="@tournamentId" />
+                        <input type="hidden" name="fileName" value="@fileName" />
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            Delete
+                        </button>
+                    </form>
+                }
+            </div>
+        }
+    </div>
+}
+
+<a asp-controller="Tournament"
+   asp-action="CityTournaments"
+   asp-route-id="@tournamentId"
+   class="btn btn-warning w-100 fw-bold mt-3">
+    Back to Tournaments
+</a>

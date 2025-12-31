@@ -155,6 +155,7 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
             tournament.StartDate = start;
             tournament.EndDate = end;
             tournament.ImageUrl = model.ImageUrl;
+            tournament.Winner = model.Winner;
 
             await data.SaveChangesAsync();
         }
@@ -185,40 +186,46 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
             }).ToListAsync();
         }
 
-        public async Task<IEnumerable<TournamentViewModel>> GetCityTournamentsAsync(int id)
+        public async Task<IEnumerable<TournamentViewModel>> GetCityTournamentsAsync(int id, bool showPast)
         {
-
-            var city = await data.Cities.Where(x => x.Id == id).FirstOrDefaultAsync();
+            var city = await data.Cities
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (city == null)
             {
                 return null;
             }
 
-            var cityTournaments = await data.TournamentsCities.Where(x => x.CityId == id).Select(x => new TournamentViewModel()
-            {
-                Id = x.TournamentId,
-                StartDate = x.Tournament.StartDate,
-                EndDate = x.Tournament.EndDate,
-                Description = x.Tournament.Description,
-                RefereeId = x.Tournament.RefereeId,
-                Status = x.Tournament.Status.ToString(),
-                NumberOfTeams = x.Tournament.NumberOfTeams,
-                ImageUrl = x.Tournament.ImageUrl,
-
-
-            }).ToListAsync();
+            var cityTournaments = await data.TournamentsCities
+                .Where(x => x.CityId == id)
+                .Select(x => new TournamentViewModel()
+                {
+                    Id = x.TournamentId,
+                    StartDate = x.Tournament.StartDate,
+                    EndDate = x.Tournament.EndDate,
+                    Description = x.Tournament.Description,
+                    RefereeId = x.Tournament.RefereeId,
+                    Status = x.Tournament.Status.ToString(),
+                    NumberOfTeams = x.Tournament.NumberOfTeams,
+                    ImageUrl = x.Tournament.ImageUrl
+                })
+                .ToListAsync();
 
             foreach (var tournament in cityTournaments)
             {
                 UpdateTournamentStatus(tournament);
-
             }
 
-            
-            await data.SaveChangesAsync();
-
-            return cityTournaments.Where(x => x.Status != TournamentStatus.Finished.ToString());
+            if (showPast)
+            {
+                return cityTournaments
+                    .Where(x => x.Status == TournamentStatus.Finished.ToString());
+            }
+            else
+            {
+                return cityTournaments
+                    .Where(x => x.Status != TournamentStatus.Finished.ToString());
+            }
         }
 
         public async Task<DetailsViewModel> GetTournamentDetailsAsync(int id)
@@ -255,7 +262,8 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                     .Select(tt => tt.Team.Name)
                     .ToList(),
                 Prize = needed.Prize,
-                ParticipationFee = needed.ParticipationFee
+                ParticipationFee = needed.ParticipationFee,
+                Winner = needed.Winner
 
             };
 
@@ -334,7 +342,8 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 EndDate = tournament.EndDate.ToString(RequiredDateTimeFormat),
                 StartDate = tournament.StartDate.ToString(RequiredDateTimeFormat),
                 ImageUrl = tournament.ImageUrl,
-                CreatedOn = tournament.CreatedOn.ToString(RequiredDateTimeFormat)
+                CreatedOn = tournament.CreatedOn.ToString(RequiredDateTimeFormat),
+                Winner = tournament.Winner
             };
         }
 

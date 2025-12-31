@@ -1,4 +1,5 @@
 ﻿@using FootballProjectSoftUni.Core.Models.Tournament;
+@using FootballProjectSoftUni.Extensions
 @using FootballProjectSoftUni.Infrastructure.Data.Enums;
 @model DetailsViewModel
 @{
@@ -47,7 +48,16 @@
                 }
             </p>
 
+            @if (!string.IsNullOrWhiteSpace(Model.Winner))
+            {
+                <p class="mb-0"><span class="fw-bold">Winner: </span>@Model.Winner</p>
+            }
+
             <a asp-controller="Tournament" asp-action="CityTournaments" asp-route-id="@Model.CityId" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Back to All Tournaments</a>
+            @if (User.IsAdmin())
+            {
+                <a asp-controller="Tournament" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Edit</a>
+            }
 
         </div>
 

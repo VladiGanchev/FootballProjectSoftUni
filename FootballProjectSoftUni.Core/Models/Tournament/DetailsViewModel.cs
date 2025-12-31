@@ -41,5 +41,7 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
         public decimal Prize { get; set; }
         public decimal ParticipationFee { get; set; }
 
+        public string? Winner { get; set; }
+
     }
 }

@@ -13,6 +13,9 @@
     @{
         if (User.Identity.IsAuthenticated)
         {
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-controller="Referee" asp-action="Referees">Referees</a>
+            </li>
 
             if (User.IsAdmin())
             {
@@ -61,10 +64,6 @@
                     </ul>
                 </li>
             }
-
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-controller="Referee" asp-action="Referees">Referees</a>
-            </li>
         }
     }
 </ul>

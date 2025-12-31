@@ -16,6 +16,29 @@
 
 <h2 class="text-center">@ViewBag.Title</h2>
 
+@{
+    var cityId = ViewBag.CityId as int? ?? 0;
+    bool showPast = ViewBag.ShowPast != null && (bool)ViewBag.ShowPast;
+}
+
+<div class="mb-3 text-center">
+    <a asp-controller="Tournament"
+       asp-action="CityTournaments"
+       asp-route-id="@cityId"
+       asp-route-showPast="false"
+       class="btn @(showPast ? "btn-outline-warning" : "btn-warning") mx-1">
+        Current & Upcoming Tournaments
+    </a>
+
+    <a asp-controller="Tournament"
+       asp-action="CityTournaments"
+       asp-route-id="@cityId"
+       asp-route-showPast="true"
+       class="btn @(showPast ? "btn-warning" : "btn-outline-warning") mx-1">
+        Finished Tournaments
+    </a>
+</div>
+
 <div class="text-center row">
     @foreach (var e in Model)
     {
@@ -30,31 +53,74 @@
 
             </div>
 
-            <a asp-controller="Tournament" asp-action="Details" asp-route-id="@e.Id" asp-route-information="@e.GetInformation()" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Tournament Details</a>
+            <a asp-controller="Tournament"
+               asp-action="Details"
+               asp-route-id="@e.Id"
+               asp-route-information="@e.GetInformation()"
+               class="btn btn-warning mb-2 w-100 p-3 fw-bold">
+                Tournament Details
+            </a>
 
-            @{
+            @if (showPast)
+            {
+                <a asp-controller="Gallery"
+                   asp-action="TournamentGallery"
+                   asp-route-id="@e.Id"
+                   class="btn btn-warning mb-2 w-100 p-3 fw-bold">
+                    Gallery
+                </a>
+
+                if (User.Identity.IsAuthenticated && User.IsAdmin())
+                {
+                    <a asp-controller="Gallery"
+                       asp-action="UploadPictures"
+                       asp-route-id="@e.Id"
+                       class="btn btn-warning mb-2 w-100 p-3 fw-bold">
+                        Upload Pictures
+                    </a>
+                }
+            }
+            else
+            {
                 if (User.Identity.IsAuthenticated)
                 {
-
                     if (User.IsAdmin())
                     {
-                        <a asp-controller="Tournament" asp-action="Edit" asp-route-id="@e.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Edit</a>
+                        <a asp-controller="Tournament"
+                           asp-action="Edit"
+                           asp-route-id="@e.Id"
+                           class="btn btn-warning mb-2 w-100 p-3 fw-bold">
+                            Edit
+                        </a>
 
-                        <a asp-controller="Tournament" asp-action="Delete" asp-route-id="@e.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Delete</a>
+                        <a asp-controller="Tournament"
+                           asp-action="Delete"
+                           asp-route-id="@e.Id"
+                           class="btn btn-warning mb-2 w-100 p-3 fw-bold">
+                            Delete
+                        </a>
                     }
                     else
                     {
-                        @if (e.RefereeId == null)
+                        if (e.RefereeId == null)
                         {
-                            <a asp-controller="Referee" asp-action="BecomeReferee" asp-route-id="@e.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Become A Referee</a>
+                            <a asp-controller="Referee"
+                               asp-action="BecomeReferee"
+                               asp-route-id="@e.Id"
+                               class="btn btn-warning mb-2 w-100 p-3 fw-bold">
+                                Become A Referee
+                            </a>
                         }
 
-                        <a asp-controller="Team" asp-action="JoinTeam" asp-route-id="@e.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Join Tournament</a>
+                        <a asp-controller="Team"
+                           asp-action="JoinTeam"
+                           asp-route-id="@e.Id"
+                           class="btn btn-warning mb-2 w-100 p-3 fw-bold">
+                            Join Tournament
+                        </a>
                     }
                 }
-
             }
-
         </div>
     }
 

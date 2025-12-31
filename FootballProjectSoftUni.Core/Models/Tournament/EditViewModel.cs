@@ -32,5 +32,7 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
 
         [Required(ErrorMessage = RequireErrorMessage)]
         public string ImageUrl { get; set; } = string.Empty;
+
+        public string? Winner { get; set; } = string.Empty;
     }
 }

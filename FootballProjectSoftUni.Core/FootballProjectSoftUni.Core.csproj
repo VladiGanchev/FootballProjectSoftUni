@@ -15,7 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Contracts\Gallery\" />
     <Folder Include="Contracts\Profile\" />
+    <Folder Include="Models\Gallery\" />
+    <Folder Include="Services\Gallery\" />
     <Folder Include="Services\Profile\" />
   </ItemGroup>
 

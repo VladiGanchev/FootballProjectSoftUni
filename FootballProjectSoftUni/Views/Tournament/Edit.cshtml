@@ -32,6 +32,11 @@
                 <span asp-validation-for="@Model.EndDate" class="text-danger"></span>
             </div>
             <div class="mb-3">
+                <label asp-for="Winner" class="form-label-add-edit">Winner</label>
+                <input asp-for="Winner" class="form-control" />
+                <span asp-validation-for="Winner" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
                 <input class="btn btn-warning mb-2 w-100 p-3 fw-bold" type="submit" value="Edit" />
             </div>
         </form>

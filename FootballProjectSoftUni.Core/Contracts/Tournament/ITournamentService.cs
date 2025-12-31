@@ -10,7 +10,7 @@ namespace FootballProjectSoftUni.Core.Contracts.Tournament
 {
     public interface ITournamentService
     {
-        Task<IEnumerable<TournamentViewModel>> GetCityTournamentsAsync(int cityId);
+        Task<IEnumerable<TournamentViewModel>> GetCityTournamentsAsync(int cityId, bool showPast);
         Task AddTournamentToCityAsync(AddTournamentFormViewModel model, int cityId, DateTime start, DateTime end);
         Task<DetailsViewModel> GetTournamentDetailsAsync(int id);
         Task EditTournamentAsync(EditViewModel model, DateTime start, DateTime end);

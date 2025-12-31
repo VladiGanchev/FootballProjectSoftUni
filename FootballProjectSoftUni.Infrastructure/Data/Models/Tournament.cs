@@ -60,7 +60,7 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal ParticipationFee { get; set; }
 
-
+        public string? Winner { get; set; }
 
     }
 }

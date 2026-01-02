@@ -93,7 +93,7 @@ namespace FootballProjectSoftUni.Controllers
             }
 
             await service.AddTournamentToCityAsync(model, cityId, start, end);
-
+            
             var city = await service.FindCityAsync(cityId);
             if (city != null)
             {

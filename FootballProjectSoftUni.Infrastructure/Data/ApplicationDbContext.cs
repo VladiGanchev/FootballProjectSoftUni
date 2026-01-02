@@ -95,10 +95,10 @@ namespace FootballProjectSoftUni.Infrastructure.Data
                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<ContactMessage>()
-            .HasOne(m => m.User)
-            .WithMany()
-            .HasForeignKey(m => m.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(m => m.User)
+                .WithMany()
+                .HasForeignKey(m => m.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<ContactMessage>()
                 .HasOne(m => m.ParentMessage)
@@ -113,8 +113,8 @@ namespace FootballProjectSoftUni.Infrastructure.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<RefereeRating>()
-        .HasIndex(rr => new { rr.RefereeId, rr.UserId })
-        .IsUnique();
+                .HasIndex(rr => new { rr.RefereeId, rr.UserId })
+                .IsUnique();
 
             builder.Entity<RefereeRating>()
                 .HasOne(rr => rr.Referee)
@@ -122,10 +122,25 @@ namespace FootballProjectSoftUni.Infrastructure.Data
                 .HasForeignKey(rr => rr.RefereeId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<Match>()
+                .HasOne(m => m.Tournament)
+                .WithMany(t => t.Matches)
+                .HasForeignKey(m => m.TournamentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
 
             if (_seedDb)
             {
                 builder.ApplyConfiguration(new CityConfiguration());
+
+                builder.Entity<TournamentStats>().HasData(new TournamentStats
+                {
+                    Id = 1,
+                    PlayersCreatedTotal = 0,
+                    TeamsCreatedTotal = 0,
+                    TournamentsCreatedTotal = 0
+                });
 
                 var AdminUser = new ApplicationUser()
                 {
@@ -162,6 +177,8 @@ namespace FootballProjectSoftUni.Infrastructure.Data
         public DbSet<Partner> Partners { get; set; }
         public DbSet<ContactMessage> ContactMessages { get; set; }
         public DbSet<RefereeRating> RefereesRatings { get; set; } = null!;
+        public DbSet<Match> Matches { get; set; }
+        public DbSet<TournamentStats> AppStats { get; set; } = null!;
 
     }
 }

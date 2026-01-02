@@ -19,7 +19,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         private ICoachService _coachService;
 
         [OneTimeSetUp]
-        public void SetUp() => _coachService = new CoachService(_data);
+        //public void SetUp() => _coachService = new CoachService(_data);
 
         [Test]
         public async Task BecomeCoach_ShouldCreateCoach()

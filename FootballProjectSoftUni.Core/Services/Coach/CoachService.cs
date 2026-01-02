@@ -1,4 +1,5 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Coach;
+using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Models.Coach;
 using FootballProjectSoftUni.Core.Models.ServiceError;
 using FootballProjectSoftUni.Core.Models.Tournament;
@@ -16,10 +17,12 @@ namespace FootballProjectSoftUni.Core.Services.Coach
     public class CoachService : ICoachService
     {
         private readonly ApplicationDbContext context;
+        private readonly ITournamentService tournamentService;
 
-        public CoachService(ApplicationDbContext _context)
+        public CoachService(ApplicationDbContext _context, ITournamentService _tournamentService)
         {
             context = _context;
+            tournamentService = _tournamentService;
         }
 
         public async Task BecomeCoachAsync(CoachViewModel model, string id)
@@ -66,7 +69,9 @@ namespace FootballProjectSoftUni.Core.Services.Coach
             var userId = id;
 
             return await context.TournamentsParticipants
-                .Where(x => x.ParticipantId == userId && x.Role == "Coach")
+                .Where(x => x.ParticipantId == userId
+                         && x.Role == "Coach"
+                         && x.Tournament.EndDate > DateTime.Now) // 🔥 само активни/предстоящи турнири
                 .Select(x => new TournamentViewModel()
                 {
                     Id = x.TournamentId,
@@ -83,6 +88,19 @@ namespace FootballProjectSoftUni.Core.Services.Coach
 
         public async Task<bool> LeaveTournamentAsync(int tournamentId, string userId)
         {
+            var tournament = await context.Tournaments
+                .FirstOrDefaultAsync(t => t.Id == tournamentId);
+
+            if (tournament == null)
+            {
+                return false;
+            }
+
+            if (DateTime.Now >= tournament.StartDate)
+            {
+                return false;
+            }
+
             var tp = await context.TournamentsParticipants
                 .FirstOrDefaultAsync(x => x.ParticipantId == userId
                                           && x.TournamentId == tournamentId
@@ -119,20 +137,20 @@ namespace FootballProjectSoftUni.Core.Services.Coach
 
             await context.SaveChangesAsync();
 
-            var tournament = await context.Tournaments
-                .FirstOrDefaultAsync(t => t.Id == tournamentId);
+            tournament.NumberOfTeams = await context.TournamentsTeams
+                .Where(tt => tt.TournamentId == tournament.Id)
+                .CountAsync();
 
-            if (tournament != null)
+            await context.SaveChangesAsync();
+
+            if (teamId != null)
             {
-                tournament.NumberOfTeams = await context.TournamentsTeams
-                    .Where(tt => tt.TournamentId == tournament.Id)
-                    .CountAsync();
-
-                await context.SaveChangesAsync();
+                await tournamentService.RemoveTeamFromBracketAsync(tournamentId, teamId.Value);
             }
 
             return true;
         }
+
 
 
 

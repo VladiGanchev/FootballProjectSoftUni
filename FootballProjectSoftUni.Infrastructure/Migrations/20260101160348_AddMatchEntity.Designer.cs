@@ -4,6 +4,7 @@ using FootballProjectSoftUni.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballProjectSoftUni.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260101160348_AddMatchEntity")]
+    partial class AddMatchEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,7 +103,7 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                         {
                             Id = "600bafb9-a73d-4489-a387-643c2b8ae96c",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "867488cb-0c80-4f8a-93a6-b63adf6ecd7e",
+                            ConcurrencyStamp = "cf1525f5-4b0c-4a51-ab6a-40833a77b61f",
                             Email = "admin@mail.com",
                             EmailConfirmed = false,
                             FirstName = "Great",
@@ -109,9 +111,9 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@MAIL.COM",
                             NormalizedUserName = "ADMIN@MAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEBNg/xl+yX75tcKkNtcZgY6ZhJBaCpJ9gfvzp4iCzsWbhlLj8AVxSFwv3+VJOHITXQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAKdQ0ncym3+ExbP5SM22bZB21n2d1hfnx1dbk7jOpKutypLDKIOjWodOENzWO/aXA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "f9a07ac1-fbbe-46d7-8938-510d33b68680",
+                            SecurityStamp = "7c59fceb-01a0-4df8-a11c-527851c5fb6f",
                             TwoFactorEnabled = false,
                             UserName = "admin@mail.com"
                         });
@@ -680,37 +682,6 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                     b.HasIndex("TournamentId");
 
                     b.ToTable("TournamentsParticipants");
-                });
-
-            modelBuilder.Entity("FootballProjectSoftUni.Infrastructure.Data.Models.TournamentStats", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("PlayersCreatedTotal")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TeamsCreatedTotal")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TournamentsCreatedTotal")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppStats");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            PlayersCreatedTotal = 0,
-                            TeamsCreatedTotal = 0,
-                            TournamentsCreatedTotal = 0
-                        });
                 });
 
             modelBuilder.Entity("FootballProjectSoftUni.Infrastructure.Data.Models.TournamentTeam", b =>

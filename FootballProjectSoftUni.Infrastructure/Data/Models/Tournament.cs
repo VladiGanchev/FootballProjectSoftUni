@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static FootballProjectSoftUni.Infrastructure.Data.Constants.DataConstants;
 
@@ -61,6 +62,8 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
         public decimal ParticipationFee { get; set; }
 
         public string? Winner { get; set; }
+
+        public ICollection<Match> Matches { get; set; } = new List<Match>();
 
     }
 }

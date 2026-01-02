@@ -1,5 +1,6 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Models.City;
+using FootballProjectSoftUni.Core.Models.Match;
 using FootballProjectSoftUni.Core.Models.Tournament;
 using FootballProjectSoftUni.Infrastructure.Data;
 using FootballProjectSoftUni.Infrastructure.Data.Enums;
@@ -43,16 +44,15 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
         public async Task<bool> DeleteTournamentAsync(int id)
         {
             var tournament = await data.Tournaments
-               .Include(t => t.TournamentCities)
-                   .ThenInclude(tc => tc.City)
-               .FirstOrDefaultAsync(t => t.Id == id);
-
+                .Include(t => t.TournamentCities)
+                .FirstOrDefaultAsync(t => t.Id == id);
 
             if (tournament == null)
             {
                 return false;
             }
 
+            // 1) Разкачаме рефера (НЕ го трием)
             if (tournament.RefereeId != null)
             {
                 var referee = await data.Referees
@@ -60,85 +60,60 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
 
                 if (referee != null)
                 {
-                    referee.TournamentId = null; 
+                    referee.TournamentId = null;
                 }
 
                 tournament.RefereeId = null;
-
-                await data.SaveChangesAsync();
             }
 
-            var city = tournament.TournamentCities.FirstOrDefault(x => x.TournamentId == id);
+            // 2) Махаме участниците в турнира
+            var tournamentParticipants = await data.TournamentsParticipants
+                .Where(x => x.TournamentId == id)
+                .ToListAsync();
 
-            if (city == null)
-            {
-                return false;
-            }
-
-            var tournamentCity = await data.TournamentsCities.Where(x => x.TournamentId == id && x.CityId == city.CityId).FirstOrDefaultAsync();
-
-            if (tournamentCity == null)
-            {
-                return false;
-            }
-
-            data.TournamentsCities.Remove(tournamentCity);
-
-            await data.SaveChangesAsync();
-
-            var tournamentParticipants = await data.TournamentsParticipants.Where(x => x.TournamentId == id).ToListAsync();
-
-            if (tournamentParticipants.Count > 0)
+            if (tournamentParticipants.Any())
             {
                 data.TournamentsParticipants.RemoveRange(tournamentParticipants);
-
-                await data.SaveChangesAsync();
             }
 
-            var teamsId = await data.TournamentsTeams.Where(x => x.TournamentId == id).Select(x => x.TeamId).ToListAsync();
+            // 3) Махаме мачовете на този турнир
+            var matches = await data.Matches
+                .Where(m => m.TournamentId == id)
+                .ToListAsync();
 
-            if (teamsId.Count > 0)
+            if (matches.Any())
             {
-                var coaches = await data.Coaches.ToListAsync();
-
-                foreach (var coach in coaches)
-                {
-                    if (teamsId.Contains(coach.TeamId ?? 0))
-                    {
-                        coach.TeamId = null;
-                    }
-                }
-
-                await data.SaveChangesAsync();
-
-                var tournametsTeams = await data.TournamentsTeams.Where(x => x.TournamentId == id).ToListAsync();
-
-                data.TournamentsTeams.RemoveRange(tournametsTeams);
-
-                await data.SaveChangesAsync();
-
-                var playersToRemove = await data.Players.Where(p => teamsId.Contains(p.TeamId ?? 0)).ToListAsync();
-
-                data.Players.RemoveRange(playersToRemove);
-
-                await data.SaveChangesAsync();
-
-                var teamsToRemove = await data.Teams.Where(t => teamsId.Contains(t.Id)).ToListAsync();
-
-                data.Teams.RemoveRange(teamsToRemove);
-
-                await data.SaveChangesAsync();
-
-
+                data.Matches.RemoveRange(matches);
             }
 
+            // 4) Махаме връзките team–tournament (НЕ трием самите отбори)
+            var tournamentTeams = await data.TournamentsTeams
+                .Where(x => x.TournamentId == id)
+                .ToListAsync();
 
-            data.Remove(tournament);
+            if (tournamentTeams.Any())
+            {
+                data.TournamentsTeams.RemoveRange(tournamentTeams);
+            }
+
+            // 5) Махаме връзките city–tournament (НЕ трием градовете)
+            var tournamentCities = await data.TournamentsCities
+                .Where(x => x.TournamentId == id)
+                .ToListAsync();
+
+            if (tournamentCities.Any())
+            {
+                data.TournamentsCities.RemoveRange(tournamentCities);
+            }
+
+            // 6) Накрая трием самия турнир
+            data.Tournaments.Remove(tournament);
 
             await data.SaveChangesAsync();
 
             return true;
         }
+
 
         public async Task EditTournamentAsync(EditViewModel model, DateTime start, DateTime end)
         {
@@ -219,7 +194,8 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
             if (showPast)
             {
                 return cityTournaments
-                    .Where(x => x.Status == TournamentStatus.Finished.ToString());
+                    .Where(x => x.Status == TournamentStatus.Finished.ToString())
+                    .OrderByDescending(x => x.EndDate);
             }
             else
             {
@@ -231,12 +207,16 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
         public async Task<DetailsViewModel> GetTournamentDetailsAsync(int id)
         {
             var needed = await data.Tournaments
-               .Include(t => t.Referee)
-               .Include(t => t.TournamentCities)
-                   .ThenInclude(tc => tc.City)
-                .Include(t => t.TournamentTeams)
-                .ThenInclude(tt => tt.Team)
-           .FirstOrDefaultAsync(t => t.Id == id);
+                .Include(t => t.Referee)
+                .Include(t => t.TournamentCities).ThenInclude(tc => tc.City)
+                .Include(t => t.TournamentTeams).ThenInclude(tt => tt.Team)
+                .Include(t => t.Matches)
+                    .ThenInclude(m => m.Team1)
+                .Include(t => t.Matches)
+                    .ThenInclude(m => m.Team2)
+                .Include(t => t.Matches)
+                    .ThenInclude(m => m.WinnerTeam)
+                .FirstOrDefaultAsync(t => t.Id == id);
 
             if (needed == null)
             {
@@ -267,14 +247,31 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
 
             };
 
+            model.Matches = needed.Matches
+       .OrderBy(m => m.Round)
+       .ThenBy(m => m.IndexInRound)
+       .Select(m => new MatchViewModel
+       {
+           Id = m.Id,
+           Round = m.Round,
+           IndexInRound = m.IndexInRound,
+           Team1Id = m.Team1Id,
+           Team1Name = m.Team1 != null ? m.Team1.Name : "---",
+           Team2Id = m.Team2Id,
+           Team2Name = m.Team2 != null ? m.Team2.Name : "---",
+           Team1Goals = m.Team1Goals,
+           Team2Goals = m.Team2Goals,
+           WinnerTeamId = m.WinnerTeamId,
+           WinnerTeamName = m.WinnerTeam != null ? m.WinnerTeam.Name : null
+       })
+       .ToList();
+
             return model;
 
         }
 
         public async Task AddTournamentToCityAsync(AddTournamentFormViewModel model, int cityId, DateTime start, DateTime end)
         {
-            var city = await data.Cities.Where(x => x.Id == cityId).FirstOrDefaultAsync();
-
             var tournament = new FootballProjectSoftUni.Infrastructure.Data.Models.Tournament()
             {
                 StartDate = start,
@@ -302,6 +299,13 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
             };
 
             data.TournamentsCities.Add(cityTournament);
+
+            var stats = await data.AppStats.FindAsync(1);
+
+            if (stats != null)
+            {
+                stats.TournamentsCreatedTotal++;
+            }
 
             await data.SaveChangesAsync();
         }
@@ -354,5 +358,172 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                     .ThenInclude(tc => tc.City)
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
+
+        public async Task GenerateBracketAsync(int tournamentId)
+        {
+            var tournament = await data.Tournaments
+                .Include(t => t.Matches)
+                .FirstOrDefaultAsync(t => t.Id == tournamentId);
+
+            if (tournament == null)
+            {
+                throw new ArgumentException("Invalid tournament id");
+            }
+
+            if (tournament.Matches.Any())
+            {
+                // вече има схема
+                return;
+            }
+
+            // Рунд 1 – 8 мача
+            for (int i = 0; i < 8; i++)
+            {
+                data.Matches.Add(new Match
+                {
+                    TournamentId = tournamentId,
+                    Round = 1,
+                    IndexInRound = i
+                });
+            }
+
+            // Рунд 2 – 4 мача
+            for (int i = 0; i < 4; i++)
+            {
+                data.Matches.Add(new Match
+                {
+                    TournamentId = tournamentId,
+                    Round = 2,
+                    IndexInRound = i
+                });
+            }
+
+            // Рунд 3 – 2 мача
+            for (int i = 0; i < 2; i++)
+            {
+                data.Matches.Add(new Match
+                {
+                    TournamentId = tournamentId,
+                    Round = 3,
+                    IndexInRound = i
+                });
+            }
+
+            // Рунд 4 – 1 мач (финал)
+            data.Matches.Add(new Match
+            {
+                TournamentId = tournamentId,
+                Round = 4,
+                IndexInRound = 0
+            });
+
+            await data.SaveChangesAsync();
+        }
+
+        public async Task AssignTeamToBracketAsync(int tournamentId, int teamId)
+        {
+            // взимаме мачовете от първия рунд по ред
+            var firstRoundMatches = await data.Matches
+                .Where(m => m.TournamentId == tournamentId && m.Round == 1)
+                .OrderBy(m => m.IndexInRound)
+                .ToListAsync();
+
+            foreach (var match in firstRoundMatches)
+            {
+                if (!match.Team1Id.HasValue)
+                {
+                    match.Team1Id = teamId;
+                    await data.SaveChangesAsync();
+                    return;
+                }
+
+                if (!match.Team2Id.HasValue)
+                {
+                    match.Team2Id = teamId;
+                    await data.SaveChangesAsync();
+                    return;
+                }
+            }
+
+            // ако няма свободно място, можеш да хвърлиш exception или да игнорираш
+            throw new InvalidOperationException("No free slots in bracket.");
+        }
+
+        public async Task MoveWinnerToNextRoundAsync(int matchId)
+        {
+            var match = await data.Matches.FirstOrDefaultAsync(m => m.Id == matchId);
+
+            if (match == null || !match.WinnerTeamId.HasValue)
+            {
+                return;
+            }
+
+            // ако е финал – записваме winner в турнира
+            if (match.Round == 4)
+            {
+                var tournament = await data.Tournaments.FirstOrDefaultAsync(t => t.Id == match.TournamentId);
+                if (tournament != null)
+                {
+                    var team = await data.Teams.FindAsync(match.WinnerTeamId.Value);
+                    tournament.Winner = team?.Name;
+                }
+
+                return;
+            }
+
+            int nextRound = match.Round + 1;
+            int nextIndex = match.IndexInRound / 2;
+
+            var nextMatch = await data.Matches.FirstOrDefaultAsync(m =>
+                m.TournamentId == match.TournamentId &&
+                m.Round == nextRound &&
+                m.IndexInRound == nextIndex);
+
+            if (nextMatch == null)
+            {
+                return;
+            }
+
+            if (match.IndexInRound % 2 == 0)
+            {
+                nextMatch.Team1Id = match.WinnerTeamId;
+            }
+            else
+            {
+                nextMatch.Team2Id = match.WinnerTeamId;
+            }
+        }
+
+        public async Task RemoveTeamFromBracketAsync(int tournamentId, int teamId)
+        {
+            var tournament = await data.Tournaments.FirstOrDefaultAsync(t => t.Id == tournamentId);
+            if (tournament == null)
+            {
+                return;
+            }
+
+            if (DateTime.Now >= tournament.StartDate)
+            {
+                return;
+            }
+
+            var matches = await data.Matches
+                .Where(m => m.TournamentId == tournamentId &&
+                            (m.Team1Id == teamId || m.Team2Id == teamId || m.WinnerTeamId == teamId))
+                .ToListAsync();
+
+            foreach (var match in matches)
+            {
+                if (match.Team1Id == teamId) match.Team1Id = null;
+                if (match.Team2Id == teamId) match.Team2Id = null;
+                if (match.WinnerTeamId == teamId) match.WinnerTeamId = null;
+
+                match.Team1Goals = null;
+                match.Team2Goals = null;
+            }
+
+            await data.SaveChangesAsync();
+        }
+
     }
 }

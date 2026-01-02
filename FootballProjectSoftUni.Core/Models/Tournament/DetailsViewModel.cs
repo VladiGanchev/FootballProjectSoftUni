@@ -1,4 +1,5 @@
 ﻿using FootballProjectSoftUni.Core.Contracts;
+using FootballProjectSoftUni.Core.Models.Match;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -42,6 +43,8 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
         public decimal ParticipationFee { get; set; }
 
         public string? Winner { get; set; }
+
+        public List<MatchViewModel> Matches { get; set; } = new();
 
     }
 }

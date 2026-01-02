@@ -19,5 +19,9 @@ namespace FootballProjectSoftUni.Core.Contracts.Tournament
         Task<CityViewModel> FindCityAsync(int cityId);
         Task<EditViewModel> FindTournamentAsync(int cityId);
         Task<FootballProjectSoftUni.Infrastructure.Data.Models.Tournament> FindTournamentByIdAsync(int id);
+        Task GenerateBracketAsync(int tournamentId);
+        Task AssignTeamToBracketAsync(int tournamentId, int teamId);
+        Task MoveWinnerToNextRoundAsync(int matchId);
+        Task RemoveTeamFromBracketAsync(int tournamentId, int teamId);
     }
 }

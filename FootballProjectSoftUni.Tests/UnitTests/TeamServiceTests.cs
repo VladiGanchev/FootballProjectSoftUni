@@ -1,4 +1,5 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Team;
+using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Models.Player;
 using FootballProjectSoftUni.Core.Models.Team;
 using FootballProjectSoftUni.Core.Services.Team;
@@ -15,10 +16,10 @@ namespace FootballProjectSoftUni.Tests.UnitTests
     public class TeamServiceTests : UnitTestsBase
     {
         private ITeamService _teamService;
-
         [OneTimeSetUp]
 
-        public void SetUp() => _teamService = new TeamService(_data);
+        //trqbva da se opravi posle
+       // public void SetUp() => _teamService = new TeamService(_data);
 
         [Test]
         public async Task CheckForError_ShouldReturn_FirstError()

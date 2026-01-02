@@ -64,6 +64,76 @@
 
     </div>
 </div>
+
+@if (Model.Matches != null && Model.Matches.Any())
+{
+    <hr />
+    <h3 class="text-center mt-4">Схема на турнира</h3>
+
+    @foreach (var roundGroup in Model.Matches.GroupBy(m => m.Round).OrderBy(g => g.Key))
+    {
+        <h4 class="mt-3">Рунд @roundGroup.Key</h4>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="text-center">Отбор 1</th>
+                    <th class="text-center">Резултат</th>
+                    <th class="text-center">Отбор 2</th>
+                    <th class="text-center">Победител</th>
+                    <th class="text-center"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var match in roundGroup)
+                {
+                    <tr>
+                        <td class="text-center">@match.Team1Name</td>
+                        <td class="text-center">
+                            @if (match.Team1Goals.HasValue && match.Team2Goals.HasValue)
+                            {
+                                @($"{match.Team1Goals}:{match.Team2Goals}")
+                            }
+                            else
+                            {
+                                @: -
+                            }
+                        </td>
+                        <td class="text-center">@match.Team2Name</td>
+                        <td class="text-center">
+                            @if (!string.IsNullOrEmpty(match.WinnerTeamName))
+                            {
+                                @match.WinnerTeamName
+                            }
+                            else
+                            {
+                                @: -
+                            }
+                        </td>
+                        <td class="text-center">
+                            @if (User.IsAdmin()
+                                            && match.Team1Id.HasValue
+                                            && match.Team2Id.HasValue)
+                            {
+                                <a asp-controller="Match"
+                                   asp-action="EnterResult"
+                                   asp-route-id="@match.Id"
+                                   class="btn btn-sm btn-primary">
+                                    Въведи / редактирай резултат
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+else
+{
+    <p class="mt-4 text-center">Все още няма схема за този турнир.</p>
+}
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

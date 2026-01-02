@@ -1,6 +1,8 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Team;
+using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Models.ServiceError;
 using FootballProjectSoftUni.Core.Models.Team;
+using FootballProjectSoftUni.Core.Services.Tournament;
 using FootballProjectSoftUni.Infrastructure.Data;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
@@ -17,14 +19,36 @@ namespace FootballProjectSoftUni.Core.Services.Team
     public class TeamService : ITeamService
     {
         private readonly ApplicationDbContext context;
+        private readonly ITournamentService tournamentService;
 
-        public TeamService(ApplicationDbContext _context)
+        public TeamService(ApplicationDbContext _context, ITournamentService _tournamentService)
         {
             context = _context;
+            tournamentService = _tournamentService;
         }
 
         public async Task<ServiceError> CheckForErrorsAsync(int id, string userId)
         {
+            // 0) Проверяваме самия турнир
+            var tournament = await context.Tournaments.FindAsync(id);
+
+            if (tournament == null)
+            {
+                return new ServiceError
+                {
+                    Message = "Tournament not found."
+                };
+            }
+
+            // Не позволяваме join в вече завършен турнир
+            if (DateTime.Now >= tournament.EndDate)
+            {
+                return new ServiceError
+                {
+                    Message = "You cannot join a tournament that has already finished."
+                };
+            }
+
             var tournametsTeamsCount = await context.TournamentsTeams.Where(x => x.TournamentId == id).CountAsync();
 
             if (tournametsTeamsCount == TournamentNumnerOfTeamsMaxLength)
@@ -69,9 +93,17 @@ namespace FootballProjectSoftUni.Core.Services.Team
                
             }
 
-            var isInAnotherTournamentAsCoach = await context.TournamentsParticipants.Where(x => x.ParticipantId == userId && x.Role == "Coach").FirstOrDefaultAsync();
+            var hasActiveCoachParticipation = await context.TournamentsParticipants
+                .Where(tp => tp.ParticipantId == userId && tp.Role == "Coach")
+                .Join(
+                    context.Tournaments,
+                    tp => tp.TournamentId,
+                    t => t.Id,
+                    (tp, t) => t
+                )
+                .AnyAsync(t => t.EndDate > DateTime.Now); // турнирът още не е свършил
 
-            if (isInAnotherTournamentAsCoach != null)
+            if (hasActiveCoachParticipation)
             {
                 return new ServiceError()
                 {
@@ -101,7 +133,6 @@ namespace FootballProjectSoftUni.Core.Services.Team
 
         public async Task<ServiceError> JoinTeamAsync(TeamRegistrationViewModel viewModel, int id, string userId)
         {
-            // 1) Намираме коуча
             var coach = await context.Coaches
                 .FirstOrDefaultAsync(c => c.Id == userId);
 
@@ -113,7 +144,6 @@ namespace FootballProjectSoftUni.Core.Services.Team
                 };
             }
 
-            // 2) Намираме турнира (ползваме го навсякъде по-надолу)
             var tournament = await context.Tournaments
                 .FirstOrDefaultAsync(x => x.Id == id);
 
@@ -125,7 +155,6 @@ namespace FootballProjectSoftUni.Core.Services.Team
                 };
             }
 
-            // 3) Ако коучът вече има отбор -> само го закачаме към турнира
             if (coach.TeamId != null)
             {
                 var teamId = coach.TeamId.Value;
@@ -164,10 +193,8 @@ namespace FootballProjectSoftUni.Core.Services.Team
                     context.TournamentsParticipants.Add(tp);
                 }
 
-                // ✅ Първо записваме новите TournamentTeam/TournamentParticipant
                 await context.SaveChangesAsync();
 
-                // ✅ Ако реално сме добавили нов отбор към турнира – обновяваме NumberOfTeams
                 if (addedTeamToTournament)
                 {
                     tournament.NumberOfTeams = await context.TournamentsTeams
@@ -175,26 +202,24 @@ namespace FootballProjectSoftUni.Core.Services.Team
                         .CountAsync();
 
                     await context.SaveChangesAsync();
+
+                    await tournamentService.GenerateBracketAsync(id);
+                    await tournamentService.AssignTeamToBracketAsync(id, teamId);
                 }
 
                 return null;
             }
 
-            // 4) Коуч НЯМА отбор
-            // ако viewModel == null -> значи сме дошли от GET и просто искаме да разберем това
             if (viewModel == null)
             {
                 return new ServiceError()
                 {
-                    // специално съобщение за вътрешно ползване в контролера
                     Message = "NO_TEAM_YET"
                 };
             }
 
-            // 5) Коуч няма отбор И има подадена форма -> създаваме отбор + играчи (старото поведение)
-
             var nameExists = await context.Teams
-                .AnyAsync(t => t.Name.ToLower() == viewModel.TeamName); // ако искаш case-insensitive: t.Name.ToLower() == viewModel.TeamName.ToLower()
+                .AnyAsync(t => t.Name.ToLower() == viewModel.TeamName);
 
             if (nameExists)
             {
@@ -254,7 +279,7 @@ namespace FootballProjectSoftUni.Core.Services.Team
                 Name = viewModel.TeamName,
                 Players = players,
                 CoachId = userId,
-                Coach = coach // вече го имаме
+                Coach = coach 
             };
 
             context.Teams.Add(team);
@@ -286,15 +311,24 @@ namespace FootballProjectSoftUni.Core.Services.Team
 
             context.TournamentsParticipants.Add(tpNew);
 
-            // записваме новия team–tournament и участието на коуча
             await context.SaveChangesAsync();
 
-            // обновяваме броя на отборите
             tournament.NumberOfTeams = await context.TournamentsTeams
                 .Where(tt => tt.TournamentId == tournament.Id)
                 .CountAsync();
 
+            var stats = await context.AppStats.FindAsync(1);
+
+            if (stats != null)
+            {
+                stats.TeamsCreatedTotal++;
+                stats.PlayersCreatedTotal += players.Count();
+            }
+
             await context.SaveChangesAsync();
+
+            await tournamentService.GenerateBracketAsync(id);
+            await tournamentService.AssignTeamToBracketAsync(id, team.Id);
 
             return null;
         }

@@ -21,9 +21,11 @@ namespace FootballProjectSoftUni.Core.Services.Home
 
         public async Task<HomeViewModel> GetHomePageData()
         {
-            int tournaments = await context.Tournaments.CountAsync();
-            int players = await context.Players.CountAsync();
-            int teams = await context.Teams.CountAsync();
+            var stats = await context.AppStats.FindAsync(1);
+
+            int tournaments = stats.TournamentsCreatedTotal;
+            int players = stats.PlayersCreatedTotal;
+            int teams = stats.TeamsCreatedTotal;
 
             HomeViewModel viewModel = new HomeViewModel()
             {

@@ -1,6 +1,8 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.City;
+using FootballProjectSoftUni.Core.Contracts.TournamentJoinPayment;
 using FootballProjectSoftUni.Core.Models.City;
 using FootballProjectSoftUni.Extensions;
+using FootballProjectSoftUni.Infrastructure.Data;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +13,11 @@ namespace FootballProjectSoftUni.Controllers
     public class CityController : Controller
     {
         private readonly ICityService cityService;
+        private readonly ITournamentJoinPaymentService tournamentJoinPaymentService;
 
-        public CityController(ICityService _service)
+        public CityController(ICityService _service, ITournamentJoinPaymentService _tournamentJoinPaymentService)
         {
+            tournamentJoinPaymentService = _tournamentJoinPaymentService;
             cityService = _service;
         }
 
@@ -160,5 +164,45 @@ namespace FootballProjectSoftUni.Controllers
             return RedirectToAction("GetBestTeams", new { id = model.CityId });
         }
 
+        [HttpGet]
+        [AllowAnonymous] // Stripe връща браузъра, може да е без auth понякога
+        public async Task<IActionResult> PaymentSuccess(int orderId)
+        {
+            var order = await tournamentJoinPaymentService.GetTournametJoinPaymentOrder(orderId);
+
+            if (order == null)
+            {
+                TempData["PaymentMessage"] = "Невалидна поръчка.";
+                TempData["PaymentType"] = "danger";
+                return RedirectToAction(nameof(All));
+            }
+
+            // ВАЖНО: webhook може да не е обработил още.
+            if (order.Status == "Paid")
+            {
+                TempData["PaymentMessage"] = "✅ Плащането е успешно! Отборът е регистриран.";
+                TempData["PaymentType"] = "success";
+            }
+            else
+            {
+                TempData["PaymentMessage"] = "⏳ Плащането е получено. Изчакваме потвърждение… (ако до 10-15 сек не се обнови, рефрешни страницата)";
+                TempData["PaymentType"] = "info";
+            }
+
+            return RedirectToAction(nameof(All));
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult PaymentCancel(int orderId)
+        {
+            TempData["PaymentMessage"] = "❌ Плащането беше отказано/прекъснато.";
+            TempData["PaymentType"] = "danger";
+            return RedirectToAction(nameof(All));
+        }
+
+        // ... твоят All action си остава както е
     }
+
 }
+

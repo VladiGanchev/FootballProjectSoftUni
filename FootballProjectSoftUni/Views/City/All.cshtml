@@ -8,6 +8,13 @@
     </div>
 }
 
+@if (TempData["PaymentMessage"] != null)
+{
+    var type = TempData["PaymentType"]?.ToString() ?? "info";
+    <div class="alert alert-@type" role="alert">
+        @TempData["PaymentMessage"]
+    </div>
+}
 <div class="container">
     <div class="row justify-content-between mb-3">
         <div class="col-md-9"></div> 

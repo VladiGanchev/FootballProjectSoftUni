@@ -26,21 +26,6 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
             data = _data;
         }
 
-        //public async Task<AddTournamentFormViewModel> AddTournamentToCityAsync(AddTournamentFormViewModel model, int cityId)
-        //{
-
-        //    var cities = await data.Cities.Select(x => new CityViewModel()
-        //    {
-        //        Id = x.Id,
-        //        Name = x.Name
-        //    })
-        //        .ToListAsync();
-
-        //    model.Cities = cities;
-
-        //    return model;
-        //}
-
         public async Task<bool> DeleteTournamentAsync(int id)
         {
             var tournament = await data.Tournaments
@@ -52,7 +37,6 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 return false;
             }
 
-            // 1) Разкачаме рефера (НЕ го трием)
             if (tournament.RefereeId != null)
             {
                 var referee = await data.Referees
@@ -66,7 +50,6 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 tournament.RefereeId = null;
             }
 
-            // 2) Махаме участниците в турнира
             var tournamentParticipants = await data.TournamentsParticipants
                 .Where(x => x.TournamentId == id)
                 .ToListAsync();
@@ -76,7 +59,6 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 data.TournamentsParticipants.RemoveRange(tournamentParticipants);
             }
 
-            // 3) Махаме мачовете на този турнир
             var matches = await data.Matches
                 .Where(m => m.TournamentId == id)
                 .ToListAsync();
@@ -86,7 +68,6 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 data.Matches.RemoveRange(matches);
             }
 
-            // 4) Махаме връзките team–tournament (НЕ трием самите отбори)
             var tournamentTeams = await data.TournamentsTeams
                 .Where(x => x.TournamentId == id)
                 .ToListAsync();
@@ -96,7 +77,6 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 data.TournamentsTeams.RemoveRange(tournamentTeams);
             }
 
-            // 5) Махаме връзките city–tournament (НЕ трием градовете)
             var tournamentCities = await data.TournamentsCities
                 .Where(x => x.TournamentId == id)
                 .ToListAsync();
@@ -106,7 +86,6 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 data.TournamentsCities.RemoveRange(tournamentCities);
             }
 
-            // 6) Накрая трием самия турнир
             data.Tournaments.Remove(tournament);
 
             await data.SaveChangesAsync();
@@ -372,11 +351,9 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
 
             if (tournament.Matches.Any())
             {
-                // вече има схема
                 return;
             }
 
-            // Рунд 1 – 8 мача
             for (int i = 0; i < 8; i++)
             {
                 data.Matches.Add(new Match
@@ -387,7 +364,6 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 });
             }
 
-            // Рунд 2 – 4 мача
             for (int i = 0; i < 4; i++)
             {
                 data.Matches.Add(new Match
@@ -398,7 +374,6 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 });
             }
 
-            // Рунд 3 – 2 мача
             for (int i = 0; i < 2; i++)
             {
                 data.Matches.Add(new Match
@@ -409,7 +384,6 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 });
             }
 
-            // Рунд 4 – 1 мач (финал)
             data.Matches.Add(new Match
             {
                 TournamentId = tournamentId,
@@ -422,7 +396,6 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
 
         public async Task AssignTeamToBracketAsync(int tournamentId, int teamId)
         {
-            // взимаме мачовете от първия рунд по ред
             var firstRoundMatches = await data.Matches
                 .Where(m => m.TournamentId == tournamentId && m.Round == 1)
                 .OrderBy(m => m.IndexInRound)
@@ -445,7 +418,6 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 }
             }
 
-            // ако няма свободно място, можеш да хвърлиш exception или да игнорираш
             throw new InvalidOperationException("No free slots in bracket.");
         }
 
@@ -458,7 +430,6 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 return;
             }
 
-            // ако е финал – записваме winner в турнира
             if (match.Round == 4)
             {
                 var tournament = await data.Tournaments.FirstOrDefaultAsync(t => t.Id == match.TournamentId);

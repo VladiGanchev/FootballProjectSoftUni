@@ -4,18 +4,22 @@ using FootballProjectSoftUni.Core.Contracts.Home;
 using FootballProjectSoftUni.Core.Contracts.Message;
 using FootballProjectSoftUni.Core.Contracts.Notification;
 using FootballProjectSoftUni.Core.Contracts.Partner;
+using FootballProjectSoftUni.Core.Contracts.Payment;
 using FootballProjectSoftUni.Core.Contracts.Referee;
 using FootballProjectSoftUni.Core.Contracts.Team;
 using FootballProjectSoftUni.Core.Contracts.Tournament;
+using FootballProjectSoftUni.Core.Contracts.TournamentJoinPayment;
 using FootballProjectSoftUni.Core.Services.City;
 using FootballProjectSoftUni.Core.Services.Coach;
 using FootballProjectSoftUni.Core.Services.Home;
 using FootballProjectSoftUni.Core.Services.Message;
 using FootballProjectSoftUni.Core.Services.Notification;
 using FootballProjectSoftUni.Core.Services.Partner;
+using FootballProjectSoftUni.Core.Services.Payment;
 using FootballProjectSoftUni.Core.Services.Referee;
 using FootballProjectSoftUni.Core.Services.Team;
 using FootballProjectSoftUni.Core.Services.Tournament;
+using FootballProjectSoftUni.Core.Services.TournamentJoinPayment;
 using FootballProjectSoftUni.Infrastructure.Data;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Identity;
@@ -36,6 +40,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IPartnerService, PartnerService>();
             services.AddScoped<IContactMessageService, ContactMessageService>();
+            services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<ITournamentJoinPaymentService, TournamentJoinPaymentService>();
 
             return services;
         }

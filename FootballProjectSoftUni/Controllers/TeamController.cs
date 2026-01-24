@@ -1,13 +1,15 @@
-﻿using FootballProjectSoftUni.Core.Contracts.Team;
+﻿using FootballProjectSoftUni.Core.Contracts.Payment;
+using FootballProjectSoftUni.Core.Contracts.Team;
 using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Models.Team;
+using FootballProjectSoftUni.Core.Services.Payment;
+using FootballProjectSoftUni.Extensions;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Security.Claims;
-using FootballProjectSoftUni.Extensions;
-using Microsoft.AspNetCore.Authorization;
 
 namespace FootballProjectSoftUni.Controllers
 {
@@ -16,11 +18,13 @@ namespace FootballProjectSoftUni.Controllers
     {
         private readonly ITeamService teamService;
         private readonly ITournamentService tournamentService;
+        private readonly IPaymentService paymentService;
 
-        public TeamController(ITeamService _teamService, ITournamentService _tournamentService)
+        public TeamController(ITeamService _teamService, ITournamentService _tournamentService, IPaymentService _paymentService)
         {
             teamService = _teamService;
             tournamentService = _tournamentService;
+            paymentService = _paymentService;
         }
 
         [HttpGet]
@@ -47,34 +51,18 @@ namespace FootballProjectSoftUni.Controllers
                 }
             }
 
-            // 2) Опитваме се директно да присъединим отбора (ако има такъв)
-            var joinResult = await teamService.JoinTeamAsync(null, id, userId);
-
-            if (joinResult == null)
+            // If coach already has a team -> start Stripe payment immediately
+            // You can add a method teamService.GetCoachTeamId(userId) or read in service.
+            var coachTeamId = await teamService.GetCoachTeamIdAsync(userId); // implement simple helper
+            if (coachTeamId.HasValue)
             {
-                // Успешно: имал е отбор и го закачихме към турнира
-                var tournament = await tournamentService.FindTournamentByIdAsync(id);
-                var cityId = tournament.TournamentCities.FirstOrDefault().CityId;
-
-                return RedirectToAction("CityTournaments", "Tournament", new { id = cityId });
+                var url = await paymentService.CreateTournamentJoinCheckoutAsync(id, userId, coachTeamId.Value);
+                return Redirect(url);
             }
 
-            // 3) Ако грешката е, че няма отбор -> показваме формата за създаване
-            if (joinResult.Message == "NO_TEAM_YET")
-            {
-                var model = teamService.CreateModel(id);
-                return View(model);
-            }
-
-            // 4) Други грешки
-            if (joinResult.Message == "BadRequest Message")
-            {
-                return BadRequest();
-            }
-
-            var fallbackCityId = await teamService.GetCityIdAsync(id);
-            TempData["ErrorMessage"] = joinResult.Message;
-            return RedirectToAction("CityTournaments", "Tournament", new { id = fallbackCityId });
+            // else show team creation form
+            var model = teamService.CreateModel(id);
+            return View(model);
         }
 
 
@@ -83,31 +71,34 @@ namespace FootballProjectSoftUni.Controllers
         {
             var userId = User.Id();
 
-            var result = await teamService.JoinTeamAsync(viewModel, id, userId);
-
-            if (result != null)
+            var error = await teamService.CheckForErrorsAsync(id, userId);
+            if (error != null)
             {
-                if (result.Message == "BadRequest Message")
-                {
-                    return BadRequest();
-                }
-                else
-                {
-                    ModelState.AddModelError("", result.Message);
-                    if (!ModelState.IsValid)
-                    {
-                        return View(viewModel);
-                    }
-                }
+                if (error.Message == "You need to become a coach to join a team.")
+                    return RedirectToAction("BecomeCoach", "Coach");
 
+                var cityId = await teamService.GetCityIdAsync(id);
+                TempData["ErrorMessage"] = error.Message;
+                return RedirectToAction("CityTournaments", "Tournament", new { id = cityId });
             }
 
-            var tournament = await tournamentService.FindTournamentByIdAsync(id);
+            if (!ModelState.IsValid)
+                return View(viewModel);
 
-            var cityId = tournament.TournamentCities.FirstOrDefault().CityId;
+            int teamId;
+            try
+            {
+                teamId = await teamService.CreateTeamDraftAsync(viewModel, userId);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(viewModel);
+            }
 
-            return RedirectToAction("CityTournaments", "Tournament", new { id = cityId });
-
+            var url = await paymentService.CreateTournamentJoinCheckoutAsync(id, userId, teamId);
+            return Redirect(url);
         }
+
     }
 }

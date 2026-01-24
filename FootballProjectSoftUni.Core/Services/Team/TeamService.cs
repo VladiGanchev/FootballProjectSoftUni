@@ -333,6 +333,139 @@ namespace FootballProjectSoftUni.Core.Services.Team
             return null;
         }
 
+        public async Task<int> CreateTeamDraftAsync(TeamRegistrationViewModel viewModel, string userId)
+        {
+            var coach = await context.Coaches.FirstOrDefaultAsync(c => c.Id == userId);
+            if (coach == null) throw new InvalidOperationException("Coach not found.");
+
+            // name uniqueness
+            var nameExists = await context.Teams.AnyAsync(t => t.Name.ToLower() == viewModel.TeamName.ToLower());
+            if (nameExists) throw new InvalidOperationException("A Team with the same name already exists");
+
+            var players = new List<Player>();
+
+            foreach (var p in viewModel.Players)
+            {
+                if (!DateTime.TryParseExact(p.BirthDate, RequiredDateTimeFormat,
+                    CultureInfo.InvariantCulture, DateTimeStyles.None, out var birthdate))
+                {
+                    throw new InvalidOperationException($"Invalid date, format must be {RequiredDateTimeFormat}");
+                }
+
+                var today = DateTime.Today;
+                var age = today.Year - birthdate.Year;
+                if (birthdate.Date > today.AddYears(-age)) age--;
+
+                if (age < 18)
+                {
+                    throw new InvalidOperationException("Players must be at least 18 years old to participate.");
+                }
+
+                players.Add(new Player { Name = p.Name, BirthDate = birthdate });
+            }
+
+            context.Players.AddRange(players);
+            await context.SaveChangesAsync();
+
+            var team = new FootballProjectSoftUni.Infrastructure.Data.Models.Team
+            {
+                Name = viewModel.TeamName,
+                Players = players,
+                CoachId = userId,
+                Coach = coach
+                // Ако имаш поле IsActive / IsDraft -> set it here
+            };
+
+            context.Teams.Add(team);
+            await context.SaveChangesAsync();
+
+            var teamId = team.Id;
+
+            foreach (var player in players)
+                player.TeamId = teamId;
+
+            // закачи coach.TeamId = teamId (ако не го правиш другаде)
+            coach.TeamId = teamId;
+
+            // stats
+            var stats = await context.AppStats.FindAsync(1);
+            if (stats != null)
+            {
+                stats.TeamsCreatedTotal++;
+                stats.PlayersCreatedTotal += players.Count;
+            }
+
+            await context.SaveChangesAsync();
+            return teamId;
+        }
+
+        public async Task FinalizeJoinAsync(int tournamentId, string userId, int teamId)
+        {
+            var tournament = await context.Tournaments.FirstOrDefaultAsync(t => t.Id == tournamentId);
+            if (tournament == null) throw new ArgumentException("Tournament not found.");
+
+            // Не allow join в finished
+            if (DateTime.Now >= tournament.EndDate)
+                throw new InvalidOperationException("Tournament already finished.");
+
+            // Ensure team exists
+            var team = await context.Teams.FirstOrDefaultAsync(t => t.Id == teamId);
+            if (team == null) throw new InvalidOperationException("Team not found.");
+
+            // 1) Add team to tournament if not exists
+            var existingTournamentTeam = await context.TournamentsTeams
+                .FirstOrDefaultAsync(tt => tt.TournamentId == tournamentId && tt.TeamId == teamId);
+
+            var addedTeamToTournament = false;
+            if (existingTournamentTeam == null)
+            {
+                context.TournamentsTeams.Add(new TournamentTeam
+                {
+                    TournamentId = tournamentId,
+                    TeamId = teamId
+                });
+                addedTeamToTournament = true;
+            }
+
+            // 2) Add participant coach if not exists
+            var existingParticipation = await context.TournamentsParticipants
+                .FirstOrDefaultAsync(tp => tp.TournamentId == tournamentId
+                                        && tp.ParticipantId == userId
+                                        && tp.Role == "Coach");
+
+            if (existingParticipation == null)
+            {
+                context.TournamentsParticipants.Add(new TournamentParticipant
+                {
+                    ParticipantId = userId,
+                    TournamentId = tournamentId,
+                    Role = "Coach"
+                });
+            }
+
+            await context.SaveChangesAsync();
+
+            // 3) Update NumberOfTeams + bracket only if new team added
+            if (addedTeamToTournament)
+            {
+                tournament.NumberOfTeams = await context.TournamentsTeams
+                    .Where(tt => tt.TournamentId == tournamentId)
+                    .CountAsync();
+
+                await context.SaveChangesAsync();
+
+                await tournamentService.GenerateBracketAsync(tournamentId);
+                await tournamentService.AssignTeamToBracketAsync(tournamentId, teamId);
+            }
+        }
+        public async Task<int?> GetCoachTeamIdAsync(string userId)
+        {
+            return await context.Coaches
+                .Where(c => c.Id == userId)
+                .Select(c => c.TeamId)
+                .FirstOrDefaultAsync();
+        }
+
 
     }
 }

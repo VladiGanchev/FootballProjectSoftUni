@@ -4,6 +4,7 @@ using FootballProjectSoftUni.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballProjectSoftUni.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260118162606_AddTournamentJoinPayments")]
+    partial class AddTournamentJoinPayments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,7 +103,7 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                         {
                             Id = "600bafb9-a73d-4489-a387-643c2b8ae96c",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "01341344-696b-4eb3-a576-c5e59bae3935",
+                            ConcurrencyStamp = "745b7998-0b59-472c-a8f0-fa0b0b7a1d05",
                             Email = "admin@mail.com",
                             EmailConfirmed = false,
                             FirstName = "Great",
@@ -109,9 +111,9 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@MAIL.COM",
                             NormalizedUserName = "ADMIN@MAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEIgPGh6fXubuRwIXhW9RC1DLy9AwtCHzC4stS+QT0BB1QUQyLZUqKxwZ+/U2L42mjQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJYdX66e6YCuuRce9vovS6VpppoyQmT8TCV4vLClI+XoMGciFGoeXvSPWSMbqfAwwg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2f1457a6-c5e7-4379-a964-47c70abcb54f",
+                            SecurityStamp = "ceb6d6c0-d551-460c-9607-16cd7294082f",
                             TwoFactorEnabled = false,
                             UserName = "admin@mail.com"
                         });
@@ -689,9 +691,11 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StripePaymentIntentId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StripeSessionId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("TeamId")

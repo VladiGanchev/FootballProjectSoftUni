@@ -1,6 +1,8 @@
 
 
+using FootballProjectSoftUni.Core.Models.Settings;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,10 @@ builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
 });
+
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddApplicationServices();
 

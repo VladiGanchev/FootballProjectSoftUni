@@ -179,6 +179,7 @@ namespace FootballProjectSoftUni.Infrastructure.Data
         public DbSet<RefereeRating> RefereesRatings { get; set; } = null!;
         public DbSet<Match> Matches { get; set; }
         public DbSet<TournamentStats> AppStats { get; set; } = null!;
+        public DbSet<TournamentJoinPayment> TournamentJoinPayments { get; set; }
 
     }
 }

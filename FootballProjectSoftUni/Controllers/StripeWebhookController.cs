@@ -120,6 +120,44 @@ public class StripeWebhookController : ControllerBase
             }
         }
 
+        if (stripeEvent.Type == "charge.refunded")
+        {
+            var charge = stripeEvent.Data.Object as Charge;
+            if (charge == null) return Ok();
+
+            var piId = charge.PaymentIntentId;
+            if (string.IsNullOrWhiteSpace(piId)) return Ok();
+
+            var order = await context.TournamentJoinPayments
+                .FirstOrDefaultAsync(o => o.StripePaymentIntentId == piId);
+
+            if (order == null) return Ok();
+
+            order.Status = "Refunded";
+            order.RefundedOnUtc = DateTime.UtcNow;
+
+            await context.SaveChangesAsync();
+            var userEmail = await context.Users
+              .Where(u => u.Id == order.UserId)
+              .Select(u => u.Email)
+              .FirstOrDefaultAsync();
+
+            if (!string.IsNullOrWhiteSpace(userEmail))
+            {
+                var subject = "Успешно връщане на пари! ⚽";
+                var body = $"<p>Сумата по сметката ви е въстановена!</p>";
+
+                try
+                {
+                    await emailService.SendAsync(userEmail, subject, body);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("EMAIL ERROR: " + ex.ToString());
+                }
+            }
+        }
+
         return Ok();
     }
 }

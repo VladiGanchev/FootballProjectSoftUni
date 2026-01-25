@@ -5,12 +5,13 @@ using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Stripe;
+using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Stripe.Checkout;
 
 namespace FootballProjectSoftUni.Core.Services.Payment
 {
@@ -118,6 +119,76 @@ namespace FootballProjectSoftUni.Core.Services.Payment
             return session.Url; // redirect user to Stripe
         }
 
+        public async Task<bool> RefundTournamentJoinAsync(int orderId, decimal? amount = null, string? reason = null)
+        {
+            var order = await context.TournamentJoinPayments
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (order == null) throw new ArgumentException("Order not found.");
+            if (order.Status != "Paid") throw new InvalidOperationException("Only PAID orders can be refunded.");
+            if (!string.IsNullOrWhiteSpace(order.StripeRefundId) || order.Status == "Refunded")
+                throw new InvalidOperationException("This order is already refunded (or refund is started).");
+
+            if (string.IsNullOrWhiteSpace(order.StripePaymentIntentId))
+                throw new InvalidOperationException("Missing Stripe PaymentIntentId for this order.");
+
+            long? amountCents = null;
+            if (amount.HasValue)
+            {
+                if (amount.Value <= 0) throw new ArgumentException("Refund amount must be > 0.");
+                if (amount.Value > order.Amount) throw new ArgumentException("Refund amount cannot exceed paid amount.");
+
+                amountCents = (long)Math.Round(amount.Value * 100m, MidpointRounding.AwayFromZero);
+            }
+
+            // mark locally
+            order.Status = "RefundPending";
+            order.RefundReason = reason;
+            await context.SaveChangesAsync();
+
+            var refundService = new RefundService();
+
+            var options = new RefundCreateOptions
+            {
+                PaymentIntent = order.StripePaymentIntentId,
+                Amount = amountCents, // null => full refund
+                Reason = string.IsNullOrWhiteSpace(reason) ? null : reason,
+                Metadata = new Dictionary<string, string>
+                {
+                    ["orderId"] = order.Id.ToString(),
+                    ["tournamentId"] = order.TournamentId.ToString(),
+                    ["userId"] = order.UserId
+                }
+            };
+
+            // ✅ idempotency (prevents double refunds)
+            var requestOptions = new RequestOptions
+            {
+                IdempotencyKey = $"refund_order_{order.Id}_{amountCents?.ToString() ?? "full"}"
+            };
+
+            var refund = await refundService.CreateAsync(options, requestOptions);
+
+            order.StripeRefundId = refund.Id;
+
+            if (refund.Status == "succeeded")
+            {
+                order.Status = "Refunded";
+                order.RefundedOnUtc = DateTime.UtcNow;
+                order.RefundAmount = amount ?? order.Amount;
+            }
+            else if (refund.Status == "failed" || refund.Status == "canceled")
+            {
+                order.Status = "RefundFailed";
+            }
+            else
+            {
+                order.Status = "RefundPending";
+            }
+
+            await context.SaveChangesAsync();
+            return true;
+        }
 
     }
 

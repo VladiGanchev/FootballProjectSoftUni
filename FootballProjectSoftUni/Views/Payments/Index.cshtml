@@ -1,0 +1,51 @@
+﻿@using FootballProjectSoftUni.Core.Models.AdminPayments
+@model IEnumerable<AdminPaymentViewModel>
+
+<h2>Payments</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>OrderId</th>
+            <th>User</th>
+            <th>Tournament</th>
+            <th>Team</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Paid On</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.Id</td>
+                <td>@p.UserId</td>
+                <td>@p.TournamentId</td>
+                <td>@p.TeamId</td>
+                <td>@p.Amount €</td>
+                <td>@p.Status</td>
+                <td>@(p.PaidOnUtc?.ToString("dd.MM.yyyy HH:mm") ?? "-")</td>
+                <td>
+                    @if (p.Status == "Paid")
+                    {
+                        <form asp-action="Refund" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="orderId" value="@p.Id" />
+                            <button type="submit"
+                                    class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Сигурен ли си, че искаш refund?');">
+                                Refund
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted">–</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

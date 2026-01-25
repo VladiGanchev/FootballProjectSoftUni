@@ -26,5 +26,9 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
         public string Status { get; set; } = "Pending"; // Pending/Paid/Failed/Expired
         public DateTime CreatedOnUtc { get; set; } = DateTime.UtcNow;
         public DateTime? PaidOnUtc { get; set; }
+        public string? StripeRefundId { get; set; }
+        public DateTime? RefundedOnUtc { get; set; }
+        public decimal? RefundAmount { get; set; }
+        public string? RefundReason { get; set; }
     }
 }

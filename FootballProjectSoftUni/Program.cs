@@ -1,10 +1,23 @@
 
 
+using FootballProjectSoftUni.Core.Contracts.Email;
+using FootballProjectSoftUni.Core.Models.Email;
 using FootballProjectSoftUni.Core.Models.Settings;
+using FootballProjectSoftUni.Core.Services.Email;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using FootballProjectSoftUni.Infrastructure.Data;
+using FootballProjectSoftUni.Core.Services.EmailSender;
 
 var builder = WebApplication.CreateBuilder(args);
+//var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContextConnection' not found.");
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//    options.UseSqlServer(connectionString));
+
+//builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+//    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddApplicationDbContext(builder.Configuration);
 builder.Services.AddApplicationIdentity(builder.Configuration);
@@ -19,6 +32,9 @@ StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddApplicationServices();
+
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 var app = builder.Build();
 

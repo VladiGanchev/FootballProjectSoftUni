@@ -35,18 +35,28 @@
                     <span>Няма оценки</span>
                 }
             </td>
-            <td>
-                <form asp-action="Rate" method="post" class="d-flex">
-                    <input type="hidden" name="refereeId" value="@r.Id" />
-                    <select name="rating" class="form-select form-select-sm w-auto">
-                        @for (int i = 1; i <= 5; i++)
-                        {
-                            <option value="@i">@i</option>
-                        }
-                    </select>
-                    <button type="submit" class="btn btn-sm btn-success ms-2">Запази</button>
-                </form>
-            </td>
+          <td>
+    <div class="d-flex align-items-center gap-2">
+        <form asp-action="Rate" method="post" class="d-flex align-items-center gap-2 m-0">
+            <input type="hidden" name="refereeId" value="@r.Id" />
+
+            <select name="rating" class="form-select form-select-sm w-auto">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <option value="@i">@i</option>
+                }
+            </select>
+
+            <button type="submit" class="btn btn-sm btn-success">Запази</button>
+        </form>
+
+        <a asp-action="Comments"
+           asp-route-id="@r.Id"
+           class="btn btn-sm btn-secondary">
+            Коментари
+        </a>
+    </div>
+</td>
         </tr>
     }
     </tbody>

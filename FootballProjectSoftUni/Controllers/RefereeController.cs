@@ -1,4 +1,5 @@
-﻿using FootballProjectSoftUni.Core.Contracts.Message;
+﻿using FootballProjectSoftUni.Core.Contracts.Email;
+using FootballProjectSoftUni.Core.Contracts.Message;
 using FootballProjectSoftUni.Core.Contracts.Notification;
 using FootballProjectSoftUni.Core.Contracts.Referee;
 using FootballProjectSoftUni.Core.Contracts.Tournament;
@@ -21,13 +22,15 @@ namespace FootballProjectSoftUni.Controllers
         private readonly ITournamentService tournamentService;
         private readonly INotificationService notificationService;
         private readonly IContactMessageService contactMessageService;
+        private readonly IEmailService emailService;
 
-        public RefereeController(IRefereeService _refereeService, ITournamentService _tournamentService, INotificationService _notificationService, IContactMessageService _contactMessageService)
+        public RefereeController(IRefereeService _refereeService, ITournamentService _tournamentService, INotificationService _notificationService, IContactMessageService _contactMessageService, IEmailService _emailService)
         {
             refereeService = _refereeService;
             tournamentService = _tournamentService;
             notificationService = _notificationService;
             contactMessageService = _contactMessageService;
+            emailService = _emailService;
         }
 
         [HttpGet]
@@ -236,10 +239,34 @@ namespace FootballProjectSoftUni.Controllers
                 model.RefereeId       // получател (рефер)
             );
 
+            var email = await refereeService.GetRefereeEmail(model.RefereeId);
+
+            await emailService.SendAsync(email, model.Subject,model.Content);
+
             TempData["Success"] = "Поканата беше изпратена успешно!";
             return RedirectToAction(nameof(Referees));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Comments(string id)
+        {
+            var model = await refereeService.GetCommentsAsync(id);
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddComment(string refereeId, string content)
+        {
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                TempData["Error"] = "Коментарът не може да е празен.";
+                return RedirectToAction(nameof(Comments), new { id = refereeId });
+            }
+
+            await refereeService.AddCommentAsync(refereeId, User.Id(), content);
+
+            return RedirectToAction(nameof(Comments), new { id = refereeId });
+        }
 
 
     }

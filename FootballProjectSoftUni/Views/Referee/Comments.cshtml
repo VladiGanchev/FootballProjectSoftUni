@@ -1,0 +1,31 @@
+﻿@model FootballProjectSoftUni.Core.Models.Referee.RefereeCommentsPageViewModel
+
+<h2>Коментари за @Model.RefereeName</h2>
+
+<hr />
+
+@if (Model.Comments.Any())
+{
+    foreach (var c in Model.Comments)
+    {
+        <div class="border p-2 mb-2 rounded">
+            <strong>@c.UserName</strong>
+            <span class="text-muted">(@c.CreatedOn.ToString("dd.MM.yyyy HH:mm"))</span>
+            <p>@c.Content</p>
+        </div>
+    }
+}
+else
+{
+    <p>Все още няма коментари.</p>
+}
+
+<hr />
+
+<h4>Добави коментар</h4>
+
+<form asp-action="AddComment" method="post">
+    <input type="hidden" name="refereeId" value="@Model.RefereeId" />
+    <textarea name="content" class="form-control mb-2" rows="3"></textarea>
+    <button type="submit" class="btn btn-primary">Публикувай</button>
+</form>

@@ -1,5 +1,6 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.City;
 using FootballProjectSoftUni.Core.Contracts.Coach;
+using FootballProjectSoftUni.Core.Contracts.Email;
 using FootballProjectSoftUni.Core.Contracts.Home;
 using FootballProjectSoftUni.Core.Contracts.Message;
 using FootballProjectSoftUni.Core.Contracts.Notification;
@@ -11,6 +12,8 @@ using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Contracts.TournamentJoinPayment;
 using FootballProjectSoftUni.Core.Services.City;
 using FootballProjectSoftUni.Core.Services.Coach;
+using FootballProjectSoftUni.Core.Services.Email;
+using FootballProjectSoftUni.Core.Services.EmailSender;
 using FootballProjectSoftUni.Core.Services.Home;
 using FootballProjectSoftUni.Core.Services.Message;
 using FootballProjectSoftUni.Core.Services.Notification;
@@ -23,6 +26,7 @@ using FootballProjectSoftUni.Core.Services.TournamentJoinPayment;
 using FootballProjectSoftUni.Infrastructure.Data;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -42,6 +46,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IContactMessageService, ContactMessageService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<ITournamentJoinPaymentService, TournamentJoinPaymentService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IEmailSender, EmailSenderService>();
+
 
             return services;
         }

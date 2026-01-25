@@ -19,5 +19,9 @@ namespace FootballProjectSoftUni.Core.Contracts.Referee
         Task RateRefereeAsync(string refereeId, string userId, int rating);
         Task<bool> AssignExistingRefereeToTournamentAsync(string userId, int tournamentId);
         Task<FootballProjectSoftUni.Infrastructure.Data.Models.Referee?> GetRefereeByUserIdAsync(string userId);
+
+        Task<RefereeCommentsPageViewModel> GetCommentsAsync(string refereeId);
+        Task AddCommentAsync(string refereeId, string userId, string content);
+        Task<string> GetRefereeEmail(string userId);
     }
 }

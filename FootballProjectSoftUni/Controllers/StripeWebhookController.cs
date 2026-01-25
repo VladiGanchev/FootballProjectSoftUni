@@ -1,6 +1,8 @@
-﻿using FootballProjectSoftUni.Core.Contracts.Notification;
+﻿using FootballProjectSoftUni.Core.Contracts.Email;
+using FootballProjectSoftUni.Core.Contracts.Notification;
 using FootballProjectSoftUni.Core.Contracts.Team;
 using FootballProjectSoftUni.Core.Models.Settings;
+using FootballProjectSoftUni.Core.Services.Email;
 using FootballProjectSoftUni.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,17 +21,20 @@ public class StripeWebhookController : ControllerBase
     private readonly StripeSettings settings;
     private readonly ITeamService teamService;
     private INotificationService notificationService;
+    private IEmailService emailService;
 
     public StripeWebhookController(
         ApplicationDbContext context,
         IOptions<StripeSettings> options,
         ITeamService teamService,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        IEmailService emailService)
     {
         this.context = context;
         this.settings = options.Value;
         this.teamService = teamService;
         this.notificationService = notificationService;
+        this.emailService = emailService;
     }
 
     [HttpPost]
@@ -92,8 +97,27 @@ public class StripeWebhookController : ControllerBase
 
             var message =$"✅ Плащането на сумата от {fee} € е успешно! Отборът {teamName} е регистриран за турнир в град {cityName}.";
 
-            // Създаваш известие към потребителя
             await notificationService.CreateNotificationForUserAsync(order.UserId, message);
+
+            var userEmail = await context.Users
+                .Where(u => u.Id == order.UserId)
+                .Select(u => u.Email)
+                .FirstOrDefaultAsync();
+
+            if (!string.IsNullOrWhiteSpace(userEmail))
+            {
+                var subject = "Успешно плащане ⚽";
+                var body = $"<p>Плащането е успешно. Отборът <b>{teamName}</b> е регистриран!</p>";
+
+                try
+                {
+                    await emailService.SendAsync(userEmail, subject, body);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("EMAIL ERROR: " + ex.ToString());
+                }
+            }
         }
 
         return Ok();

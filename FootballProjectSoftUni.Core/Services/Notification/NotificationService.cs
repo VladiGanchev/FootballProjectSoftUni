@@ -1,4 +1,5 @@
-﻿using FootballProjectSoftUni.Core.Contracts.Notification;
+﻿using FootballProjectSoftUni.Core.Contracts.Email;
+using FootballProjectSoftUni.Core.Contracts.Notification;
 using FootballProjectSoftUni.Core.Models.Notification;
 using FootballProjectSoftUni.Infrastructure.Data;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
@@ -15,10 +16,12 @@ namespace FootballProjectSoftUni.Core.Services.Notification
     public class NotificationService : INotificationService
     {
         private readonly ApplicationDbContext data;
+        private readonly IEmailService emailService;
 
-        public NotificationService(ApplicationDbContext _data)
+        public NotificationService(ApplicationDbContext _data, IEmailService _emailService)
         {
             data = _data;
+            emailService = _emailService;
         }
         public async Task<IPagedList<NotificationViewModel>> AllNotificationsAsync(string userId, int pageNumber, int pageSize)
         {
@@ -55,16 +58,29 @@ namespace FootballProjectSoftUni.Core.Services.Notification
             if (!coachIds.Any())
                 return;
 
+            var userEmails = await data.Users
+                .Where(u => coachIds.Contains(u.Id))
+                .Select(u => u.Email)
+                .ToListAsync();
+
             var notifications = coachIds.Select(coachId => new FootballProjectSoftUni.Infrastructure.Data.Models.Notification
             {
                 UserId = coachId,
                 Message = message,
-                CreatedOn = DateTime.Now,
+                CreatedOn = DateTime.UtcNow,
                 IsRead = false
             }).ToList();
 
             await data.Notifications.AddRangeAsync(notifications);
             await data.SaveChangesAsync();
+
+            string subject = "Нов Турнир!";
+            string content = message;
+
+            foreach (var email in userEmails)
+            {
+                await emailService.SendAsync(email, subject, content);
+            }
         }
 
         public async Task<int> GetUnreadCountAsync(string userId)

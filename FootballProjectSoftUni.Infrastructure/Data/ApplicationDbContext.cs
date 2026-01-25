@@ -128,6 +128,11 @@ namespace FootballProjectSoftUni.Infrastructure.Data
                 .HasForeignKey(m => m.TournamentId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<RefereeComment>()
+                .HasOne(c => c.Referee)
+                .WithMany()
+                .HasForeignKey(c => c.RefereeId)
+                .OnDelete(DeleteBehavior.Cascade);
 
 
             if (_seedDb)
@@ -180,6 +185,8 @@ namespace FootballProjectSoftUni.Infrastructure.Data
         public DbSet<Match> Matches { get; set; }
         public DbSet<TournamentStats> AppStats { get; set; } = null!;
         public DbSet<TournamentJoinPayment> TournamentJoinPayments { get; set; }
+        public DbSet<RefereeComment> RefereeComments { get; set; } = null!;
+
 
     }
 }

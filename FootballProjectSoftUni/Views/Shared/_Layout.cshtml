@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using FootballProjectSoftUni.Extensions
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -39,7 +40,7 @@
     <footer class="border-top footer text-muted">
         <div class="container d-flex justify-content-between align-items-center">
             <span>&copy; @DateTime.Today.Year - FootballProjectSoftUni</span>
-            @if (User.Identity.IsAuthenticated)
+            @if (User.Identity.IsAuthenticated && !User.IsAdmin() )
             {
                 <a asp-controller="ContactMessage" asp-action="Create" class="text-decoration-none">
                     Свържи се с организаторите

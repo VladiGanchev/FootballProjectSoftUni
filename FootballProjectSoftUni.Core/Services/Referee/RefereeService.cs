@@ -330,5 +330,63 @@ namespace FootballProjectSoftUni.Core.Services.Referee
                 .FirstOrDefaultAsync(r => r.Id == userId);
         }
 
+        public async Task<RefereeCommentsPageViewModel> GetCommentsAsync(string refereeId)
+        {
+            var referee = await context.Referees
+                .FirstOrDefaultAsync(r => r.Id == refereeId);
+
+            if (referee == null)
+            {
+                throw new ArgumentException("Invalid referee");
+            }
+
+            var comments = await context.RefereeComments
+       .Where(c => c.RefereeId == refereeId)
+       .OrderByDescending(c => c.CreatedOn)
+       .Select(c => new RefereeCommentViewModel
+       {
+           Content = c.Content,
+           CreatedOn = c.CreatedOn,
+           UserName = context.Users
+               .Where(u => u.Id == c.UserId)
+               .Select(u => $"{u.FirstName} {u.LastName}")
+               .FirstOrDefault()!
+       })
+       .ToListAsync();
+            return new RefereeCommentsPageViewModel
+            {
+                RefereeId = refereeId,
+                RefereeName = referee.Name,
+                Comments = comments
+            };
+        }
+
+        public async Task AddCommentAsync(string refereeId, string userId, string content)
+        {
+            var comment = new RefereeComment
+            {
+                RefereeId = refereeId,
+                UserId = userId,
+                Content = content
+            };
+
+            context.RefereeComments.Add(comment);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<string> GetRefereeEmail(string userId)
+        {
+            var email = await context.Users
+                .Where(u => u.Id == userId)
+                .Select(u => u.Email)
+                .FirstOrDefaultAsync();
+
+            if (email == null)
+            {
+                throw new ArgumentException("Invalid referee user id.");
+            }
+
+            return email;
+        }
     }
 }

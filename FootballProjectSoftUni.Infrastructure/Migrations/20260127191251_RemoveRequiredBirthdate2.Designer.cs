@@ -4,6 +4,7 @@ using FootballProjectSoftUni.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballProjectSoftUni.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260127191251_RemoveRequiredBirthdate2")]
+    partial class RemoveRequiredBirthdate2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,7 +103,7 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                         {
                             Id = "600bafb9-a73d-4489-a387-643c2b8ae96c",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "bb651cdd-eccd-4570-a8e4-f14d90a0be61",
+                            ConcurrencyStamp = "0a71d336-bb92-45bf-a4b9-7bae8c8e5357",
                             Email = "admin@mail.com",
                             EmailConfirmed = false,
                             FirstName = "Great",
@@ -109,9 +111,9 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@MAIL.COM",
                             NormalizedUserName = "ADMIN@MAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEAfNA3nUR9eS3k5yX0uYdnl3BFu7iJnPfsL8O37lLAnfdmT0lbfE4AxuT2JNGTsXog==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEP6/g/PRfu8WxpamhtMjeeUkoMiHIi/tkR2XDhBeBN4FRpdllrMWAFuExZl89fKJTg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4362b4e7-451d-43f8-b1e5-f265cc6c3432",
+                            SecurityStamp = "c145ff08-f945-4c76-9c83-dd05bb1d4349",
                             TwoFactorEnabled = false,
                             UserName = "admin@mail.com"
                         });
@@ -494,6 +496,7 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime?>("BirthDate")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")

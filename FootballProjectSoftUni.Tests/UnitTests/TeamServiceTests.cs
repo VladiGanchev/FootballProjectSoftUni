@@ -686,52 +686,42 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             var model1 = new PlayerViewModel()
             {
                 Name = "1",
-                BirthDate = "20.02.2003"
             };
             var model2 = new PlayerViewModel()
             {
                 Name = "2",
-                BirthDate = "20.02.2003"
             };
             var model3 = new PlayerViewModel()
             {
                 Name = "3",
-                BirthDate = "20.02.2003"
             };
             var model4 = new PlayerViewModel()
             {
                 Name = "4",
-                BirthDate = "20.02.2003"
             };
             var model5 = new PlayerViewModel()
             {
                 Name = "5",
-                BirthDate = "20.02.2003"
             };
             var model6 = new PlayerViewModel()
             {
                 Name = "6",
-                BirthDate = "20.02.2003"
             };
             var model7 = new PlayerViewModel()
             {
                 Name = "7",
-                BirthDate = "20.02.2003"
             };
             var model8 = new PlayerViewModel()
             {
                 Name = "8",
-                BirthDate = "20.02.2003"
             };
             var model9 = new PlayerViewModel()
             {
                 Name = "9",
-                BirthDate = "20.02.2003"
             };
             var model10 = new PlayerViewModel()
             {
                 Name = "10",
-                BirthDate = "20.02.2003"
             };
 
             models.Add(model1);
@@ -757,52 +747,42 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             var model1 = new PlayerViewModel()
             {
                 Name = "1",
-                BirthDate = "19/03/2024 12:32"
             };
             var model2 = new PlayerViewModel()
             {
                 Name = "2",
-                BirthDate = "20/02/2003"
             };
             var model3 = new PlayerViewModel()
             {
                 Name = "3",
-                BirthDate = "20/02/2003"
             };
             var model4 = new PlayerViewModel()
             {
                 Name = "4",
-                BirthDate = "20/02/2003"
             };
             var model5 = new PlayerViewModel()
             {
                 Name = "5",
-                BirthDate = "20/02/2003"
             };
             var model6 = new PlayerViewModel()
             {
                 Name = "6",
-                BirthDate = "20/02/2003"
             };
             var model7 = new PlayerViewModel()
             {
                 Name = "7",
-                BirthDate = "20/02/2003"
             };
             var model8 = new PlayerViewModel()
             {
                 Name = "8",
-                BirthDate = "20/02/2003"
             };
             var model9 = new PlayerViewModel()
             {
                 Name = "9",
-                BirthDate = "20/02/2003"
             };
             var model10 = new PlayerViewModel()
             {
                 Name = "10",
-                BirthDate = "20/02/2003"
             };
 
             models.Add(model1);
@@ -828,53 +808,43 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             var model1 = new PlayerViewModel()
             {
                 Name = "1",
-                BirthDate = "19/03/2004 12:32",
                 
             };
             var model2 = new PlayerViewModel()
             {
                 Name = "2",
-                BirthDate = "19/03/2004 12:32"
             };
             var model3 = new PlayerViewModel()
             {
                 Name = "3",
-                BirthDate = "19/03/2004 12:32"
             };
             var model4 = new PlayerViewModel()
             {
                 Name = "4",
-                BirthDate = "19/03/2004 12:32"
             };
             var model5 = new PlayerViewModel()
             {
                 Name = "5",
-                BirthDate = "19/03/2004 12:32"
             };
             var model6 = new PlayerViewModel()
             {
                 Name = "6",
-                BirthDate = "19/03/2004 12:32"
             };
             var model7 = new PlayerViewModel()
             {
                 Name = "7",
-                BirthDate = "19/03/2004 12:32"
             };
             var model8 = new PlayerViewModel()
             {
                 Name = "8",
-                BirthDate = "19/03/2004 12:32"
             };
             var model9 = new PlayerViewModel()
             {
                 Name = "9",
-                BirthDate = "19/03/2004 12:32"
             };
             var model10 = new PlayerViewModel()
             {
                 Name = "10",
-                BirthDate = "19/03/2004 12:32"
             };
 
             models.Add(model1);

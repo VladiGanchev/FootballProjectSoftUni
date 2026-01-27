@@ -12,8 +12,5 @@ namespace FootballProjectSoftUni.Core.Models.Player
     {
         [Required(ErrorMessage = RequireErrorMessage)]
         public string Name { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Please enter the player's date of birth.")]
-        public string BirthDate { get; set; } = string.Empty;
     }
 }

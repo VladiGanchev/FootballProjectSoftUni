@@ -14,8 +14,7 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
         [Required]
         public string Name { get; set; } = string.Empty;
 
-        [Required]
-        public DateTime BirthDate { get; set; }
+        public DateTime? BirthDate { get; set; }
 
         public int? TeamId { get; set; }
 

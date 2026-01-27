@@ -26,19 +26,6 @@
                 <input asp-for="Team1Goals" class="form-control" type="number" min="0" />
                 <span asp-validation-for="Team1Goals" class="text-danger"></span>
             </div>
-
-            @if (Model.Team1Id.HasValue)
-            {
-                <div class="form-check">
-                    <input class="form-check-input"
-                           type="radio"
-                           asp-for="WinnerTeamId"
-                           value="@Model.Team1Id.Value" />
-                    <label class="form-check-label">
-                        Победител: @Model.Team1Name
-                    </label>
-                </div>
-            }
         </div>
 
         <div class="col-md-6">
@@ -49,25 +36,8 @@
                 <input asp-for="Team2Goals" class="form-control" type="number" min="0" />
                 <span asp-validation-for="Team2Goals" class="text-danger"></span>
             </div>
+     </div>
 
-            @if (Model.Team2Id.HasValue)
-            {
-                <div class="form-check">
-                    <input class="form-check-input"
-                           type="radio"
-                           asp-for="WinnerTeamId"
-                           value="@Model.Team2Id.Value" />
-                    <label class="form-check-label">
-                        Победител: @Model.Team2Name
-                    </label>
-                </div>
-            }
-        </div>
-
-    </div>
-
-    <div class="mt-2 text-center">
-        <span asp-validation-for="WinnerTeamId" class="text-danger fw-bold"></span>
     </div>
 
     <button type="submit" class="btn btn-primary mt-4 w-100 fw-bold">

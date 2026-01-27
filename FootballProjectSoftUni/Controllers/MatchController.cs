@@ -49,7 +49,6 @@ namespace FootballProjectSoftUni.Controllers
                 Team2Name = match.Team2?.Name,
                 Team1Goals = match.Team1Goals,
                 Team2Goals = match.Team2Goals,
-                WinnerTeamId = match.WinnerTeamId ?? 0
             };
 
             return View(model);
@@ -69,13 +68,15 @@ namespace FootballProjectSoftUni.Controllers
             {
                 return NotFound();
             }
-            if (!model.WinnerTeamId.HasValue)
+
+            if (model.Team1Goals == model.Team2Goals)
             {
-                ModelState.AddModelError(nameof(model.WinnerTeamId), "Моля, избери победител.");
+                ModelState.AddModelError("", "Равенство не е позволено. Моля, въведи победител.");
             }
-            else if (model.WinnerTeamId != match.Team1Id && model.WinnerTeamId != match.Team2Id)
+
+            if (model.Team1Goals < 0 || model.Team2Goals < 0)
             {
-                ModelState.AddModelError(nameof(model.WinnerTeamId), "Invalid winner.");
+                ModelState.AddModelError("", "Головете не могат да са отрицателни.");
             }
 
             if (match.Team1Id.HasValue)
@@ -92,13 +93,20 @@ namespace FootballProjectSoftUni.Controllers
 
             if (!ModelState.IsValid)
             {
-
                 return View(model);
             }
 
             match.Team1Goals = model.Team1Goals;
             match.Team2Goals = model.Team2Goals;
-            match.WinnerTeamId = model.WinnerTeamId;
+
+            if (model.Team1Goals > model.Team2Goals)
+            {
+                match.WinnerTeamId = match.Team1Id;
+            }
+            else
+            {
+                match.WinnerTeamId = match.Team2Id;
+            }
 
             await tournamentService.MoveWinnerToNextRoundAsync(match.Id);
             await data.SaveChangesAsync();

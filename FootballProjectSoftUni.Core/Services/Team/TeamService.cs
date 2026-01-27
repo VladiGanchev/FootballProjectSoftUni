@@ -235,33 +235,10 @@ namespace FootballProjectSoftUni.Core.Services.Team
 
             foreach (var playerViewModel in viewModel.Players)
             {
-                DateTime birthdate;
-
-                if (!DateTime.TryParseExact(playerViewModel.BirthDate, RequiredDateTimeFormat,
-                    CultureInfo.InvariantCulture, DateTimeStyles.None, out birthdate))
-                {
-                    return new ServiceError()
-                    {
-                        Message = $"Invalid date, format must be {RequiredDateTimeFormat}"
-                    };
-                }
-
-                var today = DateTime.Today;
-                var age = today.Year - birthdate.Year;
-                if (birthdate.Date > today.AddYears(-age)) age--;
-
-                if (age < 18)
-                {
-                    return new ServiceError()
-                    {
-                        Message = "Players must be at least 18 years old to participate."
-                    };
-                }
 
                 var player = new Player
                 {
                     Name = playerViewModel.Name,
-                    BirthDate = birthdate
                 };
 
                 players.Add(player);
@@ -346,22 +323,8 @@ namespace FootballProjectSoftUni.Core.Services.Team
 
             foreach (var p in viewModel.Players)
             {
-                if (!DateTime.TryParseExact(p.BirthDate, RequiredDateTimeFormat,
-                    CultureInfo.InvariantCulture, DateTimeStyles.None, out var birthdate))
-                {
-                    throw new InvalidOperationException($"Invalid date, format must be {RequiredDateTimeFormat}");
-                }
 
-                var today = DateTime.Today;
-                var age = today.Year - birthdate.Year;
-                if (birthdate.Date > today.AddYears(-age)) age--;
-
-                if (age < 18)
-                {
-                    throw new InvalidOperationException("Players must be at least 18 years old to participate.");
-                }
-
-                players.Add(new Player { Name = p.Name, BirthDate = birthdate });
+                players.Add(new Player { Name = p.Name });
             }
 
             context.Players.AddRange(players);

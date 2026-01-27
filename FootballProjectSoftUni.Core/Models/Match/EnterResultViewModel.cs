@@ -20,7 +20,6 @@ namespace FootballProjectSoftUni.Core.Models.Match
         public int? Team1Goals { get; set; }
         public int? Team2Goals { get; set; }
 
-        public int? WinnerTeamId { get; set; } // ще се избира от радиобутон
     }
 
 }

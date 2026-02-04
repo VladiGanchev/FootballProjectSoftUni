@@ -1,6 +1,7 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.City;
 using FootballProjectSoftUni.Core.Contracts.Coach;
 using FootballProjectSoftUni.Core.Contracts.Referee;
+using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Models.City;
 using FootballProjectSoftUni.Core.Models.Coach;
 using FootballProjectSoftUni.Core.Services.City;
@@ -19,10 +20,11 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         private ICityService _cityService;
         private IRefereeService _refereeService;
         private ICoachService _coachService;
+        private ITournamentService tournamentService;
 
         [OneTimeSetUp]
 
-        public void SetUp() => _cityService = new CityService(_data);
+        public void SetUp() => _cityService = new CityService(_data, tournamentService);
 
         [Test]
         public async Task FindTownAsync_ShouldReturnCorrectCity_WhenCityExists()

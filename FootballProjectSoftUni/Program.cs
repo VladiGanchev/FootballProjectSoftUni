@@ -1,15 +1,17 @@
 
 
 using FootballProjectSoftUni.Core.Contracts.Email;
+using FootballProjectSoftUni.Core.Job;
 using FootballProjectSoftUni.Core.Models.Email;
 using FootballProjectSoftUni.Core.Models.Settings;
 using FootballProjectSoftUni.Core.Services.Email;
-using Microsoft.AspNetCore.Mvc;
-using Stripe;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using FootballProjectSoftUni.Infrastructure.Data;
 using FootballProjectSoftUni.Core.Services.EmailSender;
+using FootballProjectSoftUni.Infrastructure.Data;
+using Hangfire;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 //var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContextConnection' not found.");
@@ -36,7 +38,27 @@ builder.Services.AddApplicationServices();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
 builder.Services.AddTransient<IEmailService, EmailService>();
 
+builder.Services.AddHangfire(config =>
+{
+    config.UseSqlServerStorage(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+    );
+});
+
+builder.Services.AddHangfireServer();
+
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var recurringJobs = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
+
+    recurringJobs.AddOrUpdate<TournamentReminderJob>(
+        "tournament-reminders",
+        job => job.SendRemindersAsync(),
+        "*/30 * * * *"
+    );
+}
 
 if (app.Environment.IsDevelopment())
 {
@@ -57,6 +79,8 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseHangfireDashboard("/hangfire");
 
 app.UseEndpoints(endpoints =>
 {

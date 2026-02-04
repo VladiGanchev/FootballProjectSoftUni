@@ -12,44 +12,20 @@ namespace FootballProjectSoftUni.Controllers
     [Authorize]
     public class MatchController : Controller
     {
-        private readonly ApplicationDbContext data;
         private readonly ITournamentService tournamentService;
 
-        public MatchController(ApplicationDbContext _data, ITournamentService _tournamentService)
+        public MatchController(ITournamentService _tournamentService)
         {
-            data = _data;
             tournamentService = _tournamentService;
         }
 
         [HttpGet]
         public async Task<IActionResult> EnterResult(int id)
         {
-            if (!User.IsAdmin())
-            {
-                return Unauthorized();
-            }
+            if (!User.IsAdmin()) return Unauthorized();
 
-            var match = await data.Matches
-                .Include(m => m.Team1)
-                .Include(m => m.Team2)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (match == null)
-            {
-                return NotFound();
-            }
-
-            var model = new EnterResultViewModel
-            {
-                MatchId = match.Id,
-                TournamentId = match.TournamentId,
-                Team1Id = match.Team1Id,
-                Team1Name = match.Team1?.Name,
-                Team2Id = match.Team2Id,
-                Team2Name = match.Team2?.Name,
-                Team1Goals = match.Team1Goals,
-                Team2Goals = match.Team2Goals,
-            };
+            var model = await tournamentService.GetEnterResultModelAsync(id);
+            if (model == null) return NotFound();
 
             return View(model);
         }
@@ -62,59 +38,26 @@ namespace FootballProjectSoftUni.Controllers
                 return Unauthorized();
             }
 
-            var match = await data.Matches.FirstOrDefaultAsync(m => m.Id == model.MatchId);
-
-            if (match == null)
-            {
-                return NotFound();
-            }
-
-            if (model.Team1Goals == model.Team2Goals)
-            {
-                ModelState.AddModelError("", "Равенство не е позволено. Моля, въведи победител.");
-            }
-
-            if (model.Team1Goals < 0 || model.Team2Goals < 0)
-            {
-                ModelState.AddModelError("", "Головете не могат да са отрицателни.");
-            }
-
-            if (match.Team1Id.HasValue)
-            {
-                var t1 = await data.Teams.FindAsync(match.Team1Id.Value);
-                model.Team1Name = t1?.Name;
-            }
-
-            if (match.Team2Id.HasValue)
-            {
-                var t2 = await data.Teams.FindAsync(match.Team2Id.Value);
-                model.Team2Name = t2?.Name;
-            }
-
             if (!ModelState.IsValid)
             {
-                return View(model);
+                var refill0 = await tournamentService.GetEnterResultModelAsync(model.MatchId);
+                return View(refill0 ?? model);
             }
 
-            match.Team1Goals = model.Team1Goals;
-            match.Team2Goals = model.Team2Goals;
+            var result = await tournamentService.EnterMatchResultAsync(model);
 
-            if (model.Team1Goals > model.Team2Goals)
+            if (!result.ok)
             {
-                match.WinnerTeamId = match.Team1Id;
-            }
-            else
-            {
-                match.WinnerTeamId = match.Team2Id;
+                ModelState.AddModelError("", result.error!);
+
+                var refill = await tournamentService.GetEnterResultModelAsync(model.MatchId);
+                return View(refill ?? model);
             }
 
-            await tournamentService.MoveWinnerToNextRoundAsync(match.Id);
-            await data.SaveChangesAsync();
-
-            var details = await tournamentService.GetTournamentDetailsAsync(model.TournamentId);
+            var details = await tournamentService.GetTournamentDetailsAsync(result.tournamentId);
             var info = details.GetInformation();
 
-            return RedirectToAction("Details", "Tournament", new { id = model.TournamentId, information = info });
+            return RedirectToAction("Details", "Tournament", new { id = result.tournamentId, information = info });
         }
 
 

@@ -17,7 +17,7 @@ namespace FootballProjectSoftUni.Core.Contracts.Team
         Task<ServiceError> JoinTeamAsync(TeamRegistrationViewModel viewModel, int id, string UserId);
 
         Task<int> CreateTeamDraftAsync(TeamRegistrationViewModel viewModel, string userId);
-        Task FinalizeJoinAsync(int tournamentId, string userId, int teamId);
+        Task FinalizeJoinAsync(int tournamentId, string userId, int teamId, int cityId);
         Task<int?> GetCoachTeamIdAsync(string userId);
     }
 }

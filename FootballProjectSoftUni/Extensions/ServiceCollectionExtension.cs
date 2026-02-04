@@ -6,10 +6,13 @@ using FootballProjectSoftUni.Core.Contracts.Message;
 using FootballProjectSoftUni.Core.Contracts.Notification;
 using FootballProjectSoftUni.Core.Contracts.Partner;
 using FootballProjectSoftUni.Core.Contracts.Payment;
+using FootballProjectSoftUni.Core.Contracts.Profile;
 using FootballProjectSoftUni.Core.Contracts.Referee;
 using FootballProjectSoftUni.Core.Contracts.Team;
 using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Contracts.TournamentJoinPayment;
+using FootballProjectSoftUni.Core.Contracts.TournamentReminder;
+using FootballProjectSoftUni.Core.Job;
 using FootballProjectSoftUni.Core.Services.City;
 using FootballProjectSoftUni.Core.Services.Coach;
 using FootballProjectSoftUni.Core.Services.Email;
@@ -19,10 +22,12 @@ using FootballProjectSoftUni.Core.Services.Message;
 using FootballProjectSoftUni.Core.Services.Notification;
 using FootballProjectSoftUni.Core.Services.Partner;
 using FootballProjectSoftUni.Core.Services.Payment;
+using FootballProjectSoftUni.Core.Services.Profile;
 using FootballProjectSoftUni.Core.Services.Referee;
 using FootballProjectSoftUni.Core.Services.Team;
 using FootballProjectSoftUni.Core.Services.Tournament;
 using FootballProjectSoftUni.Core.Services.TournamentJoinPayment;
+using FootballProjectSoftUni.Core.Services.TournamentReminder;
 using FootballProjectSoftUni.Infrastructure.Data;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Identity;
@@ -48,6 +53,10 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<ITournamentJoinPaymentService, TournamentJoinPaymentService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IEmailSender, EmailSenderService>();
+            services.AddScoped<ITournamentReminderService, TournamentReminderService>();
+            services.AddScoped<IProfileService, ProfileService>();
+            services.AddScoped<TournamentReminderJob>();
+
 
 
             return services;

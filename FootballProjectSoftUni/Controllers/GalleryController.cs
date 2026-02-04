@@ -74,7 +74,6 @@ namespace FootballProjectSoftUni.Controllers
                 return BadRequest();
             }
 
-            // Малка защита: да няма пътеки вътре
             fileName = Path.GetFileName(fileName);
 
             var root = Directory.GetCurrentDirectory();

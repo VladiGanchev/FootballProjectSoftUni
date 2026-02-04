@@ -166,9 +166,10 @@ namespace FootballProjectSoftUni.Core.Services.Coach
 
             var teamId = coach.TeamId;
 
-            // 1) Махаме участието му като Coach от всички турнири
+            // 1) Махаме участията му като Coach САМО от активни/предстоящи турнири
             var coachParticipations = await context.TournamentsParticipants
                 .Where(tp => tp.ParticipantId == userId && tp.Role == "Coach")
+                .Where(tp => tp.Tournament.EndDate > DateTime.UtcNow)
                 .ToListAsync();
 
             if (coachParticipations.Any())
@@ -176,72 +177,91 @@ namespace FootballProjectSoftUni.Core.Services.Coach
                 context.TournamentsParticipants.RemoveRange(coachParticipations);
             }
 
-            // 2) Ако има отбор – чистим всичко свързано с него
             if (teamId != null)
             {
-                // Всички връзки team–tournament
-                var tournamentsTeams = await context.TournamentsTeams
-                    .Where(tt => tt.TeamId == teamId)
+                // 2) Махаме отбора от активни/предстоящи турнири (не пипаме миналите, за да остане историята)
+                var activeTournamentTeams = await context.TournamentsTeams
+                    .Where(tt => tt.TeamId == teamId.Value)
+                    .Where(tt => tt.Tournament.EndDate > DateTime.UtcNow)
                     .ToListAsync();
 
-                if (tournamentsTeams.Any())
+                if (activeTournamentTeams.Any())
                 {
-                    var tournamentIds = tournamentsTeams
+                    var affectedTournamentIds = activeTournamentTeams
                         .Select(tt => tt.TournamentId)
                         .Distinct()
                         .ToList();
 
-                    // Обновяваме NumberOfTeams за всеки турнир
+                    context.TournamentsTeams.RemoveRange(activeTournamentTeams);
+
+                    // 2.1) Обновяваме NumberOfTeams за засегнатите турнири
                     var tournaments = await context.Tournaments
-                        .Where(t => tournamentIds.Contains(t.Id))
+                        .Where(t => affectedTournamentIds.Contains(t.Id))
                         .ToListAsync();
 
                     foreach (var t in tournaments)
                     {
                         t.NumberOfTeams = await context.TournamentsTeams
-                            .Where(tt => tt.TournamentId == t.Id && tt.TeamId != teamId)
+                            .Where(tt => tt.TournamentId == t.Id && tt.TeamId != teamId.Value)
                             .CountAsync();
                     }
-
-                    context.TournamentsTeams.RemoveRange(tournamentsTeams);
                 }
 
-                // Играчите от отбора
-                var players = await context.Players
-                    .Where(p => p.TeamId == teamId)
-                    .ToListAsync();
+                // 3) Ако има мачове (история) -> НЕ трим отбора, защото Matches сочат към него
+                var hasMatches = await context.Matches
+                    .AnyAsync(m => m.Team1Id == teamId.Value
+                                || m.Team2Id == teamId.Value
+                                || m.WinnerTeamId == teamId.Value);
 
-                if (players.Any())
+                if (hasMatches)
                 {
-                    context.Players.RemoveRange(players);
+                    // Оставяме историята. Разкачаме coach-а от отбора, за да не държи TeamId
+                    coach.TeamId = null;
                 }
-
-                // Самия отбор
-                var team = await context.Teams
-                    .FirstOrDefaultAsync(t => t.Id == teamId);
-
-                if (team != null)
+                else
                 {
-                    var cityBestTeams = await context.CityBestTeams
-                        .Where(cbt => cbt.TeamId == teamId)
+                    // Няма мачове -> безопасно е да изтрием всичко за този отбор
+
+                    var tournamentsTeamsAll = await context.TournamentsTeams
+                        .Where(tt => tt.TeamId == teamId.Value)
                         .ToListAsync();
+                    if (tournamentsTeamsAll.Any())
+                    {
+                        context.TournamentsTeams.RemoveRange(tournamentsTeamsAll);
+                    }
 
+                    var players = await context.Players
+                        .Where(p => p.TeamId == teamId.Value)
+                        .ToListAsync();
+                    if (players.Any())
+                    {
+                        context.Players.RemoveRange(players);
+                    }
+
+                    var cityBestTeams = await context.CityBestTeams
+                        .Where(cbt => cbt.TeamId == teamId.Value)
+                        .ToListAsync();
                     if (cityBestTeams.Any())
                     {
                         context.CityBestTeams.RemoveRange(cityBestTeams);
-                        await context.SaveChangesAsync();
                     }
 
-                    context.Teams.Remove(team);
+                    var team = await context.Teams
+                        .FirstOrDefaultAsync(t => t.Id == teamId.Value);
+                    if (team != null)
+                    {
+                        context.Teams.Remove(team);
+                    }
                 }
             }
 
-            // 3) Накрая трим самия coach
+            // 4) Накрая махаме самия Coach запис (ролята)
             context.Coaches.Remove(coach);
 
             await context.SaveChangesAsync();
             return true;
         }
+
 
     }
 }

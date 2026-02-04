@@ -362,7 +362,7 @@ namespace FootballProjectSoftUni.Core.Services.Team
             return teamId;
         }
 
-        public async Task FinalizeJoinAsync(int tournamentId, string userId, int teamId)
+        public async Task FinalizeJoinAsync(int tournamentId, string userId, int teamId, int cityId)
         {
             var tournament = await context.Tournaments.FirstOrDefaultAsync(t => t.Id == tournamentId);
             if (tournament == null) throw new ArgumentException("Tournament not found.");
@@ -406,6 +406,22 @@ namespace FootballProjectSoftUni.Core.Services.Team
                 });
             }
 
+            await context.SaveChangesAsync();
+
+            var exists = await context.CityBestTeams
+       .AnyAsync(cb => cb.CityId == cityId && cb.TeamId == teamId);
+
+            if (exists)
+                return;
+
+            var entry = new CityBestTeam
+            {
+                CityId = cityId,
+                TeamId = teamId,
+                WinsInCity = 0
+            };
+
+            context.CityBestTeams.Add(entry);
             await context.SaveChangesAsync();
 
             // 3) Update NumberOfTeams + bracket only if new team added

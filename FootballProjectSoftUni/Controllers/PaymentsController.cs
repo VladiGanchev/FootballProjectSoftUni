@@ -10,12 +10,10 @@ namespace FootballProjectSoftUni.Controllers
 {
     public class PaymentsController : Controller
     {
-        private readonly ApplicationDbContext context;
         private readonly IPaymentService paymentService;
 
-        public PaymentsController(ApplicationDbContext context, IPaymentService paymentService)
+        public PaymentsController(IPaymentService paymentService)
         {
-            this.context = context;
             this.paymentService = paymentService;
         }
 
@@ -26,20 +24,7 @@ namespace FootballProjectSoftUni.Controllers
                 return Unauthorized();
             }
 
-            var payments = await context.TournamentJoinPayments
-                .OrderByDescending(p => p.PaidOnUtc)
-                .Select(p => new AdminPaymentViewModel
-                {
-                    Id = p.Id,
-                    UserId = p.UserId,
-                    TournamentId = p.TournamentId,
-                    TeamId = p.TeamId,
-                    Amount = p.Amount,
-                    Status = p.Status,
-                    PaidOnUtc = p.PaidOnUtc
-                })
-                .ToListAsync();
-
+            var payments = await paymentService.GetAllTournamentJoinPaymentsAsync();
             return View(payments);
         }
 

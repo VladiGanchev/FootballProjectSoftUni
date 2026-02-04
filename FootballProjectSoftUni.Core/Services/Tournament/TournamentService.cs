@@ -496,5 +496,76 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
             await data.SaveChangesAsync();
         }
 
+        public async Task<EnterResultViewModel?> GetEnterResultModelAsync(int matchId)
+        {
+            var match = await data.Matches
+                .Include(m => m.Team1)
+                .Include(m => m.Team2)
+                .FirstOrDefaultAsync(m => m.Id == matchId);
+
+            if (match == null)
+            {
+                return null;
+            }
+
+            return new EnterResultViewModel
+            {
+                MatchId = match.Id,
+                TournamentId = match.TournamentId,
+
+                Team1Id = match.Team1Id,
+                Team1Name = match.Team1?.Name,
+
+                Team2Id = match.Team2Id,
+                Team2Name = match.Team2?.Name,
+
+                Team1Goals = match.Team1Goals,
+                Team2Goals = match.Team2Goals
+            };
+        }
+
+            public async Task<(bool ok, string? error, int tournamentId)> EnterMatchResultAsync(EnterResultViewModel model)
+        {
+            // 1) намираме мача
+            var match = await data.Matches.FirstOrDefaultAsync(m => m.Id == model.MatchId);
+
+            if (match == null)
+            {
+                return (false, "Match not found.", 0);
+            }
+
+            // 2) бизнес валидации
+            if (model.Team1Goals < 0 || model.Team2Goals < 0)
+            {
+                return (false, "Головете не могат да са отрицателни.", match.TournamentId);
+            }
+
+            if (model.Team1Goals == model.Team2Goals)
+            {
+                return (false, "Равенство не е позволено. Моля, въведи победител.", match.TournamentId);
+            }
+
+            // 3) записваме резултата
+            match.Team1Goals = model.Team1Goals;
+            match.Team2Goals = model.Team2Goals;
+
+            // 4) winner
+            if (model.Team1Goals > model.Team2Goals)
+            {
+                match.WinnerTeamId = match.Team1Id;
+            }
+            else
+            {
+                match.WinnerTeamId = match.Team2Id;
+            }
+
+            // 5) местим победителя в следващия рунд
+            await MoveWinnerToNextRoundAsync(match.Id);
+
+            // 6) save
+            await data.SaveChangesAsync();
+
+            return (true, null, match.TournamentId);
+        }
     }
 }

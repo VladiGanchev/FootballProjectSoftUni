@@ -11,6 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Hangfire" Version="1.8.22" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.22" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.22" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.35" />
     <PackageReference Include="Stripe.net" Version="50.2.0" />
     <PackageReference Include="X.PagedList.Mvc.Core" Version="9.1.2" />

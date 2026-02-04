@@ -1,4 +1,5 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Payment;
+using FootballProjectSoftUni.Core.Models.AdminPayments;
 using FootballProjectSoftUni.Core.Models.Settings;
 using FootballProjectSoftUni.Infrastructure.Data;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
@@ -190,6 +191,23 @@ namespace FootballProjectSoftUni.Core.Services.Payment
             return true;
         }
 
+        public async Task<ICollection<AdminPaymentViewModel>> GetAllTournamentJoinPaymentsAsync()
+        {
+            return await context.TournamentJoinPayments
+                .AsNoTracking()
+                .OrderByDescending(p => p.PaidOnUtc)
+                .Select(p => new AdminPaymentViewModel
+                {
+                    Id = p.Id,
+                    UserId = p.UserId,
+                    TournamentId = p.TournamentId,
+                    TeamId = p.TeamId,
+                    Amount = p.Amount,
+                    Status = p.Status,
+                    PaidOnUtc = p.PaidOnUtc
+                })
+                .ToListAsync();
+        }
     }
 
 }

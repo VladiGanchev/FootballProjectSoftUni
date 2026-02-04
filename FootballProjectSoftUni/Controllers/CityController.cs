@@ -126,7 +126,7 @@ namespace FootballProjectSoftUni.Controllers
             return View(bestTeams);
         }
 
-        [Authorize] // по желание можеш да сложиш и проверка за Admin с IsAdmin()
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> UpdateCityLeaders()
         {
@@ -150,7 +150,6 @@ namespace FootballProjectSoftUni.Controllers
 
             if (!ModelState.IsValid)
             {
-                // трябва да върнем пак списъците за dropdown-ите
                 var refill = await cityService.GetUpdateCityBestTeamFormAsync();
                 model.Cities = refill.Cities;
                 model.Teams = refill.Teams;
@@ -160,12 +159,11 @@ namespace FootballProjectSoftUni.Controllers
 
             await cityService.IncrementTeamWinsInCityAsync(model.CityId, model.TeamId);
 
-            // по желание – пренасочваме към класацията на този град
             return RedirectToAction("GetBestTeams", new { id = model.CityId });
         }
 
         [HttpGet]
-        [AllowAnonymous] // Stripe връща браузъра, може да е без auth понякога
+        [AllowAnonymous]
         public async Task<IActionResult> PaymentSuccess(int orderId)
         {
             var order = await tournamentJoinPaymentService.GetTournametJoinPaymentOrder(orderId);
@@ -177,7 +175,6 @@ namespace FootballProjectSoftUni.Controllers
                 return RedirectToAction(nameof(All));
             }
 
-            // ВАЖНО: webhook може да не е обработил още.
             if (order.Status == "Paid")
             {
                 TempData["PaymentMessage"] = "✅ Плащането е успешно! Отборът е регистриран.";
@@ -200,8 +197,6 @@ namespace FootballProjectSoftUni.Controllers
             TempData["PaymentType"] = "danger";
             return RedirectToAction(nameof(All));
         }
-
-        // ... твоят All action си остава както е
     }
 
 }

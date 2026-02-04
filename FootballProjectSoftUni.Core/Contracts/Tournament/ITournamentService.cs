@@ -1,4 +1,5 @@
 ﻿using FootballProjectSoftUni.Core.Models.City;
+using FootballProjectSoftUni.Core.Models.Match;
 using FootballProjectSoftUni.Core.Models.Tournament;
 using System;
 using System.Collections.Generic;
@@ -23,5 +24,7 @@ namespace FootballProjectSoftUni.Core.Contracts.Tournament
         Task AssignTeamToBracketAsync(int tournamentId, int teamId);
         Task MoveWinnerToNextRoundAsync(int matchId);
         Task RemoveTeamFromBracketAsync(int tournamentId, int teamId);
+        Task<EnterResultViewModel?> GetEnterResultModelAsync(int matchId);
+        Task<(bool ok, string? error, int tournamentId)> EnterMatchResultAsync(EnterResultViewModel model);
     }
 }

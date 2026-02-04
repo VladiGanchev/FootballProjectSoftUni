@@ -65,5 +65,7 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
 
         public ICollection<Match> Matches { get; set; } = new List<Match>();
 
+        public bool ReminderSent { get; set; }
+
     }
 }

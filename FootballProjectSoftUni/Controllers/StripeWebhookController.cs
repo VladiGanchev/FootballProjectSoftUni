@@ -81,12 +81,18 @@ public class StripeWebhookController : ControllerBase
                 return Ok();
             }
 
-            await teamService.FinalizeJoinAsync(order.TournamentId, order.UserId, order.TeamId.Value);
+            var cityId = await context.TournamentsCities
+                .Where(x => x.TournamentId == order.TournamentId)
+                .Select(x => x.City.Id)
+                .FirstOrDefaultAsync();
+
+            await teamService.FinalizeJoinAsync(order.TournamentId, order.UserId, order.TeamId.Value, cityId);
 
             var cityName = await context.TournamentsCities
                 .Where(x => x.TournamentId == order.TournamentId)
                 .Select(x => x.City.Name)
                 .FirstOrDefaultAsync();
+
 
             var teamName = await context.Teams
                 .Where(t => t.Id == order.TeamId.Value) 

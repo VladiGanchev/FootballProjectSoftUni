@@ -1,31 +1,85 @@
 ﻿@model FootballProjectSoftUni.Core.Models.Referee.RefereeCommentsPageViewModel
 
-<h2>Коментари за @Model.RefereeName</h2>
+@{
+    ViewData["Title"] = $"Коментари за {Model.RefereeName}";
+}
 
-<hr />
+<section class="container py-4">
 
-@if (Model.Comments.Any())
-{
-    foreach (var c in Model.Comments)
+    <div class="text-center mb-4">
+        <h2 class="page-title mb-1">
+            <i class="bi bi-chat-dots-fill me-2"></i>
+            Коментари за @Model.RefereeName
+        </h2>
+        <p class="text-muted mb-0">
+            Виж мненията за съдията и добави свой коментар.
+        </p>
+    </div>
+
+    @* Comments List *@
+    @if (Model.Comments != null && Model.Comments.Any())
     {
-        <div class="border p-2 mb-2 rounded">
-            <strong>@c.UserName</strong>
-            <span class="text-muted">(@c.CreatedOn.ToString("dd.MM.yyyy HH:mm"))</span>
-            <p>@c.Content</p>
+        <div class="row g-3 mb-4">
+            @foreach (var c in Model.Comments)
+            {
+                <div class="col-12">
+                    <div class="comment-card">
+
+                        <div class="comment-card__top">
+                            <div class="comment-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+
+                            <div>
+                                <div class="fw-bold">@c.UserName</div>
+                                <div class="text-muted small">
+                                    <i class="bi bi-calendar-event-fill me-1"></i>
+                                    @c.CreatedOn.ToString("dd.MM.yyyy HH:mm")
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-3" />
+
+                        <p class="mb-0 fw-semibold">@c.Content</p>
+
+                    </div>
+                </div>
+            }
         </div>
     }
-}
-else
-{
-    <p>Все още няма коментари.</p>
-}
+    else
+    {
+        <div class="empty-state text-center mb-4">
+            <i class="bi bi-chat-left-text display-4 text-muted"></i>
+            <h5 class="mt-3">Все още няма коментари</h5>
+            <p class="text-muted mb-0">
+                Бъди първият, който ще остави мнение.
+            </p>
+        </div>
+    }
 
-<hr />
+    @* Add Comment *@
+    <div class="admin-form-card mx-auto">
+        <form asp-action="AddComment" method="post" class="admin-form">
+            <input type="hidden" name="refereeId" value="@Model.RefereeId" />
 
-<h4>Добави коментар</h4>
+            <div class="mb-3">
+                <label class="form-label fw-bold">
+                    <i class="bi bi-pencil-square me-2"></i>Добави коментар
+                </label>
 
-<form asp-action="AddComment" method="post">
-    <input type="hidden" name="refereeId" value="@Model.RefereeId" />
-    <textarea name="content" class="form-control mb-2" rows="3"></textarea>
-    <button type="submit" class="btn btn-primary">Публикувай</button>
-</form>
+                <textarea name="content"
+                          class="form-control tg-input"
+                          rows="4"
+                          placeholder="Напиши мнението си..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg w-100 tg-action-btn">
+                <i class="bi bi-send-fill me-2"></i>
+                Публикувай
+            </button>
+        </form>
+    </div>
+
+</section>

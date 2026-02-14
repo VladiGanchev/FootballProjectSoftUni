@@ -1,64 +1,148 @@
 ﻿@using FootballProjectSoftUni.Core.Models.Tournament;
 @model AddTournamentFormViewModel
+
 @{
     ViewBag.Title = "Create a New Tournament";
 }
 
-<h2 class="text-center">@ViewBag.Title</h2>
-<hr />
+<section class="container py-4">
 
-<div class="row">
-    <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
-        <form asp-action="AddTournamentToCity" method="post">
+    <div class="text-center mb-4">
+        <h2 class="page-title mb-1">
+            <i class="bi bi-trophy-fill me-2"></i>
+            @ViewBag.Title
+        </h2>
+        <p class="text-muted mb-0">
+            Създай турнир: описание, дати, награди и такси, плюс град.
+        </p>
+    </div>
+
+    <div class="admin-form-card mx-auto" style="max-width: 760px;">
+
+        <form asp-action="AddTournamentToCity" method="post" class="admin-form">
+
             <div class="mb-3">
-                <label asp-for="@Model.Description" class="form-label-add-edit">Description</label>
-                <textarea asp-for="@Model.Description" class="form-control" aria-required="true" rows="5"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <label asp-for="@Model.Description" class="form-label fw-bold">
+                    <i class="bi bi-card-text me-2"></i>Description
+                </label>
+
+                <textarea asp-for="@Model.Description"
+                          class="form-control tg-input"
+                          aria-required="true"
+                          rows="6"
+                          placeholder="Describe the tournament..."></textarea>
+
+                <span asp-validation-for="Description" class="text-danger small"></span>
             </div>
+
             <div class="mb-3">
-                <label asp-for="@Model.ImageUrl" class="form-label-add-edit">Image URL</label>
-                <input asp-for="@Model.ImageUrl" class="form-control" aria-required="true" />
-                <span asp-validation-for="@Model.ImageUrl" class="text-danger"></span>
+                <label asp-for="@Model.ImageUrl" class="form-label fw-bold">
+                    <i class="bi bi-image-fill me-2"></i>Image URL
+                </label>
+
+                <input asp-for="@Model.ImageUrl"
+                       class="form-control tg-input"
+                       aria-required="true"
+                       placeholder="https://..." />
+
+                <span asp-validation-for="@Model.ImageUrl" class="text-danger small"></span>
             </div>
-            <div class="mb-3">
-                <label asp-for="@Model.StartDate" class="form-label-add-edit">Start</label>
-                <input asp-for="@Model.StartDate" class="form-control" aria-required="true" value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")" />
-                <span asp-validation-for="@Model.StartDate" class="text-danger"></span>
+
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="@Model.StartDate" class="form-label fw-bold">
+                            <i class="bi bi-calendar-event-fill me-2"></i>Start
+                        </label>
+
+                        <input asp-for="@Model.StartDate"
+                               class="form-control tg-input"
+                               aria-required="true"
+                               value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")" />
+
+                        <span asp-validation-for="@Model.StartDate" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="@Model.EndDate" class="form-label fw-bold">
+                            <i class="bi bi-calendar-check-fill me-2"></i>End
+                        </label>
+
+                        <input asp-for="@Model.EndDate"
+                               class="form-control tg-input"
+                               aria-required="true"
+                               value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")" />
+
+                        <span asp-validation-for="@Model.EndDate" class="text-danger small"></span>
+                    </div>
+                </div>
             </div>
-            <div class="mb-3">
-                <label asp-for="@Model.EndDate" class="form-label-add-edit">End</label>
-                <input asp-for="@Model.EndDate" class="form-control" aria-required="true" value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")" />
-                <span asp-validation-for="@Model.EndDate" class="text-danger"></span>
+
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Prize" class="form-label fw-bold">
+                            <i class="bi bi-cash-coin me-2"></i>Prize (€)
+                        </label>
+
+                        <input asp-for="Prize"
+                               class="form-control tg-input"
+                               aria-required="true"
+                               type="number"
+                               step="0.01"
+                               min="0" />
+
+                        <span asp-validation-for="Prize" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="ParticipationFee" class="form-label fw-bold">
+                            <i class="bi bi-receipt-cutoff me-2"></i>Participation Fee (€)
+                        </label>
+
+                        <input asp-for="ParticipationFee"
+                               class="form-control tg-input"
+                               aria-required="true"
+                               type="number"
+                               step="0.01"
+                               min="0" />
+
+                        <span asp-validation-for="ParticipationFee" class="text-danger small"></span>
+                    </div>
+                </div>
             </div>
+
             <div class="mb-3">
-                <label asp-for="Prize" class="form-label-add-edit">Prize (€)</label>
-                <input asp-for="Prize" class="form-control" aria-required="true"
-                       type="number" step="0.01" min="0" />
-                <span asp-validation-for="Prize" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="ParticipationFee" class="form-label-add-edit">Participation Fee (€)</label>
-                <input asp-for="ParticipationFee" class="form-control" aria-required="true"
-                       type="number" step="0.01" min="0" />
-                <span asp-validation-for="ParticipationFee" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.CityId" class="form-label-add-edit">Type of event</label>
-                <select asp-for="@Model.CityId" class="form-control" aria-required="true">
+                <label asp-for="@Model.CityId" class="form-label fw-bold">
+                    <i class="bi bi-geo-alt-fill me-2"></i>City
+                </label>
+
+                <select asp-for="@Model.CityId"
+                        class="form-select form-select-lg tg-select"
+                        aria-required="true">
                     @foreach (var type in Model.Cities)
                     {
                         <option value="@type.Id">@type.Name</option>
                     }
                 </select>
-                <span asp-validation-for="@Model.CityId" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <input class="btn btn-warning mb-2 w-100 p-3 fw-bold" type="submit" value="Add" />
-            </div>
-        </form>
-    </div>
-</div>
 
+                <span asp-validation-for="@Model.CityId" class="text-danger small"></span>
+            </div>
+
+            <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn">
+                <i class="bi bi-plus-circle-fill me-2"></i>
+                Add
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

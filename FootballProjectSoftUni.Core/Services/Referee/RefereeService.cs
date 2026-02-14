@@ -288,21 +288,17 @@ namespace FootballProjectSoftUni.Core.Services.Referee
                 return false;
             }
 
-            // допълнителна защита – да няма вече съдия
             if (tournament.RefereeId != null)
             {
                 return false;
             }
 
-            // увеличаваме броя турнири, в които е участвал
             referee.RefereedTournamentsCount++;
 
-            // закачаме го към този турнир
             referee.TournamentId = tournamentId;
             tournament.RefereeId = referee.Id;
             tournament.Referee = referee;
 
-            // ако няма запис в TournamentsParticipants – добавяме
             var existingTp = await context.TournamentsParticipants
                 .FirstOrDefaultAsync(tp => tp.ParticipantId == userId
                                            && tp.TournamentId == tournamentId

@@ -1,28 +1,58 @@
-﻿@using FootballProjectSoftUni.Core.Models.Coach;
+﻿@using FootballProjectSoftUni.Core.Models.Coach
 @model CoachViewModel
+
 @{
-    ViewBag.Title = "You have to become a coach in order to register a team";
+    ViewBag.Title = "Become a Coach";
 }
 
-<h2 class="text-center">@ViewBag.Title</h2>
-<hr />
+<section class="container py-4">
 
-<div class="row">
-    <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
-        <form asp-action="BecomeCoach" method="post">
-            <div class="mb-3">
-                <label asp-for="@Model.Name" class="form-label-add-edit">Name</label>
-                <input asp-for="@Model.Name" class="form-control" aria-required="true" />
-                <span asp-validation-for="@Model.Name" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.Experience" class="form-label-add-edit">Experience</label>
-                <input asp-for="@Model.Experience" class="form-control" aria-required="true" />
-                <span asp-validation-for="@Model.Experience" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <input class="btn btn-warning mb-2 w-100 p-3 fw-bold" type="submit" value="Become Coach" />
-            </div>
-        </form>
+    <div class="text-center mb-4">
+        <h2 class="page-title mb-1">
+            <i class="bi bi-person-badge-fill me-2"></i>
+            Become a Coach
+        </h2>
+
+        <p class="text-muted mb-0">
+            Трябва да станеш треньор, за да можеш да регистрираш отбор.
+        </p>
     </div>
-</div>
+
+    <div class="admin-form-card mx-auto">
+
+        <form asp-action="BecomeCoach" method="post">
+
+            <div class="mb-3">
+                <label asp-for="@Model.Name" class="form-label fw-bold">
+                    <i class="bi bi-person-fill me-2"></i>Name
+                </label>
+
+                <input asp-for="@Model.Name"
+                       class="form-control form-control-lg tg-input"
+                       placeholder="Enter your name..." />
+
+                <span asp-validation-for="@Model.Name" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="@Model.Experience" class="form-label fw-bold">
+                    <i class="bi bi-graph-up me-2"></i>Experience (Years)
+                </label>
+
+                <input asp-for="@Model.Experience"
+                       class="form-control form-control-lg tg-input"
+                       placeholder="Years of experience..." />
+
+                <span asp-validation-for="@Model.Experience" class="text-danger small"></span>
+            </div>
+
+            <button class="btn btn-warning btn-lg w-100 tg-action-btn" type="submit">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                Become Coach
+            </button>
+
+        </form>
+
+    </div>
+
+</section>

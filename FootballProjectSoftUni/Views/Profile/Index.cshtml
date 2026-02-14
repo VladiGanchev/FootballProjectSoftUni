@@ -4,57 +4,121 @@
     ViewData["Title"] = "My Profile";
 }
 
-<h2>My Profile</h2>
+<section class="container py-4">
 
-<div class="card p-3 mt-3">
+    <div class="profile-card">
 
-    <p><strong>Име:</strong> @Model.FirstName @Model.LastName</p>
-    <p><strong>Email:</strong> @Model.Email</p>
+        <!-- Header -->
+        <div class="profile-header text-center">
 
-    <p>
-        <strong>Роля:</strong>
-        @if (Model.Role == "Referee")
-        {
-            <span>Referee</span>
-            <form asp-action="RemoveRefereeRole" method="post" style="display:inline">
-                <button type="submit" class="btn btn-sm btn-outline-danger ms-2">
-                    Спри да бъдеш рефер
-                </button>
-            </form>
-        }
-        else if (Model.Role == "Coach")
-        {
-            <span>Coach</span>
-            <form asp-action="RemoveCoachRole" method="post" style="display:inline">
-                <button type="submit" class="btn btn-sm btn-outline-danger ms-2">
-                    Спри да бъдеш треньор
-                </button>
-            </form>
-        }
-        else
-        {
-            <span>Нямаш роля все още</span>
-        }
-    </p>
+            <div class="profile-avatar">
+                <i class="bi bi-person-fill"></i>
+            </div>
 
-    @if (Model.Experience != null)
-    {
-        <p><strong>Опит:</strong> @Model.Experience години</p>
-    }
+            <h3 class="mt-3 mb-1">
+                @Model.FirstName @Model.LastName
+            </h3>
 
-    @if (Model.TeamName != null)
-    {
-        <p><strong>Отбор:</strong> @Model.TeamName</p>
-    }
+            <p class="text-muted">@Model.Email</p>
 
-    @if (Model.RefereeTournamentsCount != null)
-    {
-        <p><strong>Турнири като съдия:</strong> @Model.RefereeTournamentsCount</p>
-    }
+            <div class="mt-2">
 
-    @if (Model.RefereeRating != null)
-    {
-        <p><strong>Оценка:</strong> @Model.RefereeRating.Value.ToString("0.00") / 5</p>
-    }
+                @if (Model.Role == "Referee")
+                {
+                    <span class="badge bg-primary profile-role">
+                        <i class="bi bi-flag-fill me-1"></i> Referee
+                    </span>
+                }
+                else if (Model.Role == "Coach")
+                {
+                    <span class="badge bg-success profile-role">
+                        <i class="bi bi-person-badge-fill me-1"></i> Coach
+                    </span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary profile-role">
+                        No role yet
+                    </span>
+                }
 
-</div>
+            </div>
+
+        </div>
+
+        <hr />
+
+        <!-- Details -->
+        <div class="row g-3 mt-1">
+
+            @if (Model.Experience != null)
+            {
+                <div class="col-md-4">
+                    <div class="profile-info">
+                        <i class="bi bi-graph-up"></i>
+                        <span>@Model.Experience години опит</span>
+                    </div>
+                </div>
+            }
+
+            @if (Model.TeamName != null)
+            {
+                <div class="col-md-4">
+                    <div class="profile-info">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Отбор: @Model.TeamName</span>
+                    </div>
+                </div>
+            }
+
+            @if (Model.RefereeTournamentsCount != null)
+            {
+                <div class="col-md-4">
+                    <div class="profile-info">
+                        <i class="bi bi-trophy-fill"></i>
+                        <span>Турнири като съдия: @Model.RefereeTournamentsCount</span>
+                    </div>
+                </div>
+            }
+
+            @if (Model.RefereeRating != null)
+            {
+                <div class="col-md-4">
+                    <div class="profile-info">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <span>
+                            Оценка: @Model.RefereeRating.Value.ToString("0.00") / 5
+                        </span>
+                    </div>
+                </div>
+            }
+
+        </div>
+
+        <!-- Role Actions -->
+        <div class="text-center mt-4">
+
+            @if (Model.Role == "Referee")
+            {
+                <form asp-action="RemoveRefereeRole" method="post">
+                    <button type="submit" class="btn btn-outline-danger profile-btn">
+                        <i class="bi bi-x-circle me-2"></i>
+                        Спри да бъдеш рефер
+                    </button>
+                </form>
+            }
+            else if (Model.Role == "Coach")
+            {
+                <form asp-action="RemoveCoachRole" method="post">
+                    <button type="submit" class="btn btn-outline-danger profile-btn">
+                        <i class="bi bi-x-circle me-2"></i>
+                        Спри да бъдеш треньор
+                    </button>
+                </form>
+            }
+
+        </div>
+
+    </div>
+
+</section>

@@ -1,32 +1,71 @@
-﻿@using FootballProjectSoftUni.Core.Models.Partner;
+﻿@using FootballProjectSoftUni.Core.Models.Partner
 @model List<PartnerViewModel>
 
-<h2 class="text-center">Delete Partner</h2>
-<hr />
+<section class="container py-4">
 
-<form asp-action="DeleteConfirmed" method="get">
-    <div class="form-group">
-        <label>Select Partner to Delete:</label>
+    <div class="text-center mb-4">
+        <h2 class="page-title text-danger mb-1">
+            <i class="bi bi-trash-fill me-2"></i>
+            Delete Partner
+        </h2>
 
-        <select name="id" id="partnerId" class="form-control">
-            <option value="">-- Select Partner --</option>
-            @foreach (var partner in Model)
-            {
-                <option value="@partner.Id">@partner.Name</option>
-            }
-        </select>
+        <p class="text-muted mb-0">
+            Избери партньор, който искаш да премахнеш от платформата.
+        </p>
     </div>
 
-    <a id="deleteButton" class="btn btn-warning mt-3 w-100 p-3 fw-bold">
-        Delete Partner
-    </a>
-</form>
+    <div class="admin-form-card mx-auto">
+
+        <form asp-action="DeleteConfirmed" method="get">
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">
+                    <i class="bi bi-handshake-fill me-2"></i>Select Partner
+                </label>
+
+                <select name="id"
+                        id="partnerId"
+                        class="form-select form-select-lg tg-select">
+
+                    <option value="">-- Select Partner --</option>
+
+                    @foreach (var partner in Model)
+                    {
+                        <option value="@partner.Id">@partner.Name</option>
+                    }
+
+                </select>
+            </div>
+
+            <a id="deleteButton"
+               class="btn btn-danger btn-lg w-100 tg-action-btn disabled">
+
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                Delete Partner
+            </a>
+
+        </form>
+
+    </div>
+
+</section>
 
 <script>
-    // Update the button link when selecting a partner
-    document.getElementById('partnerId').addEventListener('change', function () {
-        var selectedId = this.value;
-        var deleteButton = document.getElementById('deleteButton');
-        deleteButton.href = '/Partner/DeleteConfirmed?id=' + selectedId;
+
+    const partnerSelect = document.getElementById('partnerId');
+    const deleteButton = document.getElementById('deleteButton');
+
+    partnerSelect.addEventListener('change', function () {
+
+        if (this.value) {
+            deleteButton.href = '/Partner/DeleteConfirmed?id=' + this.value;
+            deleteButton.classList.remove('disabled');
+        }
+        else {
+            deleteButton.href = '#';
+            deleteButton.classList.add('disabled');
+        }
+
     });
+
 </script>

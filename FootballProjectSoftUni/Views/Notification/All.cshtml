@@ -7,184 +7,235 @@
     ViewData["Title"] = "Известия и съобщения";
 }
 
-<h2 class="mb-3">Известия и съобщения</h2>
+<section class="container py-4">
 
-<div class="mb-3">
-    <a asp-controller="Notification"
-       asp-action="All"
-       asp-route-box="inbox"
-       class="btn @(Model.Box == "inbox" ? "btn-primary" : "btn-outline-primary") me-2">
-        📥 Входящи
-    </a>
+    @* Header + Tabs *@
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+        <div>
+            <h2 class="page-title mb-1">
+                <i class="bi bi-bell-fill me-2"></i>
+                @ViewData["Title"]
+            </h2>
+            <p class="text-muted mb-0">
+                Управлявай входящите известия и изпратените съобщения.
+            </p>
+        </div>
 
-    <a asp-controller="Notification"
-       asp-action="All"
-       asp-route-box="sent"
-       class="btn @(Model.Box == "sent" ? "btn-primary" : "btn-outline-primary")">
-        📤 Изпратени
-    </a>
-</div>
+        <div class="d-flex gap-2">
+            <a asp-controller="Notification"
+               asp-action="All"
+               asp-route-box="inbox"
+               class="btn @(Model.Box == "inbox" ? "btn-primary" : "btn-outline-primary") tg-action-btn">
+                <i class="bi bi-inbox-fill me-2"></i>Входящи
+            </a>
 
-<hr />
+            <a asp-controller="Notification"
+               asp-action="All"
+               asp-route-box="sent"
+               class="btn @(Model.Box == "sent" ? "btn-primary" : "btn-outline-primary") tg-action-btn">
+                <i class="bi bi-send-fill me-2"></i>Изпратени
+            </a>
+        </div>
+    </div>
 
-@if (Model.Box == "sent")
-{
-    <h4>Изпратени съобщения</h4>
-
-    @if (Model.SentMessages == null || !Model.SentMessages.Any())
+    @* SENT BOX *@
+    @if (Model.Box == "sent")
     {
-        <div class="alert alert-light">Нямате изпратени съобщения.</div>
-    }
-    else
-    {
-        var paged = (IPagedList<SentMessageViewModel>)Model.SentMessages;
+        <div class="tg-table-card">
+            <div class="p-3 border-bottom" style="background: rgba(0,0,0,.02);">
+                <h5 class="mb-0 fw-bold">
+                    <i class="bi bi-send-check-fill me-2"></i>
+                    Изпратени съобщения
+                </h5>
+            </div>
 
-        <div class="list-group mb-3">
-            @foreach (var msg in paged)
+            @if (Model.SentMessages == null || !Model.SentMessages.Any())
             {
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <a asp-controller="ContactMessage"
-                           asp-action="OpenMessage"
-                           asp-route-messageId="@msg.Id"
-                           class="fw-bold text-primary text-decoration-none">
-                            @msg.Subject
-                        </a>
-
-                        <div class="text-muted small">
-                            Изпратено към: @msg.ToName
-                        </div>
-
-                        <small class="text-muted">
-                            @msg.CreatedOn.ToLocalTime().ToString("g")
-                        </small>
+                <div class="p-4">
+                    <div class="empty-state text-center">
+                        <i class="bi bi-envelope display-4 text-muted"></i>
+                        <h5 class="mt-3">Нямате изпратени съобщения</h5>
+                        <p class="text-muted mb-0">Когато изпратите съобщение, ще се появи тук.</p>
                     </div>
                 </div>
             }
-        </div>
-
-        <nav aria-label="Page navigation">
-            <ul class="pagination">
-                @{
-                    var nextPage = paged.PageNumber + 1;
-                    var previousPage = paged.PageNumber - 1;
-                }
-
-                <li class="page-item @(paged.HasPreviousPage ? "" : "disabled")">
-                    <a class="page-link"
-                       href="@Url.Action("All", new { box = "sent", page = previousPage })"
-                       tabindex="-1">Previous</a>
-                </li>
-
-                @for (int i = 1; i <= paged.PageCount; i++)
-                {
-                    <li class="page-item @(i == paged.PageNumber ? "active" : "")">
-                        <a class="page-link"
-                           href="@Url.Action("All", new { box = "sent", page = i })">@i</a>
-                    </li>
-                }
-
-                <li class="page-item @(paged.HasNextPage ? "" : "disabled")">
-                    <a class="page-link"
-                       href="@Url.Action("All", new { box = "sent", page = nextPage })">Next</a>
-                </li>
-            </ul>
-        </nav>
-    }
-}
-else
-{
-    <h4>Входящи нотификации</h4>
-
-    @if (Model.Notifications == null || !Model.Notifications.Any())
-    {
-        <div class="alert alert-info">
-            Нямате нотификации.
-        </div>
-    }
-    else
-    {
-        var paged = (IPagedList<NotificationViewModel>)Model.Notifications;
-
-        <div class="list-group mb-3">
-            @foreach (var notification in paged)
+            else
             {
-                <div class="list-group-item d-flex justify-content-between align-items-center @(notification.IsRead ? "bg-light" : "bg-white")">
-                    <div>
-                        @* Линк към съобщението, текст, дата и т.н. *@
-                        @if (notification.ContactMessageId != null)
-                        {
-                            <a asp-controller="ContactMessage"
-                               asp-action="OpenMessage"
-                               asp-route-messageId="@notification.ContactMessageId"
-                               class="fw-bold text-primary text-decoration-none">
-                                @notification.Message
-                            </a>
+                var paged = (IPagedList<SentMessageViewModel>)Model.SentMessages;
 
-                            @if (!string.IsNullOrWhiteSpace(notification.FromName))
-                            {
-                                <div class="text-muted small">
-                                    Получено от: @notification.FromName
+                <div class="list-group list-group-flush">
+                    @foreach (var msg in paged)
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-start gap-3">
+                            <div>
+                                <a asp-controller="ContactMessage"
+                                   asp-action="OpenMessage"
+                                   asp-route-messageId="@msg.Id"
+                                   class="tg-msg-link">
+                                    <i class="bi bi-envelope-check-fill me-2 text-success"></i>
+                                    @msg.Subject
+                                </a>
+
+                                <div class="text-muted small mt-1">
+                                    <i class="bi bi-person-check-fill me-2"></i>
+                                    Изпратено към: <strong>@msg.ToName</strong>
                                 </div>
-                            }
-                        }
-                        else
-                        {
-                            <span>@notification.Message</span>
-                        }
 
-                        <small class="text-muted d-block mt-1">
-                            @notification.CreatedOn.ToLocalTime().ToString("g")
-                        </small>
-                    </div>
-
-                    <div class="d-flex align-items-center">
-                        @if (!notification.IsRead)
-                        {
-                            <span class="badge bg-primary me-2">New</span>
-                        }
-
-                        <form asp-controller="Notification"
-                              asp-action="Delete"
-                              method="post"
-                              onsubmit="return confirm('Сигурен ли си, че искаш да изтриеш тази нотификация?');">
-                            <input type="hidden" name="id" value="@notification.Id" />
-                            <input type="hidden" name="box" value="@Model.Box" />
-                            @* по желание може да подадеш и page *@
-                            <button type="submit" class="btn btn-sm btn-outline-danger">🗑</button>
-                        </form>
-                    </div>
+                                <div class="text-muted small mt-1">
+                                    <i class="bi bi-calendar-event-fill me-2"></i>
+                                    @msg.CreatedOn.ToLocalTime().ToString("g")
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
 
+                <nav class="mt-3 mb-3" aria-label="Page navigation">
+                    <ul class="pagination justify-content-center tg-pagination">
+                        @{
+                            var nextPage = paged.PageNumber + 1;
+                            var previousPage = paged.PageNumber - 1;
+                        }
+
+                        <li class="page-item @(paged.HasPreviousPage ? "" : "disabled")">
+                            <a class="page-link"
+                               href="@Url.Action("All", new { box = "sent", page = previousPage })"
+                               tabindex="-1">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+
+                        @for (int i = 1; i <= paged.PageCount; i++)
+                        {
+                            <li class="page-item @(i == paged.PageNumber ? "active" : "")">
+                                <a class="page-link"
+                                   href="@Url.Action("All", new { box = "sent", page = i })">@i</a>
+                            </li>
+                        }
+
+                        <li class="page-item @(paged.HasNextPage ? "" : "disabled")">
+                            <a class="page-link"
+                               href="@Url.Action("All", new { box = "sent", page = nextPage })">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             }
         </div>
-
-        <nav aria-label="Page navigation">
-            <ul class="pagination">
-                @{
-                    var nextPage = paged.PageNumber + 1;
-                    var previousPage = paged.PageNumber - 1;
-                }
-
-                <li class="page-item @(paged.HasPreviousPage ? "" : "disabled")">
-                    <a class="page-link"
-                       href="@Url.Action("All", new { box = "inbox", page = previousPage })"
-                       tabindex="-1">Previous</a>
-                </li>
-
-                @for (int i = 1; i <= paged.PageCount; i++)
-                {
-                    <li class="page-item @(i == paged.PageNumber ? "active" : "")">
-                        <a class="page-link"
-                           href="@Url.Action("All", new { box = "inbox", page = i })">@i</a>
-                    </li>
-                }
-
-                <li class="page-item @(paged.HasNextPage ? "" : "disabled")">
-                    <a class="page-link"
-                       href="@Url.Action("All", new { box = "inbox", page = nextPage })">Next</a>
-                </li>
-            </ul>
-        </nav>
     }
-}
+    else
+    {
+        @* INBOX BOX *@
+        <div class="tg-table-card">
+            <div class="p-3 border-bottom" style="background: rgba(0,0,0,.02);">
+                <h5 class="mb-0 fw-bold">
+                    <i class="bi bi-bell-fill me-2"></i>
+                    Входящи нотификации
+                </h5>
+            </div>
+
+            @if (Model.Notifications == null || !Model.Notifications.Any())
+            {
+                <div class="p-4">
+                    <div class="empty-state text-center">
+                        <i class="bi bi-bell-slash display-4 text-muted"></i>
+                        <h5 class="mt-3">Нямате нотификации</h5>
+                        <p class="text-muted mb-0">Когато има нови събития, ще ги виждате тук.</p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                var paged = (IPagedList<NotificationViewModel>)Model.Notifications;
+
+                <div class="list-group list-group-flush">
+                    @foreach (var notification in paged)
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-start gap-3 notification-item @(notification.IsRead ? "is-read" : "is-unread")">
+                            <div>
+                                @if (notification.ContactMessageId != null)
+                                {
+                                    <a asp-controller="ContactMessage"
+                                       asp-action="OpenMessage"
+                                       asp-route-messageId="@notification.ContactMessageId"
+                                       class="tg-msg-link">
+                                        @notification.Message
+                                    </a>
+
+                                    @if (!string.IsNullOrWhiteSpace(notification.FromName))
+                                    {
+                                        <div class="text-muted small mt-1">
+                                            <i class="bi bi-person-fill me-2"></i>
+                                            Получено от: <strong>@notification.FromName</strong>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="fw-semibold">@notification.Message</div>
+                                }
+
+                                <div class="text-muted small mt-1">
+                                    <i class="bi bi-calendar-event-fill me-2"></i>
+                                    @notification.CreatedOn.ToLocalTime().ToString("g")
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2">
+                                @if (!notification.IsRead)
+                                {
+                                    <span class="badge bg-primary">New</span>
+                                }
+
+                                <form asp-controller="Notification"
+                                      asp-action="Delete"
+                                      method="post"
+                                      onsubmit="return confirm('Сигурен ли си, че искаш да изтриеш тази нотификация?');">
+                                    <input type="hidden" name="id" value="@notification.Id" />
+                                    <input type="hidden" name="box" value="@Model.Box" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <nav class="mt-3 mb-3" aria-label="Page navigation">
+                    <ul class="pagination justify-content-center tg-pagination">
+                        @{
+                            var nextPage = paged.PageNumber + 1;
+                            var previousPage = paged.PageNumber - 1;
+                        }
+
+                        <li class="page-item @(paged.HasPreviousPage ? "" : "disabled")">
+                            <a class="page-link"
+                               href="@Url.Action("All", new { box = "inbox", page = previousPage })"
+                               tabindex="-1">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+
+                        @for (int i = 1; i <= paged.PageCount; i++)
+                        {
+                            <li class="page-item @(i == paged.PageNumber ? "active" : "")">
+                                <a class="page-link"
+                                   href="@Url.Action("All", new { box = "inbox", page = i })">@i</a>
+                            </li>
+                        }
+
+                        <li class="page-item @(paged.HasNextPage ? "" : "disabled")">
+                            <a class="page-link"
+                               href="@Url.Action("All", new { box = "inbox", page = nextPage })">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            }
+        </div>
+    }
+
+</section>

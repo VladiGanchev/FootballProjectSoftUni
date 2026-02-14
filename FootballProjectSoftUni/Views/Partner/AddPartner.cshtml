@@ -4,39 +4,69 @@
     ViewData["Title"] = "Add Partner";
 }
 
-<h2 class="text-center mb-4">Add New Partner</h2>
+<section class="container py-4">
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
+    <div class="text-center mb-4">
+        <h2 class="page-title mb-1">
+            <i class="bi bi-handshake-fill me-2"></i>
+            Add Partner
+        </h2>
+
+        <p class="text-muted mb-0">
+            Добави нов партньор и неговото лого.
+        </p>
+    </div>
+
+    <div class="admin-form-card mx-auto">
 
         <form method="post">
 
             <div class="mb-3">
-                <label asp-for="Name" class="form-label fw-bold"></label>
-                <input asp-for="Name" class="form-control" placeholder="Partner name..." />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="Name" class="form-label fw-bold">
+                    <i class="bi bi-building me-2"></i>Partner Name
+                </label>
+
+                <input asp-for="Name"
+                       class="form-control form-control-lg tg-input"
+                       placeholder="Partner name..." />
+
+                <span asp-validation-for="Name" class="text-danger small"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="ImageUrl" class="form-label fw-bold"></label>
-                <input asp-for="ImageUrl" class="form-control" placeholder="Image URL..." id="imageInput" />
-                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                <label asp-for="ImageUrl" class="form-label fw-bold">
+                    <i class="bi bi-image-fill me-2"></i>Image URL
+                </label>
+
+                <input asp-for="ImageUrl"
+                       class="form-control form-control-lg tg-input"
+                       placeholder="https://..."
+                       id="imageInput" />
+
+                <span asp-validation-for="ImageUrl" class="text-danger small"></span>
             </div>
 
-            <!-- Image Preview -->
+            <!-- Preview -->
             <div class="text-center mb-3">
-                <img id="previewImage" src="" class="img-fluid rounded shadow" style="max-height:150px; display:none;" />
+                <img id="previewImage"
+                     class="partner-preview shadow"
+                     style="display:none;" />
             </div>
 
-            <button class="btn btn-primary w-100">Add Partner</button>
+            <button class="btn btn-primary btn-lg w-100 tg-action-btn">
+                <i class="bi bi-plus-circle-fill me-2"></i>Add Partner
+            </button>
+
         </form>
+
     </div>
-</div>
+
+</section>
 
 @section Scripts {
     <script>
-        // Preview image when user types an URL
         document.getElementById("imageInput").addEventListener("input", function () {
+
             const img = document.getElementById("previewImage");
             const url = this.value;
 
@@ -46,6 +76,7 @@
             } else {
                 img.style.display = "none";
             }
+
         });
     </script>
 }

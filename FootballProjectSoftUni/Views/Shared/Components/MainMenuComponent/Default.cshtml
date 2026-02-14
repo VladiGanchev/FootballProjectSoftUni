@@ -1,72 +1,122 @@
-﻿@using System.Security.Claims;
-@using FootballProjectSoftUni.Extensions;
-<ul class="navbar-nav flex-grow-1">
+﻿@using FootballProjectSoftUni.Extensions
+
+<ul class="navbar-nav flex-grow-1 tg-menu">
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+        <a class="nav-link tg-navlink @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "is-active" : "")"
+           asp-area="" asp-controller="Home" asp-action="Index">
+            <i class="bi bi-house-door-fill me-2"></i> Home
+        </a>
     </li>
+
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="City" asp-action="All">Cities</a>
+        <a class="nav-link tg-navlink @(ViewContext.RouteData.Values["controller"]?.ToString() == "City" ? "is-active" : "")"
+           asp-area="" asp-controller="City" asp-action="All">
+            <i class="bi bi-geo-alt-fill me-2"></i> Cities
+        </a>
     </li>
+
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="Partner" asp-action="All">Partners</a>
+        <a class="nav-link tg-navlink @(ViewContext.RouteData.Values["controller"]?.ToString() == "Partner" ? "is-active" : "")"
+           asp-area="" asp-controller="Partner" asp-action="All">
+            <i class="bi bi-person"></i> Partners
+        </a>
     </li>
-    @{
-        if (User.Identity.IsAuthenticated)
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <li class="nav-item">
+            <a class="nav-link tg-navlink @(ViewContext.RouteData.Values["controller"]?.ToString() == "Referee" ? "is-active" : "")"
+               asp-controller="Referee" asp-action="Referees">
+                <i class="bi bi-flag-fill me-2"></i>  Referees
+            </a>
+        </li>
+
+        @if (User.IsAdmin())
         {
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-controller="Referee" asp-action="Referees">Referees</a>
+            <li class="nav-item dropdown">
+                <a class="nav-link tg-navlink dropdown-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Tournament"
+                                                                                                                    || ViewContext.RouteData.Values["controller"]?.ToString() == "Payments"
+                                                                                                                    || (ViewContext.RouteData.Values["controller"]?.ToString() == "City" && (ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Add") == true
+                                                                                                                                                                                         || ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Delete") == true
+                                                                                                                                                                                         || ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Update") == true))
+                                                                                                                    || (ViewContext.RouteData.Values["controller"]?.ToString() == "Partner" && (ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Add") == true
+                                                                                                                                                                                         || ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Delete") == true))
+                                                                                                                    ? "is-active" : "")"
+           href="#"
+           id="adminDropdown"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">
+            <i class="bi bi-shield-lock-fill me-2"></i> Admin Dashboard
+        </a>
+
+                <ul class="dropdown-menu tg-dropdown" aria-labelledby="adminDropdown">
+                    <li>
+                        <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="Tournament" asp-action="AddTournamentToCity">
+                            <i class="bi bi-trophy-fill me-2"></i> Add Tournament
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="City" asp-action="AddCity">
+                            <i class="bi bi-plus-circle-fill me-2"></i> Add City
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="City" asp-action="DeleteCity">
+                            <i class="bi bi-trash-fill me-2"></i> Delete City
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="Partner" asp-action="AddPartner">
+                            <i class="bi bi-person-plus-fill me-2"></i> Add Partner
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="Partner" asp-action="DeletePartner">
+                            <i class="bi bi-person-x-fill me-2"></i> Delete Partner
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="City" asp-action="UpdateCityLeaders">
+                            <i class="bi bi-arrow-repeat me-2"></i> Update City Leaders
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="Payments" asp-action="Index">
+                            <i class="bi bi-cash-coin me-2"></i> Refund
+                        </a>
+                    </li>
+                </ul>
             </li>
+        }
+        else
+        {
+            <li class="nav-item dropdown">
+                <a class="nav-link tg-navlink dropdown-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Referee"
+                                                                                                                    || ViewContext.RouteData.Values["controller"]?.ToString() == "Coach"
+                                                                                                                    ? "is-active" : "")"
+           href="#"
+           id="participateDropdown"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">
+            <i class="bi bi-calendar2-check-fill me-2"></i> Participate
+        </a>
 
-            if (User.IsAdmin())
-            {
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-dark" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Admin Dashboard
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                        <li>
-                            <a class="dropdown-item" asp-area="" asp-controller="Tournament" asp-action="AddTournamentToCity">Add Tournament</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" asp-area="" asp-controller="City" asp-action="AddCity">Add City</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" asp-area="" asp-controller="City" asp-action="DeleteCity">Delete City</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" asp-area="" asp-controller="Partner" asp-action="AddPartner">Add Partner</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" asp-area="" asp-controller="Partner" asp-action="DeletePartner">Delete Partner</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" asp-area="" asp-controller="City" asp-action="UpdateCityLeaders">
-                                Update City Leaders
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" asp-area="" asp-controller="Payments" asp-action="Index">Refund</a>
-                        </li>
-                    </ul>
-                </li>
-            }
-            else
-            {
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-dark" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Tournaments To Participate
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                        <li>
-                            <a class="dropdown-item" asp-area="" asp-controller="Referee" asp-action="AllTournamentsToReferee">As Referee</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" asp-area="" asp-controller="Coach" asp-action="AllTournamentsToParticipateAsCoach">As Coach</a>
-                        </li>
-                    </ul>
-                </li>
-            }
+                <ul class="dropdown-menu tg-dropdown" aria-labelledby="participateDropdown">
+                    <li>
+                        <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="Referee" asp-action="AllTournamentsToReferee">
+                            <i class="bi bi-flag me-2"></i> As Referee
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="Coach" asp-action="AllTournamentsToParticipateAsCoach">
+                            <i class="bi bi-person-badge-fill me-2"></i> As Coach
+                        </a>
+                    </li>
+                </ul>
+            </li>
         }
     }
 </ul>

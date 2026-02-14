@@ -1,50 +1,107 @@
 ﻿@using FootballProjectSoftUni.Core.Models.Tournament;
 @model EditViewModel
+
 @{
     ViewBag.Title = "Edit Tournament";
 }
 
+<section class="container py-4">
 
-<h2 class="text-center">@ViewBag.Title</h2>
-<hr />
-
-<div class="row">
-    <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
-        <form asp-action="Edit" method="post">
-            <div class="mb-3">
-                <label asp-for="@Model.ImageUrl" class="form-label-add-edit">Image URL</label>
-                <input asp-for="@Model.ImageUrl" class="form-control" aria-required="true" />
-                <span asp-validation-for="@Model.ImageUrl" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.Description" class="form-label-add-edit">Edit Topic</label>
-                <input asp-for="@Model.Description" class="form-control" aria-required="true" />
-                <span asp-validation-for="@Model.Description" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.StartDate" class="form-label-add-edit">Start Date</label>
-                <input asp-for="@Model.StartDate" class="form-control" aria-required="true" value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")" />
-                <span asp-validation-for="@Model.StartDate" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="@Model.EndDate" class="form-label-add-edit">End Date</label>
-                <input asp-for="@Model.EndDate" class="form-control" aria-required="true" value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")" />
-                <span asp-validation-for="@Model.EndDate" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="Winner" class="form-label-add-edit">Winner</label>
-                <input asp-for="Winner" class="form-control" />
-                <span asp-validation-for="Winner" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <input class="btn btn-warning mb-2 w-100 p-3 fw-bold" type="submit" value="Edit" />
-            </div>
-        </form>
+    <div class="text-center mb-4">
+        <h2 class="page-title mb-1">
+            <i class="bi bi-pencil-square me-2"></i>
+            @ViewBag.Title
+        </h2>
+        <p class="text-muted mb-0">
+            Редактирай информацията за турнира и запази промените.
+        </p>
     </div>
-</div>
 
+    <div class="admin-form-card mx-auto" style="max-width: 760px;">
+
+        <form asp-action="Edit" method="post" class="admin-form">
+
+            <div class="mb-3">
+                <label asp-for="@Model.ImageUrl" class="form-label fw-bold">
+                    <i class="bi bi-image-fill me-2"></i>Image URL
+                </label>
+
+                <input asp-for="@Model.ImageUrl"
+                       class="form-control tg-input"
+                       aria-required="true"
+                       placeholder="https://..." />
+
+                <span asp-validation-for="@Model.ImageUrl" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="@Model.Description" class="form-label fw-bold">
+                    <i class="bi bi-card-text me-2"></i>Edit Topic
+                </label>
+
+                <input asp-for="@Model.Description"
+                       class="form-control tg-input"
+                       aria-required="true"
+                       placeholder="Tournament description..." />
+
+                <span asp-validation-for="@Model.Description" class="text-danger small"></span>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="@Model.StartDate" class="form-label fw-bold">
+                            <i class="bi bi-calendar-event-fill me-2"></i>Start Date
+                        </label>
+
+                        <input asp-for="@Model.StartDate"
+                               class="form-control tg-input"
+                               aria-required="true"
+                               value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")" />
+
+                        <span asp-validation-for="@Model.StartDate" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="@Model.EndDate" class="form-label fw-bold">
+                            <i class="bi bi-calendar-check-fill me-2"></i>End Date
+                        </label>
+
+                        <input asp-for="@Model.EndDate"
+                               class="form-control tg-input"
+                               aria-required="true"
+                               value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")" />
+
+                        <span asp-validation-for="@Model.EndDate" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Winner" class="form-label fw-bold">
+                    <i class="bi bi-award-fill me-2"></i>Winner
+                </label>
+
+                <input asp-for="Winner"
+                       class="form-control tg-input"
+                       placeholder="Winner team name (optional)..." />
+
+                <span asp-validation-for="Winner" class="text-danger small"></span>
+            </div>
+
+            <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn">
+                <i class="bi bi-save2-fill me-2"></i>
+                Edit
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-

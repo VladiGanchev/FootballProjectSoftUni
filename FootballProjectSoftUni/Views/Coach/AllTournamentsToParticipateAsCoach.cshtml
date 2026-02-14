@@ -1,47 +1,107 @@
-﻿@using FootballProjectSoftUni.Core.Models.Tournament;
-@using FootballProjectSoftUni.Infrastructure.Data.Enums;
+﻿@using FootballProjectSoftUni.Core.Models.Tournament
+@using FootballProjectSoftUni.Infrastructure.Data.Enums
 @model IEnumerable<TournamentViewModel>
 
 @{
     ViewData["Title"] = "Tournaments To Participate As Coach";
 }
 
-<hr />
+<section class="container py-4">
 
-<h2 class="text-center">@ViewBag.Title</h2>
+    <div class="text-center mb-4">
+        <h2 class="page-title mb-1">
+            <i class="bi bi-calendar2-check-fill me-2"></i>
+            @ViewData["Title"]
+        </h2>
+        <p class="text-muted mb-0">
+            Турнири, в които участваш като треньор.
+        </p>
+    </div>
 
-<div class="text-center row">
-    @foreach (var e in Model)
+    @if (Model != null && Model.Any())
     {
-        <div class="card col-4" style="width: 20rem; ">
-            <div class="card-body">
-                <img class="card-img-top" src=@e.ImageUrl alt="Ad Image">
-                <p class="mb-0"><span class="fw-bold">City: @e.CityName</span></p>
-                <p class="mb-0"><span class="fw-bold">Start Date: </span>@e.StartDate</p>
-                <p class="mb-0"><span class="fw-bold">End Date: </span>@e.EndDate</p>
-                <p class="mb-0"><span class="fw-bold">Number Of Teams: </span>@($"{e.NumberOfTeams} / 16")</p>
+        <div class="row g-4">
+            @foreach (var e in Model)
+            {
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="tournament-card h-100">
 
-                @{
-                    if (e.StartDate > DateTime.Now)
-                    {
-                        <p class="mb-0"><span class="fw-bold">Status: </span>@TournamentStatus.Upcoming</p>
-                    }
-                    else if (DateTime.Now > e.StartDate && DateTime.Now < e.EndDate)
-                    {
-                        <p class="mb-0"><span class="fw-bold">Status: </span>@TournamentStatus.Started</p>
-                    }
-                    else if (DateTime.Now > e.EndDate)
-                    {
-                        <p class="mb-0"><span class="fw-bold">Status: </span>@TournamentStatus.Finished</p>
-                    }
-                }
+                        <div class="tournament-cover">
+                            <img src="@e.ImageUrl" alt="Tournament Image" />
+                            <div class="tournament-cover__overlay"></div>
 
+                            <div class="tournament-top">
+                                <span class="badge tournament-pill">
+                                    <i class="bi bi-geo-alt-fill me-1"></i>@e.CityName
+                                </span>
 
+                                @{
+                                    string statusText;
+                                    string statusClass;
 
-            </div>
+                                    if (e.StartDate > DateTime.Now)
+                                    {
+                                        statusText = TournamentStatus.Upcoming.ToString();
+                                        statusClass = "status-upcoming";
+                                    }
+                                    else if (DateTime.Now > e.StartDate && DateTime.Now < e.EndDate)
+                                    {
+                                        statusText = TournamentStatus.Started.ToString();
+                                        statusClass = "status-started";
+                                    }
+                                    else
+                                    {
+                                        statusText = TournamentStatus.Finished.ToString();
+                                        statusClass = "status-finished";
+                                    }
+                                }
 
-            <a asp-controller="Coach" asp-action="LeaveTournament" asp-route-id="@e.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Leave Tournament</a>
+                                <span class="badge tournament-status @statusClass">
+                                    <i class="bi bi-activity me-1"></i>@statusText
+                                </span>
+                            </div>
+                        </div>
 
+                        <div class="p-3">
+                            <div class="tournament-meta">
+                                <div class="tmeta">
+                                    <i class="bi bi-calendar-event me-2"></i>
+                                    <span><strong>Start:</strong> @e.StartDate</span>
+                                </div>
+
+                                <div class="tmeta">
+                                    <i class="bi bi-calendar-x me-2"></i>
+                                    <span><strong>End:</strong> @e.EndDate</span>
+                                </div>
+
+                                <div class="tmeta">
+                                    <i class="bi bi-people-fill me-2"></i>
+                                    <span><strong>Teams:</strong> @($"{e.NumberOfTeams} / 16")</span>
+                                </div>
+                            </div>
+
+                            <a asp-controller="Coach"
+                               asp-action="LeaveTournament"
+                               asp-route-id="@e.Id"
+                               class="btn btn-warning w-100 fw-bold city-btn mt-3">
+                                <i class="bi bi-box-arrow-right me-2"></i>Leave Tournament
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            }
         </div>
     }
-</div>
+    else
+    {
+        <div class="empty-state text-center">
+            <i class="bi bi-calendar2-x display-4 text-muted"></i>
+            <h5 class="mt-3">Няма турнири</h5>
+            <p class="text-muted mb-0">
+                Все още не участваш в турнири като треньор.
+            </p>
+        </div>
+    }
+
+</section>

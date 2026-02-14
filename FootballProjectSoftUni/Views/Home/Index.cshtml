@@ -4,37 +4,92 @@
     ViewData["Title"] = "Tournament Galaxy";
 }
 
-<div class="text-center mt-5">
-    <h1 class="index-page-greeting">Tournament Galaxy</h1>
-    <p>Welcome to our Website for Football Tournaments!</p>
+<section class="hero">
+    <div class="hero__bg"
+         style="background-image:url('https://fcdynamo.com/img/4ed49bb5-4123-4d5c-b5ce-7e6b1d5aa1e9/3fd4154410720ba54ec935ce9e460a191210.jpg?fm=jpg&q=80&fit=max&crop=900%2C506%2C0%2C0');">
+    </div>
+    <div class="hero__overlay"></div>
 
-    <img src="https://fcdynamo.com/img/4ed49bb5-4123-4d5c-b5ce-7e6b1d5aa1e9/3fd4154410720ba54ec935ce9e460a191210.jpg?fm=jpg&q=80&fit=max&crop=900%2C506%2C0%2C0"
-         style="width: 75vh; border-radius: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.2);" />
-
-    <div class="mt-5">
-        <h3>Our Achievements</h3>
-        <hr class="w-25 mx-auto" />
-
-        <div class="d-flex justify-content-center gap-4 flex-wrap mt-4">
-            <div class="stat-card p-3 border rounded-3 shadow-sm bg-light" style="width: 200px;">
-                <h4 class="text-primary">@Model.TournamentsCount</h4>
-                <p>Tournaments Organized</p>
+    <div class="container position-relative">
+        <div class="row align-items-center g-4 py-5">
+            <div class="col-lg-7">
+                <h1 class="hero-title mb-3">Tournament Galaxy</h1>
             </div>
 
-            <div class="stat-card p-3 border rounded-3 shadow-sm bg-light" style="width: 200px;">
-                <h4 class="text-success">@Model.TeamsCount</h4>
-                <p>Teams Participated</p>
-            </div>
+            <div class="col-lg-5">
+                <div class="hero-card p-4 p-md-5">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h5 class="mb-0">Our Achievements</h5>
+                        <span class="pill">
+                            <i class="bi bi-stars me-1"></i> Live
+                        </span>
+                    </div>
 
-            <div class="stat-card p-3 border rounded-3 shadow-sm bg-light" style="width: 200px;">
-                <h4 class="text-danger">@Model.PlayersCount</h4>
-                <p>Players Registered</p>
-            </div>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="stat stat--primary">
+                                <div class="stat__icon"><i class="bi bi-trophy"></i></div>
+                                <div class="stat__value">@Model.TournamentsCount</div>
+                                <div class="stat__label">Tournaments</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat stat--success">
+                                <div class="stat__icon"><i class="bi bi-people"></i></div>
+                                <div class="stat__value">@Model.TeamsCount</div>
+                                <div class="stat__label">Teams</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat stat--danger">
+                                <div class="stat__icon"><i class="bi bi-person-badge"></i></div>
+                                <div class="stat__value">@Model.PlayersCount</div>
+                                <div class="stat__label">Players</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat stat--warning">
+                                <div class="stat__icon"><i class="bi bi-calendar-event"></i></div>
+                                <div class="stat__value">@Model.YearOfFoundation</div>
+                                <div class="stat__label">Founded</div>
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="stat-card p-3 border rounded-3 shadow-sm bg-light" style="width: 200px;">
-                <h4 class="text-warning">@Model.YearOfFoundation</h4>
-                <p>Year of Foundation</p>
+                    <hr class="hr-soft my-4" />
+
+                    <div class="d-flex align-items-center justify-content-between small text-white-50">
+                        <span><i class="bi bi-shield-check me-1"></i> Secure & fast</span>
+                        <span><i class="bi bi-graph-up me-1"></i> Stats-ready</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<section class="container py-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="bi bi-lightning-charge-fill"></i></div>
+                <h5 class="mb-2">Бързо управление</h5>
+                <p class="mb-0 text-muted">Създавай отбор и се запиши лесно за турнир.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="bi bi-diagram-3-fill"></i></div>
+                <h5 class="mb-2">Ясна структура</h5>
+                <p class="mb-0 text-muted">Отбори, играчи, мачове и статистики — подредени и лесни за намиране.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="bi bi-award-fill"></i></div>
+                <h5 class="mb-2">Следене на резултати</h5>
+                <p class="mb-0 text-muted">Проследявай класирания, резултати от мачове и развитието на турнира в реално време.</p>
+            </div>
+        </div>
+    </div>
+</section>

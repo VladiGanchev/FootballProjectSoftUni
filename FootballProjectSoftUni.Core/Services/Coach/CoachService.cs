@@ -116,10 +116,6 @@ namespace FootballProjectSoftUni.Core.Services.Coach
             var coach = await context.Coaches
                 .FirstOrDefaultAsync(x => x.Id == userId);
 
-            if (coach == null)
-            {
-                return false;
-            }
 
             var teamId = coach.TeamId;
 
@@ -150,9 +146,6 @@ namespace FootballProjectSoftUni.Core.Services.Coach
 
             return true;
         }
-
-
-
 
         public async Task<bool> RemoveCoachRoleAsync(string userId)
         {

@@ -1,21 +1,44 @@
 ﻿@{
-    ViewData["Title"] = "Error";
+    ViewData["Title"] = "Page Not Found";
 }
-<div class="row">
-    <div class="col-3"></div>
-    <div class="col-6">
-        <br>
-        <div class="row">
-            <div class="col-10">
-                <img src="https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg" alt="Alternative image" class="img-thumbnail">
-                <div class="text-left h4">
-                    <p>Oops, better check that URL. Page was not found.</p>
-                </div>
 
-                <div class="text-left h4"> Go back to <a asp-controller="Home" asp-action="Index">Home</a> Page</div>
-            </div>
+<section class="container py-5">
+
+    <div class="admin-form-card mx-auto text-center">
+
+        <div class="delete-icon mb-3">
+            <i class="bi bi-search"></i>
         </div>
+
+        <h2 class="page-title text-danger mb-2">
+            404 - Page Not Found
+        </h2>
+
+        <p class="text-muted mb-4">
+            Oops, better check that URL. The page you are looking for does not exist.
+        </p>
+
+        <div class="notfound-image mb-4">
+            <img src="https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
+                 alt="Not Found"
+                 class="img-fluid rounded shadow-sm" />
+        </div>
+
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="btn btn-primary btn-lg tg-action-btn px-4">
+                <i class="bi bi-house-fill me-2"></i>
+                Go to Home
+            </a>
+
+            <button onclick="history.back()"
+                    class="btn btn-outline-secondary btn-lg px-4">
+                <i class="bi bi-arrow-left me-2"></i>
+                Go Back
+            </button>
+        </div>
+
     </div>
-    <div class="col-3">
-    </div>
-</div>
+
+</section>

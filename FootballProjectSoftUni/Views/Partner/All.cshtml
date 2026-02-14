@@ -4,23 +4,59 @@
     ViewData["Title"] = "Our Partners";
 }
 
-<h2 class="text-center mb-4">Our Partners</h2>
+<section class="container py-4">
 
-<div class="row justify-content-center">
-    @foreach (var partner in Model)
+    <div class="text-center mb-5">
+        <h2 class="page-title">
+            <i class="bi bi-handshake-fill me-2"></i>
+            Our Partners
+        </h2>
+
+        <p class="text-muted">
+            Компаниите и организациите, които подкрепят футболните турнири.
+        </p>
+    </div>
+
+    @if (Model.Any())
     {
-        <div class="col-6 col-md-3 col-lg-2 text-center mb-4">
-            <div class="card border-0 shadow-sm">
-                <img src="@partner.ImageUrl" class="card-img-top p-2" alt="@partner.Name" style="height:120px; object-fit:contain;">
-                <div class="card-body p-2">
-                    <h6 class="card-title">@partner.Name</h6>
+        <div class="row g-4 justify-content-center">
+
+            @foreach (var partner in Model)
+            {
+                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+
+                    <div class="partner-card text-center">
+
+                        <div class="partner-logo-wrapper">
+                            <img src="@partner.ImageUrl"
+                                 alt="@partner.Name"
+                                 class="partner-logo" />
+                        </div>
+
+                        <h6 class="partner-name mt-3">
+                            @partner.Name
+                        </h6>
+
+                    </div>
+
                 </div>
-            </div>
+            }
+
         </div>
     }
-</div>
+    else
+    {
+        <div class="empty-state text-center">
 
-@if (!Model.Any())
-{
-    <p class="text-center text-muted">There are no partners added yet.</p>
-}
+            <i class="bi bi-people display-4 text-muted"></i>
+
+            <h5 class="mt-3">Няма добавени партньори</h5>
+
+            <p class="text-muted">
+                Партньорите ще се появят тук, когато бъдат добавени към платформата.
+            </p>
+
+        </div>
+    }
+
+</section>

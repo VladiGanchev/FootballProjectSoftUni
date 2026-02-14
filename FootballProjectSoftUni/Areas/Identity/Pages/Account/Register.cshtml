@@ -4,40 +4,75 @@
     ViewData["Title"] = "Register";
 }
 
-<h1 class="text-center">@ViewData["Title"]</h1>
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-head text-center">
+            <div class="auth-logo">
+                <i class="bi bi-person-plus-fill"></i>
+            </div>
+            <h1 class="auth-title mb-1">Register</h1>
+            <p class="auth-subtitle mb-0">Create your Tournament Galaxy account</p>
+        </div>
 
-<div class="row">
-    <div class="col-md-4 offset-md-4">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-floating">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
-                <label asp-for="Input.Email"></label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+        <hr class="auth-hr" />
+
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="auth-form">
+            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Email" class="form-control auth-input" autocomplete="username" aria-required="true" placeholder="Email" />
+                <label asp-for="Input.Email">
+                    <i class="bi bi-envelope-fill me-2"></i>Email
+                </label>
+                <span asp-validation-for="Input.Email" class="text-danger small"></span>
             </div>
-            <div class="form-floating">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" />
-                <label asp-for="Input.Password"></label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Password" class="form-control auth-input" autocomplete="new-password" aria-required="true" placeholder="Password" />
+                <label asp-for="Input.Password">
+                    <i class="bi bi-lock-fill me-2"></i>Password
+                </label>
+                <span asp-validation-for="Input.Password" class="text-danger small"></span>
             </div>
-            <div class="form-floating">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" />
-                <label asp-for="Input.ConfirmPassword"></label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.ConfirmPassword" class="form-control auth-input" autocomplete="new-password" aria-required="true" placeholder="Confirm Password" />
+                <label asp-for="Input.ConfirmPassword">
+                    <i class="bi bi-shield-lock-fill me-2"></i>Confirm Password
+                </label>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
             </div>
-            <div class="form-floating">
-                <input asp-for="Input.FirstName" class="form-control" autocomplete="first-name" aria-required="true" />
-                <label asp-for="Input.FirstName"></label>
-                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="Input.FirstName" class="form-control auth-input" autocomplete="given-name" aria-required="true" placeholder="First Name" />
+                        <label asp-for="Input.FirstName">
+                            <i class="bi bi-person-fill me-2"></i>First Name
+                        </label>
+                        <span asp-validation-for="Input.FirstName" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="Input.LastName" class="form-control auth-input" autocomplete="family-name" aria-required="true" placeholder="Last Name" />
+                        <label asp-for="Input.LastName">
+                            <i class="bi bi-person-vcard-fill me-2"></i>Last Name
+                        </label>
+                        <span asp-validation-for="Input.LastName" class="text-danger small"></span>
+                    </div>
+                </div>
             </div>
-            <div class="form-floating">
-                <input asp-for="Input.LastName" class="form-control" autocomplete="last-name" aria-required="true" />
-                <label asp-for="Input.LastName"></label>
-                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+
+            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary auth-btn mt-3">
+                <i class="bi bi-person-check-fill me-2"></i>Register
+            </button>
+
+            <div class="text-center mt-3">
+                <span class="text-muted">Already have an account?</span>
+                <a class="auth-link ms-1" asp-page="./Login">Log in</a>
             </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>
     </div>
 </div>

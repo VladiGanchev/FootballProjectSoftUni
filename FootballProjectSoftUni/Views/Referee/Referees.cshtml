@@ -1,63 +1,128 @@
 ﻿@using FootballProjectSoftUni.Extensions
 @model IEnumerable<FootballProjectSoftUni.Core.Models.Referee.RefereeListItemViewModel>
 
-<h2>Referees</h2>
-
-@if (User.IsAdmin())
-{
-    <a asp-action="Invite" class="btn btn-primary mb-3">Покани рефер</a>
+@{
+    ViewData["Title"] = "Referees";
 }
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Име</th>
-            <th>Опит (години)</th>
-            <th>Брой Турнири</th>
-            <th>Средна оценка</th>
-            <th>Оцени</th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (var r in Model)
-    {
-        <tr>
-            <td>@r.Name</td>
-            <td>@r.Experience</td>
-            <td>@r.TournamentsCount</td>
-            <td>
-                @if (r.AverageRating.HasValue)
-                {
-                    @r.AverageRating.Value.ToString("0.00") @: / 5
-                }
-                else
-                {
-                    <span>Няма оценки</span>
-                }
-            </td>
-          <td>
-    <div class="d-flex align-items-center gap-2">
-        <form asp-action="Rate" method="post" class="d-flex align-items-center gap-2 m-0">
-            <input type="hidden" name="refereeId" value="@r.Id" />
+<section class="container py-4">
 
-            <select name="rating" class="form-select form-select-sm w-auto">
-                @for (int i = 1; i <= 5; i++)
-                {
-                    <option value="@i">@i</option>
-                }
-            </select>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+        <div>
+            <h2 class="page-title mb-1">
+                <i class="bi bi-whistle-fill me-2"></i>
+                @ViewData["Title"]
+            </h2>
+            <p class="text-muted mb-0">
+                Списък със съдии, статистики и възможност за оценяване.
+            </p>
+        </div>
 
-            <button type="submit" class="btn btn-sm btn-success">Запази</button>
-        </form>
-
-        <a asp-action="Comments"
-           asp-route-id="@r.Id"
-           class="btn btn-sm btn-secondary">
-            Коментари
-        </a>
+        @if (User.IsAdmin())
+        {
+            <a asp-action="Invite" class="btn btn-primary tg-action-btn">
+                <i class="bi bi-person-plus-fill me-2"></i>
+                Покани рефер
+            </a>
+        }
     </div>
-</td>
-        </tr>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="empty-state text-center">
+            <i class="bi bi-person-x display-4 text-muted"></i>
+            <h5 class="mt-3">Няма налични рефери</h5>
+            <p class="text-muted mb-0">Когато бъдат добавени, ще се покажат тук.</p>
+        </div>
     }
-    </tbody>
-</table>
+    else
+    {
+        <div class="tg-table-card">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0 tg-table">
+                    <thead>
+                        <tr>
+                            <th>Име</th>
+                            <th>Опит (години)</th>
+                            <th>Брой Турнири</th>
+                            <th>Средна оценка</th>
+                            <th>Оцени</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var r in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">
+                                    <i class="bi bi-person-badge-fill me-1"></i>
+                                    @r.Name
+                                </td>
+
+                                <td>
+                                    <span class="badge bg-light text-dark fw-bold">
+                                        @r.Experience г.
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <i class="bi bi-trophy-fill me-1 text-warning"></i>
+                                    @r.TournamentsCount
+                                </td>
+
+                                <td>
+                                    @if (r.AverageRating.HasValue)
+                                    {
+                                        <span class="rating-badge">
+                                            <i class="bi bi-star-fill me-1"></i>
+                                            @r.AverageRating.Value.ToString("0.00") / 5
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Няма оценки</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                                        <form asp-action="Rate"
+                                              method="post"
+                                              class="d-flex align-items-center gap-2 m-0">
+                                            <input type="hidden" name="refereeId" value="@r.Id" />
+
+                                            <select name="rating"
+                                                    class="form-select form-select-sm tg-select w-auto">
+                                                @for (int i = 1; i <= 5; i++)
+                                                {
+                                                    <option value="@i">@i</option>
+                                                }
+                                            </select>
+
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-success tg-action-btn">
+                                                <i class="bi bi-check-lg me-1"></i>
+                                                Запази
+                                            </button>
+                                        </form>
+
+                                        <a asp-action="Comments"
+                                           asp-route-id="@r.Id"
+                                           class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-chat-dots-fill me-1"></i>
+                                            Коментари
+                                        </a>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    }
+
+</section>

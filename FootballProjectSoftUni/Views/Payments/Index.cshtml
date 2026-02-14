@@ -1,51 +1,115 @@
 ﻿@using FootballProjectSoftUni.Core.Models.AdminPayments
 @model IEnumerable<AdminPaymentViewModel>
 
-<h2>Payments</h2>
+@{
+    ViewData["Title"] = "Payments";
+}
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>OrderId</th>
-            <th>User</th>
-            <th>Tournament</th>
-            <th>Team</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Paid On</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var p in Model)
-        {
-            <tr>
-                <td>@p.Id</td>
-                <td>@p.UserId</td>
-                <td>@p.TournamentId</td>
-                <td>@p.TeamId</td>
-                <td>@p.Amount €</td>
-                <td>@p.Status</td>
-                <td>@(p.PaidOnUtc?.ToString("dd.MM.yyyy HH:mm") ?? "-")</td>
-                <td>
-                    @if (p.Status == "Paid")
-                    {
-                        <form asp-action="Refund" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="orderId" value="@p.Id" />
-                            <button type="submit"
-                                    class="btn btn-sm btn-danger"
-                                    onclick="return confirm('Сигурен ли си, че искаш refund?');">
-                                Refund
-                            </button>
-                        </form>
-                    }
-                    else
-                    {
-                        <span class="text-muted">–</span>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<section class="container py-4">
+
+    <div class="text-center mb-4">
+        <h2 class="page-title mb-1">
+            <i class="bi bi-credit-card-2-front-fill me-2"></i>
+            Payments
+        </h2>
+        <p class="text-muted mb-0">
+            Управлявай плащанията и извършвай възстановявания (refund).
+        </p>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="empty-state text-center">
+            <i class="bi bi-wallet2 display-4 text-muted"></i>
+            <h5 class="mt-3">Няма плащания</h5>
+            <p class="text-muted mb-0">
+                Когато потребителите извършат плащания, ще се появят тук.
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="tg-table-card">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0 tg-table">
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>User</th>
+                            <th>Tournament</th>
+                            <th>Team</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Paid On</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var p in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">#@p.Id</td>
+
+                                <td>
+                                    <i class="bi bi-person-fill me-1"></i>
+                                    @p.UserId
+                                </td>
+
+                                <td>
+                                    <i class="bi bi-trophy-fill me-1"></i>
+                                    @p.TournamentId
+                                </td>
+
+                                <td>
+                                    <i class="bi bi-shield-fill me-1"></i>
+                                    @p.TeamId
+                                </td>
+
+                                <td class="fw-bold text-success">
+                                    @p.Amount €
+                                </td>
+
+                                <td>
+                                    <span class="payment-status status-@p.Status.ToLower()">
+                                        @p.Status
+                                    </span>
+                                </td>
+
+                                <td class="text-muted">
+                                    @(p.PaidOnUtc?.ToString("dd.MM.yyyy HH:mm") ?? "-")
+                                </td>
+
+                                <td class="text-center">
+                                    @if (p.Status == "Paid")
+                                    {
+                                        <form asp-action="Refund"
+                                              method="post"
+                                              class="d-inline">
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden" name="orderId" value="@p.Id" />
+
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-danger tg-action-btn"
+                                                    onclick="return confirm('Сигурен ли си, че искаш refund?');">
+                                                <i class="bi bi-arrow-counterclockwise me-1"></i>
+                                                Refund
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    }
+
+</section>

@@ -1,25 +1,89 @@
 ﻿@model ErrorViewModel
+
 @{
     ViewData["Title"] = "Error";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<section class="container py-5">
 
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
-}
+    <div class="admin-form-card mx-auto" style="max-width: 860px;">
 
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-    It can result in displaying sensitive information from exceptions to end users.
-    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-    and restarting the app.
-</p>
+        <div class="text-center">
+            <div class="delete-icon mb-3">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+
+            <h2 class="page-title text-danger mb-2">
+                Error
+            </h2>
+
+            <p class="text-muted mb-0">
+                An error occurred while processing your request.
+            </p>
+        </div>
+
+        @if (Model.ShowRequestId)
+        {
+            <div class="mt-4">
+                <div class="message-box message-box--previous">
+                    <div class="message-box__title">
+                        <i class="bi bi-fingerprint me-2"></i>
+                        Request ID
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+                        <code class="fw-bold">@Model.RequestId</code>
+
+                        <button type="button"
+                                class="btn btn-sm btn-outline-secondary"
+                                onclick="navigator.clipboard?.writeText('@Model.RequestId')">
+                            <i class="bi bi-clipboard me-1"></i>Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <hr class="my-4" />
+
+        <div class="message-box message-box--current">
+            <div class="message-box__title">
+                <i class="bi bi-bug-fill me-2"></i>
+                Development Mode
+            </div>
+
+            <p class="mb-2">
+                Swapping to <strong>Development</strong> environment will display more detailed information
+                about the error that occurred.
+            </p>
+
+            <p class="mb-2">
+                <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
+                It can result in displaying sensitive information from exceptions to end users.
+            </p>
+
+            <p class="mb-0">
+                For local debugging, enable the <strong>Development</strong> environment by setting the
+                <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
+                and restarting the app.
+            </p>
+        </div>
+
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="btn btn-primary btn-lg tg-action-btn px-4">
+                <i class="bi bi-house-fill me-2"></i>
+                Go to Home
+            </a>
+
+            <button onclick="history.back()"
+                    class="btn btn-outline-secondary btn-lg px-4">
+                <i class="bi bi-arrow-left me-2"></i>
+                Go Back
+            </button>
+        </div>
+
+    </div>
+
+</section>

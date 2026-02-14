@@ -1,128 +1,220 @@
 ﻿@using FootballProjectSoftUni.Core.Models.Tournament;
 @using System.Security.Claims;
 @using FootballProjectSoftUni.Extensions;
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger" role="alert">
-        @TempData["ErrorMessage"]
-    </div>
-}
 
 @model IEnumerable<TournamentViewModel>
 
 @{
     ViewData["Title"] = "City Tournaments";
-}
-
-<h2 class="text-center">@ViewBag.Title</h2>
-
-@{
     var cityId = ViewBag.CityId as int? ?? 0;
     bool showPast = ViewBag.ShowPast != null && (bool)ViewBag.ShowPast;
 }
 
-<div class="mb-3 text-center">
-    <a asp-controller="Tournament"
-       asp-action="CityTournaments"
-       asp-route-id="@cityId"
-       asp-route-showPast="false"
-       class="btn @(showPast ? "btn-outline-warning" : "btn-warning") mx-1">
-        Current & Upcoming Tournaments
-    </a>
+<section class="container py-4">
 
-    <a asp-controller="Tournament"
-       asp-action="CityTournaments"
-       asp-route-id="@cityId"
-       asp-route-showPast="true"
-       class="btn @(showPast ? "btn-warning" : "btn-outline-warning") mx-1">
-        Finished Tournaments
-    </a>
-</div>
-
-<div class="text-center row">
-    @foreach (var e in Model)
+    @* Alerts *@
+    @if (TempData["ErrorMessage"] != null)
     {
-        <div class="card col-4" style="width: 20rem; ">
-            <div class="card-body">
-                <img class="card-img-top" src=@e.ImageUrl alt="Ad Image">
-                <p class="mb-0"><span class="fw-bold">Start Date: </span>@e.StartDate</p>
-                <p class="mb-0"><span class="fw-bold">End Date: </span>@e.EndDate</p>
-                <p class="mb-0"><span class="fw-bold">Number Of Teams: </span>@($"{e.NumberOfTeams} / 16")</p>
-                <p class="mb-0"><span class="fw-bold">Status: </span>@e.Status.ToString()</p>
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            @TempData["ErrorMessage"]
+        </div>
+    }
 
+    @* Header *@
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+        <div>
+            <h2 class="page-title mb-1">
+                <i class="bi bi-trophy-fill me-2"></i>
+                @ViewData["Title"]
+            </h2>
+            <p class="text-muted mb-0">
+                @if (showPast)
+                {
+                    <span>Завършени турнири в този град.</span>
+                }
+                else
+                {
+                    <span>Текущи и предстоящи турнири в този град.</span>
+                }
+            </p>
+        </div>
 
-            </div>
-
+        @* Toggle buttons *@
+        <div class="d-flex flex-wrap gap-2">
             <a asp-controller="Tournament"
-               asp-action="Details"
-               asp-route-id="@e.Id"
-               asp-route-information="@e.GetInformation()"
-               class="btn btn-warning mb-2 w-100 p-3 fw-bold">
-                Tournament Details
+               asp-action="CityTournaments"
+               asp-route-id="@cityId"
+               asp-route-showPast="false"
+               class="btn @(showPast ? "btn-outline-warning" : "btn-warning") tg-action-btn">
+                <i class="bi bi-clock-fill me-2"></i>
+                Current & Upcoming
             </a>
 
-            @if (showPast)
-            {
-                <a asp-controller="Gallery"
-                   asp-action="TournamentGallery"
-                   asp-route-id="@e.Id"
-                   class="btn btn-warning mb-2 w-100 p-3 fw-bold">
-                    Gallery
-                </a>
+            <a asp-controller="Tournament"
+               asp-action="CityTournaments"
+               asp-route-id="@cityId"
+               asp-route-showPast="true"
+               class="btn @(showPast ? "btn-warning" : "btn-outline-warning") tg-action-btn">
+                <i class="bi bi-flag-fill me-2"></i>
+                Finished
+            </a>
+        </div>
+    </div>
 
-                if (User.Identity.IsAuthenticated && User.IsAdmin())
-                {
-                    <a asp-controller="Gallery"
-                       asp-action="UploadPictures"
-                       asp-route-id="@e.Id"
-                       class="btn btn-warning mb-2 w-100 p-3 fw-bold">
-                        Upload Pictures
-                    </a>
-                }
-            }
-            else
+    @if (Model == null || !Model.Any())
+    {
+        <div class="empty-state text-center">
+            <i class="bi bi-calendar-x display-4 text-muted"></i>
+            <h5 class="mt-3">Няма турнири</h5>
+            <p class="text-muted mb-0">
+                Няма турнири за показване според избрания филтър.
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var e in Model)
             {
-                if (User.Identity.IsAuthenticated)
-                {
-                    if (User.IsAdmin())
-                    {
-                        <a asp-controller="Tournament"
-                           asp-action="Edit"
-                           asp-route-id="@e.Id"
-                           class="btn btn-warning mb-2 w-100 p-3 fw-bold">
-                            Edit
-                        </a>
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="tournament-card h-100">
 
-                        <a asp-controller="Tournament"
-                           asp-action="Delete"
-                           asp-route-id="@e.Id"
-                           class="btn btn-warning mb-2 w-100 p-3 fw-bold">
-                            Delete
-                        </a>
-                    }
-                    else
-                    {
-                        if (e.RefereeId == null)
-                        {
-                            <a asp-controller="Referee"
-                               asp-action="BecomeReferee"
+                        <div class="tournament-cover">
+                            <img src="@e.ImageUrl" alt="Tournament Image" />
+                            <div class="tournament-cover__overlay"></div>
+
+                            <div class="tournament-top">
+                                <span class="tournament-pill">
+                                    <i class="bi bi-geo-alt-fill me-1"></i>City
+                                </span>
+
+                                @{
+                                    // ВАЖНО: не променям логиката ти — показвам това, което вече имаш (e.Status)
+                                    // и просто му давам визуален "badge" клас.
+                                    var statusClass = e.Status.ToString().ToLower() switch
+                                    {
+                                        "upcoming" => "status-upcoming",
+                                        "started" => "status-started",
+                                        "finished" => "status-finished",
+                                        _ => "status-upcoming"
+                                    };
+                                }
+
+                                <span class="tournament-status @statusClass">
+                                    <i class="bi bi-info-circle-fill me-1"></i>@e.Status.ToString()
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-3">
+                            <div class="tournament-meta">
+                                <div class="tmeta">
+                                    <i class="bi bi-calendar-event-fill me-2"></i>
+                                    <span class="fw-bold me-1">Start:</span> @e.StartDate
+                                </div>
+
+                                <div class="tmeta">
+                                    <i class="bi bi-calendar-check-fill me-2"></i>
+                                    <span class="fw-bold me-1">End:</span> @e.EndDate
+                                </div>
+
+                                <div class="tmeta">
+                                    <i class="bi bi-people-fill me-2"></i>
+                                    <span class="fw-bold me-1">Teams:</span> @($"{e.NumberOfTeams} / 16")
+                                </div>
+
+                                <div class="tmeta">
+                                    <i class="bi bi-activity me-2"></i>
+                                    <span class="fw-bold me-1">Status:</span> @e.Status.ToString()
+                                </div>
+                            </div>
+
+                            <a asp-controller="Tournament"
+                               asp-action="Details"
                                asp-route-id="@e.Id"
-                               class="btn btn-warning mb-2 w-100 p-3 fw-bold">
-                                Become A Referee
+                               asp-route-information="@e.GetInformation()"
+                               class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn mt-3">
+                                <i class="bi bi-info-circle-fill me-2"></i>
+                                Tournament Details
                             </a>
-                        }
 
-                        <a asp-controller="Team"
-                           asp-action="JoinTeam"
-                           asp-route-id="@e.Id"
-                           class="btn btn-warning mb-2 w-100 p-3 fw-bold">
-                            Join Tournament
-                        </a>
-                    }
-                }
+                            @* Finished tournaments actions *@
+                            @if (showPast)
+                            {
+                                <a asp-controller="Gallery"
+                                   asp-action="TournamentGallery"
+                                   asp-route-id="@e.Id"
+                                   class="btn btn-outline-dark btn-lg w-100 fw-bold tg-action-btn mt-2">
+                                    <i class="bi bi-images me-2"></i>
+                                    Gallery
+                                </a>
+
+                                @if (User.Identity.IsAuthenticated && User.IsAdmin())
+                                {
+                                    <a asp-controller="Gallery"
+                                       asp-action="UploadPictures"
+                                       asp-route-id="@e.Id"
+                                       class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn mt-2">
+                                        <i class="bi bi-cloud-upload-fill me-2"></i>
+                                        Upload Pictures
+                                    </a>
+                                }
+                            }
+                            else
+                            {
+                                @* Current/Upcoming actions *@
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    @if (User.IsAdmin())
+                                    {
+                                        <a asp-controller="Tournament"
+                                           asp-action="Edit"
+                                           asp-route-id="@e.Id"
+                                           class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn mt-2">
+                                            <i class="bi bi-pencil-square me-2"></i>
+                                            Edit
+                                        </a>
+
+                                        <a asp-controller="Tournament"
+                                           asp-action="Delete"
+                                           asp-route-id="@e.Id"
+                                           class="btn btn-outline-danger btn-lg w-100 fw-bold tg-action-btn mt-2">
+                                            <i class="bi bi-trash3-fill me-2"></i>
+                                            Delete
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        @if (e.RefereeId == null)
+                                        {
+                                            <a asp-controller="Referee"
+                                               asp-action="BecomeReferee"
+                                               asp-route-id="@e.Id"
+                                               class="btn btn-outline-secondary btn-lg w-100 fw-bold tg-action-btn mt-2">
+                                                <i class="bi bi-whistle-fill me-2"></i>
+                                                Become A Referee
+                                            </a>
+                                        }
+
+                                        <a asp-controller="Team"
+                                           asp-action="JoinTeam"
+                                           asp-route-id="@e.Id"
+                                           class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn mt-2">
+                                            <i class="bi bi-people-fill me-2"></i>
+                                            Join Tournament
+                                        </a>
+                                    }
+                                }
+                            }
+                        </div>
+
+                    </div>
+                </div>
             }
         </div>
     }
 
-</div>
-@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.ValidationSummary(true, "", new { @class = "text-danger mt-3" })
+
+</section>

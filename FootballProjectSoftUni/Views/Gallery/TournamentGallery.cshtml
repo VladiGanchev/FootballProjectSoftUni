@@ -7,55 +7,92 @@
     bool isAdmin = User.Identity.IsAuthenticated && User.IsAdmin();
 }
 
-<h2 class="text-center">@ViewBag.Title</h2>
-<hr />
+<section class="container py-4">
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
-
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
-
-@if (Model == null || !Model.Any())
-{
-    <p class="text-center">No images yet.</p>
-}
-else
-{
-    <div class="row">
-        @foreach (var img in Model)
-        {
-            <div class="col-4 mb-3 text-center">
-                <img src="@img" class="img-fluid rounded shadow mb-2" />
-
-                @if (isAdmin)
-                {
-                    // Взимаме само името на файла от URL-а
-                    var fileName = System.IO.Path.GetFileName(img);
-
-                    <form asp-controller="Gallery"
-                          asp-action="DeletePicture"
-                          method="post"
-                          class="mt-1">
-                        <input type="hidden" name="id" value="@tournamentId" />
-                        <input type="hidden" name="fileName" value="@fileName" />
-                        <button type="submit" class="btn btn-danger btn-sm">
-                            Delete
-                        </button>
-                    </form>
-                }
-            </div>
-        }
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+        <div>
+            <h2 class="page-title mb-1">
+                <i class="bi bi-images me-2"></i>
+                @ViewBag.Title
+            </h2>
+            <p class="text-muted mb-0">
+                Снимки от турнира. Админите могат да премахват изображения.
+            </p>
+        </div>
     </div>
-}
 
-<a asp-controller="Tournament"
-   asp-action="CityTournaments"
-   asp-route-id="@tournamentId"
-   class="btn btn-warning w-100 fw-bold mt-3">
-    Back to Tournaments
-</a>
+    @* Alerts *@
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            @TempData["Error"]
+        </div>
+    }
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="empty-state text-center">
+            <i class="bi bi-image display-4 text-muted"></i>
+            <h5 class="mt-3">No images yet</h5>
+            <p class="text-muted mb-0">
+                Все още няма добавени снимки за този турнир.
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var img in Model)
+            {
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="gallery-card h-100">
+
+                        <div class="gallery-cover">
+                            <img src="@img" alt="Tournament image" />
+                            <div class="gallery-cover__overlay"></div>
+                        </div>
+
+                        <div class="p-3">
+                            @if (isAdmin)
+                            {
+                                // Взимаме само името на файла от URL-а
+                                var fileName = System.IO.Path.GetFileName(img);
+
+                                <form asp-controller="Gallery"
+                                      asp-action="DeletePicture"
+                                      method="post"
+                                      class="d-grid">
+                                    <input type="hidden" name="id" value="@tournamentId" />
+                                    <input type="hidden" name="fileName" value="@fileName" />
+
+                                    <button type="submit" class="btn btn-danger tg-action-btn">
+                                        <i class="bi bi-trash-fill me-2"></i>
+                                        Delete
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <div class="text-muted small">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Само администратори могат да изтриват снимки.
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+</section>

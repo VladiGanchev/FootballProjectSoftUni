@@ -5,49 +5,80 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Tournament Galaxy</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FootballProjectSoftUni.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Tournament Galaxy</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+
+<body class="tg-body d-flex flex-column min-vh-100">
+    <header class="tg-header">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light tg-navbar">
+            <div class="container-xl">
+                <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
+                    <span class="tg-brand-mark">
+                        <i class="bi bi-trophy-fill"></i>
+                    </span>
+                    <span class="tg-brand-text">Tournament Galaxy</span>
+                </a>
+
+                <button class="navbar-toggler" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     @await Component.InvokeAsync(nameof(MainMenuComponent))
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        @await Component.InvokeAsync(nameof(NotificationComponent))
-                    }
-                    <partial name="_LoginPartial" />
-                </div>
 
+                    <div class="d-flex align-items-center gap-2">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @await Component.InvokeAsync(nameof(NotificationComponent))
+                        }
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container d-flex justify-content-between align-items-center">
-            <span>&copy; @DateTime.Today.Year - FootballProjectSoftUni</span>
-            @if (User.Identity.IsAuthenticated && !User.IsAdmin() )
-            {
-                <a asp-controller="ContactMessage" asp-action="Create" class="text-decoration-none">
-                    Свържи се с организаторите
-                </a>
-            }
+    <main role="main" class="tg-main flex-grow-1">
+        <div class="container-xl pb-4">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="tg-footer border-top">
+        <div class="container-xl d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 py-3">
+            <div class="d-flex align-items-center gap-2">
+                <span class="tg-footer-logo">
+                    <i class="bi bi-stars"></i>
+                </span>
+                <span class="text-muted">
+                    &copy; @DateTime.Today.Year - Tournament Galaxy
+                </span>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                @if (User.Identity.IsAuthenticated && !User.IsAdmin())
+                {
+                    <a asp-controller="ContactMessage"
+                       asp-action="Create"
+                       class="tg-footer-link text-decoration-none">
+                        <i class="bi bi-chat-dots-fill me-2"></i>
+                        Свържи се с организаторите
+                    </a>
+                }
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

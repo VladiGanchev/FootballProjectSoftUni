@@ -1,25 +1,67 @@
-﻿@using FootballProjectSoftUni.Core.Models.City;
+﻿@using FootballProjectSoftUni.Core.Models.City
 @model List<CityViewModel>
 
-<form asp-action="Delete" method="post">
-    <div class="form-group">
-        <label>Select City to Delete:</label>
-        <select name="cityId" id="cityId" class="form-control">
-            <option value="">-- Select City --</option>
-            @foreach (var city in Model)
-            {
-                <option value="@city.Id">@city.Name</option>
-            }
-        </select>
+<section class="container py-4">
+
+    <div class="text-center mb-4">
+        <h2 class="page-title text-danger mb-1">
+            <i class="bi bi-trash-fill me-2"></i>
+            Delete City
+        </h2>
+
+        <p class="text-muted mb-0">
+            Изтриването на град може да премахне свързани турнири и данни.
+        </p>
     </div>
-    <a id="deleteButton" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Delete City</a>
-</form>
+
+    <div class="admin-form-card mx-auto">
+
+        <form asp-action="Delete" method="post">
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">
+                    <i class="bi bi-geo-alt-fill me-2"></i>Select City
+                </label>
+
+                <select name="cityId"
+                        id="cityId"
+                        class="form-select form-select-lg tg-select">
+
+                    <option value="">-- Select City --</option>
+
+                    @foreach (var city in Model)
+                    {
+                        <option value="@city.Id">@city.Name</option>
+                    }
+                </select>
+            </div>
+
+            <a id="deleteButton"
+               class="btn btn-danger btn-lg w-100 tg-action-btn disabled">
+
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                Delete City
+            </a>
+
+        </form>
+
+    </div>
+
+</section>
 
 <script>
-    // Актуализиране на връзката при промяна в падащото меню
-    document.getElementById('cityId').addEventListener('change', function () {
-        var selectedCityId = this.value;
-        var deleteButton = document.getElementById('deleteButton');
-        deleteButton.href = '/City/DeleteConfirmed/' + selectedCityId;
+    const citySelect = document.getElementById('cityId');
+    const deleteButton = document.getElementById('deleteButton');
+
+    citySelect.addEventListener('change', function () {
+
+        if (this.value) {
+            deleteButton.href = '/City/DeleteConfirmed/' + this.value;
+            deleteButton.classList.remove('disabled');
+        } else {
+            deleteButton.href = '#';
+            deleteButton.classList.add('disabled');
+        }
+
     });
 </script>

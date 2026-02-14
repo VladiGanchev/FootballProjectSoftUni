@@ -1,35 +1,68 @@
 ﻿@using FootballProjectSoftUni.Core.Models.Message
 @model ReplyFormViewModel
 
-<h3 class="text-center">Отговор на съобщение</h3>
-<hr />
+@{
+    ViewData["Title"] = "Отговор на съобщение";
+}
 
-<form asp-action="Reply" method="post" class="w-50 mx-auto">
-    <input type="hidden" asp-for="ParentMessageId" />
+<section class="container py-4">
 
-    <div class="mb-3">
-        <label asp-for="Subject" class="form-label">Тема</label>
-        <input asp-for="Subject" class="form-control" />
-        <span asp-validation-for="Subject" class="text-danger"></span>
+    <div class="text-center mb-4">
+        <h2 class="page-title mb-1">
+            <i class="bi bi-reply-all-fill me-2"></i>
+            @ViewData["Title"]
+        </h2>
+        <p class="text-muted mb-0">
+            Напиши отговор и го изпрати към подателя на съобщението.
+        </p>
     </div>
 
-    <div class="border p-3 rounded bg-light mb-2">
-        <strong>Последно съобщение:</strong>
-        <p>@Model.CurrentMessageText</p>
+    <div class="admin-form-card mx-auto">
+        <form asp-action="Reply" method="post" class="admin-form">
+            <input type="hidden" asp-for="ParentMessageId" />
+
+            <div class="mb-3">
+                <label asp-for="Subject" class="form-label fw-bold">
+                    <i class="bi bi-chat-left-text-fill me-2"></i>Тема
+                </label>
+
+                <input asp-for="Subject"
+                       class="form-control tg-input"
+                       placeholder="Напр. Re: Въпрос за турнир..." />
+
+                <span asp-validation-for="Subject" class="text-danger small"></span>
+            </div>
+
+            <div class="message-box message-box--previous mb-3">
+                <div class="message-box__title">
+                    <i class="bi bi-envelope-fill me-2"></i>
+                    Последно съобщение
+                </div>
+                <p class="mb-0">@Model.CurrentMessageText</p>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Content" class="form-label fw-bold">
+                    <i class="bi bi-pencil-square me-2"></i>Вашият отговор
+                </label>
+
+                <textarea asp-for="Content"
+                          class="form-control tg-input"
+                          rows="6"
+                          placeholder="Напиши отговора си тук..."></textarea>
+
+                <span asp-validation-for="Content" class="text-danger small"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg w-100 tg-action-btn">
+                <i class="bi bi-send-fill me-2"></i>
+                Изпрати отговор
+            </button>
+        </form>
     </div>
 
-
-    <div class="mb-3">
-        <label asp-for="Content" class="form-label">Вашият отговор</label>
-        <textarea asp-for="Content" class="form-control" rows="5"></textarea>
-        <span asp-validation-for="Content" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary w-100">Изпрати отговор</button>
-</form>
+</section>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-
-

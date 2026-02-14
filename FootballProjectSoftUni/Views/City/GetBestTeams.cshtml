@@ -4,32 +4,66 @@
     ViewData["Title"] = "City Leaders";
 }
 
-<h2 class="text-center mb-4">Top Teams in this City</h2>
+<section class="container py-4">
 
-<div class="row">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+        <div>
+            <h2 class="page-title mb-1">
+                <i class="bi bi-bar-chart-fill me-2"></i>
+                City Leaders
+            </h2>
+            <p class="text-muted mb-0">Топ отбори в този град според победи.</p>
+        </div>
+
+        <a asp-controller="City" asp-action="All" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Cities
+        </a>
+    </div>
+
     @if (Model != null && Model.Count > 0)
     {
-        foreach (var team in Model)
-        {
-            <div class="card col-md-4 mb-3" style="width: 18rem;">
-                <div class="card-body">
-                    <h5 class="card-title">@team.TeamName</h5>
-                    <p class="card-text"><strong>Coach:</strong> @team.CoachName</p>
-                    <p class="card-text"><strong>Wins in City:</strong> @team.WinsInCity</p>
+        <div class="row g-4">
+            @foreach (var team in Model)
+            {
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="leader-card h-100">
+
+                        <div class="leader-card__top">
+                            <div class="leader-badge">
+                                <i class="bi bi-trophy-fill"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 fw-bold">@team.TeamName</h5>
+                                <div class="text-muted small">
+                                    <i class="bi bi-person-badge-fill me-1"></i>
+                                    Coach: @team.CoachName
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-3" />
+
+                        <div class="leader-metric">
+                            <span class="text-muted">
+                                <i class="bi bi-check2-circle me-2"></i>Wins in City
+                            </span>
+                            <span class="leader-value">@team.WinsInCity</span>
+                        </div>
+
+                    </div>
                 </div>
-            </div>
-        }
+            }
+        </div>
     }
     else
     {
-        <div class="col-12">
-            <div class="alert alert-info text-center" role="alert">
-                No teams found in this city yet.
-            </div>
+        <div class="empty-state text-center">
+            <i class="bi bi-people display-4 text-muted"></i>
+            <h5 class="mt-3">Няма отбори в този град</h5>
+            <p class="text-muted mb-0">
+                Все още няма регистрирани резултати/победи за отбори в този град.
+            </p>
         </div>
     }
-</div>
 
-<div class="mt-3">
-    <a asp-controller="City" asp-action="All" class="btn btn-secondary">Back to Cities</a>
-</div>
+</section>

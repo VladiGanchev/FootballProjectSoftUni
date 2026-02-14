@@ -1,76 +1,118 @@
-﻿@using FootballProjectSoftUni.Core.Models.City;
-@using X.PagedList;
+﻿@using FootballProjectSoftUni.Core.Models.City
+@using X.PagedList
 @model IPagedList<CityViewModel>
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger" role="alert">
-        @TempData["ErrorMessage"]
-    </div>
-}
-
-@if (TempData["PaymentMessage"] != null)
-{
-    var type = TempData["PaymentType"]?.ToString() ?? "info";
-    <div class="alert alert-@type" role="alert">
-        @TempData["PaymentMessage"]
-    </div>
-}
-<div class="container">
-    <div class="row justify-content-between mb-3">
-        <div class="col-md-9"></div> 
-        <div class="col-md-3 text-right">
-            <form method="get" action="@Url.Action("Search")">
-                <div class="input-group">
-                    <input type="text" class="form-control" name="searchString" placeholder="Search cities">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="submit">Search</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 @{
     ViewData["Title"] = "Cities";
 }
 
-<h2 class="text-center">@ViewBag.Title</h2>
+<section class="container py-4">
 
-<div class="row">
-    @foreach (var city in Model)
+    @* Alerts *@
+    @if (TempData["ErrorMessage"] != null)
     {
-        <div class="card col-4" style="width: 20rem; ">
-            <div class="card-body">
-                <h5 class="card-title mt-1">@city.Name</h5>
-                <img class="card-img-top" src="@city.ImageUrl" alt="City Image">
-            </div>
-            <a asp-controller="Tournament" asp-action="CityTournaments" asp-route-id="@city.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">Tournaments</a>
-            <a asp-controller="City" asp-action="GetBestTeams" asp-route-id="@city.Id" class="btn btn-warning mb-2 w-100 p-3 fw-bold">City Leaders</a>
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            @TempData["ErrorMessage"]
         </div>
     }
-</div>
 
-<nav aria-label="Page navigation">
-    <ul class="pagination">
-        @{
-            var nextPage = Model.PageNumber + 1;
-            var previousPage = Model.PageNumber - 1;
-        }
+    @if (TempData["PaymentMessage"] != null)
+    {
+        var type = TempData["PaymentType"]?.ToString() ?? "info";
+        <div class="alert alert-@type" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            @TempData["PaymentMessage"]
+        </div>
+    }
 
-        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-            <a class="page-link" href="@Url.Action("All", new { page = previousPage })" tabindex="-1">Previous</a>
-        </li>
+    @* Header + Search *@
+    <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-4">
+        <div>
+            <h2 class="page-title mb-1">
+                <i class="bi bi-geo-alt-fill me-2"></i>Cities
+            </h2>
+            <p class="text-muted mb-0">Избери град и разгледай турнири и лидери.</p>
+        </div>
 
-        @for (int i = 1; i <= Model.PageCount; i++)
+        <form method="get" action="@Url.Action("Search")" class="city-search">
+            <div class="input-group">
+                <span class="input-group-text bg-white">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text"
+                       class="form-control"
+                       name="searchString"
+                       placeholder="Search cities..." />
+                <button class="btn btn-primary" type="submit">
+                    Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+    @* Grid *@
+    <div class="row g-4">
+        @foreach (var city in Model)
         {
-            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                <a class="page-link" href="@Url.Action("All", new { page = i })">@i</a>
-            </li>
-        }
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="city-card h-100">
 
-        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-            <a class="page-link" href="@Url.Action("All", new { page = nextPage })">Next</a>
-        </li>
-    </ul>
-</nav>
+                    <div class="city-cover">
+                        <img src="@city.ImageUrl" alt="City Image" />
+                        <div class="city-cover__overlay"></div>
+                        <div class="city-name">
+                            <h5 class="mb-0">@city.Name</h5>
+                        </div>
+                    </div>
+
+                    <div class="city-actions p-3">
+                        <a asp-controller="Tournament"
+                           asp-action="CityTournaments"
+                           asp-route-id="@city.Id"
+                           class="btn btn-warning w-100 fw-bold city-btn">
+                            <i class="bi bi-trophy-fill me-2"></i>Tournaments
+                        </a>
+
+                        <a asp-controller="City"
+                           asp-action="GetBestTeams"
+                           asp-route-id="@city.Id"
+                           class="btn btn-outline-dark w-100 fw-bold city-btn mt-2">
+                            <i class="bi bi-bar-chart-fill me-2"></i>City Leaders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @* Pagination *@
+    <nav class="mt-4" aria-label="Page navigation">
+        <ul class="pagination justify-content-center tg-pagination">
+            @{
+                var nextPage = Model.PageNumber + 1;
+                var previousPage = Model.PageNumber - 1;
+            }
+
+            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                <a class="page-link" href="@Url.Action("All", new { page = previousPage })" tabindex="-1">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+
+            @for (int i = 1; i <= Model.PageCount; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("All", new { page = i })">@i</a>
+                </li>
+            }
+
+            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                <a class="page-link" href="@Url.Action("All", new { page = nextPage })">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+</section>

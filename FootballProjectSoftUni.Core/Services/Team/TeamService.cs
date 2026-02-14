@@ -29,7 +29,6 @@ namespace FootballProjectSoftUni.Core.Services.Team
 
         public async Task<ServiceError> CheckForErrorsAsync(int id, string userId)
         {
-            // 0) Проверяваме самия турнир
             var tournament = await context.Tournaments.FindAsync(id);
 
             if (tournament == null)
@@ -40,7 +39,6 @@ namespace FootballProjectSoftUni.Core.Services.Team
                 };
             }
 
-            // Не позволяваме join в вече завършен турнир
             if (DateTime.Now >= tournament.EndDate)
             {
                 return new ServiceError
@@ -219,7 +217,7 @@ namespace FootballProjectSoftUni.Core.Services.Team
             }
 
             var nameExists = await context.Teams
-                .AnyAsync(t => t.Name.ToLower() == viewModel.TeamName);
+                .AnyAsync(t => t.Name.ToLower() == viewModel.TeamName.ToLower());
 
             if (nameExists)
             {

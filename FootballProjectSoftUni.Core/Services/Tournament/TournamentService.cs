@@ -203,6 +203,7 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
             }
 
             var cityId = needed.TournamentCities.FirstOrDefault().CityId;
+            if (cityId == null) return null;
 
             var model = new DetailsViewModel()
             {

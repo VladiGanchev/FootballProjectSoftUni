@@ -44,7 +44,7 @@ namespace FootballProjectSoftUni.Core.Services.City
         public async Task<IEnumerable<CityViewModel>> AllCitiesAsync(int? page)
         {
             var pageNumber = page ?? 1;
-            var pageSize = 8;
+            var pageSize = 9;
 
             return await data.Cities
                 .Select(x => new CityViewModel()

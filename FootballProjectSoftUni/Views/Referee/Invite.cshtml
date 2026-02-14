@@ -1,31 +1,74 @@
 ﻿@model FootballProjectSoftUni.Core.Models.Referee.RefereeInviteFormViewModel
 
-<h3 class="text-center">Покани рефер</h3>
-<hr />
+@{
+    ViewData["Title"] = "Покани рефер";
+}
 
-<form asp-action="Invite" method="post" class="w-50 mx-auto">
-    <div class="mb-3">
-        <label class="form-label">Рефер</label>
-        <select asp-for="RefereeId" asp-items="Model.Referees" class="form-select">
-            <option value="">-- избери рефер --</option>
-        </select>
-        <span asp-validation-for="RefereeId" class="text-danger"></span>
+<section class="container py-4">
+
+    <div class="text-center mb-4">
+        <h2 class="page-title mb-1">
+            <i class="bi bi-person-plus-fill me-2"></i>
+            @ViewData["Title"]
+        </h2>
+        <p class="text-muted mb-0">
+            Избери рефер и изпрати покана за участие в турнир.
+        </p>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Subject" class="form-label">Тема</label>
-        <input asp-for="Subject" class="form-control" />
-        <span asp-validation-for="Subject" class="text-danger"></span>
+    <div class="admin-form-card mx-auto">
+
+        <form asp-action="Invite" method="post" class="admin-form">
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">
+                    <i class="bi bi-whistle-fill me-2"></i>Рефер
+                </label>
+
+                <select asp-for="RefereeId"
+                        asp-items="Model.Referees"
+                        class="form-select form-select-lg tg-select">
+                    <option value="">-- избери рефер --</option>
+                </select>
+
+                <span asp-validation-for="RefereeId" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Subject" class="form-label fw-bold">
+                    <i class="bi bi-chat-left-text-fill me-2"></i>Тема
+                </label>
+
+                <input asp-for="Subject"
+                       class="form-control tg-input"
+                       placeholder="Напр. Покана за турнир..." />
+
+                <span asp-validation-for="Subject" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Content" class="form-label fw-bold">
+                    <i class="bi bi-pencil-square me-2"></i>Съобщение
+                </label>
+
+                <textarea asp-for="Content"
+                          class="form-control tg-input"
+                          rows="6"
+                          placeholder="Напиши текста на поканата..."></textarea>
+
+                <span asp-validation-for="Content" class="text-danger small"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg w-100 tg-action-btn">
+                <i class="bi bi-send-fill me-2"></i>
+                Изпрати поканата
+            </button>
+
+        </form>
+
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Content" class="form-label">Съобщение</label>
-        <textarea asp-for="Content" class="form-control" rows="5"></textarea>
-        <span asp-validation-for="Content" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary w-100">Изпрати поканата</button>
-</form>
+</section>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

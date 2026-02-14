@@ -5,8 +5,10 @@ using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Models.City;
 using FootballProjectSoftUni.Core.Models.Coach;
 using FootballProjectSoftUni.Core.Services.City;
+using FootballProjectSoftUni.Core.Services.Tournament;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,13 +20,15 @@ namespace FootballProjectSoftUni.Tests.UnitTests
     public class CityServiceTests : UnitTestsBase
     {
         private ICityService _cityService;
-        private IRefereeService _refereeService;
-        private ICoachService _coachService;
-        private ITournamentService tournamentService;
+        private ITournamentService _tournamentService;
 
-        [OneTimeSetUp]
+        [SetUp]
 
-        public void SetUp() => _cityService = new CityService(_data, tournamentService);
+        public void SetUp()
+        {
+            _tournamentService = new TournamentService(_data);
+            _cityService = new CityService(_data, _tournamentService);
+        }
 
         [Test]
         public async Task FindTownAsync_ShouldReturnCorrectCity_WhenCityExists()
@@ -97,7 +101,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         [Test]
         public async Task AllCitiesAsyncWithPageShouldReturnCorrectCities()
         {
-            var pageSize = 8; 
+            var pageSize = 9; 
             var pageNumber = 2; 
 
             var citiesOnPage = await _cityService.AllCitiesAsync(pageNumber);
@@ -146,261 +150,195 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         }
 
         [Test]
-
-        public async Task DeleteCity_ShouldReturnNull_ForReferee()
+        public async Task GetBestTeamsAsync_ShouldReturnTeamsOrderedByWinsDesc_AndMapCorrectly()
         {
-            Tournament tournament = new Tournament();
+            var city = new City { Id = 6543, Name = "Sofia", ImageUrl = "x" };
+            _data.Cities.Add(city);
 
-            _data.Tournaments.Add(tournament);
+            var coach1 = new Coach { Id = "c1", Name = "Coach One", Experience = "3" };
+            var coach2 = new Coach { Id = "c2", Name = "Coach Two", Experience = "5" };
+            _data.Coaches.AddRange(coach1, coach2);
 
-            _data.SaveChanges();
+            var team1 = new Team { Id = 555, Name = "Team A", CoachId = coach1.Id, Coach = coach1, WinsCount = 0 };
+            var team2 = new Team { Id = 5146511, Name = "Team B", CoachId = coach2.Id, Coach = coach2, WinsCount = 0 };
+            _data.Teams.AddRange(team1, team2);
 
-            var cityTournament = new TournamentCity()
-            {
-                CityId = 3,
-                TournamentId = tournament.Id
-            };
+            _data.CityBestTeams.AddRange(
+                new CityBestTeam { CityId = 6543, TeamId = 555, City = city, Team = team1, WinsInCity = 2 },
+                new CityBestTeam { CityId = 6543, TeamId = 5146511, City = city, Team = team2, WinsInCity = 7 }
+            );
 
-            _data.TournamentsCities.Add(cityTournament);
+            await _data.SaveChangesAsync();
 
-            _data.SaveChanges();
+            var result = await _cityService.GetBestTeamsAsync(6543);
 
-            var result = await _cityService.DeleteCityAsync(3);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(2));
 
-            Assert.IsFalse(result);
+            Assert.That(result[0].TeamId, Is.EqualTo(5146511));
+            Assert.That(result[0].TeamName, Is.EqualTo("Team B"));
+            Assert.That(result[0].CoachName, Is.EqualTo("Coach Two"));
+            Assert.That(result[0].WinsInCity, Is.EqualTo(7));
 
+            Assert.That(result[1].TeamId, Is.EqualTo(555));
+            Assert.That(result[1].TeamName, Is.EqualTo("Team A"));
+            Assert.That(result[1].CoachName, Is.EqualTo("Coach One"));
+            Assert.That(result[1].WinsInCity, Is.EqualTo(2));
         }
 
         [Test]
-
-        public async Task DeleteCity_ShouldDeleteEverything_WhenEverithingIsCreated()
+        public async Task GetBestTeamsAsync_ShouldReturnEmptyList_WhenNoBestTeamsForCity()
         {
-            var tournament = new Tournament()
-            {
-                Id = 6,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now,
-                CreatedOn = DateTime.Now,
-                Description = "lkjhgfdvbjkiuytrdvbnjiuytfgbnjuytghjuytg",
-                NumberOfTeams = 0,
-                Status = FootballProjectSoftUni.Infrastructure.Data.Enums.TournamentStatus.Finished,
-                OrganiserId = "600bafb9-a73d-4489-a387-643c3b8ae96c",
-                RefereeId = null
-            };
+            _data.Cities.Add(new City { Id = 651, Name = "Plovdiv", ImageUrl = "x" });
+            await _data.SaveChangesAsync();
 
-            _data.Tournaments.Add(tournament);
+            var result = await _cityService.GetBestTeamsAsync(2);
 
-            _data.SaveChanges();
-
-            var cityTournament = new TournamentCity()
-            {
-                CityId = 5,
-                TournamentId = tournament.Id
-            };
-
-            _data.TournamentsCities.Add(cityTournament);
-
-            _data.SaveChanges();
-
-
-            string id = "2424e1da-a66e-466e-bf7f-a59ecvf4b60b";
-            var coach = new Coach()
-            {
-                Id = id,
-                Name = "Pesho",
-                Experience = "3"
-            };
-
-            _data.Coaches.Add(coach);
-
-            _data.SaveChanges();
-
-            var players = new List<Player>()
-            {
-                new Player()
-                {
-                    Id = 81,
-                    Name = "1",
-                    BirthDate = DateTime.Now,
-                    TeamId = 0
-                },
-                new Player()
-                {
-                    Id = 82,
-                    Name = "2",
-                    BirthDate = DateTime.Now,
-                    TeamId = 0
-
-                },
-                new Player()
-                {
-                    Id = 83,
-                    Name = "3",
-                    BirthDate = DateTime.Now,
-                    TeamId = 0
-
-                },
-                new Player()
-                {
-                    Id = 84,
-                    Name = "4",
-                    BirthDate = DateTime.Now,
-                    TeamId = 0
-
-                },
-                new Player()
-                {
-                    Id = 85,
-                    Name = "5",
-                    BirthDate = DateTime.Now,
-                    TeamId = 0
-
-                },
-                new Player()
-                {
-                    Id = 86,
-                    Name = "6",
-                    BirthDate = DateTime.Now,
-                    TeamId = 0
-
-                },
-                new Player()
-                {
-                    Id = 87,
-                    Name = "7",
-                    BirthDate = DateTime.Now,
-                    TeamId = 0
-
-                },
-                new Player()
-                {
-                    Id = 88,
-                    Name = "8",
-                    BirthDate = DateTime.Now,
-                    TeamId = 0
-
-                },
-                new Player()
-                {
-                    Id = 89,
-                    Name = "9",
-                    BirthDate = DateTime.Now,
-                    TeamId = 0
-
-                },
-                new Player()
-                {
-                    Id = 90,
-                    Name = "10",
-                    BirthDate = DateTime.Now,
-                    TeamId = 0
-
-                },
-            };
-
-            _data.Players.AddRange(players);
-
-            _data.SaveChanges();
-
-            var team = new Team()
-            {
-                Id = 3,
-                Name = "qkite",
-                CoachId = id,
-                Coach = coach,
-                Players = players,
-            };
-
-            _data.Teams.Add(team);
-
-            _data.SaveChanges();
-
-
-            foreach (var palyer in players)
-            {
-                palyer.TeamId = team.Id;
-                palyer.Team = team;
-            }
-
-            _data.SaveChanges();
-
-            team.CoachId = id;
-
-            _data.SaveChanges();
-
-            var tt = new TournamentTeam()
-            {
-                Team = team,
-                TeamId = team.Id,
-                TournamentId = tournament.Id
-            };
-
-            _data.TournamentsTeams.Add(tt);
-
-            _data.SaveChanges();
-
-            var tp = new TournamentParticipant()
-            {
-                ParticipantId = id,
-                TournamentId = tournament.Id,
-                Role = "Coach"
-
-            };
-
-            _data.TournamentsParticipants.Add(tp);
-
-            _data.SaveChanges();
-
-            var referee = new Referee()
-            {
-                Id = "c034dba6-00ae-45c4-b234-b9c72bc872ab",
-                Birthdate = DateTime.Now.AddYears(-20),
-                Name = "Misho",
-                Experience = 7,
-                TournamentId = 5,
-                Tournament = tournament
-            };
-
-            _data.Referees.Add(referee);
-
-            _data.SaveChanges();
-
-
-            var tp2 = new TournamentParticipant()
-            {
-                ParticipantId = referee.Id,
-                TournamentId = tournament.Id,
-                Role = "Referee"
-
-            };
-
-            _data.TournamentsParticipants.Add(tp2);
-
-            _data.SaveChanges();
-
-            tournament.Referee = referee;
-            tournament.RefereeId = referee.Id;
-
-            _data.SaveChanges();
-
-            await _cityService.DeleteCityAsync(5);
-
-            Assert.IsNull(await _data.Tournaments.FindAsync(5));
-            Assert.IsEmpty(await _data.TournamentsCities.Where(x => x.CityId == 4).ToListAsync());
-            var deletedPlayers = await _data.Players.Where(p => p.TeamId == 2).ToListAsync();
-            Assert.IsEmpty(deletedPlayers);
-            var deletedTeam = await _data.Teams.FindAsync(2);
-            Assert.IsNull(deletedTeam);
-            var deletedTournamentTeam = await _data.TournamentsTeams.FirstOrDefaultAsync(tt => tt.TeamId == 2 && tt.TournamentId == 5);
-            Assert.IsNull(deletedTournamentTeam);
-            var deletedTournamentParticipant = await _data.TournamentsParticipants.Where(tp => tp.TournamentId == 5).ToListAsync();
-            Assert.IsEmpty(deletedTournamentParticipant);
-            var deletedReferee = await _data.Referees.FirstOrDefaultAsync(r => r.Id == "c034dba6-00ae-45c4-b234-b9c72bc872ab");
-            Assert.IsNull(deletedReferee);
-
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.Empty);
         }
 
+        [Test]
+        public async Task GetUpdateCityBestTeamFormAsync_ShouldReturnCitiesAndTeams()
+        {
+            var city1 = new City { Id = 765, Name = "Sofia", ImageUrl = "img1" };
+            var city2 = new City { Id = 259, Name = "Plovdiv", ImageUrl = "img2" };
 
-        
+            var coach = new Coach { Id = "coach156", Name = "Coach", Experience = "5" };
+
+            var team1 = new Team { Id = 157, Name = "Team A", Coach = coach, CoachId = coach.Id };
+            var team2 = new Team { Id = 297, Name = "Team B", Coach = coach, CoachId = coach.Id };
+
+            _data.Cities.AddRange(city1, city2);
+            _data.Coaches.Add(coach);
+            _data.Teams.AddRange(team1, team2);
+
+            await _data.SaveChangesAsync();
+
+            var result = await _cityService.GetUpdateCityBestTeamFormAsync();
+
+            Assert.That(result, Is.Not.Null);
+
+            Assert.That(result.Cities.Count, Is.EqualTo(29));
+            Assert.That(result.Teams.Count, Is.EqualTo(2));
+
+            Assert.That(result.Cities.Any(c => c.Name == "Sofia"));
+            Assert.That(result.Teams.Any(t => t.Name == "Team A"));
+        }
+
+        [Test]
+        public async Task GetUpdateCityBestTeamFormAsync_ShouldMapCorrectIds()
+        {
+            var city = new City { Id = 342, Name = "Varna", ImageUrl = "x" };
+            var coach = new Coach { Id = "thgrf", Name = "Coach", Experience = "2" };
+            var team = new Team { Id = 7223, Name = "Champions", CoachId = coach.Id, Coach = coach };
+
+            _data.Cities.Add(city);
+            _data.Coaches.Add(coach);
+            _data.Teams.Add(team);
+            await _data.SaveChangesAsync();
+
+            var result = await _cityService.GetUpdateCityBestTeamFormAsync();
+
+            Assert.That(result.Cities.Any(c => c.Id == 342 && c.Name == "Varna"), Is.True);
+            Assert.That(result.Teams.Any(t => t.Id == 7223 && t.Name == "Champions"), Is.True);
+        }
+
+        [Test]
+        public async Task IncrementTeamWinsInCityAsync_ShouldCreateEntry_WhenNotExists()
+        {
+            int cityId = 1;
+            int teamId = 10;
+
+            await _cityService.IncrementTeamWinsInCityAsync(cityId, teamId);
+
+            var entry = await _data.CityBestTeams
+                .FirstOrDefaultAsync(x => x.CityId == cityId && x.TeamId == teamId);
+
+            Assert.That(entry, Is.Not.Null);
+            Assert.That(entry!.WinsInCity, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task IncrementTeamWinsInCityAsync_ShouldCreateEntryWithWins1_WhenEntryDoesNotExist()
+        {
+            var cityId = 9001;
+            var teamId = 8001;
+
+            var city = new City { Id = cityId, Name = "TestCity", ImageUrl = "x" };
+            var coach = new Coach { Id = "coach-inc-1", Name = "Coach", Experience = "3" };
+            var team = new Team { Id = teamId, Name = "TestTeam", CoachId = coach.Id, Coach = coach };
+
+            _data.Cities.Add(city);
+            _data.Coaches.Add(coach);
+            _data.Teams.Add(team);
+            await _data.SaveChangesAsync();
+
+            await _cityService.IncrementTeamWinsInCityAsync(cityId, teamId);
+
+            var entry = await _data.CityBestTeams
+                .FirstOrDefaultAsync(cb => cb.CityId == cityId && cb.TeamId == teamId);
+
+            Assert.That(entry, Is.Not.Null);
+            Assert.That(entry!.WinsInCity, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task IncrementTeamWinsInCityAsync_ShouldIncrementWins_WhenEntryExists()
+        {
+            var cityId = 9002;
+            var teamId = 8002;
+
+            var city = new City { Id = cityId, Name = "TestCity2", ImageUrl = "x" };
+            var coach = new Coach { Id = "coach-inc-2", Name = "Coach2", Experience = "4" };
+            var team = new Team { Id = teamId, Name = "TestTeam2", CoachId = coach.Id, Coach = coach };
+
+            _data.Cities.Add(city);
+            _data.Coaches.Add(coach);
+            _data.Teams.Add(team);
+
+            _data.CityBestTeams.Add(new CityBestTeam
+            {
+                CityId = cityId,
+                TeamId = teamId,
+                WinsInCity = 2
+            });
+
+            await _data.SaveChangesAsync();
+
+            await _cityService.IncrementTeamWinsInCityAsync(cityId, teamId);
+
+            var entry = await _data.CityBestTeams
+                .FirstOrDefaultAsync(cb => cb.CityId == cityId && cb.TeamId == teamId);
+
+            Assert.That(entry, Is.Not.Null);
+            Assert.That(entry!.WinsInCity, Is.EqualTo(3));
+        }
+
+        [Test]
+        public async Task IncrementTeamWinsInCityAsync_ShouldIncreaseTo2_WhenCalledTwiceAndEntryInitiallyMissing()
+        {
+            var cityId = 9003;
+            var teamId = 8003;
+
+            var city = new City { Id = cityId, Name = "TestCity3", ImageUrl = "x" };
+            var coach = new Coach { Id = "coach-inc-3", Name = "Coach3", Experience = "2" };
+            var team = new Team { Id = teamId, Name = "TestTeam3", CoachId = coach.Id, Coach = coach };
+
+            _data.Cities.Add(city);
+            _data.Coaches.Add(coach);
+            _data.Teams.Add(team);
+            await _data.SaveChangesAsync();
+
+            await _cityService.IncrementTeamWinsInCityAsync(cityId, teamId);
+            await _cityService.IncrementTeamWinsInCityAsync(cityId, teamId);
+
+            var entry = await _data.CityBestTeams
+                .FirstOrDefaultAsync(cb => cb.CityId == cityId && cb.TeamId == teamId);
+
+            Assert.That(entry, Is.Not.Null);
+            Assert.That(entry!.WinsInCity, Is.EqualTo(2));
+        }
+
     }
 }

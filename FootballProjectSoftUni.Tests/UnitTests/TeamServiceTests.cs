@@ -3,7 +3,9 @@ using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Core.Models.Player;
 using FootballProjectSoftUni.Core.Models.Team;
 using FootballProjectSoftUni.Core.Services.Team;
+using FootballProjectSoftUni.Core.Services.Tournament;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
@@ -16,540 +18,243 @@ namespace FootballProjectSoftUni.Tests.UnitTests
     public class TeamServiceTests : UnitTestsBase
     {
         private ITeamService _teamService;
-        [OneTimeSetUp]
+        private ITournamentService _tournamentService;
+        [SetUp]
 
-        //trqbva da se opravi posle
-       // public void SetUp() => _teamService = new TeamService(_data);
-
-        [Test]
-        public async Task CheckForError_ShouldReturn_FirstError()
+        public void SetUp()
         {
-            var tournament = new Tournament()
+            _tournamentService = new TournamentService(_data);
+            _teamService = new TeamService(_data, _tournamentService);
+        }
+
+        private Tournament FinishedTournament(int id)
+            => new Tournament
             {
-                Id = 16,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now,
-                CreatedOn = DateTime.Now,
-                Description = "lkjhgfdvbjkiuytrdvbnjiuytfgbnjuytghjuytg",
+                Id = id,
+                StartDate = DateTime.Now.AddDays(-5),
+                EndDate = DateTime.Now.AddDays(-1),
+                CreatedOn = DateTime.Now.AddDays(-10),
+                Description = "test",
                 NumberOfTeams = 0,
                 Status = FootballProjectSoftUni.Infrastructure.Data.Enums.TournamentStatus.Finished,
-                OrganiserId = "600bafb9-a73d-4489-a387-643c3b8ae96c",
+                OrganiserId = Guid.NewGuid().ToString(),
                 RefereeId = null
             };
 
-            _data.Tournaments.Add(tournament);
-            _data.SaveChanges();
+        private Coach MakeCoach(string id)
+            => new Coach { Id = id, Name = "Coach", Experience = "3" };
 
+        private Referee MakeReferee(string id)
+            => new Referee { Id = id, Name = "Ref", Experience = 5, Birthdate = DateTime.Now.AddYears(-25) };
 
-            var coaches = GenerateCoaches();
+        private Tournament ActiveTournament(int id) => new Tournament
+        {
+            Id = id,
+            StartDate = DateTime.Now.AddDays(-1),
+            EndDate = DateTime.Now.AddDays(1),
+            CreatedOn = DateTime.Now,
+            Description = "test",
+            NumberOfTeams = 0,
+            Status = FootballProjectSoftUni.Infrastructure.Data.Enums.TournamentStatus.Upcoming,
+            OrganiserId = Guid.NewGuid().ToString(),
+            RefereeId = null
+        };
 
-            for (int i = 0; i < 16; i++)
+        private Coach MakeCoach(string id, int? teamId = null) => new Coach
+        {
+            Id = id,
+            Name = "Coach",
+            Experience = "3",
+            TeamId = teamId
+        };
+
+        private TeamRegistrationViewModel MakeTeamModel(string teamName = "NewTeam")
+        {
+            return new TeamRegistrationViewModel
             {
-                var team = new Team()
-                {
-                    Id = i + 16,
-                    Name = $"{i}",
-                    CoachId = coaches[i].Id,
-                    Coach = coaches[i]
-                };
-
-                _data.Teams.Add(team);
-                _data.SaveChanges();
-
-            }
-            for (int i = 0; i < 16; i++)
-            {
-                var tt = new TournamentTeam()
-                {
-                    TeamId = i + 16,
-                    TournamentId = 16,
-
-                };
-
-                _data.TournamentsTeams.Add(tt);
-                _data.SaveChanges();
-
-            }
-
-            var extraCoach = new Coach()
-            {
-                Id = "a2bda19v-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
+                TeamName = teamName,
+                Players = Enumerable.Range(1, 10)
+                    .Select(i => new PlayerViewModel { Name = $"P{i}" })
+                    .ToList()
             };
-
-            _data.Coaches.Add(extraCoach);
-            _data.SaveChanges();
-
-            var extraTeam = new Team()
-            {
-                Id = 99999,
-                Name = "asan",
-                CoachId = extraCoach.Id,
-                Coach = extraCoach
-            };
-
-            _data.Teams.Add(extraTeam);
-            _data.SaveChanges();
-
-            var result = await _teamService.CheckForErrorsAsync(16, "wfds");
-
-            Assert.AreEqual(result.Message, "You cannot apply for this tournament because the maximum limit of teams has been reached.");
-        
         }
 
-        private List<Coach> GenerateCoaches()
+        private TeamRegistrationViewModel DraftModel(string name = "DraftTeam")
+    => new TeamRegistrationViewModel
+    {
+        TeamName = name,
+        Players = Enumerable.Range(1, 10)
+            .Select(i => new PlayerViewModel { Name = $"P{i}" })
+            .ToList()
+    };
+
+
+        [Test]
+        public async Task CheckForErrorsAsync_TournamentNotFound_ReturnsError()
         {
-            List<Coach> coaches = new List<Coach>();
+            var result = await _teamService.CheckForErrorsAsync(9999, "u1");
 
-            var coach1 = new Coach()
-            {
-                Id = "a2bda19a-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-
-            _data.Coaches.Add(coach1);
-            _data.SaveChanges();
-            coaches.Add(coach1);
-
-            var coach2 = new Coach()
-            {
-                Id = "b2bda19a-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-
-            _data.Coaches.Add(coach2);
-            _data.SaveChanges();
-            coaches.Add(coach2);
-
-            var coach3 = new Coach()
-            {
-                Id = "c2bda19a-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-
-            _data.Coaches.Add(coach3);
-            _data.SaveChanges();
-            coaches.Add(coach3);
-
-
-            var coach4 = new Coach()
-            {
-                Id = "d2bda19a-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-            _data.Coaches.Add(coach4);
-            _data.SaveChanges();
-            coaches.Add(coach4);
-
-
-            var coach5 = new Coach()
-            {
-                Id = "e2bda19a-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-            _data.Coaches.Add(coach5);
-            _data.SaveChanges();
-            coaches.Add(coach5);
-
-
-            var coach6 = new Coach()
-            {
-                Id = "f2bda19a-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-            _data.Coaches.Add(coach6);
-            _data.SaveChanges();
-            coaches.Add(coach6);
-
-
-            var coach7 = new Coach()
-            {
-                Id = "g2bda19a-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-            _data.Coaches.Add(coach7);
-            _data.SaveChanges();
-            coaches.Add(coach7);
-
-
-            var coach8 = new Coach()
-            {
-                Id = "h2bda19a-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-
-            _data.Coaches.Add(coach8);
-            _data.SaveChanges();
-            coaches.Add(coach8);
-
-
-            var coach9 = new Coach()
-            {
-                Id = "i2bda19a-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-
-            _data.Coaches.Add(coach9);
-            _data.SaveChanges();
-            coaches.Add(coach9);
-
-
-            var coach10 = new Coach()
-            {
-                Id = "j2bda19a-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-
-            _data.Coaches.Add(coach10);
-            _data.SaveChanges();
-            coaches.Add(coach10);
-
-
-            var coach11 = new Coach()
-            {
-                Id = "k2bda19a-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-
-            _data.Coaches.Add(coach11);
-            _data.SaveChanges();
-            coaches.Add(coach11);
-
-
-            var coach12 = new Coach()
-            {
-                Id = "l2bda19a-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-
-            _data.Coaches.Add(coach12);
-            _data.SaveChanges();
-            coaches.Add(coach12);
-
-
-            var coach13 = new Coach()
-            {
-                Id = "m2bda19a-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-
-            _data.Coaches.Add(coach13);
-            _data.SaveChanges();
-            coaches.Add(coach13);
-
-
-            var coach14 = new Coach()
-            {
-                Id = "n2bda19a-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-
-            _data.Coaches.Add(coach14);
-            _data.SaveChanges();
-            coaches.Add(coach14);
-
-
-            var coach15 = new Coach()
-            {
-                Id = "o2bda19a-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-
-            _data.Coaches.Add(coach15);
-            _data.SaveChanges();
-            coaches.Add(coach15);
-
-
-            var coach16 = new Coach()
-            {
-                Id = "p2bda19a-7da6-4fc4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-
-            _data.Coaches.Add(coach16);
-            _data.SaveChanges();
-            coaches.Add(coach16);
-
-
-            return coaches;
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Tournament not found.", result!.Message);
         }
 
         [Test]
-        public async Task CheckForErrors_ShouldReturn_SecondError()
+        public async Task CheckForErrorsAsync_TournamentFinished_ReturnsFinishedError()
         {
-            var tournament = new Tournament()
+            var t = FinishedTournament(1);
+            _data.Tournaments.Add(t);
+            await _data.SaveChangesAsync();
+
+            var result = await _teamService.CheckForErrorsAsync(1, "u1");
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("You cannot join a tournament that has already finished.", result!.Message);
+        }
+
+        [Test]
+        public async Task CheckForErrorsAsync_MaxTeamsReached_ReturnsMaxTeamsError()
+        {
+            var t = ActiveTournament(2);
+            _data.Tournaments.Add(t);
+
+            for (int i = 1; i <= 16; i++)
             {
-                Id = 17,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now,
-                CreatedOn = DateTime.Now,
-                Description = "lkjhgfdvbjkiuytrdvbnjiuytfgbnjuytghjuytg",
-                NumberOfTeams = 0,
-                Status = FootballProjectSoftUni.Infrastructure.Data.Enums.TournamentStatus.Finished,
-                OrganiserId = "600bafb9-a73d-4489-a387-643c3b8ae96c",
-                RefereeId = null
-            };
+                _data.TournamentsTeams.Add(new TournamentTeam
+                {
+                    TournamentId = t.Id,
+                    TeamId = 1000 + i
+                });
+            }
 
-            _data.Tournaments.Add(tournament);
-            _data.SaveChanges();
+            await _data.SaveChangesAsync();
 
-            var referee = new Referee()
+            var result = await _teamService.CheckForErrorsAsync(t.Id, "anyUser");
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("You cannot apply for this tournament because the maximum limit of teams has been reached.",
+                result!.Message);
+        }
+
+        [Test]
+        public async Task CheckForErrorsAsync_UserIsRefereeInTournament_ReturnsRefereeInTournamentError()
+        {
+            var t = ActiveTournament(3);
+            var userId = "ref1";
+
+            _data.Tournaments.Add(t);
+            _data.Referees.Add(MakeReferee(userId));
+
+            _data.TournamentsParticipants.Add(new TournamentParticipant
             {
-                Id = "01bd2vq2-415b-4514-a6hb-11042df2acca",
-                Birthdate = DateTime.Now.AddYears(-20),
-                Name = "goshow",
-                Experience = 5,
-                Tournament = tournament,
-                TournamentId = tournament.Id
-            };
-
-            _data.Referees.Add(referee);
-
-            _data.SaveChanges();
-
-            var tp = new TournamentParticipant()
-            {
-                ParticipantId = "01bd2vq2-415b-4514-a6hb-11042df2acca",
-                TournamentId = tournament.Id,
+                ParticipantId = userId,
+                TournamentId = t.Id,
                 Role = "Referee"
-            };
+            });
 
-            _data.TournamentsParticipants.Add(tp);
-            _data.SaveChanges();
+            await _data.SaveChangesAsync();
 
-            var result = await _teamService.CheckForErrorsAsync(tournament.Id, "01bd2vq2-415b-4514-a6hb-11042df2acca");
+            var result = await _teamService.CheckForErrorsAsync(t.Id, userId);
 
-            Assert.AreEqual(result.Message, "You cannot apply as a coach for this tournament because you are already a referee in it.");
-
-        }
-
-
-        [Test]
-        public async Task ChechForError_ShouldReturn_ThirdError()
-        {
-            var tournament = new Tournament()
-            {
-                Id = 18,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now,
-                CreatedOn = DateTime.Now,
-                Description = "lkjhgfdvbjkiuytrdvbnjiuytfgbnjuytghjuytg",
-                NumberOfTeams = 0,
-                Status = FootballProjectSoftUni.Infrastructure.Data.Enums.TournamentStatus.Finished,
-                OrganiserId = "600bafb9-a73d-4489-a387-643c3b8ae96c",
-                RefereeId = null
-            };
-
-            _data.Tournaments.Add(tournament);
-            _data.SaveChanges();
-
-            var result = await _teamService.CheckForErrorsAsync(tournament.Id, "01bd2vq2-415b-4514-a6hb-11042dd2acca");
-
-            Assert.AreEqual(result.Message, "You need to become a coach to join a team.");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("You cannot apply as a coach for this tournament because you are already a referee in it.",
+                result!.Message);
         }
 
         [Test]
-
-        public async Task ChechForError_ShouldReturn_FourthError()
+        public async Task CheckForErrorsAsync_UserIsRefereeButNotInTournament_AndNotCoach_ReturnsNeedCoachError()
         {
-            var tournament = new Tournament()
+            var t = ActiveTournament(4);
+            var userId = "ref2";
+
+            _data.Tournaments.Add(t);
+            _data.Referees.Add(MakeReferee(userId));
+            await _data.SaveChangesAsync();
+
+            var result = await _teamService.CheckForErrorsAsync(t.Id, userId);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("You need to become a coach to join a team.", result!.Message);
+        }
+
+        [Test]
+        public async Task CheckForErrorsAsync_UserNotCoach_ReturnsNeedCoachError()
+        {
+            var t = ActiveTournament(5);
+            _data.Tournaments.Add(t);
+            await _data.SaveChangesAsync();
+
+            var result = await _teamService.CheckForErrorsAsync(t.Id, "u-not-coach");
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("You need to become a coach to join a team.", result!.Message);
+        }
+
+        [Test]
+        public async Task CheckForErrorsAsync_AlreadyCoachInSameTournament_ReturnsSecondTimeError()
+        {
+            var t = ActiveTournament(6);
+            var userId = "coach1";
+
+            _data.Tournaments.Add(t);
+            _data.Coaches.Add(MakeCoach(userId));
+
+            _data.TournamentsParticipants.Add(new TournamentParticipant
             {
-                Id = 6545,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now,
-                CreatedOn = DateTime.Now,
-                Description = "lkjhgfdvbjkiuytrdvbnjiuytfgbnjuytghjuytg",
-                NumberOfTeams = 0,
-                Status = FootballProjectSoftUni.Infrastructure.Data.Enums.TournamentStatus.Finished,
-                OrganiserId = "600bafb9-a73d-4489-a387-643c3b8ae96c",
-                RefereeId = null
-            };
-
-            _data.Tournaments.Add(tournament);
-            _data.SaveChanges();
-
-
-            var coach = new Coach()
-            {
-                Id = "a2gda19v-7dk6-43c4-bcc8-0c5ce80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-
-            _data.Coaches.Add(coach);
-            _data.SaveChanges();
-
-            var team = new Team()
-            {
-                Id = 99499,
-                Name = "asan",
-                CoachId = coach.Id,
-                Coach = coach
-            };
-
-            _data.Teams.Add(team);
-            _data.SaveChanges();
-
-            var tp = new TournamentParticipant()
-            {
-                ParticipantId = "a2gda19v-7dk6-43c4-bcc8-0c5ce80153f2",
-                TournamentId = tournament.Id,
+                ParticipantId = userId,
+                TournamentId = t.Id,
                 Role = "Coach"
-            };
+            });
 
-            _data.TournamentsParticipants.Add(tp);
-            _data.SaveChanges();
+            await _data.SaveChangesAsync();
 
-            var result = await _teamService.CheckForErrorsAsync(tournament.Id, "a2gda19v-7dk6-43c4-bcc8-0c5ce80153f2");
+            var result = await _teamService.CheckForErrorsAsync(t.Id, userId);
 
-            Assert.AreEqual(result.Message, "You cannot apply second time for this tournament because you already participate as a coach in it.");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("You cannot apply second time for this tournament because you already participate as a coach in it.",
+                result!.Message);
         }
 
         [Test]
-        public async Task ChechForError_ShouldReturn_FifthError()
+        public async Task CheckForErrorsAsync_CoachHasActiveParticipationInOtherTournament_ReturnsActiveParticipationError()
         {
-            var tournament = new Tournament()
+            var targetTournament = ActiveTournament(7);
+            var activeOtherTournament = ActiveTournament(8);
+            var userId = "coach2";
+
+            _data.Tournaments.AddRange(targetTournament, activeOtherTournament);
+            _data.Coaches.Add(MakeCoach(userId));
+
+            _data.TournamentsParticipants.Add(new TournamentParticipant
             {
-                Id = 3548,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now,
-                CreatedOn = DateTime.Now,
-                Description = "lkjhgfdvbjkiuytrdvbnjiuytfgbnjuytghjuytg",
-                NumberOfTeams = 0,
-                Status = FootballProjectSoftUni.Infrastructure.Data.Enums.TournamentStatus.Finished,
-                OrganiserId = "600bafb9-a73d-4489-a387-643c3b8ae96c",
-                RefereeId = null
-            };
-
-            _data.Tournaments.Add(tournament);
-            _data.SaveChanges();
-
-
-            var coach = new Coach()
-            {
-                Id = "a2gda19v-7dk6-43c4-bcc8-0c53e80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-
-            _data.Coaches.Add(coach);
-            _data.SaveChanges();
-
-            var team = new Team()
-            {
-                Id = 99439,
-                Name = "asan",
-                CoachId = coach.Id,
-                Coach = coach
-            };
-
-            _data.Teams.Add(team);
-            _data.SaveChanges();
-
-            var tp = new TournamentParticipant()
-            {
-                ParticipantId = "a2gda19v-7dk6-43c4-bcc8-0c53e80153f2",
-                TournamentId = tournament.Id,
+                ParticipantId = userId,
+                TournamentId = activeOtherTournament.Id,
                 Role = "Coach"
-            };
+            });
 
-            _data.TournamentsParticipants.Add(tp);
-            _data.SaveChanges();
+            await _data.SaveChangesAsync();
 
-            var secondTournament = new Tournament()
-            {
-                Id = 3535,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now,
-                CreatedOn = DateTime.Now,
-                Description = "lkjhgfdvbjkiuytrdvbnjiuytfgbnjuytghjuytg",
-                NumberOfTeams = 0,
-                Status = FootballProjectSoftUni.Infrastructure.Data.Enums.TournamentStatus.Finished,
-                OrganiserId = "600bafb9-a73d-4489-a387-643c3b8ae96c",
-                RefereeId = null
-            };
+            var result = await _teamService.CheckForErrorsAsync(targetTournament.Id, userId);
 
-            _data.Tournaments.Add(secondTournament);
-            _data.SaveChanges();
-
-            var result = await _teamService.CheckForErrorsAsync(secondTournament.Id, coach.Id);
-
-            Assert.AreEqual(result.Message, "You cannot apply for second tournament. You have to leave the current one in order to join a new one.");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("You cannot apply for second tournament. You have to leave the current one in order to join a new one.",
+                result!.Message);
         }
 
         [Test]
-
-        public async Task CheckForError_ShouldReturnNull()
+        public async Task CheckForErrorsAsync_WhenNoErrors_ReturnsNull()
         {
-            var tournament = new Tournament()
-            {
-                Id = 3518,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now,
-                CreatedOn = DateTime.Now,
-                Description = "lkjhgfdvbjkiuytrdvbnjiuytfgbnjuytghjuytg",
-                NumberOfTeams = 0,
-                Status = FootballProjectSoftUni.Infrastructure.Data.Enums.TournamentStatus.Finished,
-                OrganiserId = "600bafb9-a73d-4489-a387-643c3b8ae96c",
-                RefereeId = null
-            };
+            var t = ActiveTournament(9);
+            var userId = "coach-ok";
 
-            _data.Tournaments.Add(tournament);
-            _data.SaveChanges();
+            _data.Tournaments.Add(t);
+            _data.Coaches.Add(MakeCoach(userId));
 
+            await _data.SaveChangesAsync();
 
-            var coach = new Coach()
-            {
-                Id = "a2gda19v-7dk6-4324-bcc8-0c53e80153f2",
-                Name = "q",
-                Experience = "3"
-
-            };
-
-            _data.Coaches.Add(coach);
-            _data.SaveChanges();
-
-            var result = await _teamService.CheckForErrorsAsync(tournament.Id, coach.Id);
+            var result = await _teamService.CheckForErrorsAsync(t.Id, userId);
 
             Assert.IsNull(result);
         }
-
 
         [Test]
         public async Task CreateModel_ShouldBeTrue()
@@ -598,270 +303,349 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         }
 
         [Test]
-
-        public async Task JoinTeam_ShouldReturnError_ForFormat()
+        public async Task JoinTeamAsync_WhenCoachMissing_ReturnsNeedCoachError()
         {
-            var tournament = new Tournament()
-            {
-                Id = 354812,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now,
-                CreatedOn = DateTime.Now,
-                Description = "lkjhgfdvbjkiuytrdvbnjiuytfgbnjuytghjuytg",
-                NumberOfTeams = 0,
-                Status = FootballProjectSoftUni.Infrastructure.Data.Enums.TournamentStatus.Finished,
-                OrganiserId = "600bafb9-a73d-4489-a387-643c3b8ae96c",
-                RefereeId = null
-            };
+            var t = ActiveTournament(1);
+            _data.Tournaments.Add(t);
+            await _data.SaveChangesAsync();
 
-            _data.Tournaments.Add(tournament);
-            _data.SaveChanges();
+            var model = MakeTeamModel();
 
-            var coach = new Coach()
-            {
-                Id = "ebfdvscxfvgbhtnjmkmujnhbgf",
-                Name = "mitaka",
-            };
+            var result = await _teamService.JoinTeamAsync(model, t.Id, "missing-coach");
 
-            _data.Coaches.Add(coach);
-            _data.SaveChanges();
-
-            var teamModel = new TeamRegistrationViewModel()
-            {
-                TeamName = "omryzna mi",
-                TournamentId = tournament.Id,
-                Players = CreatePlayerModelsWithWrongDateFormat()
-            };
-
-            var result = await _teamService.JoinTeamAsync(teamModel, tournament.Id, coach.Id);
-
-            Assert.AreEqual(result.Message, $"Invalid date, format must be dd/MM/yyyy HH:mm");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("You need to become a coach to join a team.", result!.Message);
         }
 
         [Test]
-
-        public async Task JoinTeam_ShouldReturnError_ForYears()
+        public async Task JoinTeamAsync_WhenTournamentMissing_ReturnsBadRequest()
         {
-            var tournament = new Tournament()
+            var coach = MakeCoach("c1");
+            _data.Coaches.Add(coach);
+            await _data.SaveChangesAsync();
+
+            var model = MakeTeamModel();
+
+            var result = await _teamService.JoinTeamAsync(model, 9999, coach.Id);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("BadRequest Message", result!.Message);
+        }
+
+        [Test]
+        public async Task JoinTeamAsync_WhenCoachHasTeam_AddsTournamentTeamAndParticipation_ReturnsNull()
+        {
+            var tournament = ActiveTournament(2);
+
+            var coach = MakeCoach("c2", teamId: 200);
+            var team = new Team { Id = 200, Name = "ExistingTeam", CoachId = coach.Id, Coach = coach };
+
+            _data.Tournaments.Add(tournament);
+            _data.Coaches.Add(coach);
+            _data.Teams.Add(team);
+
+            await _data.SaveChangesAsync();
+
+            var result = await _teamService.JoinTeamAsync(MakeTeamModel(), tournament.Id, coach.Id);
+
+            Assert.IsNull(result);
+
+            Assert.IsTrue(await _data.TournamentsTeams.AnyAsync(tt => tt.TournamentId == tournament.Id && tt.TeamId == team.Id));
+
+            Assert.IsTrue(await _data.TournamentsParticipants.AnyAsync(tp =>
+                tp.TournamentId == tournament.Id && tp.ParticipantId == coach.Id && tp.Role == "Coach"));
+
+            var tFromDb = await _data.Tournaments.FirstAsync(t => t.Id == tournament.Id);
+            Assert.AreEqual(1, tFromDb.NumberOfTeams);
+        }
+
+        [Test]
+        public async Task JoinTeamAsync_WhenCoachHasTeam_AndAlreadyJoined_DoesNotDuplicate_ReturnsNull()
+        {
+            var tournament = ActiveTournament(3);
+
+            var coach = MakeCoach("c3", teamId: 300);
+            var team = new Team { Id = 300, Name = "ExistingTeam2", CoachId = coach.Id, Coach = coach };
+
+            _data.Tournaments.Add(tournament);
+            _data.Coaches.Add(coach);
+            _data.Teams.Add(team);
+
+            _data.TournamentsTeams.Add(new TournamentTeam { TournamentId = tournament.Id, TeamId = team.Id });
+            _data.TournamentsParticipants.Add(new TournamentParticipant
             {
-                Id = 354862,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now,
-                CreatedOn = DateTime.Now,
-                Description = "lkjhgfdvbjkiuytrdvbnjiuytfgbnjuytghjuytg",
-                NumberOfTeams = 0,
-                Status = FootballProjectSoftUni.Infrastructure.Data.Enums.TournamentStatus.Finished,
-                OrganiserId = "600bafb9-a73d-4489-a387-643c3b8ae96c",
-                RefereeId = null
+                ParticipantId = coach.Id,
+                TournamentId = tournament.Id,
+                Role = "Coach"
+            });
+
+            await _data.SaveChangesAsync();
+
+            var result = await _teamService.JoinTeamAsync(MakeTeamModel(), tournament.Id, coach.Id);
+
+            Assert.IsNull(result);
+
+            var ttCount = await _data.TournamentsTeams.CountAsync(tt => tt.TournamentId == tournament.Id && tt.TeamId == team.Id);
+            var tpCount = await _data.TournamentsParticipants.CountAsync(tp =>
+                tp.TournamentId == tournament.Id && tp.ParticipantId == coach.Id && tp.Role == "Coach");
+
+            Assert.AreEqual(1, ttCount);
+            Assert.AreEqual(1, tpCount);
+        }
+
+        [Test]
+        public async Task JoinTeamAsync_WhenCoachHasNoTeam_AndModelIsNull_ReturnsNoTeamYet()
+        {
+            var tournament = ActiveTournament(4);
+            var coach = MakeCoach("c4", teamId: null);
+
+            _data.Tournaments.Add(tournament);
+            _data.Coaches.Add(coach);
+            await _data.SaveChangesAsync();
+
+            var result = await _teamService.JoinTeamAsync(null, tournament.Id, coach.Id);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("NO_TEAM_YET", result!.Message);
+        }
+
+        [Test]
+        public async Task JoinTeamAsync_WhenCoachHasNoTeam_AndNameExists_ReturnsNameExistsError()
+        {
+            var tournament = ActiveTournament(5);
+
+            var coach = new Coach
+            {
+                Id = "c5",
+                Name = "Coach",
+                Experience = "3",
+                TeamId = null
             };
 
             _data.Tournaments.Add(tournament);
-            _data.SaveChanges();
-
-            var coach = new Coach()
+            _data.Coaches.Add(coach);
+            
+            _data.Teams.Add(new Team
             {
-                Id = "ebfdvscxfvgbh2tnjmkmujnhbgf",
-                Name = "mitaka",
+                Id = 555,
+                Name = "SameName",
+                CoachId = "someone-else"
+            });
+
+            await _data.SaveChangesAsync();
+
+            var model = MakeTeamModel("SameName");
+
+            var result = await _teamService.JoinTeamAsync(model, tournament.Id, coach.Id);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("A Team with the same name already exists", result!.Message);
+        }
+
+        [Test]
+        public void CreateTeamDraftAsync_WhenCoachMissing_ThrowsCoachNotFound()
+        {
+            var model = DraftModel("Draft1");
+
+            var ex = Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                await _teamService.CreateTeamDraftAsync(model, "missing-coach"));
+
+            Assert.AreEqual("Coach not found.", ex!.Message);
+        }
+
+        [Test]
+        public async Task CreateTeamDraftAsync_WhenNameExists_ThrowsNameExists()
+        {
+            var coach = new Coach { Id = "c1", Name = "Coach", Experience = "3" };
+            _data.Coaches.Add(coach);
+
+            _data.Teams.Add(new Team
+            {
+                Id = 100,
+                Name = "SameName",
+                CoachId = "someone-else"
+            });
+
+            await _data.SaveChangesAsync();
+
+            var model = DraftModel("SameName");
+
+            var ex = Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                await _teamService.CreateTeamDraftAsync(model, coach.Id));
+
+            Assert.AreEqual("A Team with the same name already exists", ex!.Message);
+        }
+
+        [Test]
+        public void FinalizeJoinAsync_WhenTournamentMissing_ThrowsArgumentException()
+        {
+            Assert.ThrowsAsync<ArgumentException>(async () =>
+                await _teamService.FinalizeJoinAsync(9999, "u1", 1, 1));
+        }
+
+        [Test]
+        public async Task FinalizeJoinAsync_WhenTournamentFinished_ThrowsInvalidOperation()
+        {
+            var t = FinishedTournament(1);
+            _data.Tournaments.Add(t);
+            await _data.SaveChangesAsync();
+
+            var ex = Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                await _teamService.FinalizeJoinAsync(t.Id, "u1", 1, 1));
+
+            Assert.AreEqual("Tournament already finished.", ex!.Message);
+        }
+
+        [Test]
+        public async Task FinalizeJoinAsync_WhenTeamMissing_ThrowsTeamNotFound()
+        {
+            var t = ActiveTournament(2);
+            _data.Tournaments.Add(t);
+            await _data.SaveChangesAsync();
+
+            var ex = Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                await _teamService.FinalizeJoinAsync(t.Id, "u1", 999, 1));
+
+            Assert.AreEqual("Team not found.", ex!.Message);
+        }
+
+        [Test]
+        public async Task FinalizeJoinAsync_WhenValid_AddsTournamentTeamParticipationAndCityEntry()
+        {
+            var tournament = ActiveTournament(3);
+            var coachId = "coach1";
+
+            var coach = new Coach { Id = coachId, Name = "Coach", Experience = "3" };
+            var team = new Team { Id = 30, Name = "T30", CoachId = coachId, Coach = coach };
+
+            _data.Tournaments.Add(tournament);
+            _data.Coaches.Add(coach);
+            _data.Teams.Add(team);
+
+            await _data.SaveChangesAsync();
+
+            await _teamService.FinalizeJoinAsync(tournament.Id, coachId, team.Id, cityId: 5);
+
+            Assert.IsTrue(await _data.TournamentsTeams.AnyAsync(tt => tt.TournamentId == tournament.Id && tt.TeamId == team.Id));
+
+            Assert.IsTrue(await _data.TournamentsParticipants.AnyAsync(tp =>
+                tp.TournamentId == tournament.Id && tp.ParticipantId == coachId && tp.Role == "Coach"));
+
+            Assert.IsTrue(await _data.CityBestTeams.AnyAsync(cb => cb.CityId == 5 && cb.TeamId == team.Id));
+
+            var tFromDb = await _data.Tournaments.FirstAsync(t => t.Id == tournament.Id);
+            Assert.AreEqual(1, tFromDb.NumberOfTeams);
+        }
+
+        [Test]
+        public async Task FinalizeJoinAsync_WhenAlreadyHasTTAndTP_DoesNotDuplicate_AddsCityEntry()
+        {
+            var tournament = ActiveTournament(4);
+            var coachId = "coach2";
+
+            var coach = new Coach { Id = coachId, Name = "Coach", Experience = "3" };
+            var team = new Team { Id = 40, Name = "T40", CoachId = coachId, Coach = coach };
+
+            _data.Tournaments.Add(tournament);
+            _data.Coaches.Add(coach);
+            _data.Teams.Add(team);
+
+            _data.TournamentsTeams.Add(new TournamentTeam { TournamentId = tournament.Id, TeamId = team.Id });
+            _data.TournamentsParticipants.Add(new TournamentParticipant
+            {
+                ParticipantId = coachId,
+                TournamentId = tournament.Id,
+                Role = "Coach"
+            });
+
+            await _data.SaveChangesAsync();
+
+            await _teamService.FinalizeJoinAsync(tournament.Id, coachId, team.Id, cityId: 7);
+
+            var ttCount = await _data.TournamentsTeams.CountAsync(tt => tt.TournamentId == tournament.Id && tt.TeamId == team.Id);
+            var tpCount = await _data.TournamentsParticipants.CountAsync(tp =>
+                tp.TournamentId == tournament.Id && tp.ParticipantId == coachId && tp.Role == "Coach");
+
+            Assert.AreEqual(1, ttCount);
+            Assert.AreEqual(1, tpCount);
+
+            Assert.IsTrue(await _data.CityBestTeams.AnyAsync(cb => cb.CityId == 7 && cb.TeamId == team.Id));
+        }
+
+        [Test]
+        public async Task FinalizeJoinAsync_WhenCityEntryExists_ReturnsEarly_DoesNotDuplicateCityEntry()
+        {
+            var tournament = ActiveTournament(5);
+            var coachId = "coach3";
+
+            var coach = new Coach { Id = coachId, Name = "Coach", Experience = "3" };
+            var team = new Team { Id = 50, Name = "T50", CoachId = coachId, Coach = coach };
+
+            _data.Tournaments.Add(tournament);
+            _data.Coaches.Add(coach);
+            _data.Teams.Add(team);
+
+            _data.CityBestTeams.Add(new CityBestTeam
+            {
+                CityId = 9,
+                TeamId = team.Id,
+                WinsInCity = 0
+            });
+
+            await _data.SaveChangesAsync();
+
+            await _teamService.FinalizeJoinAsync(tournament.Id, coachId, team.Id, cityId: 9);
+
+            var count = await _data.CityBestTeams.CountAsync(cb => cb.CityId == 9 && cb.TeamId == team.Id);
+            Assert.AreEqual(1, count);
+        }
+
+        [Test]
+        public async Task GetCoachTeamIdAsync_WhenCoachNotFound_ReturnsNull()
+        {
+            var result = await _teamService.GetCoachTeamIdAsync("missing-id");
+
+            Assert.IsNull(result);
+        }
+
+        [Test]
+        public async Task GetCoachTeamIdAsync_WhenCoachHasNoTeam_ReturnsNull()
+        {
+            var coach = new Coach
+            {
+                Id = "c2",
+                Name = "Coach",
+                Experience = "3",
+                TeamId = null
             };
 
             _data.Coaches.Add(coach);
-            _data.SaveChanges();
+            await _data.SaveChangesAsync();
 
-            var teamModel = new TeamRegistrationViewModel()
-            {
-                TeamName = "omryzna mi",
-                TournamentId = tournament.Id,
-                Players = CreatePlayerModelsWithRightDateFormatButWrongAge()
-            };
+            var result = await _teamService.GetCoachTeamIdAsync(coach.Id);
 
-            var result = await _teamService.JoinTeamAsync(teamModel, tournament.Id, coach.Id);
-
-            Assert.AreEqual(result.Message, "Players must be at least 18 years old to participate.");
+            Assert.IsNull(result);
         }
 
-        private List<PlayerViewModel> CreatePlayerModelsWithWrongDateFormat()
+        [Test]
+        public async Task GetCoachTeamIdAsync_WhenCoachHasTeam_ReturnsTeamId()
         {
-            List<PlayerViewModel> models = new List<PlayerViewModel>();
-
-            var model1 = new PlayerViewModel()
+            var coach = new Coach
             {
-                Name = "1",
-            };
-            var model2 = new PlayerViewModel()
-            {
-                Name = "2",
-            };
-            var model3 = new PlayerViewModel()
-            {
-                Name = "3",
-            };
-            var model4 = new PlayerViewModel()
-            {
-                Name = "4",
-            };
-            var model5 = new PlayerViewModel()
-            {
-                Name = "5",
-            };
-            var model6 = new PlayerViewModel()
-            {
-                Name = "6",
-            };
-            var model7 = new PlayerViewModel()
-            {
-                Name = "7",
-            };
-            var model8 = new PlayerViewModel()
-            {
-                Name = "8",
-            };
-            var model9 = new PlayerViewModel()
-            {
-                Name = "9",
-            };
-            var model10 = new PlayerViewModel()
-            {
-                Name = "10",
+                Id = "c1",
+                Name = "Coach",
+                Experience = "3",
+                TeamId = 100
             };
 
-            models.Add(model1);
-            models.Add(model2);
-            models.Add(model3);
-            models.Add(model4);
-            models.Add(model5);
-            models.Add(model6);
-            models.Add(model7);
-            models.Add(model8);
-            models.Add(model9);
-            models.Add(model10);
+            _data.Coaches.Add(coach);
+            await _data.SaveChangesAsync();
 
+            var result = await _teamService.GetCoachTeamIdAsync(coach.Id);
 
-
-            return models;
+            Assert.AreEqual(100, result);
         }
 
-        private List<PlayerViewModel> CreatePlayerModelsWithRightDateFormatButWrongAge()
-        {
-            List<PlayerViewModel> models = new List<PlayerViewModel>();
-
-            var model1 = new PlayerViewModel()
-            {
-                Name = "1",
-            };
-            var model2 = new PlayerViewModel()
-            {
-                Name = "2",
-            };
-            var model3 = new PlayerViewModel()
-            {
-                Name = "3",
-            };
-            var model4 = new PlayerViewModel()
-            {
-                Name = "4",
-            };
-            var model5 = new PlayerViewModel()
-            {
-                Name = "5",
-            };
-            var model6 = new PlayerViewModel()
-            {
-                Name = "6",
-            };
-            var model7 = new PlayerViewModel()
-            {
-                Name = "7",
-            };
-            var model8 = new PlayerViewModel()
-            {
-                Name = "8",
-            };
-            var model9 = new PlayerViewModel()
-            {
-                Name = "9",
-            };
-            var model10 = new PlayerViewModel()
-            {
-                Name = "10",
-            };
-
-            models.Add(model1);
-            models.Add(model2);
-            models.Add(model3);
-            models.Add(model4);
-            models.Add(model5);
-            models.Add(model6);
-            models.Add(model7);
-            models.Add(model8);
-            models.Add(model9);
-            models.Add(model10);
-
-
-
-            return models;
-        }
-
-        private List<PlayerViewModel> CreatePlayerModelsWithRightDateFormat()
-        {
-            List<PlayerViewModel> models = new List<PlayerViewModel>();
-
-            var model1 = new PlayerViewModel()
-            {
-                Name = "1",
-                
-            };
-            var model2 = new PlayerViewModel()
-            {
-                Name = "2",
-            };
-            var model3 = new PlayerViewModel()
-            {
-                Name = "3",
-            };
-            var model4 = new PlayerViewModel()
-            {
-                Name = "4",
-            };
-            var model5 = new PlayerViewModel()
-            {
-                Name = "5",
-            };
-            var model6 = new PlayerViewModel()
-            {
-                Name = "6",
-            };
-            var model7 = new PlayerViewModel()
-            {
-                Name = "7",
-            };
-            var model8 = new PlayerViewModel()
-            {
-                Name = "8",
-            };
-            var model9 = new PlayerViewModel()
-            {
-                Name = "9",
-            };
-            var model10 = new PlayerViewModel()
-            {
-                Name = "10",
-            };
-
-            models.Add(model1);
-            models.Add(model2);
-            models.Add(model3);
-            models.Add(model4);
-            models.Add(model5);
-            models.Add(model6);
-            models.Add(model7);
-            models.Add(model8);
-            models.Add(model9);
-            models.Add(model10);
-
-
-
-            return models;
-        }
 
     }
 }

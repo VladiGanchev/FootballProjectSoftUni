@@ -16,7 +16,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
     {
         protected ApplicationDbContext _data;
 
-        [OneTimeSetUp]
+        [SetUp]
 
         public void SetUpBase()
         {
@@ -191,11 +191,15 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             _data.Cities.Add(City);
 
 
-            _data.SaveChangesAsync();
+            _data.SaveChanges();
         }
 
-        [OneTimeTearDown]
+        [TearDown]
+        public void TearDownBase()
+    => _data.Dispose();
 
-        public void TearDownBase() => _data.Dispose();
+        //[OneTimeTearDown]
+
+        //public void TearDownBase() => _data.Dispose();
     }
 }

@@ -34,14 +34,13 @@ namespace FootballProjectSoftUni.Core.Services.Payment
 
         public async Task<string> CreateTournamentJoinCheckoutAsync(int tournamentId, string userId, int? teamId)
         {
-            // 1) Load tournament fee from DB (source of truth)
             var tournament = await context.Tournaments.FirstOrDefaultAsync(t => t.Id == tournamentId);
             if (tournament == null)
             {
                 throw new ArgumentException("Tournament not found.");
             }
 
-            var fee = tournament.ParticipationFee; // decimal
+            var fee = tournament.ParticipationFee; 
             if (fee <= 0)
             {
                 throw new InvalidOperationException("Participation fee is not configured.");
@@ -50,7 +49,6 @@ namespace FootballProjectSoftUni.Core.Services.Payment
             long amount = (long)Math.Round(fee * 100m, MidpointRounding.AwayFromZero);
             if (amount <= 0) throw new InvalidOperationException("Invalid fee amount.");
 
-            // 2) Create payment order first (Pending)
             var order = new FootballProjectSoftUni.Infrastructure.Data.Models.TournamentJoinPayment
             {
                 TournamentId = tournamentId,
@@ -64,22 +62,18 @@ namespace FootballProjectSoftUni.Core.Services.Payment
             context.TournamentJoinPayments.Add(order);
             await context.SaveChangesAsync();
 
-            // 3) Build absolute urls
             var req = httpContextAccessor.HttpContext!.Request;
             var baseUrl = $"{req.Scheme}://{req.Host}";
 
-            // Success page can show "waiting confirmation"
             var successUrl = $"{baseUrl}/City/PaymentSuccess?orderId={order.Id}";
             var cancelUrl = $"{baseUrl}/City/PaymentCancel?orderId={order.Id}";
 
-            // 4) Create Stripe checkout session
             var sessionOptions = new SessionCreateOptions
             {
                 Mode = "payment",
                 SuccessUrl = successUrl,
                 CancelUrl = cancelUrl,
 
-                // For cards, wallet, etc.
                 PaymentMethodTypes = new List<string> { "card" },
 
                 LineItems = new List<SessionLineItemOptions>
@@ -111,13 +105,11 @@ namespace FootballProjectSoftUni.Core.Services.Payment
             var sessionService = new SessionService();
             var session = await sessionService.CreateAsync(sessionOptions);
 
-            // 5) Save session id (and later payment intent id)
             order.StripeSessionId = session.Id;
-            // session.PaymentIntentId may be null depending on mode; often present after creation
             order.StripePaymentIntentId = session.PaymentIntentId ?? "";
             await context.SaveChangesAsync();
 
-            return session.Url; // redirect user to Stripe
+            return session.Url; 
         }
 
         public async Task<bool> RefundTournamentJoinAsync(int orderId, decimal? amount = null, string? reason = null)
@@ -142,7 +134,6 @@ namespace FootballProjectSoftUni.Core.Services.Payment
                 amountCents = (long)Math.Round(amount.Value * 100m, MidpointRounding.AwayFromZero);
             }
 
-            // mark locally
             order.Status = "RefundPending";
             order.RefundReason = reason;
             await context.SaveChangesAsync();
@@ -152,7 +143,7 @@ namespace FootballProjectSoftUni.Core.Services.Payment
             var options = new RefundCreateOptions
             {
                 PaymentIntent = order.StripePaymentIntentId,
-                Amount = amountCents, // null => full refund
+                Amount = amountCents, 
                 Reason = string.IsNullOrWhiteSpace(reason) ? null : reason,
                 Metadata = new Dictionary<string, string>
                 {
@@ -162,7 +153,6 @@ namespace FootballProjectSoftUni.Core.Services.Payment
                 }
             };
 
-            // ✅ idempotency (prevents double refunds)
             var requestOptions = new RequestOptions
             {
                 IdempotencyKey = $"refund_order_{order.Id}_{amountCents?.ToString() ?? "full"}"

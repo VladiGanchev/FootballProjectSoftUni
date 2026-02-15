@@ -99,7 +99,7 @@ namespace FootballProjectSoftUni.Core.Services.Team
                     t => t.Id,
                     (tp, t) => t
                 )
-                .AnyAsync(t => t.EndDate > DateTime.Now); // турнирът още не е свършил
+                .AnyAsync(t => t.EndDate > DateTime.Now); 
 
             if (hasActiveCoachParticipation)
             {
@@ -313,7 +313,6 @@ namespace FootballProjectSoftUni.Core.Services.Team
             var coach = await context.Coaches.FirstOrDefaultAsync(c => c.Id == userId);
             if (coach == null) throw new InvalidOperationException("Coach not found.");
 
-            // name uniqueness
             var nameExists = await context.Teams.AnyAsync(t => t.Name.ToLower() == viewModel.TeamName.ToLower());
             if (nameExists) throw new InvalidOperationException("A Team with the same name already exists");
 
@@ -334,7 +333,6 @@ namespace FootballProjectSoftUni.Core.Services.Team
                 Players = players,
                 CoachId = userId,
                 Coach = coach
-                // Ако имаш поле IsActive / IsDraft -> set it here
             };
 
             context.Teams.Add(team);
@@ -345,10 +343,8 @@ namespace FootballProjectSoftUni.Core.Services.Team
             foreach (var player in players)
                 player.TeamId = teamId;
 
-            // закачи coach.TeamId = teamId (ако не го правиш другаде)
             coach.TeamId = teamId;
 
-            // stats
             var stats = await context.AppStats.FindAsync(1);
             if (stats != null)
             {
@@ -365,15 +361,12 @@ namespace FootballProjectSoftUni.Core.Services.Team
             var tournament = await context.Tournaments.FirstOrDefaultAsync(t => t.Id == tournamentId);
             if (tournament == null) throw new ArgumentException("Tournament not found.");
 
-            // Не allow join в finished
             if (DateTime.Now >= tournament.EndDate)
                 throw new InvalidOperationException("Tournament already finished.");
 
-            // Ensure team exists
             var team = await context.Teams.FirstOrDefaultAsync(t => t.Id == teamId);
             if (team == null) throw new InvalidOperationException("Team not found.");
 
-            // 1) Add team to tournament if not exists
             var existingTournamentTeam = await context.TournamentsTeams
                 .FirstOrDefaultAsync(tt => tt.TournamentId == tournamentId && tt.TeamId == teamId);
 
@@ -388,7 +381,6 @@ namespace FootballProjectSoftUni.Core.Services.Team
                 addedTeamToTournament = true;
             }
 
-            // 2) Add participant coach if not exists
             var existingParticipation = await context.TournamentsParticipants
                 .FirstOrDefaultAsync(tp => tp.TournamentId == tournamentId
                                         && tp.ParticipantId == userId
@@ -422,7 +414,6 @@ namespace FootballProjectSoftUni.Core.Services.Team
             context.CityBestTeams.Add(entry);
             await context.SaveChangesAsync();
 
-            // 3) Update NumberOfTeams + bracket only if new team added
             if (addedTeamToTournament)
             {
                 tournament.NumberOfTeams = await context.TournamentsTeams

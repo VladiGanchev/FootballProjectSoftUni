@@ -688,7 +688,6 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         [Test]
         public async Task AssignExistingRefereeToTournamentAsync_WhenTournamentAlreadyHasReferee_ReturnsFalse()
         {
-            // Arrange
             _data.Referees.Add(new Referee
             {
                 Id = "r1",
@@ -707,18 +706,15 @@ namespace FootballProjectSoftUni.Tests.UnitTests
                 NumberOfTeams = 0,
                 Status = TournamentStatus.Upcoming,
                 OrganiserId = "org",
-                RefereeId = "someone-else" // вече има съдия
+                RefereeId = "someone-else" 
             });
 
             await _data.SaveChangesAsync();
 
-            // Act
             var result = await _refereeService.AssignExistingRefereeToTournamentAsync("r1", 1);
 
-            // Assert
             Assert.AreEqual(false, result);
 
-            // и да не е увеличил броя турнири
             var r = await _data.Referees.FirstAsync(x => x.Id == "r1");
             Assert.AreEqual(0, r.RefereedTournamentsCount);
         }
@@ -758,7 +754,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             Assert.AreEqual(true, result);
 
             var referee = await _data.Referees.FirstAsync(r => r.Id == userId);
-            Assert.AreEqual(8, referee.RefereedTournamentsCount); // +1
+            Assert.AreEqual(8, referee.RefereedTournamentsCount); 
             Assert.AreEqual(tournamentId, referee.TournamentId);
 
             var tournament = await _data.Tournaments.FirstAsync(t => t.Id == tournamentId);

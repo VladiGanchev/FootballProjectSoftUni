@@ -527,7 +527,6 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
 
             public async Task<(bool ok, string? error, int tournamentId)> EnterMatchResultAsync(EnterResultViewModel model)
         {
-            // 1) намираме мача
             var match = await data.Matches.FirstOrDefaultAsync(m => m.Id == model.MatchId);
 
             if (match == null)
@@ -535,7 +534,6 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 return (false, "Match not found.", 0);
             }
 
-            // 2) бизнес валидации
             if (model.Team1Goals < 0 || model.Team2Goals < 0)
             {
                 return (false, "Головете не могат да са отрицателни.", match.TournamentId);
@@ -546,11 +544,9 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 return (false, "Равенство не е позволено. Моля, въведи победител.", match.TournamentId);
             }
 
-            // 3) записваме резултата
             match.Team1Goals = model.Team1Goals;
             match.Team2Goals = model.Team2Goals;
 
-            // 4) winner
             if (model.Team1Goals > model.Team2Goals)
             {
                 match.WinnerTeamId = match.Team1Id;
@@ -560,10 +556,8 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 match.WinnerTeamId = match.Team2Id;
             }
 
-            // 5) местим победителя в следващия рунд
             await MoveWinnerToNextRoundAsync(match.Id);
 
-            // 6) save
             await data.SaveChangesAsync();
 
             return (true, null, match.TournamentId);

@@ -12,8 +12,8 @@ namespace FootballProjectSoftUni.Core.Models.Referee
         public string Name { get; set; } = string.Empty;
         public int Experience { get; set; }
 
-        public int TournamentsCount { get; set; }  // изиграни турнири
-        public double? AverageRating { get; set; } // средна оценка
+        public int TournamentsCount { get; set; }  
+        public double? AverageRating { get; set; } 
     }
 
 }

@@ -51,12 +51,10 @@ namespace FootballProjectSoftUni.Controllers
                 return RedirectToAction("CityTournaments", "Tournament", new { id = cityId });
             }
 
-            // 🔹 НОВО: ако вече има Referee запис за този user, НЕ показваме форма
-            var alreadyReferee = await refereeService.GetRefereeByUserIdAsync(userId); // ще го направим след малко
+            var alreadyReferee = await refereeService.GetRefereeByUserIdAsync(userId);
 
             if (alreadyReferee != null)
             {
-                // директно го assign-ваме към турнира
                 var success = await refereeService.AssignExistingRefereeToTournamentAsync(userId, id);
 
                 if (!success)
@@ -67,7 +65,6 @@ namespace FootballProjectSoftUni.Controllers
                 return RedirectToAction(nameof(AllTournamentsToReferee));
             }
 
-            // старата логика – ако още не е рефер, показваме формата
             var model = new RefereeFormViewMOdel
             {
                 TournamentId = id
@@ -171,7 +168,6 @@ namespace FootballProjectSoftUni.Controllers
         {
             var userId = User.Id();
 
-            // проста валидация
             if (rating < 1 || rating > 5)
             {
                 TempData["ErrorMessage"] = "Rating must be between 1 and 5.";
@@ -231,12 +227,11 @@ namespace FootballProjectSoftUni.Controllers
                 return View(model);
             }
 
-            // тук: admin (User.Id()) изпраща съобщение към рефера (model.RefereeId)
             await contactMessageService.SendInitialAsync(
-                User.Id(),            // изпращач (админ)
+                User.Id(),           
                 model.Subject,
                 model.Content,
-                model.RefereeId       // получател (рефер)
+                model.RefereeId       
             );
 
             var email = await refereeService.GetRefereeEmail(model.RefereeId);

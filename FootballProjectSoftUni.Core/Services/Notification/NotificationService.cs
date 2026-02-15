@@ -128,7 +128,7 @@ namespace FootballProjectSoftUni.Core.Services.Notification
                 Message = message,
                 CreatedOn = DateTime.UtcNow,
                 IsRead = false,
-                ContactMessageId = null // това си остава null, защото не е свързано с ContactMessage
+                ContactMessageId = null
             };
 
             await data.Notifications.AddAsync(notification);

@@ -71,7 +71,7 @@ namespace FootballProjectSoftUni.Core.Services.Coach
             return await context.TournamentsParticipants
                 .Where(x => x.ParticipantId == userId
                          && x.Role == "Coach"
-                         && x.Tournament.EndDate > DateTime.Now) // 🔥 само активни/предстоящи турнири
+                         && x.Tournament.EndDate > DateTime.Now)
                 .Select(x => new TournamentViewModel()
                 {
                     Id = x.TournamentId,
@@ -159,7 +159,6 @@ namespace FootballProjectSoftUni.Core.Services.Coach
 
             var teamId = coach.TeamId;
 
-            // 1) Махаме участията му като Coach САМО от активни/предстоящи турнири
             var coachParticipations = await context.TournamentsParticipants
                 .Where(tp => tp.ParticipantId == userId && tp.Role == "Coach")
                 .Where(tp => tp.Tournament.EndDate > DateTime.UtcNow)
@@ -172,7 +171,6 @@ namespace FootballProjectSoftUni.Core.Services.Coach
 
             if (teamId != null)
             {
-                // 2) Махаме отбора от активни/предстоящи турнири (не пипаме миналите, за да остане историята)
                 var activeTournamentTeams = await context.TournamentsTeams
                     .Where(tt => tt.TeamId == teamId.Value)
                     .Where(tt => tt.Tournament.EndDate > DateTime.UtcNow)
@@ -187,7 +185,6 @@ namespace FootballProjectSoftUni.Core.Services.Coach
 
                     context.TournamentsTeams.RemoveRange(activeTournamentTeams);
 
-                    // 2.1) Обновяваме NumberOfTeams за засегнатите турнири
                     var tournaments = await context.Tournaments
                         .Where(t => affectedTournamentIds.Contains(t.Id))
                         .ToListAsync();
@@ -200,7 +197,6 @@ namespace FootballProjectSoftUni.Core.Services.Coach
                     }
                 }
 
-                // 3) Ако има мачове (история) -> НЕ трим отбора, защото Matches сочат към него
                 var hasMatches = await context.Matches
                     .AnyAsync(m => m.Team1Id == teamId.Value
                                 || m.Team2Id == teamId.Value
@@ -208,12 +204,10 @@ namespace FootballProjectSoftUni.Core.Services.Coach
 
                 if (hasMatches)
                 {
-                    // Оставяме историята. Разкачаме coach-а от отбора, за да не държи TeamId
                     coach.TeamId = null;
                 }
                 else
                 {
-                    // Няма мачове -> безопасно е да изтрием всичко за този отбор
 
                     var tournamentsTeamsAll = await context.TournamentsTeams
                         .Where(tt => tt.TeamId == teamId.Value)
@@ -248,7 +242,6 @@ namespace FootballProjectSoftUni.Core.Services.Coach
                 }
             }
 
-            // 4) Накрая махаме самия Coach запис (ролята)
             context.Coaches.Remove(coach);
 
             await context.SaveChangesAsync();

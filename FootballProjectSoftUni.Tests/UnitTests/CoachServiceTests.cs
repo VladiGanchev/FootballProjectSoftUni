@@ -965,7 +965,6 @@ namespace FootballProjectSoftUni.Tests.UnitTests
                 new TournamentTeam { TournamentId = active1.Id, TeamId = 99 } 
             );
 
-            // Coach participation (активно)
             _data.TournamentsParticipants.Add(new TournamentParticipant
             {
                 ParticipantId = userId,

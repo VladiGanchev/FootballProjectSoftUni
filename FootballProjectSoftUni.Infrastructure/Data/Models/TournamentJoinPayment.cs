@@ -15,15 +15,15 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
 
         public string UserId { get; set; } = null!; 
 
-        public int? TeamId { get; set; } // ако вече имаш team или след като го създадеш (draft)
+        public int? TeamId { get; set; } 
 
         public string? StripeSessionId { get; set; } 
         public string? StripePaymentIntentId { get; set; }
 
-        public decimal Amount { get; set; } // participation fee (за лог)
+        public decimal Amount { get; set; } 
         public string Currency { get; set; } = "eur";
 
-        public string Status { get; set; } = "Pending"; // Pending/Paid/Failed/Expired
+        public string Status { get; set; } = "Pending"; 
         public DateTime CreatedOnUtc { get; set; } = DateTime.UtcNow;
         public DateTime? PaidOnUtc { get; set; }
         public string? StripeRefundId { get; set; }

@@ -36,12 +36,11 @@ namespace FootballProjectSoftUni.Core.Services.Message
                 throw new ArgumentException("Subject and content are required.");
             }
 
-            // Ако няма подаден receiver → старият сценарий: потребител пише на админ
             if (receiverUserId == null)
             {
                 var message = new ContactMessage
                 {
-                    UserId = userId,           // собственик на нишката е потребителят
+                    UserId = userId,           
                     Subject = subject,
                     Content = content,
                     IsFromAdmin = false,
@@ -54,7 +53,7 @@ namespace FootballProjectSoftUni.Core.Services.Message
 
                 var notification = new FootballProjectSoftUni.Infrastructure.Data.Models.Notification
                 {
-                    UserId = await GetAdminIdAsync(),   // получател е админът
+                    UserId = await GetAdminIdAsync(),   
                     ContactMessageId = message.Id,
                     Message = subject,
                     CreatedOn = DateTime.UtcNow,
@@ -68,8 +67,6 @@ namespace FootballProjectSoftUni.Core.Services.Message
             }
             else
             {
-                // НОВО: админ пише директно на конкретен потребител (рефер)
-                // userId тук е изпращачът (админ), receiverUserId – реферът
                 bool isAdmin = await IsAdminAsync(userId);
                 if (!isAdmin)
                 {
@@ -78,7 +75,7 @@ namespace FootballProjectSoftUni.Core.Services.Message
 
                 var message = new ContactMessage
                 {
-                    UserId = receiverUserId,   // нишката "принадлежи" на рефера
+                    UserId = receiverUserId,   
                     Subject = subject,
                     Content = content,
                     IsFromAdmin = true,
@@ -91,7 +88,7 @@ namespace FootballProjectSoftUni.Core.Services.Message
 
                 var notification = new FootballProjectSoftUni.Infrastructure.Data.Models.Notification
                 {
-                    UserId = receiverUserId,   // нотификацията отива при рефера
+                    UserId = receiverUserId,   
                     ContactMessageId = message.Id,
                     Message = subject,
                     CreatedOn = DateTime.UtcNow,

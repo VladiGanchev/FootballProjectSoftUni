@@ -90,8 +90,7 @@
                                 </span>
 
                                 @{
-                                    // ВАЖНО: не променям логиката ти — показвам това, което вече имаш (e.Status)
-                                    // и просто му давам визуален "badge" клас.
+
                                     var statusClass = e.Status.ToString().ToLower() switch
                                     {
                                         "upcoming" => "status-upcoming",

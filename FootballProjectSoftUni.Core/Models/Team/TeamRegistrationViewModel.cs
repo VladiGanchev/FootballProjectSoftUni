@@ -15,7 +15,6 @@ namespace FootballProjectSoftUni.Core.Models.Team
         [StringLength(TeamNameMaxLength, MinimumLength = TeamNameMinLength, ErrorMessage = StringLengthErrorMessage)]
         public string TeamName { get; set; } = string.Empty;
 
-        //[Required(ErrorMessage = RequireErrorMessage)]
         public List<PlayerViewModel> Players { get; set; } = new List<PlayerViewModel>();
 
         public int TournamentId { get; set; }

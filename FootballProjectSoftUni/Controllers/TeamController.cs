@@ -32,7 +32,6 @@ namespace FootballProjectSoftUni.Controllers
         {
             string userId = User.Id();
 
-            // 1) Първо глобалните проверки (макс. отбори, вече е коуч в турнир, рефер и т.н.)
             var error = await teamService.CheckForErrorsAsync(id, userId);
 
             if (error != null)
@@ -51,16 +50,13 @@ namespace FootballProjectSoftUni.Controllers
                 }
             }
 
-            // If coach already has a team -> start Stripe payment immediately
-            // You can add a method teamService.GetCoachTeamId(userId) or read in service.
-            var coachTeamId = await teamService.GetCoachTeamIdAsync(userId); // implement simple helper
+            var coachTeamId = await teamService.GetCoachTeamIdAsync(userId); 
             if (coachTeamId.HasValue)
             {
                 var url = await paymentService.CreateTournamentJoinCheckoutAsync(id, userId, coachTeamId.Value);
                 return Redirect(url);
             }
 
-            // else show team creation form
             var model = teamService.CreateModel(id);
             return View(model);
         }

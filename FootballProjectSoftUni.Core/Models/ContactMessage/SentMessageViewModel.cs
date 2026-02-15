@@ -16,6 +16,6 @@ namespace FootballProjectSoftUni.Core.Models.ContactMessage
 
         public DateTime CreatedOn { get; set; }
 
-        public string ToName { get; set; } = string.Empty; // "Админ" или името на потребителя
+        public string ToName { get; set; } = string.Empty;
     }
 }

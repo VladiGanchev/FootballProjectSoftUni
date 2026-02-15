@@ -311,7 +311,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             var result = await _tournamentService.GetCitiesAsync();
             var cities = result.ToList();
 
-            Assert.That(cities.Count, Is.EqualTo(27)); // толкова seed-ваш в UnitTestsBase
+            Assert.That(cities.Count, Is.EqualTo(27)); 
 
             var blagoevgrad = cities.FirstOrDefault(c => c.Id == 1);
             Assert.NotNull(blagoevgrad);

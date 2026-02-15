@@ -49,13 +49,11 @@ namespace FootballProjectSoftUni.Core.Services.Referee
                 };
             }
 
-            // 🔴 ТУК ПРАВИМ ПРОМЯНАТА:
-            // Искаме да спрем само ако е рефер в ДРУГ АКТИВЕН турнир
             var activeRefereeInAnotherTournament = await context.Referees
                 .AnyAsync(r =>
                     r.Id == userId &&
-                    r.TournamentId != null &&       // има активен турнир
-                    r.TournamentId != tournamentId  // и не е същият турнир
+                    r.TournamentId != null &&       
+                    r.TournamentId != tournamentId  
                 );
 
             if (activeRefereeInAnotherTournament)
@@ -108,34 +106,29 @@ namespace FootballProjectSoftUni.Core.Services.Referee
      string userId,
      DateTime birthdate)
         {
-            // 1. Опитваме да намерим вече съществуващ рефер
             var referee = await context.Referees
                 .FirstOrDefaultAsync(r => r.Id == userId);
 
             if (referee == null)
             {
-                // 2. Ако НЯМА рефер – създаваме нов
                 referee = new FootballProjectSoftUni.Infrastructure.Data.Models.Referee()
                 {
                     Id = userId,
                     Name = model.Name,
                     Birthdate = birthdate,
                     Experience = model.Experience,
-                    RefereedTournamentsCount = 0 // стартово
+                    RefereedTournamentsCount = 0 
                 };
 
                 context.Referees.Add(referee);
             }
 
-            // 3. Увеличаваме общия брой турнири, в които е бил съдия
             referee.RefereedTournamentsCount++;
 
-            // 4. Задаваме текущия турнир, в който ще бъде съдия сега
             referee.TournamentId = id;
 
             await context.SaveChangesAsync();
 
-            // 5. Обновяваме самия турнир
             var tournament = await context.Tournaments
                 .Where(x => x.Id == id)
                 .FirstOrDefaultAsync();
@@ -150,7 +143,6 @@ namespace FootballProjectSoftUni.Core.Services.Referee
 
             await context.SaveChangesAsync();
 
-            // 6. Добавяме запис в TournamentsParticipants (роля Referee)
             TournamentParticipant tp = new TournamentParticipant()
             {
                 ParticipantId = userId,

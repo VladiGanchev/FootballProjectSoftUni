@@ -198,8 +198,5 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         public void TearDownBase()
     => _data.Dispose();
 
-        //[OneTimeTearDown]
-
-        //public void TearDownBase() => _data.Dispose();
     }
 }

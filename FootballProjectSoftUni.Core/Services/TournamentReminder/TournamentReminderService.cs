@@ -24,7 +24,6 @@ namespace FootballProjectSoftUni.Core.Services.TournamentReminder
 
         public async Task Send24HourRemindersAsync()
         {
-            // Времето е локално => ползваме DateTime.Now
             var now = DateTime.Now;
             var from = now.AddHours(23);
             var to = now.AddHours(25);
@@ -47,7 +46,6 @@ namespace FootballProjectSoftUni.Core.Services.TournamentReminder
             {
                 var cityName = string.IsNullOrWhiteSpace(t.CityName) ? "неизвестен град" : t.CityName;
 
-                // Взимаме всички userId-та на join-налите
                 var userIds = await data.TournamentsParticipants
                     .Where(tp => tp.TournamentId == t.Id)
                     .Select(tp => tp.ParticipantId)
@@ -56,13 +54,11 @@ namespace FootballProjectSoftUni.Core.Services.TournamentReminder
 
                 if (userIds.Count == 0)
                 {
-                    // Няма участници -> пак маркираме, за да не се върти безкрайно
                     var entityNoUsers = await data.Tournaments.FindAsync(t.Id);
                     if (entityNoUsers != null) entityNoUsers.ReminderSent = true;
                     continue;
                 }
 
-                // Взимаме имейлите на тези потребители
                 var users = await data.Users
                     .Where(u => userIds.Contains(u.Id))
                     .Select(u => new { u.Id, u.Email })
@@ -75,17 +71,14 @@ namespace FootballProjectSoftUni.Core.Services.TournamentReminder
 
                 foreach (var u in users)
                 {
-                    // 1) Notification
                     await notificationService.CreateNotificationForUserAsync(u.Id, message);
 
-                    // 2) Email (ако има email)
                     if (!string.IsNullOrWhiteSpace(u.Email))
                     {
                         await emailService.SendAsync(u.Email, subject, message);
                     }
                 }
 
-                // Маркираме, че напомнянето е изпратено (за да няма дубли)
                 var entity = await data.Tournaments.FindAsync(t.Id);
                 if (entity != null)
                     entity.ReminderSent = true;

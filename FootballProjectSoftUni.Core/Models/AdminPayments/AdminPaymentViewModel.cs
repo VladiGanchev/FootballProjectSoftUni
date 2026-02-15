@@ -8,7 +8,7 @@ namespace FootballProjectSoftUni.Core.Models.AdminPayments
 {
     public class AdminPaymentViewModel
     {
-        public int Id { get; set; } // OrderId
+        public int Id { get; set; } 
         public string UserId { get; set; } = null!;
         public int TournamentId { get; set; }
         public int? TeamId { get; set; }

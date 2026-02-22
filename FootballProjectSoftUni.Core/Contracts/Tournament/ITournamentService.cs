@@ -6,12 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace FootballProjectSoftUni.Core.Contracts.Tournament
 {
     public interface ITournamentService
     {
-        Task<IEnumerable<TournamentViewModel>> GetCityTournamentsAsync(int cityId, bool showPast);
+        Task<IPagedList<TournamentViewModel>> GetCityTournamentsAsync(int cityId, bool showPast, int? page);
         Task AddTournamentToCityAsync(AddTournamentFormViewModel model, int cityId, DateTime start, DateTime end);
         Task<DetailsViewModel> GetTournamentDetailsAsync(int id);
         Task EditTournamentAsync(EditViewModel model, DateTime start, DateTime end);

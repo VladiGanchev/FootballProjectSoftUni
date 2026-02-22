@@ -13,7 +13,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using X.PagedList;
 using static FootballProjectSoftUni.Infrastructure.Data.Constants.DataConstants;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace FootballProjectSoftUni.Core.Services.Tournament
 {
@@ -140,47 +142,48 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
             }).ToListAsync();
         }
 
-        public async Task<IEnumerable<TournamentViewModel>> GetCityTournamentsAsync(int id, bool showPast)
+        public async Task<IPagedList<TournamentViewModel>> GetCityTournamentsAsync(int id, bool showPast, int? page)
         {
-            var city = await data.Cities
-                .FirstOrDefaultAsync(x => x.Id == id);
+            var pageNumber = page ?? 1;
+            var pageSize = 9;
 
-            if (city == null)
-            {
-                return null;
-            }
+            var cityExists = await data.Cities.AnyAsync(x => x.Id == id);
+            if (!cityExists) return null;
 
-            var cityTournaments = await data.TournamentsCities
+            var now = DateTime.Now; // ако ползваш UTC навсякъде -> DateTime.UtcNow
+
+            // базов query
+            var query = data.TournamentsCities
                 .Where(x => x.CityId == id)
-                .Select(x => new TournamentViewModel()
+                .Select(x => new TournamentViewModel
                 {
                     Id = x.TournamentId,
                     StartDate = x.Tournament.StartDate,
                     EndDate = x.Tournament.EndDate,
                     Description = x.Tournament.Description,
                     RefereeId = x.Tournament.RefereeId,
-                    Status = x.Tournament.Status.ToString(),
                     NumberOfTeams = x.Tournament.NumberOfTeams,
-                    ImageUrl = x.Tournament.ImageUrl
-                })
-                .ToListAsync();
+                    ImageUrl = x.Tournament.ImageUrl,
 
-            foreach (var tournament in cityTournaments)
-            {
-                UpdateTournamentStatus(tournament);
-            }
+                    // можеш да оставиш това, но реалният "динамичен" статус ще го сложим после
+                    Status = x.Tournament.Status
+                });
 
+            // showPast = приключили => EndDate < now
             if (showPast)
-            {
-                return cityTournaments
-                    .Where(x => x.Status == TournamentStatus.Finished.ToString())
-                    .OrderByDescending(x => x.EndDate);
-            }
+                query = query.Where(x => x.EndDate < now)
+                             .OrderByDescending(x => x.EndDate);
             else
-            {
-                return cityTournaments
-                    .Where(x => x.Status != TournamentStatus.Finished.ToString());
-            }
+                query = query.Where(x => x.EndDate >= now)
+                             .OrderBy(x => x.StartDate);
+
+            var paged = await query.ToPagedListAsync(pageNumber, pageSize);
+
+            // тук вече имаш реални обекти (материализирани) и можеш да сметнеш динамичния статус
+            foreach (var t in paged)
+                UpdateTournamentStatus(t, now);
+
+            return paged;
         }
 
         public async Task<DetailsViewModel> GetTournamentDetailsAsync(int id)
@@ -291,20 +294,14 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
         }
 
 
-        private void UpdateTournamentStatus(TournamentViewModel tournament)
+        private void UpdateTournamentStatus(TournamentViewModel tournament, DateTime now)
         {
-            if (tournament.StartDate > DateTime.Now)
-            {
-                tournament.Status = TournamentStatus.Upcoming.ToString();
-            }
-            else if (DateTime.Now > tournament.StartDate && DateTime.Now < tournament.EndDate)
-            {
-                tournament.Status = TournamentStatus.Started.ToString();
-            }
-            else if (DateTime.Now > tournament.EndDate)
-            {
-                tournament.Status = TournamentStatus.Finished.ToString();
-            }
+            if (tournament.StartDate > now)
+                tournament.Status = TournamentStatus.Upcoming;
+            else if (now >= tournament.StartDate && now < tournament.EndDate)
+                tournament.Status = TournamentStatus.Started;
+            else
+                tournament.Status = TournamentStatus.Finished;
         }
 
         public async Task<EditViewModel> FindTournamentAsync(int id)

@@ -316,13 +316,13 @@ namespace FootballProjectSoftUni.Core.Services.Team
             var nameExists = await context.Teams.AnyAsync(t => t.Name.ToLower() == viewModel.TeamName.ToLower());
             if (nameExists) throw new InvalidOperationException("A Team with the same name already exists");
 
-            var players = new List<Player>();
+            var players = viewModel.Players
+                .Where(p => !string.IsNullOrWhiteSpace(p.Name))
+                .Select(p => new Player { Name = p.Name!.Trim() })
+                .ToList();
 
-            foreach (var p in viewModel.Players)
-            {
-
-                players.Add(new Player { Name = p.Name });
-            }
+            if (players.Count < 6)
+                throw new InvalidOperationException("You must enter at least 6 players.");
 
             context.Players.AddRange(players);
             await context.SaveChangesAsync();
@@ -401,17 +401,19 @@ namespace FootballProjectSoftUni.Core.Services.Team
             var exists = await context.CityBestTeams
        .AnyAsync(cb => cb.CityId == cityId && cb.TeamId == teamId);
 
-            if (exists)
-                return;
-
-            var entry = new CityBestTeam
+            if (!exists)
             {
-                CityId = cityId,
-                TeamId = teamId,
-                WinsInCity = 0
-            };
+                var entry = new CityBestTeam
+                {
+                    CityId = cityId,
+                    TeamId = teamId,
+                    WinsInCity = 0
+                };
 
-            context.CityBestTeams.Add(entry);
+                context.CityBestTeams.Add(entry);
+            }
+
+
             await context.SaveChangesAsync();
 
             if (addedTeamToTournament)

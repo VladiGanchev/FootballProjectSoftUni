@@ -38,7 +38,7 @@ namespace FootballProjectSoftUni.Controllers
             {
                 if (error.Message == "You need to become a coach to join a team.")
                 {
-                    return RedirectToAction("BecomeCoach", "Coach");
+                    return RedirectToAction("BecomeCoach", "Coach", new { tournamentId = id });
                 }
                 else
                 {

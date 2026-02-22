@@ -1,4 +1,5 @@
 ﻿using FootballProjectSoftUni.Core.Contracts;
+using FootballProjectSoftUni.Infrastructure.Data.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -19,7 +20,7 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
         public DateTime EndDate { get; set; }
 
         [Required]
-        public string Status { get; set; } = string.Empty;
+        public TournamentStatus Status { get; set; }
 
         [Required]
         public string Description { get; set; } = string.Empty;

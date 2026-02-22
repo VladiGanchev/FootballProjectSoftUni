@@ -10,7 +10,6 @@ namespace FootballProjectSoftUni.Core.Models.Player
 {
     public class PlayerViewModel
     {
-        [Required(ErrorMessage = RequireErrorMessage)]
-        public string Name { get; set; } = string.Empty;
+        public string? Name { get; set; } = string.Empty;
     }
 }

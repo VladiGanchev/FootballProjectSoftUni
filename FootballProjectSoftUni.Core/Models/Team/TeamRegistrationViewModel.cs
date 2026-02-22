@@ -9,7 +9,7 @@ using static FootballProjectSoftUni.Infrastructure.Data.Constants.DataConstants;
 
 namespace FootballProjectSoftUni.Core.Models.Team
 {
-    public class TeamRegistrationViewModel
+    public class TeamRegistrationViewModel : IValidatableObject
     {
         [Required(ErrorMessage = RequireErrorMessage)]
         [StringLength(TeamNameMaxLength, MinimumLength = TeamNameMinLength, ErrorMessage = StringLengthErrorMessage)]
@@ -24,6 +24,18 @@ namespace FootballProjectSoftUni.Core.Models.Team
             for (int i = 0; i < 10; i++)
             {
                 Players.Add(new PlayerViewModel());
+            }
+        }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var filled = Players.Count(p => !string.IsNullOrWhiteSpace(p?.Name));
+
+            if (filled < 6)
+            {
+                yield return new ValidationResult(
+                    "Please enter at least 6 players."
+                );
             }
         }
     }

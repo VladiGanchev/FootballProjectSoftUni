@@ -16,6 +16,13 @@
         </div>
     }
 
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <div asp-validation-summary="All"></div>
+        </div>
+    }
+
     <div class="text-center mb-4">
         <h2 class="page-title mb-1">
             <i class="bi bi-people-fill me-2"></i>

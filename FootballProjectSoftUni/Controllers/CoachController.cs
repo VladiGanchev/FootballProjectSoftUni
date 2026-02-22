@@ -4,6 +4,7 @@ using FootballProjectSoftUni.Core.Models.Coach;
 using FootballProjectSoftUni.Core.Services.Referee;
 using FootballProjectSoftUni.Core.Services.Tournament;
 using FootballProjectSoftUni.Extensions;
+using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -24,7 +25,7 @@ namespace FootballProjectSoftUni.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> BecomeCoach()
+        public async Task<IActionResult> BecomeCoach(int? tournamentId)
         {
             var userId = User.Id();
 
@@ -39,20 +40,28 @@ namespace FootballProjectSoftUni.Controllers
             }
 
             var model = new CoachViewModel();
+            ViewBag.TournamentId = tournamentId;
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> BecomeCoach(CoachViewModel model)
+        public async Task<IActionResult> BecomeCoach(CoachViewModel model, int? tournamentId)
         {
             if (!ModelState.IsValid)
             {
+                ViewBag.TournamentId = tournamentId;
                 return View(model);
             }
 
             string userId = User.Id();
 
             await coachService.BecomeCoachAsync(model, userId);
+
+            if (tournamentId.HasValue)
+            {
+                return RedirectToAction("JoinTeam", "Team", new { id = tournamentId.Value });
+            }
+
             return RedirectToAction("All", "City");
         }
 

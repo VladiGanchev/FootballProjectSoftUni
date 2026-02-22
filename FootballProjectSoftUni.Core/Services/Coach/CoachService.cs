@@ -79,7 +79,7 @@ namespace FootballProjectSoftUni.Core.Services.Coach
                     CityName = x.Tournament.TournamentCities.FirstOrDefault().City.Name,
                     EndDate = x.Tournament.EndDate,
                     Description = x.Tournament.Description,
-                    Status = x.Tournament.Status.ToString(),
+                    Status = x.Tournament.Status,
                     NumberOfTeams = x.Tournament.NumberOfTeams,
                     ImageUrl = x.Tournament.ImageUrl
                 })

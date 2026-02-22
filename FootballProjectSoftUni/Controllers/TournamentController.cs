@@ -30,7 +30,7 @@ namespace FootballProjectSoftUni.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> CityTournaments(int id, bool showPast)
+        public async Task<IActionResult> CityTournaments(int id, bool showPast, int? page)
         {
             var city = await service.FindCityAsync(id);
 
@@ -39,7 +39,7 @@ namespace FootballProjectSoftUni.Controllers
                 return BadRequest();
             }
 
-            var tournaments = await service.GetCityTournamentsAsync(id, showPast);
+            var tournaments = await service.GetCityTournamentsAsync(id, showPast, page);
 
             ViewBag.ShowPast = showPast;
             ViewBag.CityId = id;

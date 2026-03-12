@@ -1,5 +1,7 @@
 ﻿@using FootballProjectSoftUni.Core.Models.Team
 @model TeamRegistrationViewModel
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
 
 @{
     ViewData["Title"] = "Join Team";
@@ -29,7 +31,7 @@
             @ViewData["Title"]
         </h2>
         <p class="text-muted mb-0">
-            Въведи име на отбор и попълни играчите.
+            @Localizer["JTEnter"]
         </p>
     </div>
 
@@ -39,9 +41,9 @@
 
             <div class="mb-3">
                 <label asp-for="TeamName" class="form-label fw-bold">
-                    <i class="bi bi-shield-fill me-2"></i>Team Name
+                    <i class="bi bi-shield-fill me-2"></i>@Localizer["JTTeamName"]
                 </label>
-                <input asp-for="TeamName" class="form-control tg-input" placeholder="Enter team name..." />
+                <input asp-for="TeamName" class="form-control tg-input" />
                 <span asp-validation-for="TeamName" class="text-danger small"></span>
             </div>
 
@@ -49,9 +51,9 @@
 
             <div class="d-flex align-items-center justify-content-between mb-2">
                 <h4 class="mb-0 fw-bold">
-                    <i class="bi bi-person-lines-fill me-2"></i>Players Information
+                    <i class="bi bi-person-lines-fill me-2"></i>@Localizer["JTPlayers"]
                 </h4>
-                <span class="text-muted small">10 players</span>
+                <span class="text-muted small">@Localizer["JT10"]</span>
             </div>
 
             <div class="row g-3 mt-1">
@@ -60,12 +62,11 @@
                     <div class="col-12 col-md-6">
                         <div class="player-card">
                             <label asp-for="@Model.Players[i].Name" class="form-label fw-bold mb-2">
-                                <i class="bi bi-person-fill me-2"></i>Player @(i + 1)
+                                <i class="bi bi-person-fill me-2"></i>@Localizer["JTPlayer"] @(i + 1)
                             </label>
 
                             <input asp-for="@Model.Players[i].Name"
-                                   class="form-control tg-input"
-                                   placeholder="Player name..." />
+                                   class="form-control tg-input" />
 
                             <span asp-validation-for="@Model.Players[i].Name" class="text-danger small"></span>
                         </div>
@@ -75,7 +76,7 @@
 
             <button type="submit" class="btn btn-primary btn-lg w-100 tg-action-btn mt-4">
                 <i class="bi bi-check-circle-fill me-2"></i>
-                Register
+                @Localizer["JTRegister"]
             </button>
 
         </form>

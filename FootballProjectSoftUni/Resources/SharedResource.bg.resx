@@ -1,0 +1,940 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddCityAddCity" xml:space="preserve">
+    <value>Добави град</value>
+  </data>
+  <data name="AddCityImage" xml:space="preserve">
+    <value>Снимка</value>
+  </data>
+  <data name="AddCityName" xml:space="preserve">
+    <value>Име</value>
+  </data>
+  <data name="AllLeaders" xml:space="preserve">
+    <value>Лидери</value>
+  </data>
+  <data name="AllSearch" xml:space="preserve">
+    <value>Потърси град</value>
+  </data>
+  <data name="AllTournaments" xml:space="preserve">
+    <value>Турнири</value>
+  </data>
+  <data name="ATCEnd" xml:space="preserve">
+    <value>Край</value>
+  </data>
+  <data name="ATCLeaveTournament" xml:space="preserve">
+    <value>Напусни тирнир</value>
+  </data>
+  <data name="ATCNoTournament" xml:space="preserve">
+    <value>Няма турнири</value>
+  </data>
+  <data name="ATCNotYet" xml:space="preserve">
+    <value>Все още не участваш в турнири като треньор.</value>
+  </data>
+  <data name="ATCStart" xml:space="preserve">
+    <value>Старт</value>
+  </data>
+  <data name="ATCTeams" xml:space="preserve">
+    <value>Отбори</value>
+  </data>
+  <data name="BCBC" xml:space="preserve">
+    <value>Стани треньор</value>
+  </data>
+  <data name="BCBecome" xml:space="preserve">
+    <value>Стани треньор</value>
+  </data>
+  <data name="BCExperience" xml:space="preserve">
+    <value>Опит (години)</value>
+  </data>
+  <data name="BCName" xml:space="preserve">
+    <value>Име</value>
+  </data>
+  <data name="BCYouNedd" xml:space="preserve">
+    <value>Трябва да станеш треньор, за да можеш да регистрираш отбор.</value>
+  </data>
+  <data name="CTheme" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="DCAreyousure" xml:space="preserve">
+    <value>Сигурен ли си, че искаш да продължиш?</value>
+  </data>
+  <data name="DCCancel" xml:space="preserve">
+    <value>Отказ</value>
+  </data>
+  <data name="DCCareful" xml:space="preserve">
+    <value>Внимание:</value>
+  </data>
+  <data name="DCCConfirmDeletion" xml:space="preserve">
+    <value>Потвърди изтриването. Това действие не може да бъде върнато.</value>
+  </data>
+  <data name="DCConfirmDelete" xml:space="preserve">
+    <value>Потвърди изтриването</value>
+  </data>
+  <data name="DCWithDeletion" xml:space="preserve">
+    <value>С изтриването на този град ще бъдат изтрити и всички турнири в него.</value>
+  </data>
+  <data name="DeleteDeleteCity" xml:space="preserve">
+    <value>Изтрий град</value>
+  </data>
+  <data name="DeleteSelectCity" xml:space="preserve">
+    <value>Избери град</value>
+  </data>
+  <data name="FPBackToLogin" xml:space="preserve">
+    <value>Назад към Вход</value>
+  </data>
+  <data name="FPCBackToLogin" xml:space="preserve">
+    <value>Назад към Вход</value>
+  </data>
+  <data name="FPCCheckEmail" xml:space="preserve">
+    <value>Проверете имейла си</value>
+  </data>
+  <data name="FPCLogin" xml:space="preserve">
+    <value>Вход</value>
+  </data>
+  <data name="FPCPassReset" xml:space="preserve">
+    <value>Нулиране на парола</value>
+  </data>
+  <data name="FPCPassResetSuccess" xml:space="preserve">
+    <value>Паролата ви е сменена успешно.</value>
+  </data>
+  <data name="FPCSentEmail" xml:space="preserve">
+    <value>Изпратихме ви инструкции за нулиране на паролата ви. Моля, проверете входящата си поща.</value>
+  </data>
+  <data name="FPEmail" xml:space="preserve">
+    <value>Имейл</value>
+  </data>
+  <data name="FPEnterEmail" xml:space="preserve">
+    <value>Въведете имейл адреса си, за да получите инструкции за нулиране на паролата</value>
+  </data>
+  <data name="FPFP" xml:space="preserve">
+    <value>Забравена Парола</value>
+  </data>
+  <data name="FPResetPass" xml:space="preserve">
+    <value>Нулиране на парола</value>
+  </data>
+  <data name="GBTBack" xml:space="preserve">
+    <value>Обратно към градове</value>
+  </data>
+  <data name="GBTCoach" xml:space="preserve">
+    <value>Треньор</value>
+  </data>
+  <data name="GBTLeaders" xml:space="preserve">
+    <value>Лидери в града</value>
+  </data>
+  <data name="GBTNot" xml:space="preserve">
+    <value>Все още няма регистрирани резултати/победи за отбори в този град.</value>
+  </data>
+  <data name="GBTNotTeams" xml:space="preserve">
+    <value>Няма отбори в този град.</value>
+  </data>
+  <data name="GBTTop" xml:space="preserve">
+    <value>Топ отбори в този град според победи.</value>
+  </data>
+  <data name="GBTWins" xml:space="preserve">
+    <value>Победи в града</value>
+  </data>
+  <data name="ICheck" xml:space="preserve">
+    <value>Прегледай съобщенията от потребителите и отвори детайлите с един клик.</value>
+  </data>
+  <data name="IDate" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="IndexClearStructure" xml:space="preserve">
+    <value>Ясна структура</value>
+  </data>
+  <data name="IndexCreateTeam" xml:space="preserve">
+    <value>Създавай отбор и се запиши лесно за турнир.</value>
+  </data>
+  <data name="IndexFollowRanking" xml:space="preserve">
+    <value>Проследявай класирания, резултати от мачове и развитието на турнира в реално време.</value>
+  </data>
+  <data name="IndexFollowResults" xml:space="preserve">
+    <value>Следене на резултати</value>
+  </data>
+  <data name="IndexFounded" xml:space="preserve">
+    <value>Основан</value>
+  </data>
+  <data name="IndexOurAchievements" xml:space="preserve">
+    <value>Нашите постижения</value>
+  </data>
+  <data name="IndexPlayers" xml:space="preserve">
+    <value>Играчи</value>
+  </data>
+  <data name="IndexTeamPlayers" xml:space="preserve">
+    <value>Отбори, играчи, мачове и статистики — подредени и лесни за намиране.</value>
+  </data>
+  <data name="IndexTeams" xml:space="preserve">
+    <value>Отборa</value>
+  </data>
+  <data name="IndexTFastManagement" xml:space="preserve">
+    <value>Бързо управление</value>
+  </data>
+  <data name="IndexTournaments" xml:space="preserve">
+    <value>Турнирa</value>
+  </data>
+  <data name="INoMessages" xml:space="preserve">
+    <value>Нямате получени съобщения</value>
+  </data>
+  <data name="IPregled" xml:space="preserve">
+    <value>Преглед</value>
+  </data>
+  <data name="ITheme" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="IWhen" xml:space="preserve">
+    <value>Когато някой изпрати съобщение, ще се появи тук.</value>
+  </data>
+  <data name="LoginEmail" xml:space="preserve">
+    <value>Имейл</value>
+  </data>
+  <data name="LoginForgotPass" xml:space="preserve">
+    <value>Забравена парола?</value>
+  </data>
+  <data name="LoginLogin" xml:space="preserve">
+    <value>Влизане</value>
+  </data>
+  <data name="LoginNoAccount" xml:space="preserve">
+    <value>Нямаш акаунт?</value>
+  </data>
+  <data name="LoginPassword" xml:space="preserve">
+    <value>Парола</value>
+  </data>
+  <data name="LoginRegister" xml:space="preserve">
+    <value>Регистриране</value>
+  </data>
+  <data name="LoginWelcomeBack" xml:space="preserve">
+    <value>Добре дошли отново в  Tournament Galaxy</value>
+  </data>
+  <data name="MWPrevious" xml:space="preserve">
+    <value>Предишно съобщение</value>
+  </data>
+  <data name="MWReply" xml:space="preserve">
+    <value>Отговори</value>
+  </data>
+  <data name="MWTopic" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="MWWatch" xml:space="preserve">
+    <value>Прегледай съобщението и при нужда изпрати отговор.</value>
+  </data>
+  <data name="MWWatchReceived" xml:space="preserve">
+    <value>Получено съобщение</value>
+  </data>
+  <data name="RegisterAlreadyHave" xml:space="preserve">
+    <value>Вече имате акаунт?</value>
+  </data>
+  <data name="RegisterConfirmPass" xml:space="preserve">
+    <value>Повтори парола</value>
+  </data>
+  <data name="RegisterCreate" xml:space="preserve">
+    <value>Създайте своя акаунт</value>
+  </data>
+  <data name="RegisterEmail" xml:space="preserve">
+    <value>Имейл</value>
+  </data>
+  <data name="RegisterFirstName" xml:space="preserve">
+    <value>Име</value>
+  </data>
+  <data name="RegisterLastName" xml:space="preserve">
+    <value>Фамилия</value>
+  </data>
+  <data name="RegisterLogin" xml:space="preserve">
+    <value>Вход</value>
+  </data>
+  <data name="RegisterPass" xml:space="preserve">
+    <value>Парола</value>
+  </data>
+  <data name="RegisterRegister" xml:space="preserve">
+    <value>Регистриране</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Запомни ме?</value>
+  </data>
+  <data name="RLastMessage" xml:space="preserve">
+    <value>Последно съобщение</value>
+  </data>
+  <data name="RPBackToLogin" xml:space="preserve">
+    <value>Обратно към Вход</value>
+  </data>
+  <data name="RPChooseNewPass" xml:space="preserve">
+    <value>Изберете нова парола за вашия акаунт</value>
+  </data>
+  <data name="RPConfirmPassword" xml:space="preserve">
+    <value>Повтори парола</value>
+  </data>
+  <data name="RPEmail" xml:space="preserve">
+    <value>Имейл</value>
+  </data>
+  <data name="RPNewPassword" xml:space="preserve">
+    <value>Нова парола</value>
+  </data>
+  <data name="RPReset" xml:space="preserve">
+    <value>Нулиране</value>
+  </data>
+  <data name="RPResetPassword" xml:space="preserve">
+    <value>Нулиране на парола</value>
+  </data>
+  <data name="RSendReply" xml:space="preserve">
+    <value>Изпрати отговор</value>
+  </data>
+  <data name="RTopic" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="RWriteResponse" xml:space="preserve">
+    <value>Напиши отговор и го изпрати към подателя на съобщението.</value>
+  </data>
+  <data name="RYourResponse" xml:space="preserve">
+    <value>Вашият отговор</value>
+  </data>
+  <data name="SearchLeaders" xml:space="preserve">
+    <value>Лидери</value>
+  </data>
+  <data name="SearchNoCity" xml:space="preserve">
+    <value>Няма град, който да отговаря на критериите ви за търсене.</value>
+  </data>
+  <data name="SearchResults" xml:space="preserve">
+    <value>Резултати от търсенето</value>
+  </data>
+  <data name="SearchTournaments" xml:space="preserve">
+    <value>Турнири</value>
+  </data>
+  <data name="CMessage" xml:space="preserve">
+    <value>Вашето съобщение</value>
+  </data>
+  <data name="CSend" xml:space="preserve">
+    <value>Изпрати</value>
+  </data>
+  <data name="UPLAddWin" xml:space="preserve">
+    <value>Добави победа (+1)</value>
+  </data>
+  <data name="UPLCity" xml:space="preserve">
+    <value>Град</value>
+  </data>
+  <data name="UPLTeam" xml:space="preserve">
+    <value>Отбор</value>
+  </data>
+  <data name="SDate" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="SReview" xml:space="preserve">
+    <value>Преглед</value>
+  </data>
+  <data name="STopic" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="SWhenSend" xml:space="preserve">
+    <value>Когато изпратите съобщение, ще се появи тук.</value>
+  </data>
+  <data name="SNo" xml:space="preserve">
+    <value>Нямате изпратени съобщения</value>
+  </data>
+  <data name="SCheck" xml:space="preserve">
+    <value>Прегледай съобщенията, които си изпратил.</value>
+  </data>
+  <data name="TGPictures" xml:space="preserve">
+    <value>Снимки от турнира.</value>
+  </data>
+  <data name="TGNotYet" xml:space="preserve">
+    <value>Все още няма добавени снимки за този турнир.</value>
+  </data>
+  <data name="TGDelete" xml:space="preserve">
+    <value>Изтрий</value>
+  </data>
+  <data name="TGOnlyAdmins" xml:space="preserve">
+    <value>Само администратори могат да изтриват снимки.</value>
+  </data>
+  <data name="UPUP" xml:space="preserve">
+    <value>Kачи снимки за турнира</value>
+  </data>
+  <data name="UPOneOrMore" xml:space="preserve">
+    <value>Качи една или повече снимки към турнира.</value>
+  </data>
+  <data name="UPSelect" xml:space="preserve">
+    <value>Селектирай снимки</value>
+  </data>
+  <data name="UPUpload" xml:space="preserve">
+    <value>Качи</value>
+  </data>
+  <data name="ERSave" xml:space="preserve">
+    <value>Запази резултат</value>
+  </data>
+  <data name="ERGoals" xml:space="preserve">
+    <value>Голове</value>
+  </data>
+  <data name="EREnter" xml:space="preserve">
+    <value>Въведи головете за двата отбора и запази резултата.</value>
+  </data>
+  <data name="AllIncoming" xml:space="preserve">
+    <value>Входящи</value>
+  </data>
+  <data name="AllSent" xml:space="preserve">
+    <value>Изпратени</value>
+  </data>
+  <data name="AllSentMessages" xml:space="preserve">
+    <value>Изпратени съобщения</value>
+  </data>
+  <data name="AllNoSent" xml:space="preserve">
+    <value>Нямате изпратени съобщения</value>
+  </data>
+  <data name="AllWhen" xml:space="preserve">
+    <value>Когато изпратите съобщение, ще се появи тук.</value>
+  </data>
+  <data name="AllSentTo" xml:space="preserve">
+    <value>Изпратено към:</value>
+  </data>
+  <data name="AllIncomingNotifications" xml:space="preserve">
+    <value>Входящи нотификации</value>
+  </data>
+  <data name="AllNoNotifications" xml:space="preserve">
+    <value>Нямате нотификации</value>
+  </data>
+  <data name="AllWhenYouHave" xml:space="preserve">
+    <value>Когато има нови събития, ще ги виждате тук.</value>
+  </data>
+  <data name="AllReceivedFrom" xml:space="preserve">
+    <value>Получено от:</value>
+  </data>
+  <data name="APPartnerName" xml:space="preserve">
+    <value>
+Име на партньор</value>
+  </data>
+  <data name="APImage" xml:space="preserve">
+    <value>URL на изображението</value>
+  </data>
+  <data name="APAP" xml:space="preserve">
+    <value>Добави партньор</value>
+  </data>
+  <data name="AllNoPartners" xml:space="preserve">
+    <value>Няма добавени партньори</value>
+  </data>
+  <data name="AllPartnersWillShow" xml:space="preserve">
+    <value>Партньорите ще се появят тук, когато бъдат добавени към платформата.</value>
+  </data>
+  <data name="DCDP" xml:space="preserve">
+    <value>Изтрий партньор</value>
+  </data>
+  <data name="DCConfirm" xml:space="preserve">
+    <value>Потвърди изтриването. Това действие не може да бъде върнато.</value>
+  </data>
+  <data name="DCCD" xml:space="preserve">
+    <value>Потвърди изтриването</value>
+  </data>
+  <data name="DPSelectPartner" xml:space="preserve">
+    <value>Изберете партньор</value>
+  </data>
+  <data name="DPDeletePartner" xml:space="preserve">
+    <value>Изтрий партньор</value>
+  </data>
+  <data name="INoTransactions" xml:space="preserve">
+    <value>Няма плащания</value>
+  </data>
+  <data name="IWhenUsers" xml:space="preserve">
+    <value>Когато потребителите извършат плащания, ще се появят тук.</value>
+  </data>
+  <data name="IOrder" xml:space="preserve">
+    <value>Поръчка</value>
+  </data>
+  <data name="IUser" xml:space="preserve">
+    <value>Потребител</value>
+  </data>
+  <data name="ITournament" xml:space="preserve">
+    <value>Турнир</value>
+  </data>
+  <data name="ITeam" xml:space="preserve">
+    <value>Отбор</value>
+  </data>
+  <data name="IAmount" xml:space="preserve">
+    <value>Стойност</value>
+  </data>
+  <data name="IStatus" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="IPaidOn" xml:space="preserve">
+    <value>Платено на</value>
+  </data>
+  <data name="IRefund" xml:space="preserve">
+    <value>Refund</value>
+  </data>
+  <data name="IReferee" xml:space="preserve">
+    <value>Рефер</value>
+  </data>
+  <data name="ICaoch" xml:space="preserve">
+    <value>Треньор</value>
+  </data>
+  <data name="INORole" xml:space="preserve">
+    <value>Все още нямаш роля</value>
+  </data>
+  <data name="IYearsExp" xml:space="preserve">
+    <value>години опит</value>
+  </data>
+  <data name="ITeam2" xml:space="preserve">
+    <value>Отбор:</value>
+  </data>
+  <data name="ITournaments" xml:space="preserve">
+    <value>Турнири като съдия:</value>
+  </data>
+  <data name="IGrade" xml:space="preserve">
+    <value>Оценка:</value>
+  </data>
+  <data name="IStopReferee" xml:space="preserve">
+    <value>Спри да бъдеш рефер</value>
+  </data>
+  <data name="IStopCoach" xml:space="preserve">
+    <value>Спри да бъдеш треньор</value>
+  </data>
+  <data name="ATLeave" xml:space="preserve">
+    <value>Напусни турнир</value>
+  </data>
+  <data name="ATWhen" xml:space="preserve">
+    <value>Когато бъдеш назначен като съдия, турнирите ще се покажат тук.</value>
+  </data>
+  <data name="BRFill" xml:space="preserve">
+    <value>Попълни информацията, за да кандидатстваш като съдия.</value>
+  </data>
+  <data name="BRFullName" xml:space="preserve">
+    <value>Пълно име</value>
+  </data>
+  <data name="BRBirthdate" xml:space="preserve">
+    <value>Дата на раждане</value>
+  </data>
+  <data name="BRExperience" xml:space="preserve">
+    <value>Опит</value>
+  </data>
+  <data name="BRApply" xml:space="preserve">
+    <value>Запиши се</value>
+  </data>
+  <data name="CComments" xml:space="preserve">
+    <value>Коментари за</value>
+  </data>
+  <data name="CSeeComments" xml:space="preserve">
+    <value>Виж мненията за съдията и добави свой коментар.</value>
+  </data>
+  <data name="CNotYet" xml:space="preserve">
+    <value>Все още няма коментари</value>
+  </data>
+  <data name="CBeFirst" xml:space="preserve">
+    <value>Бъди първият, който ще остави мнение.</value>
+  </data>
+  <data name="CAdd" xml:space="preserve">
+    <value>Добави коментар</value>
+  </data>
+  <data name="CPublish" xml:space="preserve">
+    <value>Публикувай</value>
+  </data>
+  <data name="IChoose" xml:space="preserve">
+    <value>Избери рефер и изпрати покана за участие в турнир.</value>
+  </data>
+  <data name="IReferee2" xml:space="preserve">
+    <value>Рефер</value>
+  </data>
+  <data name="ITopic" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="IMessage" xml:space="preserve">
+    <value>Съобщение</value>
+  </data>
+  <data name="ISendInvite" xml:space="preserve">
+    <value>Изпрати поканата</value>
+  </data>
+  <data name="RComments" xml:space="preserve">
+    <value>Коментари</value>
+  </data>
+  <data name="RSave" xml:space="preserve">
+    <value>Запази</value>
+  </data>
+  <data name="RNoGrades" xml:space="preserve">
+    <value>Няма оценки</value>
+  </data>
+  <data name="RGrade" xml:space="preserve">
+    <value>Оцени</value>
+  </data>
+  <data name="RAverage" xml:space="preserve">
+    <value>Средна оценка</value>
+  </data>
+  <data name="RCount" xml:space="preserve">
+    <value>Брой Турнири</value>
+  </data>
+  <data name="RExp" xml:space="preserve">
+    <value>Опит (години)</value>
+  </data>
+  <data name="Rname" xml:space="preserve">
+    <value>Име</value>
+  </data>
+  <data name="RWhen" xml:space="preserve">
+    <value>Когато бъдат добавени, ще се покажат тук.</value>
+  </data>
+  <data name="RNoCurrent" xml:space="preserve">
+    <value>Няма налични рефери</value>
+  </data>
+  <data name="RInvite" xml:space="preserve">
+    <value>Покани рефер</value>
+  </data>
+  <data name="JTEnter" xml:space="preserve">
+    <value>Въведи име на отбор и попълни играчите.</value>
+  </data>
+  <data name="JTTeamName" xml:space="preserve">
+    <value>Име на отбор</value>
+  </data>
+  <data name="JTPlayers" xml:space="preserve">
+    <value>Информация за играчите</value>
+  </data>
+  <data name="JT10" xml:space="preserve">
+    <value>10 играчи</value>
+  </data>
+  <data name="JTPlayer" xml:space="preserve">
+    <value>Играч</value>
+  </data>
+  <data name="JTRegister" xml:space="preserve">
+    <value>Регистрирай</value>
+  </data>
+  <data name="ATAdd" xml:space="preserve">
+    <value>Добави</value>
+  </data>
+  <data name="ATCity" xml:space="preserve">
+    <value>Град</value>
+  </data>
+  <data name="ATPart" xml:space="preserve">
+    <value>Такса (€)</value>
+  </data>
+  <data name="ATPrize" xml:space="preserve">
+    <value>Награда (€)</value>
+  </data>
+  <data name="ATEnd" xml:space="preserve">
+    <value>Край</value>
+  </data>
+  <data name="ATStart" xml:space="preserve">
+    <value>Старт</value>
+  </data>
+  <data name="ATImage" xml:space="preserve">
+    <value>Изображение</value>
+  </data>
+  <data name="ATDesc" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="CTCity" xml:space="preserve">
+    <value>Завършени турнири в този град.</value>
+  </data>
+  <data name="CTUPcoming" xml:space="preserve">
+    <value>Текущи и предстоящи турнири в този град.</value>
+  </data>
+  <data name="CTCurrent" xml:space="preserve">
+    <value>Текущи и предстоящи</value>
+  </data>
+  <data name="CTFinished" xml:space="preserve">
+    <value>Приключили</value>
+  </data>
+  <data name="CTTournamentsNo" xml:space="preserve">
+    <value>Няма турнири</value>
+  </data>
+  <data name="CTNo" xml:space="preserve">
+    <value>Няма турнири за показване според избрания филтър.</value>
+  </data>
+  <data name="CTCity2" xml:space="preserve">
+    <value>Град</value>
+  </data>
+  <data name="CTStart" xml:space="preserve">
+    <value>Старт:</value>
+  </data>
+  <data name="CTEnd" xml:space="preserve">
+    <value>Край:</value>
+  </data>
+  <data name="CTTeams" xml:space="preserve">
+    <value>Отбори:</value>
+  </data>
+  <data name="CTStatus" xml:space="preserve">
+    <value>Статус:</value>
+  </data>
+  <data name="CTDetails" xml:space="preserve">
+    <value>Детайли за турнира</value>
+  </data>
+  <data name="CTGallery" xml:space="preserve">
+    <value>Галерия</value>
+  </data>
+  <data name="CTUpload" xml:space="preserve">
+    <value>Качи снимки</value>
+  </data>
+  <data name="CTEdit" xml:space="preserve">
+    <value>Редактирай</value>
+  </data>
+  <data name="CTDelete" xml:space="preserve">
+    <value>Изтрий</value>
+  </data>
+  <data name="CTBecome" xml:space="preserve">
+    <value>Стани рефер</value>
+  </data>
+  <data name="CTJoin" xml:space="preserve">
+    <value>Присъедини се</value>
+  </data>
+  <data name="DWehn" xml:space="preserve">
+    <value>Когато се генерират мачове, ще се появят тук.</value>
+  </data>
+  <data name="DNotYet" xml:space="preserve">
+    <value>Все още няма схема за този турнир</value>
+  </data>
+  <data name="DEnter" xml:space="preserve">
+    <value>Въведи / редактирай резултат</value>
+  </data>
+  <data name="DWinner" xml:space="preserve">
+    <value>Победител</value>
+  </data>
+  <data name="DTeam2" xml:space="preserve">
+    <value>Отбор 2</value>
+  </data>
+  <data name="DResult" xml:space="preserve">
+    <value>Резултат</value>
+  </data>
+  <data name="DTeam1" xml:space="preserve">
+    <value>Отбор 1</value>
+  </data>
+  <data name="DGrouped" xml:space="preserve">
+    <value>Групирано по рундове</value>
+  </data>
+  <data name="DSchema" xml:space="preserve">
+    <value>Схема на турнира</value>
+  </data>
+  <data name="DEdit" xml:space="preserve">
+    <value>Редактирай</value>
+  </data>
+  <data name="DBack" xml:space="preserve">
+    <value>Обратно към турнирите</value>
+  </data>
+  <data name="DWinner2" xml:space="preserve">
+    <value>Победител</value>
+  </data>
+  <data name="DNoTeams" xml:space="preserve">
+    <value>Все още няма регистрирани отбори.</value>
+  </data>
+  <data name="DParticipants" xml:space="preserve">
+    <value>Участници</value>
+  </data>
+  <data name="DReferee" xml:space="preserve">
+    <value>Рефер:</value>
+  </data>
+  <data name="DNumber" xml:space="preserve">
+    <value>Брой на отборите:</value>
+  </data>
+  <data name="DCreated" xml:space="preserve">
+    <value>Създаден:</value>
+  </data>
+  <data name="DEnding" xml:space="preserve">
+    <value>Край:</value>
+  </data>
+  <data name="DStarting" xml:space="preserve">
+    <value>Старт:</value>
+  </data>
+  <data name="DDetails" xml:space="preserve">
+    <value>Детайли за турнира, участници и схема с мачове по рундове.</value>
+  </data>
+  <data name="EFinalEdit" xml:space="preserve">
+    <value>Редактирай</value>
+  </data>
+  <data name="EWinner" xml:space="preserve">
+    <value>Победител</value>
+  </data>
+  <data name="EEnd" xml:space="preserve">
+    <value>Край</value>
+  </data>
+  <data name="EStart" xml:space="preserve">
+    <value>Старт</value>
+  </data>
+  <data name="EEditTopic" xml:space="preserve">
+    <value>Редактирай описанието</value>
+  </data>
+  <data name="EImaGE" xml:space="preserve">
+    <value>Снимка</value>
+  </data>
+  <data name="EEdit" xml:space="preserve">
+    <value>Редактирай информацията за турнира и запази промените.</value>
+  </data>
+  <data name="DHome" xml:space="preserve">
+    <value>Начало</value>
+  </data>
+  <data name="DCities" xml:space="preserve">
+    <value>Градове</value>
+  </data>
+  <data name="DPartners" xml:space="preserve">
+    <value>Партньори</value>
+  </data>
+  <data name="DReferees" xml:space="preserve">
+    <value>Рефери</value>
+  </data>
+  <data name="DAdmin" xml:space="preserve">
+    <value>Админ Панел</value>
+  </data>
+  <data name="DAddTournament" xml:space="preserve">
+    <value>Добави Турнир</value>
+  </data>
+  <data name="DAddCity" xml:space="preserve">
+    <value>Добави Град</value>
+  </data>
+  <data name="DDeleteCity" xml:space="preserve">
+    <value>Изтрий Град</value>
+  </data>
+  <data name="DAddPartner" xml:space="preserve">
+    <value>Добави Партньор</value>
+  </data>
+  <data name="DDeletePartner" xml:space="preserve">
+    <value>Изтрий Партньор</value>
+  </data>
+  <data name="DUCL" xml:space="preserve">
+    <value>Актуализирай Лидери</value>
+  </data>
+  <data name="DRefund" xml:space="preserve">
+    <value>Refund</value>
+  </data>
+  <data name="DParticipate" xml:space="preserve">
+    <value>Участия</value>
+  </data>
+  <data name="DAsReferee" xml:space="preserve">
+    <value>Като Рефер</value>
+  </data>
+  <data name="DAsCoach" xml:space="preserve">
+    <value>Като Tреньор</value>
+  </data>
+  <data name="LayoutContact" xml:space="preserve">
+    <value>Свържи се с организаторите</value>
+  </data>
+  <data name="TGNoImages" xml:space="preserve">
+    <value>Все още няма снимки</value>
+  </data>
+  <data name="LPProfile" xml:space="preserve">
+    <value>Моят Профил</value>
+  </data>
+  <data name="LGLogOut" xml:space="preserve">
+    <value>Изход</value>
+  </data>
+  <data name="LGRegister" xml:space="preserve">
+    <value>Регистриране</value>
+  </data>
+  <data name="LGLogin" xml:space="preserve">
+    <value>Вход</value>
+  </data>
+  <data name="DParticipation" xml:space="preserve">
+    <value>Входна такса:</value>
+  </data>
+  <data name="DPrize" xml:space="preserve">
+    <value>Награда:</value>
+  </data>
+  <data name="DStatus" xml:space="preserve">
+    <value>Статус:</value>
+  </data>
+  <data name="IAction" xml:space="preserve">
+    <value>Действие</value>
+  </data>
+</root>

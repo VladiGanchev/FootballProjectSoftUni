@@ -1,5 +1,7 @@
 ﻿@using FootballProjectSoftUni.Core.Models.AdminPayments
 @model IEnumerable<AdminPaymentViewModel>
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
 
 @{
     ViewData["Title"] = "Payments";
@@ -7,23 +9,13 @@
 
 <section class="container py-4">
 
-    <div class="text-center mb-4">
-        <h2 class="page-title mb-1">
-            <i class="bi bi-credit-card-2-front-fill me-2"></i>
-            Payments
-        </h2>
-        <p class="text-muted mb-0">
-            Управлявай плащанията и извършвай възстановявания (refund).
-        </p>
-    </div>
-
     @if (Model == null || !Model.Any())
     {
         <div class="empty-state text-center">
             <i class="bi bi-wallet2 display-4 text-muted"></i>
-            <h5 class="mt-3">Няма плащания</h5>
+            <h5 class="mt-3">@Localizer["INoTransactions"]</h5>
             <p class="text-muted mb-0">
-                Когато потребителите извършат плащания, ще се появят тук.
+                @Localizer["IWhenUsers"]
             </p>
         </div>
     }
@@ -34,14 +26,14 @@
                 <table class="table align-middle mb-0 tg-table">
                     <thead>
                         <tr>
-                            <th>Order</th>
-                            <th>User</th>
-                            <th>Tournament</th>
-                            <th>Team</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Paid On</th>
-                            <th class="text-center">Action</th>
+                            <th>@Localizer["IOrder"]</th>
+                            <th>@Localizer["IUser"]</th>
+                            <th>@Localizer["ITournament"]</th>
+                            <th>@Localizer["ITeam"]</th>
+                            <th>@Localizer["IAmount"]</th>
+                            <th>@Localizer["IStatus"]</th>
+                            <th>@Localizer["IPaidOn"]</th>
+                            <th class="text-center">@Localizer["IAction"]</th>
                         </tr>
                     </thead>
 

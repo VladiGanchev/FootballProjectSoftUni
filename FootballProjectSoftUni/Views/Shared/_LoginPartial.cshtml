@@ -3,6 +3,8 @@
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
 
 
     @{
@@ -17,24 +19,58 @@
 
     }
 <ul class="navbar-nav">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-dark"
+           href="#"
+           id="langDropdown"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false"
+           title="Language">
+            <i class="bi bi-globe2 fs-5"></i>
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
+            <li>
+                <form asp-controller="Home" asp-action="SetLanguage" method="post" class="px-3 py-1">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="culture" value="bg" />
+                    <input type="hidden" name="returnUrl" value="@($"{Context.Request.Path}{Context.Request.QueryString}")" />
+                    <button type="submit" class="dropdown-item">
+                        Български
+                    </button>
+                </form>
+            </li>
+            <li>
+                <form asp-controller="Home" asp-action="SetLanguage" method="post" class="px-3 py-1">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="culture" value="en" />
+                    <input type="hidden" name="returnUrl" value="@($"{Context.Request.Path}{Context.Request.QueryString}")" />
+                    <button type="submit" class="dropdown-item">
+                        English
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </li>
 @if (SignInManager.IsSignedIn(User))
 {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Profile" asp-action="Index">My Profile</a>
+            <a class="nav-link text-dark" asp-controller="Profile" asp-action="Index">@Localizer["LPProfile"]</a>
         </li>
     <li class="nav-item">
         <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+                <button type="submit" class="nav-link btn btn-link text-dark">@Localizer["LGLogOut"]</button>
         </form>
     </li>
 }
 else
 {
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">@Localizer["LGRegister"]</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">@Localizer["LGLogin"]</a>
     </li>
 }
 </ul>

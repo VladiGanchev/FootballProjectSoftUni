@@ -1,5 +1,6 @@
 
 
+using FootballProjectSoftUni;
 using FootballProjectSoftUni.Core.Contracts.Email;
 using FootballProjectSoftUni.Core.Job;
 using FootballProjectSoftUni.Core.Models.Email;
@@ -9,9 +10,11 @@ using FootballProjectSoftUni.Core.Services.EmailSender;
 using FootballProjectSoftUni.Infrastructure.Data;
 using Hangfire;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 //var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContextConnection' not found.");
@@ -23,10 +26,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationDbContext(builder.Configuration);
 builder.Services.AddApplicationIdentity(builder.Configuration);
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
+})
+.AddViewLocalization()
+.AddDataAnnotationsLocalization(options =>
+{
+    options.DataAnnotationLocalizerProvider = (type, factory) =>
+        factory.Create(typeof(SharedResource));
 });
 
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
@@ -74,6 +84,15 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+var supportedCultures = new[] { new CultureInfo("bg"), new CultureInfo("en") };
+
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture("bg")
+    .AddSupportedCultures("bg", "en")
+    .AddSupportedUICultures("bg", "en");
+
+app.UseRequestLocalization(localizationOptions);
 
 app.UseRouting();
 

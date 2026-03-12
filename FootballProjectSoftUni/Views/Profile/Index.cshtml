@@ -1,4 +1,6 @@
 ﻿@model FootballProjectSoftUni.Core.Models.Profile.ProfileViewModel
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
 
 @{
     ViewData["Title"] = "My Profile";
@@ -26,19 +28,19 @@
                 @if (Model.Role == "Referee")
                 {
                     <span class="badge bg-primary profile-role">
-                        <i class="bi bi-flag-fill me-1"></i> Referee
+                        <i class="bi bi-flag-fill me-1"></i> @Localizer["IReferee"]
                     </span>
                 }
                 else if (Model.Role == "Coach")
                 {
                     <span class="badge bg-success profile-role">
-                        <i class="bi bi-person-badge-fill me-1"></i> Coach
+                        <i class="bi bi-person-badge-fill me-1"></i> @Localizer["ICaoch"]
                     </span>
                 }
                 else
                 {
                     <span class="badge bg-secondary profile-role">
-                        No role yet
+                        @Localizer["INORole"]
                     </span>
                 }
 
@@ -56,7 +58,7 @@
                 <div class="col-md-4">
                     <div class="profile-info">
                         <i class="bi bi-graph-up"></i>
-                        <span>@Model.Experience години опит</span>
+                        <span>@Model.Experience @Localizer["IYearsExp"]</span>
                     </div>
                 </div>
             }
@@ -66,7 +68,7 @@
                 <div class="col-md-4">
                     <div class="profile-info">
                         <i class="bi bi-people-fill"></i>
-                        <span>Отбор: @Model.TeamName</span>
+                        <span>@Localizer["ITeam2"] @Model.TeamName</span>
                     </div>
                 </div>
             }
@@ -76,7 +78,7 @@
                 <div class="col-md-4">
                     <div class="profile-info">
                         <i class="bi bi-trophy-fill"></i>
-                        <span>Турнири като съдия: @Model.RefereeTournamentsCount</span>
+                        <span>@Localizer["ITournaments"] @Model.RefereeTournamentsCount</span>
                     </div>
                 </div>
             }
@@ -87,7 +89,7 @@
                     <div class="profile-info">
                         <i class="bi bi-star-fill text-warning"></i>
                         <span>
-                            Оценка: @Model.RefereeRating.Value.ToString("0.00") / 5
+                            @Localizer["IGrade"] @Model.RefereeRating.Value.ToString("0.00") / 5
                         </span>
                     </div>
                 </div>
@@ -103,7 +105,7 @@
                 <form asp-action="RemoveRefereeRole" method="post">
                     <button type="submit" class="btn btn-outline-danger profile-btn">
                         <i class="bi bi-x-circle me-2"></i>
-                        Спри да бъдеш рефер
+                        @Localizer["IStopReferee"]
                     </button>
                 </form>
             }
@@ -112,7 +114,7 @@
                 <form asp-action="RemoveCoachRole" method="post">
                     <button type="submit" class="btn btn-outline-danger profile-btn">
                         <i class="bi bi-x-circle me-2"></i>
-                        Спри да бъдеш треньор
+                        @Localizer["IStopCoach"]
                     </button>
                 </form>
             }

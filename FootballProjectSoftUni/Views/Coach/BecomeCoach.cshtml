@@ -1,5 +1,7 @@
 ﻿@using FootballProjectSoftUni.Core.Models.Coach
 @model CoachViewModel
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
 
 @{
     ViewBag.Title = "Become a Coach";
@@ -10,11 +12,11 @@
     <div class="text-center mb-4">
         <h2 class="page-title mb-1">
             <i class="bi bi-person-badge-fill me-2"></i>
-            Become a Coach
+            @Localizer["BCBC"]
         </h2>
 
         <p class="text-muted mb-0">
-            Трябва да станеш треньор, за да можеш да регистрираш отбор.
+            @Localizer["BCYouNedd"]
         </p>
     </div>
 
@@ -25,31 +27,29 @@
 
             <div class="mb-3">
                 <label asp-for="@Model.Name" class="form-label fw-bold">
-                    <i class="bi bi-person-fill me-2"></i>Name
+                    <i class="bi bi-person-fill me-2"></i>@Localizer["BCName"]
                 </label>
 
                 <input asp-for="@Model.Name"
-                       class="form-control form-control-lg tg-input"
-                       placeholder="Enter your name..." />
+                       class="form-control form-control-lg tg-input" />
 
                 <span asp-validation-for="@Model.Name" class="text-danger small"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="@Model.Experience" class="form-label fw-bold">
-                    <i class="bi bi-graph-up me-2"></i>Experience (Years)
+                    <i class="bi bi-graph-up me-2"></i>@Localizer["BCExperience"]
                 </label>
 
                 <input asp-for="@Model.Experience"
-                       class="form-control form-control-lg tg-input"
-                       placeholder="Years of experience..." />
+                       class="form-control form-control-lg tg-input" />
 
                 <span asp-validation-for="@Model.Experience" class="text-danger small"></span>
             </div>
 
             <button class="btn btn-warning btn-lg w-100 tg-action-btn" type="submit">
                 <i class="bi bi-check-circle-fill me-2"></i>
-                Become Coach
+                @Localizer["BCBecome"]
             </button>
 
         </form>

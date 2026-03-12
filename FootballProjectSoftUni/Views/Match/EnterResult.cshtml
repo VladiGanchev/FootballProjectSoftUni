@@ -1,5 +1,7 @@
 ﻿@using FootballProjectSoftUni.Core.Models.Match
 @model EnterResultViewModel
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
 
 @{
     ViewBag.Title = "Въведи резултат";
@@ -13,7 +15,7 @@
             @ViewBag.Title
         </h2>
         <p class="text-muted mb-0">
-            Въведи головете за двата отбора и запази резултата.
+            @Localizer["EREnter"]
         </p>
     </div>
 
@@ -41,7 +43,7 @@
 
                         <div class="mb-2">
                             <label asp-for="Team1Goals" class="form-label fw-bold">
-                                <i class="bi bi-dribbble me-2"></i>Голове
+                                <i class="bi bi-dribbble me-2"></i>@Localizer["ERGoals"]
                             </label>
                             <input asp-for="Team1Goals"
                                    class="form-control tg-input"
@@ -63,7 +65,7 @@
 
                         <div class="mb-2">
                             <label asp-for="Team2Goals" class="form-label fw-bold">
-                                <i class="bi bi-dribbble me-2"></i>Голове
+                                <i class="bi bi-dribbble me-2"></i>@Localizer["ERGoals"]
                             </label>
                             <input asp-for="Team2Goals"
                                    class="form-control tg-input"
@@ -78,7 +80,7 @@
 
             <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold tg-action-btn mt-4">
                 <i class="bi bi-save2-fill me-2"></i>
-                Запази резултат
+                @Localizer["ERSave"]
             </button>
 
         </form>

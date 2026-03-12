@@ -1,5 +1,6 @@
 ﻿@using FootballProjectSoftUni.Core.Models.Message
 @model ContactFormViewModel
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
     ViewData["Title"] = "Свържи се с организаторите";
@@ -7,7 +8,6 @@
 
 <section class="container py-4">
 
-    @* Alerts (optional - ако ползваш TempData) *@
     @if (TempData["ErrorMessage"] != null)
     {
         <div class="alert alert-danger" role="alert">
@@ -29,29 +29,28 @@
 
             <div class="mb-3">
                 <label asp-for="Subject" class="form-label fw-bold">
-                    <i class="bi bi-chat-left-text-fill me-2"></i>Тема
+                    <i class="bi bi-chat-left-text-fill me-2"></i>@Localizer["CTheme"]
                 </label>
 
-                <input asp-for="Subject" class="form-control tg-input" placeholder="Напр. Въпрос за турнир..." />
+                <input asp-for="Subject" class="form-control tg-input" />
                 <span asp-validation-for="Subject" class="text-danger small"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="Content" class="form-label fw-bold">
-                    <i class="bi bi-pencil-square me-2"></i>Вашето съобщение
+                    <i class="bi bi-pencil-square me-2"></i>@Localizer["CMessage"]
                 </label>
 
                 <textarea asp-for="Content"
                           class="form-control tg-input"
-                          rows="6"
-                          placeholder="Опиши въпроса си възможно най-детайлно..."></textarea>
+                          rows="6" ></textarea>
 
                 <span asp-validation-for="Content" class="text-danger small"></span>
             </div>
 
             <button type="submit" class="btn btn-success btn-lg w-100 tg-action-btn">
                 <i class="bi bi-send-fill me-2"></i>
-                Изпрати
+                @Localizer["CSend"]
             </button>
 
         </form>

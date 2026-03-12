@@ -1,5 +1,6 @@
 ﻿@page
 @model LoginModel
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
     ViewData["Title"] = "Log in";
@@ -11,8 +12,8 @@
             <div class="auth-logo">
                 <i class="bi bi-trophy-fill"></i>
             </div>
-            <h1 class="auth-title mb-1">Log in</h1>
-            <p class="auth-subtitle mb-0">Welcome back to Tournament Galaxy</p>
+            <h1 class="auth-title mb-1">@Localizer["LoginLogin"]</h1>
+            <p class="auth-subtitle mb-0">@Localizer["LoginWelcomeBack"]</p>
         </div>
 
         <hr class="auth-hr" />
@@ -23,7 +24,7 @@
             <div class="form-floating mb-3">
                 <input asp-for="Input.Email" class="form-control auth-input" autocomplete="username" aria-required="true" placeholder="Email" />
                 <label asp-for="Input.Email" class="form-label">
-                    <i class="bi bi-envelope-fill me-2"></i>Email
+                    <i class="bi bi-envelope-fill me-2"></i>@Localizer["LoginEmail"]
                 </label>
                 <span asp-validation-for="Input.Email" class="text-danger small"></span>
             </div>
@@ -31,7 +32,7 @@
             <div class="form-floating mb-3">
                 <input asp-for="Input.Password" class="form-control auth-input" autocomplete="current-password" aria-required="true" placeholder="Password" />
                 <label asp-for="Input.Password" class="form-label">
-                    <i class="bi bi-lock-fill me-2"></i>Password
+                    <i class="bi bi-lock-fill me-2"></i>@Localizer["LoginPassword"]
                 </label>
                 <span asp-validation-for="Input.Password" class="text-danger small"></span>
             </div>
@@ -45,18 +46,18 @@
                 </div>
 
                 <a id="forgot-password" class="auth-link" asp-page="./ForgotPassword">
-                    Forgot password?
+                    @Localizer["LoginForgotPass"]
                 </a>
             </div>
 
             <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary auth-btn">
-                <i class="bi bi-box-arrow-in-right me-2"></i>Log in
+                <i class="bi bi-box-arrow-in-right me-2"></i>@Localizer["LoginLogin"]
             </button>
 
             <div class="text-center mt-3">
-                <span class="text-muted">No account?</span>
+                <span class="text-muted">@Localizer["LoginNoAccount"]</span>
                 <a class="auth-link ms-1" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">
-                    Register
+                    @Localizer["LoginRegister"]
                 </a>
             </div>
         </form>

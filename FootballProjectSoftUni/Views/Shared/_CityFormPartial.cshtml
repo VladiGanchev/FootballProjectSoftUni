@@ -1,4 +1,5 @@
 ﻿@model CityViewModel
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 <div class="row">
     <div class="col-12">
@@ -6,7 +7,7 @@
 
             <div class="mb-3">
                 <label asp-for="@Model.Name" class="form-label fw-bold">
-                    <i class="bi bi-building me-2"></i>City Name
+                    <i class="bi bi-building me-2"></i>@Localizer["AddCityName"]
                 </label>
 
                 <input asp-for="@Model.Name"
@@ -19,7 +20,7 @@
 
             <div class="mb-3">
                 <label asp-for="@Model.ImageUrl" class="form-label fw-bold">
-                    <i class="bi bi-image-fill me-2"></i>Image URL
+                    <i class="bi bi-image-fill me-2"></i>@Localizer["AddCityImage"]
                 </label>
 
                 <input asp-for="@Model.ImageUrl"
@@ -31,7 +32,7 @@
             </div>
 
             <button class="btn btn-warning btn-lg w-100 tg-action-btn" type="submit">
-                <i class="bi bi-plus-circle-fill me-2"></i>Add City
+                <i class="bi bi-plus-circle-fill me-2"></i>@Localizer["AddCityAddCity"]
             </button>
 
         </form>

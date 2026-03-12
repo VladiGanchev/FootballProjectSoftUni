@@ -1,5 +1,5 @@
 ﻿@model FootballProjectSoftUni.Core.Models.Home.HomeViewModel
-
+@inject IStringLocalizer<SharedResource> Localizer
 @{
     ViewData["Title"] = "Tournament Galaxy";
 }
@@ -19,10 +19,7 @@
             <div class="col-lg-5">
                 <div class="hero-card p-4 p-md-5">
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <h5 class="mb-0">Our Achievements</h5>
-                        <span class="pill">
-                            <i class="bi bi-stars me-1"></i> Live
-                        </span>
+                        <h5 class="mb-0">@Localizer["IndexOurAchievements"]</h5>
                     </div>
 
                     <div class="row g-3">
@@ -30,38 +27,33 @@
                             <div class="stat stat--primary">
                                 <div class="stat__icon"><i class="bi bi-trophy"></i></div>
                                 <div class="stat__value">@Model.TournamentsCount</div>
-                                <div class="stat__label">Tournaments</div>
+                                <div class="stat__label">@Localizer["IndexTournaments"]</div>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="stat stat--success">
                                 <div class="stat__icon"><i class="bi bi-people"></i></div>
                                 <div class="stat__value">@Model.TeamsCount</div>
-                                <div class="stat__label">Teams</div>
+                                <div class="stat__label">@Localizer["IndexTeams"]</div>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="stat stat--danger">
                                 <div class="stat__icon"><i class="bi bi-person-badge"></i></div>
                                 <div class="stat__value">@Model.PlayersCount</div>
-                                <div class="stat__label">Players</div>
+                                <div class="stat__label">@Localizer["IndexPlayers"]</div>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="stat stat--warning">
                                 <div class="stat__icon"><i class="bi bi-calendar-event"></i></div>
                                 <div class="stat__value">@Model.YearOfFoundation</div>
-                                <div class="stat__label">Founded</div>
+                                <div class="stat__label">@Localizer["IndexFounded"]</div>
                             </div>
                         </div>
                     </div>
 
                     <hr class="hr-soft my-4" />
-
-                    <div class="d-flex align-items-center justify-content-between small text-white-50">
-                        <span><i class="bi bi-shield-check me-1"></i> Secure & fast</span>
-                        <span><i class="bi bi-graph-up me-1"></i> Stats-ready</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -73,22 +65,22 @@
         <div class="col-md-4">
             <div class="feature-card">
                 <div class="feature-icon"><i class="bi bi-lightning-charge-fill"></i></div>
-                <h5 class="mb-2">Бързо управление</h5>
-                <p class="mb-0 text-muted">Създавай отбор и се запиши лесно за турнир.</p>
+                <h5 class="mb-2">@Localizer["IndexTFastManagement"]</h5>
+                <p class="mb-0 text-muted">@Localizer["IndexCreateTeam"]</p>
             </div>
         </div>
         <div class="col-md-4">
             <div class="feature-card">
                 <div class="feature-icon"><i class="bi bi-diagram-3-fill"></i></div>
-                <h5 class="mb-2">Ясна структура</h5>
-                <p class="mb-0 text-muted">Отбори, играчи, мачове и статистики — подредени и лесни за намиране.</p>
+                <h5 class="mb-2">@Localizer["IndexClearStructure"]</h5>
+                <p class="mb-0 text-muted">@Localizer["IndexTeamPlayers"]</p>
             </div>
         </div>
         <div class="col-md-4">
             <div class="feature-card">
                 <div class="feature-icon"><i class="bi bi-award-fill"></i></div>
-                <h5 class="mb-2">Следене на резултати</h5>
-                <p class="mb-0 text-muted">Проследявай класирания, резултати от мачове и развитието на турнира в реално време.</p>
+                <h5 class="mb-2">@Localizer["IndexFollowResults"]</h5>
+                <p class="mb-0 text-muted">@Localizer["IndexFollowRanking"]</p>
             </div>
         </div>
     </div>

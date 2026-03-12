@@ -352,7 +352,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         [Test]
         public async Task GetCityTournamentsAsync_ShouldReturnNull_WhenCityDoesNotExist()
         {
-            var result = await _tournamentService.GetCityTournamentsAsync(99999, showPast: false);
+            var result = await _tournamentService.GetCityTournamentsAsync(99999, showPast: false, 999);
 
             Assert.IsNull(result);
         }
@@ -395,7 +395,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 
             await _data.SaveChangesAsync();
 
-            var result = (await _tournamentService.GetCityTournamentsAsync(1, showPast: false))!.ToList();
+            var result = (await _tournamentService.GetCityTournamentsAsync(1, showPast: false,1))!.ToList();
 
             Assert.That(result.Count, Is.EqualTo(2));
             Assert.That(result.Any(x => x.Id == 301), Is.True);
@@ -409,7 +409,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             Assert.That(mapped.ImageUrl, Is.EqualTo("img1"));
             Assert.That(mapped.StartDate, Is.EqualTo(t1.StartDate));
             Assert.That(mapped.EndDate, Is.EqualTo(t1.EndDate));
-            Assert.That(mapped.Status, Is.EqualTo(t1.Status.ToString()));
+            Assert.That(mapped.Status, Is.EqualTo(t1.Status));
         }
 
         [Test]
@@ -446,10 +446,10 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 
             await _data.SaveChangesAsync();
 
-            var result = (await _tournamentService.GetCityTournamentsAsync(1, showPast: true))!.ToList();
+            var result = (await _tournamentService.GetCityTournamentsAsync(1, showPast: true,1))!.ToList();
 
             Assert.That(result.Count, Is.EqualTo(2));
-            Assert.That(result.All(x => x.Status == TournamentStatus.Finished.ToString()), Is.True);
+            Assert.That(result.All(x => x.Status == TournamentStatus.Finished), Is.True);
 
             Assert.That(result[0].Id, Is.EqualTo(402));
             Assert.That(result[1].Id, Is.EqualTo(401));
@@ -479,17 +479,17 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 
             await _data.SaveChangesAsync();
 
-            var result = (await _tournamentService.GetCityTournamentsAsync(1, showPast: false))!.ToList();
+            var result = (await _tournamentService.GetCityTournamentsAsync(1, showPast: false,1))!.ToList();
 
             Assert.That(result.Count, Is.EqualTo(1));
             Assert.That(result[0].Id, Is.EqualTo(502));
-            Assert.That(result[0].Status, Is.Not.EqualTo(TournamentStatus.Finished.ToString()));
+            Assert.That(result[0].Status, Is.Not.EqualTo(TournamentStatus.Finished));
         }
 
         [Test]
         public async Task GetCityTournamentsAsync_ShouldReturnEmpty_WhenCityExistsButNoTournaments()
         {
-            var result = (await _tournamentService.GetCityTournamentsAsync(1, showPast: false))!.ToList();
+            var result = (await _tournamentService.GetCityTournamentsAsync(1, showPast: false,1))!.ToList();
 
             Assert.IsEmpty(result);
         }

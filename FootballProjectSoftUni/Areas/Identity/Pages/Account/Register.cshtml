@@ -1,5 +1,7 @@
 ﻿@page
 @model RegisterModel
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
 @{
     ViewData["Title"] = "Register";
 }
@@ -10,8 +12,8 @@
             <div class="auth-logo">
                 <i class="bi bi-person-plus-fill"></i>
             </div>
-            <h1 class="auth-title mb-1">Register</h1>
-            <p class="auth-subtitle mb-0">Create your Tournament Galaxy account</p>
+            <h1 class="auth-title mb-1">@Localizer["RegisterRegister"]</h1>
+            <p class="auth-subtitle mb-0">@Localizer["RegisterCreate"]</p>
         </div>
 
         <hr class="auth-hr" />
@@ -22,7 +24,7 @@
             <div class="form-floating mb-3">
                 <input asp-for="Input.Email" class="form-control auth-input" autocomplete="username" aria-required="true" placeholder="Email" />
                 <label asp-for="Input.Email">
-                    <i class="bi bi-envelope-fill me-2"></i>Email
+                    <i class="bi bi-envelope-fill me-2"></i>@Localizer["RegisterEmail"]
                 </label>
                 <span asp-validation-for="Input.Email" class="text-danger small"></span>
             </div>
@@ -30,7 +32,7 @@
             <div class="form-floating mb-3">
                 <input asp-for="Input.Password" class="form-control auth-input" autocomplete="new-password" aria-required="true" placeholder="Password" />
                 <label asp-for="Input.Password">
-                    <i class="bi bi-lock-fill me-2"></i>Password
+                    <i class="bi bi-lock-fill me-2"></i>@Localizer["RegisterPass"]
                 </label>
                 <span asp-validation-for="Input.Password" class="text-danger small"></span>
             </div>
@@ -38,7 +40,7 @@
             <div class="form-floating mb-3">
                 <input asp-for="Input.ConfirmPassword" class="form-control auth-input" autocomplete="new-password" aria-required="true" placeholder="Confirm Password" />
                 <label asp-for="Input.ConfirmPassword">
-                    <i class="bi bi-shield-lock-fill me-2"></i>Confirm Password
+                    <i class="bi bi-shield-lock-fill me-2"></i>@Localizer["RegisterConfirmPass"]
                 </label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
             </div>
@@ -48,7 +50,7 @@
                     <div class="form-floating">
                         <input asp-for="Input.FirstName" class="form-control auth-input" autocomplete="given-name" aria-required="true" placeholder="First Name" />
                         <label asp-for="Input.FirstName">
-                            <i class="bi bi-person-fill me-2"></i>First Name
+                            <i class="bi bi-person-fill me-2"></i>@Localizer["RegisterFirstName"]
                         </label>
                         <span asp-validation-for="Input.FirstName" class="text-danger small"></span>
                     </div>
@@ -58,7 +60,7 @@
                     <div class="form-floating">
                         <input asp-for="Input.LastName" class="form-control auth-input" autocomplete="family-name" aria-required="true" placeholder="Last Name" />
                         <label asp-for="Input.LastName">
-                            <i class="bi bi-person-vcard-fill me-2"></i>Last Name
+                            <i class="bi bi-person-vcard-fill me-2"></i>@Localizer["RegisterLastName"]
                         </label>
                         <span asp-validation-for="Input.LastName" class="text-danger small"></span>
                     </div>
@@ -66,12 +68,12 @@
             </div>
 
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary auth-btn mt-3">
-                <i class="bi bi-person-check-fill me-2"></i>Register
+                <i class="bi bi-person-check-fill me-2"></i>@Localizer["RegisterRegister"]
             </button>
 
             <div class="text-center mt-3">
-                <span class="text-muted">Already have an account?</span>
-                <a class="auth-link ms-1" asp-page="./Login">Log in</a>
+                <span class="text-muted">@Localizer["RegisterAlreadyHave"]</span>
+                <a class="auth-link ms-1" asp-page="./Login">@Localizer["RegisterLogin"]</a>
             </div>
         </form>
     </div>

@@ -3,6 +3,7 @@ using FootballProjectSoftUni.Core.Contracts.Home;
 using FootballProjectSoftUni.Core.Contracts.Team;
 using FootballProjectSoftUni.Core.Contracts.Tournament;
 using FootballProjectSoftUni.Models;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -47,6 +48,18 @@ namespace FootballProjectSoftUni.Controllers
             }
 
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult SetLanguage(string culture, string returnUrl)
+        {
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+            );
+
+            return LocalRedirect(string.IsNullOrWhiteSpace(returnUrl) ? "/" : returnUrl);
         }
     }
 }

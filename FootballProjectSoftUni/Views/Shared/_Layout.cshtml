@@ -1,4 +1,6 @@
 ﻿@using FootballProjectSoftUni.Extensions
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,7 +74,7 @@
                        asp-action="Create"
                        class="tg-footer-link text-decoration-none">
                         <i class="bi bi-chat-dots-fill me-2"></i>
-                        Свържи се с организаторите
+                        @Localizer["LayoutContact"]
                     </a>
                 }
             </div>

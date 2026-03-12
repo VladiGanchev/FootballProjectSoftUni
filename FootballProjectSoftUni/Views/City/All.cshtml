@@ -1,6 +1,8 @@
 ﻿@using FootballProjectSoftUni.Core.Models.City
 @using X.PagedList
 @model IPagedList<CityViewModel>
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
 
 @{
     ViewData["Title"] = "Cities";
@@ -35,10 +37,9 @@
                 </span>
                 <input type="text"
                        class="form-control"
-                       name="searchString"
-                       placeholder="Search cities..." />
+                       name="searchString"/>
                 <button class="btn btn-primary" type="submit">
-                    Search
+                    @Localizer["AllSearch"]
                 </button>
             </div>
         </form>
@@ -64,14 +65,14 @@
                            asp-action="CityTournaments"
                            asp-route-id="@city.Id"
                            class="btn btn-warning w-100 fw-bold city-btn">
-                            <i class="bi bi-trophy-fill me-2"></i>Tournaments
+                            <i class="bi bi-trophy-fill me-2"></i>@Localizer["AllTournaments"]
                         </a>
 
                         <a asp-controller="City"
                            asp-action="GetBestTeams"
                            asp-route-id="@city.Id"
                            class="btn btn-outline-dark w-100 fw-bold city-btn mt-2">
-                            <i class="bi bi-bar-chart-fill me-2"></i>City Leaders
+                            <i class="bi bi-bar-chart-fill me-2"></i>@Localizer["AllLeaders"]
                         </a>
                     </div>
                 </div>

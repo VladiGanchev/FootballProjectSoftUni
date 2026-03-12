@@ -4,6 +4,8 @@
 @using X.PagedList
 @using X.PagedList.Mvc.Core
 @model IPagedList<TournamentViewModel>
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
 
 @{
     ViewData["Title"] = "City Tournaments";
@@ -24,22 +26,6 @@
 
     @* Header *@
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
-        <div>
-            <h2 class="page-title mb-1">
-                <i class="bi bi-trophy-fill me-2"></i>
-                @ViewData["Title"]
-            </h2>
-            <p class="text-muted mb-0">
-                @if (showPast)
-                {
-                    <span>Завършени турнири в този град.</span>
-                }
-                else
-                {
-                    <span>Текущи и предстоящи турнири в този град.</span>
-                }
-            </p>
-        </div>
 
         @* Toggle buttons *@
         <div class="d-flex flex-wrap gap-2">
@@ -49,7 +35,7 @@
                asp-route-showPast="false"
                class="btn @(showPast ? "btn-outline-warning" : "btn-warning") tg-action-btn">
                 <i class="bi bi-clock-fill me-2"></i>
-                Current & Upcoming
+                @Localizer["CTCurrent"]
             </a>
 
             <a asp-controller="Tournament"
@@ -58,7 +44,7 @@
                asp-route-showPast="true"
                class="btn @(showPast ? "btn-warning" : "btn-outline-warning") tg-action-btn">
                 <i class="bi bi-flag-fill me-2"></i>
-                Finished
+                @Localizer["CTFinished"]
             </a>
         </div>
     </div>
@@ -67,9 +53,9 @@
     {
         <div class="empty-state text-center">
             <i class="bi bi-calendar-x display-4 text-muted"></i>
-            <h5 class="mt-3">Няма турнири</h5>
+            <h5 class="mt-3">@Localizer["CTTournamentsNo"]</h5>
             <p class="text-muted mb-0">
-                Няма турнири за показване според избрания филтър.
+                @Localizer["CTNo"]
             </p>
         </div>
     }
@@ -86,9 +72,7 @@
                             <div class="tournament-cover__overlay"></div>
 
                             <div class="tournament-top">
-                                <span class="tournament-pill">
-                                    <i class="bi bi-geo-alt-fill me-1"></i>City
-                                </span>
+                                
 
                                 @{
 
@@ -111,22 +95,22 @@
                             <div class="tournament-meta">
                                 <div class="tmeta">
                                     <i class="bi bi-calendar-event-fill me-2"></i>
-                                    <span class="fw-bold me-1">Start:</span> @e.StartDate
+                                    <span class="fw-bold me-1">@Localizer["CTStart"]</span> @e.StartDate
                                 </div>
 
                                 <div class="tmeta">
                                     <i class="bi bi-calendar-check-fill me-2"></i>
-                                    <span class="fw-bold me-1">End:</span> @e.EndDate
+                                    <span class="fw-bold me-1">@Localizer["CTEnd"]:</span> @e.EndDate
                                 </div>
 
                                 <div class="tmeta">
                                     <i class="bi bi-people-fill me-2"></i>
-                                    <span class="fw-bold me-1">Teams:</span> @($"{e.NumberOfTeams} / 16")
+                                    <span class="fw-bold me-1">@Localizer["CTTeams"]</span> @($"{e.NumberOfTeams} / 16")
                                 </div>
 
                                 <div class="tmeta">
                                     <i class="bi bi-activity me-2"></i>
-                                    <span class="fw-bold me-1">Status:</span> @e.Status.ToString()
+                                    <span class="fw-bold me-1">@Localizer["CTStatus"]</span> @e.Status.ToString()
                                 </div>
                             </div>
 
@@ -136,7 +120,7 @@
                                asp-route-information="@e.GetInformation()"
                                class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn mt-3">
                                 <i class="bi bi-info-circle-fill me-2"></i>
-                                Tournament Details
+                                @Localizer["CTDetails"]
                             </a>
 
                             @* Finished tournaments actions *@
@@ -147,7 +131,7 @@
                                    asp-route-id="@e.Id"
                                    class="btn btn-outline-dark btn-lg w-100 fw-bold tg-action-btn mt-2">
                                     <i class="bi bi-images me-2"></i>
-                                    Gallery
+                                    @Localizer["CTGallery"]
                                 </a>
 
                                 @if (User.Identity.IsAuthenticated && User.IsAdmin())
@@ -157,7 +141,7 @@
                                        asp-route-id="@e.Id"
                                        class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn mt-2">
                                         <i class="bi bi-cloud-upload-fill me-2"></i>
-                                        Upload Pictures
+                                        @Localizer["CTUpload"]
                                     </a>
                                 }
                             }
@@ -173,7 +157,7 @@
                                            asp-route-id="@e.Id"
                                            class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn mt-2">
                                             <i class="bi bi-pencil-square me-2"></i>
-                                            Edit
+                                            @Localizer["CTEdit"]
                                         </a>
 
                                         <a asp-controller="Tournament"
@@ -181,7 +165,7 @@
                                            asp-route-id="@e.Id"
                                            class="btn btn-outline-danger btn-lg w-100 fw-bold tg-action-btn mt-2">
                                             <i class="bi bi-trash3-fill me-2"></i>
-                                            Delete
+                                            @Localizer["CTDelete"]
                                         </a>
                                     }
                                     else
@@ -193,7 +177,7 @@
                                                asp-route-id="@e.Id"
                                                class="btn btn-outline-secondary btn-lg w-100 fw-bold tg-action-btn mt-2">
                                                 <i class="bi bi-whistle-fill me-2"></i>
-                                                Become A Referee
+                                                @Localizer["CTBecome"]
                                             </a>
                                         }
 
@@ -202,7 +186,7 @@
                                            asp-route-id="@e.Id"
                                            class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn mt-2">
                                             <i class="bi bi-people-fill me-2"></i>
-                                            Join Tournament
+                                            @Localizer["CTJoin"]
                                         </a>
                                     }
                                 }

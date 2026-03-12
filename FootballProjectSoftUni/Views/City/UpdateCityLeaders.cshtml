@@ -1,34 +1,25 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Rendering
 @model FootballProjectSoftUni.Core.Models.City.UpdateCityBestTeamViewModel
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
+
 
 @{
     ViewBag.Title = "Update City Leaders";
 }
 
 <section class="container py-4">
-
-    <div class="text-center mb-4">
-        <h2 class="page-title mb-1">
-            <i class="bi bi-arrow-repeat me-2"></i>
-            @ViewBag.Title
-        </h2>
-        <p class="text-muted mb-0">
-            Избери град и отбор, за да добавиш победа (+1) към лидерите на града.
-        </p>
-    </div>
-
     <div class="admin-form-card mx-auto">
         <form asp-action="UpdateCityLeaders" method="post" class="admin-form">
 
             <div class="mb-3">
                 <label asp-for="CityId" class="form-label fw-bold">
-                    <i class="bi bi-geo-alt-fill me-2"></i>City
+                    <i class="bi bi-geo-alt-fill me-2"></i>@Localizer["UPLCity"]
                 </label>
 
                 <select asp-for="CityId"
                         class="form-select form-select-lg tg-select"
                         asp-items="@(new SelectList(Model.Cities, "Id", "Name"))">
-                    <option value="">-- Select city --</option>
                 </select>
 
                 <span asp-validation-for="CityId" class="text-danger small"></span>
@@ -36,13 +27,12 @@
 
             <div class="mb-3">
                 <label asp-for="TeamId" class="form-label fw-bold">
-                    <i class="bi bi-people-fill me-2"></i>Team
+                    <i class="bi bi-people-fill me-2"></i>@Localizer["UPLTeam"]
                 </label>
 
                 <select asp-for="TeamId"
                         class="form-select form-select-lg tg-select"
                         asp-items="@(new SelectList(Model.Teams, "Id", "Name"))">
-                    <option value="">-- Select team --</option>
                 </select>
 
                 <span asp-validation-for="TeamId" class="text-danger small"></span>
@@ -50,7 +40,7 @@
 
             <button type="submit" class="btn btn-success btn-lg w-100 tg-action-btn">
                 <i class="bi bi-plus-circle-fill me-2"></i>
-                Add Win (+1)
+                @Localizer["UPLAddWin"]
             </button>
 
         </form>

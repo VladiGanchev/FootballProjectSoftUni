@@ -1,24 +1,26 @@
 ﻿@using FootballProjectSoftUni.Extensions
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
 
 <ul class="navbar-nav flex-grow-1 tg-menu">
     <li class="nav-item">
         <a class="nav-link tg-navlink @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "is-active" : "")"
            asp-area="" asp-controller="Home" asp-action="Index">
-            <i class="bi bi-house-door-fill me-2"></i> Home
+            <i class="bi bi-house-door-fill me-2"></i> @Localizer["DHome"]
         </a>
     </li>
 
     <li class="nav-item">
         <a class="nav-link tg-navlink @(ViewContext.RouteData.Values["controller"]?.ToString() == "City" ? "is-active" : "")"
            asp-area="" asp-controller="City" asp-action="All">
-            <i class="bi bi-geo-alt-fill me-2"></i> Cities
+            <i class="bi bi-geo-alt-fill me-2"></i> @Localizer["DCities"]
         </a>
     </li>
 
     <li class="nav-item">
         <a class="nav-link tg-navlink @(ViewContext.RouteData.Values["controller"]?.ToString() == "Partner" ? "is-active" : "")"
            asp-area="" asp-controller="Partner" asp-action="All">
-            <i class="bi bi-person"></i> Partners
+            <i class="bi bi-person"></i> @Localizer["DPartners"]
         </a>
     </li>
 
@@ -27,7 +29,7 @@
         <li class="nav-item">
             <a class="nav-link tg-navlink @(ViewContext.RouteData.Values["controller"]?.ToString() == "Referee" ? "is-active" : "")"
                asp-controller="Referee" asp-action="Referees">
-                <i class="bi bi-flag-fill me-2"></i>  Referees
+                <i class="bi bi-flag-fill me-2"></i>  @Localizer["DReferees"]
             </a>
         </li>
 
@@ -47,44 +49,44 @@
            role="button"
            data-bs-toggle="dropdown"
            aria-expanded="false">
-            <i class="bi bi-shield-lock-fill me-2"></i> Admin Dashboard
+            <i class="bi bi-shield-lock-fill me-2"></i> @Localizer["DAdmin"]
         </a>
 
                 <ul class="dropdown-menu tg-dropdown" aria-labelledby="adminDropdown">
                     <li>
                         <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="Tournament" asp-action="AddTournamentToCity">
-                            <i class="bi bi-trophy-fill me-2"></i> Add Tournament
+                            <i class="bi bi-trophy-fill me-2"></i> @Localizer["DAddTournament"]
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="City" asp-action="AddCity">
-                            <i class="bi bi-plus-circle-fill me-2"></i> Add City
+                            <i class="bi bi-plus-circle-fill me-2"></i> @Localizer["DAddCity"]
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="City" asp-action="DeleteCity">
-                            <i class="bi bi-trash-fill me-2"></i> Delete City
+                            <i class="bi bi-trash-fill me-2"></i>@Localizer["DDeleteCity"] 
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="Partner" asp-action="AddPartner">
-                            <i class="bi bi-person-plus-fill me-2"></i> Add Partner
+                            <i class="bi bi-person-plus-fill me-2"></i>@Localizer["DAddPartner"] 
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="Partner" asp-action="DeletePartner">
-                            <i class="bi bi-person-x-fill me-2"></i> Delete Partner
+                            <i class="bi bi-person-x-fill me-2"></i>@Localizer["DDeletePartner"] 
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="City" asp-action="UpdateCityLeaders">
-                            <i class="bi bi-arrow-repeat me-2"></i> Update City Leaders
+                            <i class="bi bi-arrow-repeat me-2"></i>@Localizer["DUCL"]
                         </a>
                     </li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
                         <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="Payments" asp-action="Index">
-                            <i class="bi bi-cash-coin me-2"></i> Refund
+                            <i class="bi bi-cash-coin me-2"></i> @Localizer["DRefund"]
                         </a>
                     </li>
                 </ul>
@@ -101,18 +103,18 @@
            role="button"
            data-bs-toggle="dropdown"
            aria-expanded="false">
-            <i class="bi bi-calendar2-check-fill me-2"></i> Participate
+            <i class="bi bi-calendar2-check-fill me-2"></i> @Localizer["DParticipate"]
         </a>
 
                 <ul class="dropdown-menu tg-dropdown" aria-labelledby="participateDropdown">
                     <li>
                         <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="Referee" asp-action="AllTournamentsToReferee">
-                            <i class="bi bi-flag me-2"></i> As Referee
+                            <i class="bi bi-flag me-2"></i> @Localizer["DAsReferee"]
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item tg-dd-item" asp-area="" asp-controller="Coach" asp-action="AllTournamentsToParticipateAsCoach">
-                            <i class="bi bi-person-badge-fill me-2"></i> As Coach
+                            <i class="bi bi-person-badge-fill me-2"></i> @Localizer["DAsCoach"]
                         </a>
                     </li>
                 </ul>

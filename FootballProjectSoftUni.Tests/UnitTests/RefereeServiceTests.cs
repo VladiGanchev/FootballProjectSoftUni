@@ -365,7 +365,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
                 Id = 13,
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now,
-                Status = FootballProjectSoftUni.Infrastructure.Data.Enums.TournamentStatus.Finished.ToString(),
+                Status = FootballProjectSoftUni.Infrastructure.Data.Enums.TournamentStatus.Finished,
                 Description = "lkjhgfdvbjkiuytrdvbnjiuytfgbnjuytghjuytg",
                 NumberOfTeams = 0,
                 CityName = "Добрич",

@@ -79,6 +79,15 @@
                                 </div>
                             </div>
 
+                            <a asp-controller="Tournament"
+                               asp-action="Details"
+                               asp-route-id="@e.Id"
+                               asp-route-information="@e.Information"
+                               class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn mt-3">
+                                <i class="bi bi-info-circle me-2"></i>
+                                @Localizer["CTDetails"]
+                            </a>
+
                             <a asp-controller="Referee"
                                asp-action="LeaveTournament"
                                asp-route-id="@e.Id"

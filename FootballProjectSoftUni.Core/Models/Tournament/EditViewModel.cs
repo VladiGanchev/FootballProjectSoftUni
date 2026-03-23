@@ -34,5 +34,14 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
         public string ImageUrl { get; set; } = string.Empty;
 
         public string? Winner { get; set; } = string.Empty;
+
+        [Range(0, double.MaxValue, ErrorMessage = "Prize must be a positive number.")]
+        public decimal Prize { get; set; }
+
+        [Range(0, double.MaxValue, ErrorMessage = "Second place prize must be a positive number.")]
+        public decimal SecondPlacePrize { get; set; }
+
+        [Range(0, double.MaxValue, ErrorMessage = "Third place prize must be a positive number.")]
+        public decimal ThirdPlacePrize { get; set; }
     }
 }

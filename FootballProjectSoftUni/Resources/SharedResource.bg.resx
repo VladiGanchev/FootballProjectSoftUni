@@ -478,7 +478,7 @@
     <value>Голове</value>
   </data>
   <data name="EREnter" xml:space="preserve">
-    <value>Въведи головете за двата отбора и запази резултата.</value>
+    <value>Въведи резултат.</value>
   </data>
   <data name="AllIncoming" xml:space="preserve">
     <value>Входящи</value>
@@ -936,5 +936,76 @@
   </data>
   <data name="IAction" xml:space="preserve">
     <value>Действие</value>
+  </data>
+  <data name="PaymentSuccessNotification" xml:space="preserve">
+    <value>✅ Плащането на сумата от {0} € е успешно! Отборът {1} е регистриран за турнир в град {2}.</value>
+  </data>
+  <data name="PaymentSuccessSubject" xml:space="preserve">
+    <value>Успешно плащане ⚽</value>
+  </data>
+  <data name="PaymentSuccessBody" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RefundSuccessSubject" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RefundSuccessBody" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ATFirstPlacePrize" xml:space="preserve">
+    <value>1-во място:</value>
+  </data>
+  <data name="ATSecondPlacePrize" xml:space="preserve">
+    <value>2-ро място:</value>
+  </data>
+  <data name="ATThirdPlacePrize" xml:space="preserve">
+    <value>3-то място:</value>
+  </data>
+  <data name="DFirstPlacePrize" xml:space="preserve">
+    <value>1-во място:</value>
+  </data>
+  <data name="DSecondPlacePrize" xml:space="preserve">
+    <value>2-ро място:</value>
+  </data>
+  <data name="DThirdPlacePrize" xml:space="preserve">
+    <value>3-то място:</value>
+  </data>
+  <data name="EFirstPlacePrize" xml:space="preserve">
+    <value>1-во място:</value>
+  </data>
+  <data name="ESecondPlacePrize" xml:space="preserve">
+    <value>2-ро място:</value>
+  </data>
+  <data name="EThirdPlacePrize" xml:space="preserve">
+    <value>3-то място:</value>
+  </data>
+  <data name="InvalidOrder" xml:space="preserve">
+    <value>Невалидна поръчка.</value>
+  </data>
+  <data name="PaymentSuccessMessage" xml:space="preserve">
+    <value>✅ Плащането е успешно! Отборът е регистриран.</value>
+  </data>
+  <data name="PaymentPendingMessage" xml:space="preserve">
+    <value>⏳ Плащането е получено. Изчакваме потвърждение… (ако до 10-15 сек не се обнови, рефрешни страницата)</value>
+  </data>
+  <data name="TournamentDeclaration" xml:space="preserve">
+    <value>С настоящото декларирам, че доброволно желая да участвам във футболен турнир, организиран чрез платформата Tournament Galaxy.
+
+1. Декларирам, че съм в добро физическо и здравословно състояние, което ми позволява да участвам в спортни дейности, включително футболни срещи.
+2. Осъзнавам и приемам рисковете, свързани с участието във футболен турнир, включително, но не само: физически наранявания, травми, инциденти и други неблагоприятни събития.
+3. Доброволно поемам всички рискове, свързани с участието ми в турнира, както по време на мачовете, така и извън тях.
+4. Освобождавам от отговорност организаторите, техните представители, партньори и служители от всякаква отговорност за вреди, наранявания, загуби или щети, възникнали в резултат на моето участие, доколкото това е допустимо от приложимото законодателство.
+5. Декларирам, че ще спазвам правилата на турнира, както и указанията на организаторите и съдиите.
+6. Съгласявам се личните ми данни да бъдат обработвани за целите на организацията на турнира и плащането.
+7. Декларирам, че съм прочел/а и разбрал/а настоящата декларация и я приемам доброволно.</value>
+  </data>
+  <data name="DDeclaration" xml:space="preserve">
+    <value>Декларация за съгласие</value>
+  </data>
+  <data name="DAccept" xml:space="preserve">
+    <value>Съгласен/съгласна съм с декларацията</value>
+  </data>
+  <data name="DContinue" xml:space="preserve">
+    <value>Продължи към плащане</value>
   </data>
 </root>

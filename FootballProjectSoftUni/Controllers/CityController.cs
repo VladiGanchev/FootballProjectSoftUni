@@ -6,6 +6,7 @@ using FootballProjectSoftUni.Infrastructure.Data;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace FootballProjectSoftUni.Controllers
 {
@@ -14,11 +15,13 @@ namespace FootballProjectSoftUni.Controllers
     {
         private readonly ICityService cityService;
         private readonly ITournamentJoinPaymentService tournamentJoinPaymentService;
-
-        public CityController(ICityService _service, ITournamentJoinPaymentService _tournamentJoinPaymentService)
+        private readonly IStringLocalizer<SharedResource> localizer;
+        public CityController(ICityService _service, ITournamentJoinPaymentService _tournamentJoinPaymentService, IStringLocalizer<SharedResource> _localizer)
         {
             tournamentJoinPaymentService = _tournamentJoinPaymentService;
             cityService = _service;
+            localizer = _localizer;
+
         }
 
         [AllowAnonymous]
@@ -170,19 +173,19 @@ namespace FootballProjectSoftUni.Controllers
 
             if (order == null)
             {
-                TempData["PaymentMessage"] = "Невалидна поръчка.";
+                TempData["PaymentMessage"] = localizer["InvalidOrder"].Value;
                 TempData["PaymentType"] = "danger";
                 return RedirectToAction(nameof(All));
             }
 
             if (order.Status == "Paid")
             {
-                TempData["PaymentMessage"] = "✅ Плащането е успешно! Отборът е регистриран.";
+                TempData["PaymentMessage"] = localizer["PaymentSuccessMessage"].Value;
                 TempData["PaymentType"] = "success";
             }
             else
             {
-                TempData["PaymentMessage"] = "⏳ Плащането е получено. Изчакваме потвърждение… (ако до 10-15 сек не се обнови, рефрешни страницата)";
+                TempData["PaymentMessage"] = localizer["PaymentPendingMessage"].Value;
                 TempData["PaymentType"] = "info";
             }
 

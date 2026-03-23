@@ -16,9 +16,8 @@ namespace FootballProjectSoftUni.Core.Models.Match
 
         public int? Team2Id { get; set; }
         public string Team2Name { get; set; }
-
-        public int? Team1Goals { get; set; }
-        public int? Team2Goals { get; set; }
+        public int Team1Goals { get; set; } = 0;
+        public int Team2Goals { get; set; } = 0;
 
     }
 

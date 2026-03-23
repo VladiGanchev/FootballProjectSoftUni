@@ -74,7 +74,7 @@
                 <div class="col-12 col-md-6">
                     <div class="mb-3">
                         <label asp-for="Prize" class="form-label fw-bold">
-                            <i class="bi bi-cash-coin me-2"></i>@Localizer["ATPrize"]
+                            <i class="bi bi-trophy-fill me-2"></i>@Localizer["ATFirstPlacePrize"]
                         </label>
 
                         <input asp-for="Prize"
@@ -85,6 +85,40 @@
                                min="0" />
 
                         <span asp-validation-for="Prize" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="SecondPlacePrize" class="form-label fw-bold">
+                            <i class="bi bi-award-fill me-2"></i>@Localizer["ATSecondPlacePrize"]
+                        </label>
+
+                        <input asp-for="SecondPlacePrize"
+                               class="form-control tg-input"
+                               aria-required="true"
+                               type="number"
+                               step="0.01"
+                               min="0" />
+
+                        <span asp-validation-for="SecondPlacePrize" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="ThirdPlacePrize" class="form-label fw-bold">
+                            <i class="bi bi-award me-2"></i>@Localizer["ATThirdPlacePrize"]
+                        </label>
+
+                        <input asp-for="ThirdPlacePrize"
+                               class="form-control tg-input"
+                               aria-required="true"
+                               type="number"
+                               step="0.01"
+                               min="0" />
+
+                        <span asp-validation-for="ThirdPlacePrize" class="text-danger small"></span>
                     </div>
                 </div>
 

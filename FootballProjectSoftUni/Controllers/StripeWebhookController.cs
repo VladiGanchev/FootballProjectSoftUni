@@ -1,4 +1,5 @@
-﻿using FootballProjectSoftUni.Core.Contracts.Email;
+﻿using FootballProjectSoftUni;
+using FootballProjectSoftUni.Core.Contracts.Email;
 using FootballProjectSoftUni.Core.Contracts.Notification;
 using FootballProjectSoftUni.Core.Contracts.Team;
 using FootballProjectSoftUni.Core.Models.Settings;
@@ -7,9 +8,11 @@ using FootballProjectSoftUni.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Stripe;
 using Stripe.Checkout;
+using System.Globalization;
 
 [AllowAnonymous]
 [IgnoreAntiforgeryToken]
@@ -22,19 +25,22 @@ public class StripeWebhookController : ControllerBase
     private readonly ITeamService teamService;
     private INotificationService notificationService;
     private IEmailService emailService;
+    private readonly IStringLocalizer<SharedResource> localizer;
 
     public StripeWebhookController(
         ApplicationDbContext context,
         IOptions<StripeSettings> options,
         ITeamService teamService,
         INotificationService notificationService,
-        IEmailService emailService)
+        IEmailService emailService,
+        IStringLocalizer<SharedResource> localizer)
     {
         this.context = context;
         this.settings = options.Value;
         this.teamService = teamService;
         this.notificationService = notificationService;
         this.emailService = emailService;
+        this.localizer = localizer;
     }
 
     [HttpPost]
@@ -70,6 +76,11 @@ public class StripeWebhookController : ControllerBase
 
             if (order.Status == "Paid") return Ok();
 
+            var culture = order.Culture ?? "bg";
+            var cultureInfo = new CultureInfo(culture);
+            CultureInfo.CurrentCulture = cultureInfo;
+            CultureInfo.CurrentUICulture = cultureInfo;
+
             order.Status = "Paid";
             order.PaidOnUtc = DateTime.UtcNow;
             order.StripePaymentIntentId = session.PaymentIntentId ?? order.StripePaymentIntentId;
@@ -101,7 +112,12 @@ public class StripeWebhookController : ControllerBase
 
             var fee = await context.Tournaments.Where(x => x.Id == order.TournamentId).Select(x => x.ParticipationFee).FirstOrDefaultAsync();
 
-            var message =$"✅ Плащането на сумата от {fee} € е успешно! Отборът {teamName} е регистриран за турнир в град {cityName}.";
+            //var message =$"✅ Плащането на сумата от {fee} € е успешно! Отборът {teamName} е регистриран за турнир в град {cityName}.";
+            var message = string.Format(
+                localizer["PaymentSuccessNotification"].Value,
+                fee,
+                teamName,
+                cityName);
 
             await notificationService.CreateNotificationForUserAsync(order.UserId, message);
 
@@ -112,8 +128,11 @@ public class StripeWebhookController : ControllerBase
 
             if (!string.IsNullOrWhiteSpace(userEmail))
             {
-                var subject = "Успешно плащане ⚽";
-                var body = $"<p>Плащането е успешно. Отборът <b>{teamName}</b> е регистриран!</p>";
+                //var subject = "Успешно плащане ⚽";
+                //var body = $"<p>Плащането е успешно. Отборът <b>{teamName}</b> е регистриран!</p>";
+
+                var subject = localizer["PaymentSuccessSubject"].Value;
+                var body = string.Format(localizer["PaymentSuccessBody"].Value, teamName);
 
                 try
                 {
@@ -139,6 +158,11 @@ public class StripeWebhookController : ControllerBase
 
             if (order == null) return Ok();
 
+            var culture = order.Culture ?? "bg";
+            var cultureInfo = new CultureInfo(culture);
+            CultureInfo.CurrentCulture = cultureInfo;
+            CultureInfo.CurrentUICulture = cultureInfo;
+
             order.Status = "Refunded";
             order.RefundedOnUtc = DateTime.UtcNow;
 
@@ -146,12 +170,14 @@ public class StripeWebhookController : ControllerBase
             var userEmail = await context.Users
               .Where(u => u.Id == order.UserId)
               .Select(u => u.Email)
-              .FirstOrDefaultAsync();
-
+              .FirstOrDefaultAsync(); 
             if (!string.IsNullOrWhiteSpace(userEmail))
             {
-                var subject = "Успешно връщане на пари! ⚽";
-                var body = $"<p>Сумата по сметката ви е въстановена!</p>";
+                // var subject = "Успешно връщане на пари! ⚽";
+                //var body = $"<p>Сумата по сметката ви е възстановена!</p>";
+
+                var subject = localizer["RefundSuccessSubject"].Value;
+                var body = localizer["RefundSuccessBody"].Value;
 
                 try
                 {

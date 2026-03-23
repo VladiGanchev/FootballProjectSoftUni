@@ -59,6 +59,12 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
         public decimal Prize { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
+        public decimal SecondPlacePrize { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal ThirdPlacePrize { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
         public decimal ParticipationFee { get; set; }
 
         public string? Winner { get; set; }

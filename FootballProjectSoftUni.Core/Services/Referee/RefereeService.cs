@@ -1,4 +1,5 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Referee;
+using FootballProjectSoftUni.Core.Extensions;
 using FootballProjectSoftUni.Core.Models.Referee;
 using FootballProjectSoftUni.Core.Models.ServiceError;
 using FootballProjectSoftUni.Core.Models.Tournament;
@@ -83,19 +84,24 @@ namespace FootballProjectSoftUni.Core.Services.Referee
         public async Task<IEnumerable<TournamentViewModel>> GetTournamentsAsync(string userId)
         {
             var tournaments = await context.TournamentsParticipants
-              .Where(x => x.ParticipantId == userId && x.Role == "Referee")
-              .Select(x => new TournamentViewModel()
-              {
-                  Id = x.TournamentId,
-                  StartDate = x.Tournament.StartDate,
-                  CityName = x.Tournament.TournamentCities.FirstOrDefault().City.Name,
-                  EndDate = x.Tournament.EndDate,
-                  Description = x.Tournament.Description,
-                  Status = x.Tournament.Status,
-                  NumberOfTeams = x.Tournament.NumberOfTeams,
-                  ImageUrl = x.Tournament.ImageUrl,
-              })
-              .ToListAsync();
+                .Where(x => x.ParticipantId == userId && x.Role == "Referee")
+                .Select(x => new TournamentViewModel()
+                {
+                    Id = x.TournamentId,
+                    StartDate = x.Tournament.StartDate,
+                    CityName = x.Tournament.TournamentCities.FirstOrDefault().City.Name,
+                    EndDate = x.Tournament.EndDate,
+                    Description = x.Tournament.Description,
+                    Status = x.Tournament.Status,
+                    NumberOfTeams = x.Tournament.NumberOfTeams,
+                    ImageUrl = x.Tournament.ImageUrl,
+                })
+                .ToListAsync();
+
+            foreach (var t in tournaments)
+            {
+                t.Information = t.GetInformation();
+            }
 
             return tournaments;
         }

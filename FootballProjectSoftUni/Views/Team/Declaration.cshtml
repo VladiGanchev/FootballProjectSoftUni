@@ -1,0 +1,65 @@
+﻿@model FootballProjectSoftUni.Core.Models.Payment.TournamentDeclarationViewModel
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
+
+@{
+    ViewData["Title"] = "Declaration";
+}
+
+<h2 class="mb-4">@Localizer["DDeclaration"]</h2>
+
+<!-- Общи грешки -->
+
+<div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+<form asp-action="Declaration" asp-controller="Team" method="post">
+    @Html.AntiForgeryToken()
+
+    
+    <input asp-for="TournamentId" type="hidden" />
+    <input asp-for="TeamId" type="hidden" />
+    <input asp-for="DeclarationText" type="hidden" />
+
+    <!-- Текст на декларацията -->
+    <div class="border rounded p-3 mb-3"
+         style="max-height: 350px; overflow-y: auto; background-color: #f8f9fa; white-space: pre-line;">
+        @Model.DeclarationText
+    </div>
+
+    <!-- Checkbox -->
+    <div class="form-check mb-3">
+        <input type="checkbox" asp-for="AcceptLiabilityDeclaration" class="form-check-input" id="acceptCheckbox" />
+        <label asp-for="AcceptLiabilityDeclaration" class="form-check-label">
+            @Localizer["DAccept"]
+        </label>
+    </div>
+
+    <!-- Бутон -->
+    <button type="submit" id="submitBtn" class="btn btn-primary" disabled>
+        @Localizer["DContinue"]
+    </button>
+    
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const checkbox = document.getElementById("acceptCheckbox");
+            const button = document.getElementById("submitBtn");
+
+            function toggleButton() {
+                button.disabled = !checkbox.checked;
+            }
+
+            // initial state
+            toggleButton();
+
+            checkbox.addEventListener("change", toggleButton);
+        });
+    </script>
+    
+
+}

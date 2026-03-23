@@ -30,5 +30,15 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
         public DateTime? RefundedOnUtc { get; set; }
         public decimal? RefundAmount { get; set; }
         public string? RefundReason { get; set; }
+
+        public string Culture { get; set; } = "bg";
+
+        public bool LiabilityDeclarationAccepted { get; set; }
+
+        public DateTime? LiabilityDeclarationAcceptedOnUtc { get; set; }
+
+        public string? LiabilityDeclarationTextSnapshot { get; set; }
+
+        public string? LiabilityDeclarationIp { get; set; }
     }
 }

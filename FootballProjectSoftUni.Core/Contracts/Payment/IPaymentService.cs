@@ -9,7 +9,7 @@ namespace FootballProjectSoftUni.Core.Contracts.Payment
 {
     public interface IPaymentService
     {
-        Task<string> CreateTournamentJoinCheckoutAsync(int tournamentId, string userId, int? teamId);
+        Task<string> CreateTournamentJoinCheckoutAsync(int tournamentId, string userId, int? teamId, bool liabilityDeclarationAccepted, string declarationTextSnapshot);
         Task<bool> RefundTournamentJoinAsync(int orderId, decimal? amount = null, string? reason = null);
         Task<ICollection<AdminPaymentViewModel>> GetAllTournamentJoinPaymentsAsync();
 

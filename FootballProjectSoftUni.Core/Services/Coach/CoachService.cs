@@ -1,5 +1,6 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Coach;
 using FootballProjectSoftUni.Core.Contracts.Tournament;
+using FootballProjectSoftUni.Core.Extensions;
 using FootballProjectSoftUni.Core.Models.Coach;
 using FootballProjectSoftUni.Core.Models.ServiceError;
 using FootballProjectSoftUni.Core.Models.Tournament;
@@ -68,7 +69,7 @@ namespace FootballProjectSoftUni.Core.Services.Coach
         {
             var userId = id;
 
-            return await context.TournamentsParticipants
+            var tournaments = await context.TournamentsParticipants
                 .Where(x => x.ParticipantId == userId
                          && x.Role == "Coach"
                          && x.Tournament.EndDate > DateTime.Now)
@@ -84,6 +85,13 @@ namespace FootballProjectSoftUni.Core.Services.Coach
                     ImageUrl = x.Tournament.ImageUrl
                 })
                 .ToListAsync();
+
+            foreach (var t in tournaments)
+            {
+                t.Information = t.GetInformation();
+            }
+
+            return tournaments;
         }
 
         public async Task<bool> LeaveTournamentAsync(int tournamentId, string userId)

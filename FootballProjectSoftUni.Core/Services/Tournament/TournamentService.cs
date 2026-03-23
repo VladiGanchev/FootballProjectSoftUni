@@ -112,6 +112,9 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
             tournament.EndDate = end;
             tournament.ImageUrl = model.ImageUrl;
             tournament.Winner = model.Winner;
+            tournament.Prize = model.Prize;
+            tournament.SecondPlacePrize = model.SecondPlacePrize;
+            tournament.ThirdPlacePrize = model.ThirdPlacePrize;
 
             await data.SaveChangesAsync();
         }
@@ -226,7 +229,9 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                     .ToList(),
                 Prize = needed.Prize,
                 ParticipationFee = needed.ParticipationFee,
-                Winner = needed.Winner
+                Winner = needed.Winner,
+                SecondPlacePrize = needed.SecondPlacePrize,
+                ThirdPlacePrize = needed.ThirdPlacePrize,
 
             };
 
@@ -267,6 +272,8 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 OrganiserId = "600bafb9-a73d-4489-a387-643c2b8ae96c",
                 RefereeId = null,
                 Prize = model.Prize,
+                SecondPlacePrize = model.SecondPlacePrize,
+                ThirdPlacePrize = model.ThirdPlacePrize,
                 ParticipationFee = model.ParticipationFee
 
             };
@@ -324,7 +331,10 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 StartDate = tournament.StartDate.ToString(RequiredDateTimeFormat),
                 ImageUrl = tournament.ImageUrl,
                 CreatedOn = tournament.CreatedOn.ToString(RequiredDateTimeFormat),
-                Winner = tournament.Winner
+                Winner = tournament.Winner,
+                Prize = tournament.Prize,
+                SecondPlacePrize = tournament.SecondPlacePrize,
+                ThirdPlacePrize = tournament.ThirdPlacePrize
             };
         }
 
@@ -517,8 +527,8 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 Team2Id = match.Team2Id,
                 Team2Name = match.Team2?.Name,
 
-                Team1Goals = match.Team1Goals,
-                Team2Goals = match.Team2Goals
+                Team1Goals = match.Team1Goals ?? 0,
+                Team2Goals = match.Team2Goals ?? 0
             };
         }
 

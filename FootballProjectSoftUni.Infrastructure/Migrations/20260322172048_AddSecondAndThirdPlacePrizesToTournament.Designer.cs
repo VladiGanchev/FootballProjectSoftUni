@@ -4,6 +4,7 @@ using FootballProjectSoftUni.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballProjectSoftUni.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260322172048_AddSecondAndThirdPlacePrizesToTournament")]
+    partial class AddSecondAndThirdPlacePrizesToTournament
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,7 +103,7 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                         {
                             Id = "600bafb9-a73d-4489-a387-643c2b8ae96c",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fe5d4075-b8c2-4566-a2cc-c03f0e3d0dca",
+                            ConcurrencyStamp = "8141eafb-4cf7-45c1-996e-6789f56b4078",
                             Email = "admin@mail.com",
                             EmailConfirmed = false,
                             FirstName = "Great",
@@ -109,9 +111,9 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@MAIL.COM",
                             NormalizedUserName = "ADMIN@MAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAECUj7KSXqNGtj5O0/7x8QAzoSXxtteAgWpZNNOGoZbfq4sOjFsIRUmjze5cAuHlSUA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFeX3hSrnRtVG8zIlcFQ6IIULeTW/nNiTs0yZckaDx2nx85q/lfMnijiEuoyyAT0kA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0f0eeb4f-8788-4cc1-8d70-2160f789cd8f",
+                            SecurityStamp = "72933e06-f564-4690-a023-3ad114434412",
                             TwoFactorEnabled = false,
                             UserName = "admin@mail.com"
                         });
@@ -723,18 +725,6 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
 
                     b.Property<string>("Currency")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("LiabilityDeclarationAccepted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LiabilityDeclarationAcceptedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LiabilityDeclarationIp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LiabilityDeclarationTextSnapshot")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("PaidOnUtc")

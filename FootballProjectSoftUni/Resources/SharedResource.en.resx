@@ -479,7 +479,7 @@
     <value>Goals</value>
   </data>
   <data name="EREnter" xml:space="preserve">
-    <value>Enter the goals for both teams and save the score.</value>
+    <value>Enter result.</value>
   </data>
   <data name="AllIncoming" xml:space="preserve">
     <value>Incoming</value>
@@ -936,5 +936,76 @@
   </data>
   <data name="IAction" xml:space="preserve">
     <value>Action</value>
+  </data>
+  <data name="PaymentSuccessNotification" xml:space="preserve">
+    <value>✅ The payment of {0} € was successful! Team {1} has been registered for a tournament in {2}.</value>
+  </data>
+  <data name="PaymentSuccessSubject" xml:space="preserve">
+    <value>Successful payment ⚽</value>
+  </data>
+  <data name="PaymentSuccessBody" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RefundSuccessSubject" xml:space="preserve">
+    <value> Refund successful! ⚽</value>
+  </data>
+  <data name="RefundSuccessBody" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ATFirstPlacePrize" xml:space="preserve">
+    <value>1st place:</value>
+  </data>
+  <data name="ATSecondPlacePrize" xml:space="preserve">
+    <value>2nd place:</value>
+  </data>
+  <data name="ATThirdPlacePrize" xml:space="preserve">
+    <value>3rd place:</value>
+  </data>
+  <data name="DFirstPlacePrize" xml:space="preserve">
+    <value>1st place:</value>
+  </data>
+  <data name="DSecondPlacePrize" xml:space="preserve">
+    <value>2nd place:</value>
+  </data>
+  <data name="DThirdPlacePrize" xml:space="preserve">
+    <value>3rd place:</value>
+  </data>
+  <data name="EFirstPlacePrize" xml:space="preserve">
+    <value>1st place:</value>
+  </data>
+  <data name="ESecondPlacePrize" xml:space="preserve">
+    <value>2nd place:</value>
+  </data>
+  <data name="EThirdPlacePrize" xml:space="preserve">
+    <value>3rd place:</value>
+  </data>
+  <data name="InvalidOrder" xml:space="preserve">
+    <value>Invalid order.</value>
+  </data>
+  <data name="PaymentSuccessMessage" xml:space="preserve">
+    <value>✅ Payment successful! The team has been registered.</value>
+  </data>
+  <data name="PaymentPendingMessage" xml:space="preserve">
+    <value>⏳ Payment received. Waiting for confirmation… (if it doesn't update in 10-15 seconds, refresh the page)</value>
+  </data>
+  <data name="TournamentDeclaration" xml:space="preserve">
+    <value>I hereby declare that I voluntarily wish to participate in a football tournament organized through the Tournament Galaxy platform.
+
+1. I declare that I am in good physical and health condition to participate in sports activities, including football matches.
+2. I understand and accept the risks associated with participating in a football tournament, including but not limited to: physical injuries, accidents, and other adverse events.
+3. I voluntarily assume all risks associated with my participation in the tournament, both during matches and outside them.
+4. I release the organizers, their representatives, partners, and employees from any liability for damages, injuries, losses, or harm arising from my participation, to the extent permitted by applicable law.
+5. I declare that I will follow the tournament rules and the instructions of organizers and referees.
+6. I agree that my personal data may be processed for the purposes of tournament organization and payment.
+7. I declare that I have read, understood, and voluntarily accept this declaration.</value>
+  </data>
+  <data name="DDeclaration" xml:space="preserve">
+    <value>Declaration of consent</value>
+  </data>
+  <data name="DAccept" xml:space="preserve">
+    <value>I agree with the declaration</value>
+  </data>
+  <data name="DContinue" xml:space="preserve">
+    <value>Proceed to payment</value>
   </data>
 </root>

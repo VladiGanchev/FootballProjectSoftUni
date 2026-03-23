@@ -46,6 +46,14 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
         public decimal Prize { get; set; }
 
         [Required(ErrorMessage = RequireErrorMessage)]
+        [Range(0, double.MaxValue, ErrorMessage = "Second place prize must be a positive number.")]
+        public decimal SecondPlacePrize { get; set; }
+
+        [Required(ErrorMessage = RequireErrorMessage)]
+        [Range(0, double.MaxValue, ErrorMessage = "Third place prize must be a positive number.")]
+        public decimal ThirdPlacePrize { get; set; }
+
+        [Required(ErrorMessage = RequireErrorMessage)]
         [Range(0, double.MaxValue, ErrorMessage = "Participation fee must be a positive number.")]
         public decimal ParticipationFee { get; set; }
     }

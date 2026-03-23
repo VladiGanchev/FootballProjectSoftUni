@@ -10,6 +10,7 @@ using Stripe;
 using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,8 +33,13 @@ namespace FootballProjectSoftUni.Core.Services.Payment
             this.httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<string> CreateTournamentJoinCheckoutAsync(int tournamentId, string userId, int? teamId)
+        public async Task<string> CreateTournamentJoinCheckoutAsync(int tournamentId, string userId, int? teamId, bool liabilityDeclarationAccepted, string declarationTextSnapshot)
         {
+            if (!liabilityDeclarationAccepted)
+            {
+                throw new InvalidOperationException("Liability declaration must be accepted before payment.");
+            }
+
             var tournament = await context.Tournaments.FirstOrDefaultAsync(t => t.Id == tournamentId);
             if (tournament == null)
             {
@@ -49,6 +55,8 @@ namespace FootballProjectSoftUni.Core.Services.Payment
             long amount = (long)Math.Round(fee * 100m, MidpointRounding.AwayFromZero);
             if (amount <= 0) throw new InvalidOperationException("Invalid fee amount.");
 
+            var ip = httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString();
+
             var order = new FootballProjectSoftUni.Infrastructure.Data.Models.TournamentJoinPayment
             {
                 TournamentId = tournamentId,
@@ -56,7 +64,12 @@ namespace FootballProjectSoftUni.Core.Services.Payment
                 TeamId = teamId,
                 Amount = fee,
                 Currency = settings.Currency,
-                Status = "Pending"
+                Status = "Pending",
+                Culture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName,
+                LiabilityDeclarationAccepted = liabilityDeclarationAccepted,
+                LiabilityDeclarationAcceptedOnUtc = DateTime.UtcNow,
+                LiabilityDeclarationIp = ip,
+                LiabilityDeclarationTextSnapshot = declarationTextSnapshot
             };
 
             context.TournamentJoinPayments.Add(order);
@@ -98,7 +111,8 @@ namespace FootballProjectSoftUni.Core.Services.Payment
                     ["orderId"] = order.Id.ToString(),
                     ["tournamentId"] = tournamentId.ToString(),
                     ["userId"] = userId,
-                    ["teamId"] = teamId?.ToString() ?? ""
+                    ["teamId"] = teamId?.ToString() ?? "",
+                    ["culture"] = order.Culture
                 }
             };
 

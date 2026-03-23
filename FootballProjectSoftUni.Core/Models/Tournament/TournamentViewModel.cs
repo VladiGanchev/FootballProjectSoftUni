@@ -35,5 +35,6 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
         [Required]
         public string ImageUrl { get; set; } = string.Empty;
 
+        public string Information { get; set; } = string.Empty;
     }
 }

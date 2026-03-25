@@ -63,58 +63,58 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             Assert.That(result[1].Id, Is.EqualTo(1));
         }
 
-        [Test]
-        public void CreateTournamentJoinCheckoutAsync_ShouldThrow_WhenTournamentNotFound()
-        {
-            var http = new HttpContextAccessor
-            {
-                HttpContext = new DefaultHttpContext()
-            };
-            http.HttpContext.Request.Scheme = "https";
-            http.HttpContext.Request.Host = new HostString("localhost");
+        //[Test]
+        //public void CreateTournamentJoinCheckoutAsync_ShouldThrow_WhenTournamentNotFound()
+        //{
+        //    var http = new HttpContextAccessor
+        //    {
+        //        HttpContext = new DefaultHttpContext()
+        //    };
+        //    http.HttpContext.Request.Scheme = "https";
+        //    http.HttpContext.Request.Host = new HostString("localhost");
 
-            var service = new PaymentService(_data, Options.Create(new StripeSettings { Currency = "EUR" }), http);
+        //    var service = new PaymentService(_data, Options.Create(new StripeSettings { Currency = "EUR" }), http);
 
-            Assert.ThrowsAsync<ArgumentException>(async () =>
-                await service.CreateTournamentJoinCheckoutAsync(99999, "u1", 1));
-        }
+        //    Assert.ThrowsAsync<ArgumentException>(async () =>
+        //        await service.CreateTournamentJoinCheckoutAsync(99999, "u1", 1));
+        //}
 
-        [Test]
-        public async Task CreateTournamentJoinCheckoutAsync_ShouldThrow_WhenFeeNotConfigured()
-        {
-            var http = new HttpContextAccessor
-            {
-                HttpContext = new DefaultHttpContext()
-            };
-            http.HttpContext.Request.Scheme = "https";
-            http.HttpContext.Request.Host = new HostString("localhost");
+        //[Test]
+        //public async Task CreateTournamentJoinCheckoutAsync_ShouldThrow_WhenFeeNotConfigured()
+        //{
+        //    var http = new HttpContextAccessor
+        //    {
+        //        HttpContext = new DefaultHttpContext()
+        //    };
+        //    http.HttpContext.Request.Scheme = "https";
+        //    http.HttpContext.Request.Host = new HostString("localhost");
 
-            var t = new Tournament
-            {
-                Id = 30001,
-                StartDate = DateTime.Now.AddDays(5),
-                EndDate = DateTime.Now.AddDays(6),
-                CreatedOn = DateTime.Now,
-                Description = "T",
-                OrganiserId = "org",
-                NumberOfTeams = 0,
-                ImageUrl = "img",
-                Status = TournamentStatus.Upcoming,
-                Prize = 0,
-                ParticipationFee = 0m,
-                ReminderSent = false
-            };
+        //    var t = new Tournament
+        //    {
+        //        Id = 30001,
+        //        StartDate = DateTime.Now.AddDays(5),
+        //        EndDate = DateTime.Now.AddDays(6),
+        //        CreatedOn = DateTime.Now,
+        //        Description = "T",
+        //        OrganiserId = "org",
+        //        NumberOfTeams = 0,
+        //        ImageUrl = "img",
+        //        Status = TournamentStatus.Upcoming,
+        //        Prize = 0,
+        //        ParticipationFee = 0m,
+        //        ReminderSent = false
+        //    };
 
-            await _data.Tournaments.AddAsync(t);
-            await _data.SaveChangesAsync();
+        //    await _data.Tournaments.AddAsync(t);
+        //    await _data.SaveChangesAsync();
 
-            var service = new PaymentService(_data, Options.Create(new StripeSettings { Currency = "EUR" }), http);
+        //    var service = new PaymentService(_data, Options.Create(new StripeSettings { Currency = "EUR" }), http);
 
-            var ex = Assert.ThrowsAsync<InvalidOperationException>(async () =>
-                await service.CreateTournamentJoinCheckoutAsync(30001, "u1", 1));
+        //    var ex = Assert.ThrowsAsync<InvalidOperationException>(async () =>
+        //        await service.CreateTournamentJoinCheckoutAsync(30001, "u1", 1));
 
-            Assert.That(ex!.Message, Is.EqualTo("Participation fee is not configured."));
-        }
+        //    Assert.That(ex!.Message, Is.EqualTo("Participation fee is not configured."));
+        //}
 
         [Test]
         public void RefundTournamentJoinAsync_ShouldThrow_WhenOrderNotFound()

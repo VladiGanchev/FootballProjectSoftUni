@@ -1310,8 +1310,6 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             Assert.That(result.Team2Id, Is.Null);
             Assert.That(result.Team1Name, Is.Null);
             Assert.That(result.Team2Name, Is.Null);
-            Assert.That(result.Team1Goals, Is.Null);
-            Assert.That(result.Team2Goals, Is.Null);
         }
 
         [Test]

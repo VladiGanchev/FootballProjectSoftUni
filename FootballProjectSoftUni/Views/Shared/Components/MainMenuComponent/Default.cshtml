@@ -1,5 +1,8 @@
 ﻿@using FootballProjectSoftUni.Extensions
+@using Microsoft.AspNetCore.Identity
+@using FootballProjectSoftUni.Infrastructure.Data.Models
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+@inject SignInManager<ApplicationUser> SignInManager
 
 
 <ul class="navbar-nav flex-grow-1 tg-menu">
@@ -24,7 +27,7 @@
         </a>
     </li>
 
-    @if (User.Identity.IsAuthenticated)
+    @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
             <a class="nav-link tg-navlink @(ViewContext.RouteData.Values["controller"]?.ToString() == "Referee" ? "is-active" : "")"

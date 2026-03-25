@@ -2,7 +2,9 @@
 using FootballProjectSoftUni.Core.Contracts.Home;
 using FootballProjectSoftUni.Core.Contracts.Team;
 using FootballProjectSoftUni.Core.Contracts.Tournament;
+using FootballProjectSoftUni.Infrastructure.Data.Models;
 using FootballProjectSoftUni.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -14,16 +16,19 @@ namespace FootballProjectSoftUni.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IHomeService homeService;
+        private readonly SignInManager<ApplicationUser> signInManager;
 
-        public HomeController(ILogger<HomeController> logger, IHomeService _homeService)
+        public HomeController(ILogger<HomeController> logger, IHomeService _homeService, SignInManager<ApplicationUser> _signInManager)
         {
             _logger = logger;
             homeService = _homeService;
+            signInManager = _signInManager;
+
         }
 
         public async Task<IActionResult> Index()
         {
-            if(User.Identity.IsAuthenticated)
+            if(signInManager.IsSignedIn(User))
             {
                 return RedirectToAction("All", "City");
             }

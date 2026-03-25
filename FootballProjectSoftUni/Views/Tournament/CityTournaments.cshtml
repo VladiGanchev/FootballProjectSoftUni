@@ -3,8 +3,11 @@
 @using FootballProjectSoftUni.Extensions;
 @using X.PagedList
 @using X.PagedList.Mvc.Core
+@using Microsoft.AspNetCore.Identity
+@using FootballProjectSoftUni.Infrastructure.Data.Models
 @model IPagedList<TournamentViewModel>
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+@inject SignInManager<ApplicationUser> SignInManager
 
 
 @{
@@ -134,7 +137,7 @@
                                     @Localizer["CTGallery"]
                                 </a>
 
-                                @if (User.Identity.IsAuthenticated && User.IsAdmin())
+                                @if (SignInManager.IsSignedIn(User) && User.IsAdmin())
                                 {
                                     <a asp-controller="Gallery"
                                        asp-action="UploadPictures"
@@ -148,7 +151,7 @@
                             else
                             {
                                 @* Current/Upcoming actions *@
-                                @if (User.Identity.IsAuthenticated)
+                                @if (SignInManager.IsSignedIn(User))
                                 {
                                     @if (User.IsAdmin())
                                     {

@@ -1,5 +1,8 @@
 ﻿@using FootballProjectSoftUni.Extensions
+@using Microsoft.AspNetCore.Identity
+@using FootballProjectSoftUni.Infrastructure.Data.Models
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+@inject SignInManager<ApplicationUser> SignInManager
 
 <!DOCTYPE html>
 <html lang="en">
@@ -39,7 +42,7 @@
                     @await Component.InvokeAsync(nameof(MainMenuComponent))
 
                     <div class="d-flex align-items-center gap-2">
-                        @if (User.Identity.IsAuthenticated)
+                        @if (SignInManager.IsSignedIn(User))
                         {
                             @await Component.InvokeAsync(nameof(NotificationComponent))
                         }
@@ -68,7 +71,7 @@
             </div>
 
             <div class="d-flex align-items-center gap-3">
-                @if (User.Identity.IsAuthenticated && !User.IsAdmin())
+                @if (SignInManager.IsSignedIn(User) && !User.IsAdmin())
                 {
                     <a asp-controller="ContactMessage"
                        asp-action="Create"

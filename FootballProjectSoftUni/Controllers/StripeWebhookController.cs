@@ -26,6 +26,7 @@ public class StripeWebhookController : ControllerBase
     private INotificationService notificationService;
     private IEmailService emailService;
     private readonly IStringLocalizer<SharedResource> localizer;
+    private readonly IWebHostEnvironment env;
 
     public StripeWebhookController(
         ApplicationDbContext context,
@@ -33,7 +34,8 @@ public class StripeWebhookController : ControllerBase
         ITeamService teamService,
         INotificationService notificationService,
         IEmailService emailService,
-        IStringLocalizer<SharedResource> localizer)
+        IStringLocalizer<SharedResource> localizer,
+        IWebHostEnvironment env)
     {
         this.context = context;
         this.settings = options.Value;
@@ -41,6 +43,7 @@ public class StripeWebhookController : ControllerBase
         this.notificationService = notificationService;
         this.emailService = emailService;
         this.localizer = localizer;
+        this.env = env;
     }
 
     [HttpPost]
@@ -51,11 +54,29 @@ public class StripeWebhookController : ControllerBase
         Event stripeEvent;
         try
         {
+            var logPath = Path.Combine(env.ContentRootPath, "stripe-webhook-log.txt");
+
+            await System.IO.File.AppendAllTextAsync(
+                logPath,
+                $"[{DateTime.UtcNow:u}] HIT /stripe/webhook{Environment.NewLine}");
+            
+
             var signatureHeader = Request.Headers["Stripe-Signature"];
             stripeEvent = EventUtility.ConstructEvent(json, signatureHeader, settings.WebhookSecret);
+
+            await System.IO.File.AppendAllTextAsync(
+                logPath,
+                $"[{DateTime.UtcNow:u}] Event type: {stripeEvent.Type}{Environment.NewLine}");
         }
         catch (Exception ex)
         {
+            var logPath = Path.Combine(env.ContentRootPath, "stripe-webhook-log.txt");
+
+            await System.IO.File.AppendAllTextAsync(
+                logPath,
+                $"[{DateTime.UtcNow:u}] ERROR: {ex}{Environment.NewLine}"
+            );
+
             Console.WriteLine("Stripe webhook error: " + ex.Message);
             return BadRequest();
         }

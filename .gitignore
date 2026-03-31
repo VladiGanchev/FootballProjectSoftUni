@@ -366,3 +366,6 @@ FodyWeavers.xsd
 appsettings.Production.json
 appsettings.Development.json
 /FootballProjectSoftUni/appsettings.Development.json
+
+*.txt
+logs/

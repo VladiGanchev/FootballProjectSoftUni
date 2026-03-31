@@ -101,16 +101,27 @@ app.UseAuthorization();
 
 app.UseHangfireDashboard("/hangfire");
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-        name: "Tournament Details",
-        pattern: "/Tournament/Details/{id}/{information}",
-        defaults: new { Controller = "Tournament", Action = "Details"}
-        );
-    endpoints.MapDefaultControllerRoute();
-    app.MapRazorPages();
-});
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllerRoute(
+//        name: "Tournament Details",
+//        pattern: "/Tournament/Details/{id}/{information}",
+//        defaults: new { Controller = "Tournament", Action = "Details"}
+//        );
+//    endpoints.MapDefaultControllerRoute();
+//    app.MapRazorPages();
+//});
+
+app.MapControllers();
+
+app.MapControllerRoute(
+    name: "Tournament Details",
+    pattern: "/Tournament/Details/{id}/{information}",
+    defaults: new { Controller = "Tournament", Action = "Details" }
+);
+
+app.MapDefaultControllerRoute();
+app.MapRazorPages();
 
 await app.CreateAdminRoleAsync();
 

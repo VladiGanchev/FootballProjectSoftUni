@@ -25,7 +25,7 @@ namespace FootballProjectSoftUni.Core.Services.Email
             var recipient = string.IsNullOrWhiteSpace(settings.OverrideTo) ? to : settings.OverrideTo;
 
             using var message = new MailMessage();
-            message.From = new MailAddress(settings.SmtpUser, "FootballProject");
+            message.From = new MailAddress(settings.SmtpUser, "Tournament Galaxy");
             message.To.Add(recipient!);
             message.Subject = subject;
             message.Body = htmlBody;

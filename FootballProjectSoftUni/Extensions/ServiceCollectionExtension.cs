@@ -80,10 +80,10 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddDefaultIdentity<ApplicationUser>(options =>
                 {
                     options.SignIn.RequireConfirmedAccount = false;
-                    options.Password.RequireDigit = false;
-                    options.Password.RequireUppercase = false;
-                    options.Password.RequireLowercase = false;
-                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireDigit = true;
+                    options.Password.RequireUppercase = true;
+                    options.Password.RequireLowercase = true;
+                    options.Password.RequireNonAlphanumeric = true;
                 })
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();

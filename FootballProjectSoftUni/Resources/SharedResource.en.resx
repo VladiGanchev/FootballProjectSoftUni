@@ -172,7 +172,7 @@
   <data name="CTheme" xml:space="preserve">
     <value>Topic</value>
   </data>
-  <data name="DCAreyousure" xml:space="preserve">
+  <data name="DCAreYousure" xml:space="preserve">
     <value>Are you sure you want to continue?</value>
   </data>
   <data name="DCCancel" xml:space="preserve">
@@ -644,7 +644,7 @@
     <value>Referee</value>
   </data>
   <data name="ITopic" xml:space="preserve">
-    <value>Iopic</value>
+    <value>Topic</value>
   </data>
   <data name="IMessage" xml:space="preserve">
     <value>Message</value>
@@ -1007,5 +1007,11 @@
   </data>
   <data name="DContinue" xml:space="preserve">
     <value>Proceed to payment</value>
+  </data>
+  <data name="BecomeReferee" xml:space="preserve">
+    <value>Become Referee</value>
+  </data>
+  <data name="NoCity" xml:space="preserve">
+    <value>Няма открите градове</value>
   </data>
 </root>

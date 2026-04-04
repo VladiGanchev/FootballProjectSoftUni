@@ -916,7 +916,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         public async Task RemoveCoachRole_ShouldReturnNullForCoach()
         {
             var result = await _coachService.RemoveCoachRoleAsync("23");
-            Assert.AreEqual(result, false);
+            Assert.AreEqual(result.Result, false);
         }
 
         [Test]
@@ -979,7 +979,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 
             var result = await _coachService.RemoveCoachRoleAsync(userId);
 
-            Assert.AreEqual(true, result);
+            Assert.AreEqual(true, result.Result);
         }
     }
 

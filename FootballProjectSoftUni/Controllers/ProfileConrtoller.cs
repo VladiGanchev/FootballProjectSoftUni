@@ -1,6 +1,7 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Coach;
 using FootballProjectSoftUni.Core.Contracts.Profile;
 using FootballProjectSoftUni.Core.Models.Profile;
+using FootballProjectSoftUni.Core.Services.Team;
 using FootballProjectSoftUni.Infrastructure.Data;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -54,7 +55,13 @@ namespace FootballProjectSoftUni.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            await coachService.RemoveCoachRoleAsync(userId);
+            var result = await coachService.RemoveCoachRoleAsync(userId);
+
+            if (result.Message != null)
+            {
+                TempData["ErrorMessage"] = result.Message;
+                return RedirectToAction("All", "City");
+            }
 
             return RedirectToAction(nameof(Index));
         }

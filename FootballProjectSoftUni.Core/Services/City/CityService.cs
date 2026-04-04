@@ -47,6 +47,7 @@ namespace FootballProjectSoftUni.Core.Services.City
             var pageSize = 9;
 
             return await data.Cities
+                .OrderBy(c => c.Name)
                 .Select(x => new CityViewModel()
                 {
                     Id = x.Id,

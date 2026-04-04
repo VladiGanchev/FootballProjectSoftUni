@@ -171,7 +171,7 @@
   <data name="CTheme" xml:space="preserve">
     <value>Тема</value>
   </data>
-  <data name="DCAreyousure" xml:space="preserve">
+  <data name="DCAreYousure" xml:space="preserve">
     <value>Сигурен ли си, че искаш да продължиш?</value>
   </data>
   <data name="DCCancel" xml:space="preserve">
@@ -1007,5 +1007,11 @@
   </data>
   <data name="DContinue" xml:space="preserve">
     <value>Продължи към плащане</value>
+  </data>
+  <data name="BecomeReferee" xml:space="preserve">
+    <value>Стани рефер</value>
+  </data>
+  <data name="NoCity" xml:space="preserve">
+    <value>No cities found</value>
   </data>
 </root>

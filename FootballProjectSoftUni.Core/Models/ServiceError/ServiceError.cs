@@ -9,5 +9,7 @@ namespace FootballProjectSoftUni.Core.Models.ServiceError
     public class ServiceError
     {
         public string Message { get; set; } = string.Empty;
+
+        public bool Result { get; set; }
     }
 }

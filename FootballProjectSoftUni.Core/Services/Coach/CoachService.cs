@@ -155,17 +155,30 @@ namespace FootballProjectSoftUni.Core.Services.Coach
             return true;
         }
 
-        public async Task<bool> RemoveCoachRoleAsync(string userId)
+        public async Task<ServiceError> RemoveCoachRoleAsync(string userId)
         {
             var coach = await context.Coaches
                 .FirstOrDefaultAsync(c => c.Id == userId);
 
             if (coach == null)
             {
-                return false;
+                return new ServiceError() {Message = null, Result = false };
             }
 
             var teamId = coach.TeamId;
+
+            var isParticipatingInActiveTournament = await context.TournamentsParticipants
+                .AnyAsync(tp => tp.ParticipantId == userId
+                   && tp.Role == "Coach"
+                   && tp.Tournament.EndDate > DateTime.UtcNow);
+
+            if (isParticipatingInActiveTournament)
+            {
+                return new ServiceError
+                {
+                    Message = "You cannot stop being a coach while still participating in a tournament."
+                };
+            }
 
             var coachParticipations = await context.TournamentsParticipants
                 .Where(tp => tp.ParticipantId == userId && tp.Role == "Coach")
@@ -253,7 +266,7 @@ namespace FootballProjectSoftUni.Core.Services.Coach
             context.Coaches.Remove(coach);
 
             await context.SaveChangesAsync();
-            return true;
+            return new ServiceError() { Message = null, Result = true};
         }
 
 

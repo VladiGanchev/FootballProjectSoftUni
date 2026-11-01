@@ -1,52 +1,97 @@
-﻿@using FootballProjectSoftUni.Core.Models.City
+@using FootballProjectSoftUni.Core.Models.City
 @model DeleteCityViewModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
     ViewBag.Title = "Delete City";
+    ViewData["FullWidth"] = true;
+
+    var isRunning = Model.Deletion?.IsRunning == true;
+    var refunds = !isRunning && Model.Deletion?.PaidTeams > 0;
 }
 
-<section class="container py-4">
+<div class="container-xl cp-page">
+    <div class="cp-rc">
 
-    <div class="text-center mb-4">
-        <h2 class="page-title text-danger mb-1">
-            <i class="bi bi-trash-fill me-2"></i>
-            @ViewBag.Title
-        </h2>
-        <p class="text-muted mb-0">
-            @Localizer["DCCConfirmDeletion"]
-        </p>
-    </div>
+        <div class="cp-rc__stage">
+            <span class="cp-card cp-card--yellow" aria-hidden="true"></span>
 
-    <div class="admin-form-card mx-auto">
+            <div class="cp-card cp-card--red">
+                <div class="cp-card__top" aria-hidden="true">
+                    <i class="bi bi-x-octagon-fill"></i>
+                </div>
 
-        <div class="text-center">
-            <div class="delete-icon">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-            </div>
+                <div class="cp-card__subject">
+                    <span class="cp-card__thumb">
+                        <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+                        @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+                        {
+                            <img src="@Model.ImageUrl" alt="" data-hide-on-error />
+                        }
+                    </span>
+                    <span class="cp-card__eyebrow">@Localizer["DeleteDeleteCity"]</span>
+                    <p class="cp-card__name">@Model.Name</p>
+                </div>
 
-            <h3 class="mt-3 mb-2 fw-bold">@Model.Name</h3>
-
-            <div class="delete-warning mt-3">
-                <strong>@Localizer["DCCareful"]</strong> @Localizer["DCWithDeletion"]
-                @Localizer["DCAreYousure"]
+                <div class="cp-card__foot" aria-hidden="true">@Localizer["CPRedCard"]</div>
             </div>
         </div>
 
-        <form asp-action="DeleteConfirmed" method="post" class="mt-4">
-            <input type="hidden" asp-for="Id" />
-
-            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                <button type="submit" class="btn btn-danger btn-lg tg-action-btn px-4">
-                    <i class="bi bi-trash3-fill me-2"></i>@Localizer["DCConfirmDelete"]
-                </button>
-
-                <a asp-action="All" class="btn btn-outline-secondary btn-lg px-4">
-                    <i class="bi bi-x-lg me-2"></i>@Localizer["DCCancel"]
-                </a>
+        <div class="tg-form-card cp-rc__panel">
+            <div class="tg-form-card__head">
+                <h1 class="tg-form-card__title">@Localizer["DeleteDeleteCity"]</h1>
+                <p class="tg-form-card__sub">@Localizer["DCCConfirmDeletion"]</p>
             </div>
-        </form>
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>@TempData["ErrorMessage"]
+                </div>
+            }
+
+            @if (isRunning)
+            {
+                <div class="cp-warn" role="alert">
+                    <i class="bi bi-lock-fill" aria-hidden="true"></i>
+                    <div>@Localizer["DCRunningBlocked", Model.Deletion!.RunningUntil?.ToString("dd.MM.yyyy HH:mm") ?? string.Empty]</div>
+                </div>
+            }
+            else
+            {
+                <div class="cp-warn" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                    <div>
+                        <strong>@Localizer["DCCareful"]</strong> @Localizer["DCWithDeletion"]
+                        @if (refunds)
+                        {
+                            @Localizer["DCPaidWarning", Model.Deletion!.PaidTeams, Model.Deletion.PaidTotal.ToString("0.00")]
+                        }
+                        else
+                        {
+                            @Localizer["DCAreYousure"]
+                        }
+                    </div>
+                </div>
+            }
+
+            <form asp-action="DeleteConfirmed" method="post">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="tg-form-actions">
+                    @if (!isRunning)
+                    {
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="bi bi-trash3-fill" aria-hidden="true"></i>@(refunds ? Localizer["TDConfirmRefund"] : Localizer["DCConfirmDelete"])
+                        </button>
+                    }
+
+                    <a asp-action="All" class="btn btn-outline-dark btn-lg">
+                        <i class="bi bi-x-lg" aria-hidden="true"></i>@Localizer["DCCancel"]
+                    </a>
+                </div>
+            </form>
+        </div>
 
     </div>
-
-</section>
+</div>

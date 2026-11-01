@@ -1,126 +1,240 @@
-﻿@model FootballProjectSoftUni.Core.Models.Profile.ProfileViewModel
+@model FootballProjectSoftUni.Core.Models.Profile.ProfileViewModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 
 @{
     ViewData["Title"] = "My Profile";
+
+    var firstInitial = string.IsNullOrWhiteSpace(Model.FirstName) ? string.Empty : Model.FirstName.Trim().Substring(0, 1);
+    var lastInitial = string.IsNullOrWhiteSpace(Model.LastName) ? string.Empty : Model.LastName.Trim().Substring(0, 1);
+    var initials = (firstInitial + lastInitial).ToUpperInvariant();
+
+    if (string.IsNullOrEmpty(initials))
+    {
+        initials = "?";
+    }
+
+    var isReferee = Model.Role == "Referee";
+    var isCoach = Model.Role == "Coach";
+    var hasStats = Model.Experience != null || Model.TeamName != null || Model.RefereeTournamentsCount != null || Model.RefereeRating != null;
+
+    // FUT card look: referee -> tier by rating, coach -> pitch card, no role -> lilac "fan" card
+    string tier;
+    if (isReferee)
+    {
+        tier = Model.RefereeRating == null ? "rookie"
+             : Model.RefereeRating.Value >= 4 ? "gold"
+             : Model.RefereeRating.Value >= 2.5 ? "silver"
+             : "bronze";
+    }
+    else
+    {
+        tier = isCoach ? "pitch" : "lilac";
+    }
+
+    var stars = Model.RefereeRating.HasValue ? (int)Math.Round(Model.RefereeRating.Value, MidpointRounding.AwayFromZero) : 0;
+    var showCardExp = Model.Experience != null && !isCoach;
+    var statCols = (showCardExp ? 1 : 0) + (Model.RefereeTournamentsCount != null ? 1 : 0) + (Model.RefereeRating != null ? 1 : 0);
 }
 
-<section class="container py-4">
+<div class="tp-profile">
 
-    <div class="profile-card">
+    @* ============ LOCKER: the user as a collectible card ============ *@
+    <aside class="tp-locker tg-pitch" aria-label="@Model.FirstName @Model.LastName">
+        <svg class="tg-pitch-lines" viewBox="0 0 64 100" preserveAspectRatio="none" aria-hidden="true">
+            <rect x="2" y="2" width="60" height="96" rx="1" />
+            <line x1="2" y1="50" x2="62" y2="50" />
+            <circle cx="32" cy="50" r="9" />
+            <rect x="17" y="2" width="30" height="13" />
+            <rect x="17" y="85" width="30" height="13" />
+        </svg>
+        <span class="tp-burst" aria-hidden="true"></span>
 
-        <!-- Header -->
-        <div class="profile-header text-center">
+        <div class="tp-fut tp-fut--@tier tp-fut--xl tp-fut--plain" data-tilt="14">
 
-            <div class="profile-avatar">
-                <i class="bi bi-person-fill"></i>
-            </div>
+            <div class="tp-fut__medal" aria-hidden="true"><span>@initials</span></div>
 
-            <h3 class="mt-3 mb-1">
-                @Model.FirstName @Model.LastName
-            </h3>
-
-            <p class="text-muted">@Model.Email</p>
-
-            <div class="mt-2">
-
-                @if (Model.Role == "Referee")
-                {
-                    <span class="badge bg-primary profile-role">
-                        <i class="bi bi-flag-fill me-1"></i> @Localizer["IReferee"]
-                    </span>
-                }
-                else if (Model.Role == "Coach")
-                {
-                    <span class="badge bg-success profile-role">
-                        <i class="bi bi-person-badge-fill me-1"></i> @Localizer["ICaoch"]
-                    </span>
-                }
-                else
-                {
-                    <span class="badge bg-secondary profile-role">
-                        @Localizer["INORole"]
-                    </span>
-                }
-
-            </div>
-
-        </div>
-
-        <hr />
-
-        <!-- Details -->
-        <div class="row g-3 mt-1">
-
-            @if (Model.Experience != null)
-            {
-                <div class="col-md-4">
-                    <div class="profile-info">
-                        <i class="bi bi-graph-up"></i>
-                        <span>@Model.Experience @Localizer["IYearsExp"]</span>
-                    </div>
-                </div>
-            }
+            <div class="tp-fut__name">@Model.FirstName @Model.LastName</div>
 
             @if (Model.TeamName != null)
             {
-                <div class="col-md-4">
-                    <div class="profile-info">
-                        <i class="bi bi-people-fill"></i>
-                        <span>@Localizer["ITeam2"] @Model.TeamName</span>
-                    </div>
-                </div>
+                <span class="tp-fut__club"><i class="bi bi-shield-fill" aria-hidden="true"></i>@Model.TeamName</span>
             }
 
-            @if (Model.RefereeTournamentsCount != null)
+            @if (statCols > 0)
             {
-                <div class="col-md-4">
-                    <div class="profile-info">
-                        <i class="bi bi-trophy-fill"></i>
-                        <span>@Localizer["ITournaments"] @Model.RefereeTournamentsCount</span>
-                    </div>
-                </div>
+                <ul class="tp-fut__stats" style="--cols:@statCols">
+                    @if (showCardExp)
+                    {
+                        <li class="tp-fut__stat"><b>@Model.Experience</b><small>@Localizer["TpExperience"]</small></li>
+                    }
+                    @if (Model.RefereeTournamentsCount != null)
+                    {
+                        <li class="tp-fut__stat"><b>@Model.RefereeTournamentsCount</b><small>@Localizer["TNTitle"]</small></li>
+                    }
+                    @if (Model.RefereeRating != null)
+                    {
+                        <li class="tp-fut__stat">
+                            <span class="tp-fut__stars" aria-hidden="true">
+                                @for (int s = 1; s <= 5; s++)
+                                {
+                                    <i class="bi bi-star-fill @(s > stars ? "is-off" : "")"></i>
+                                }
+                            </span>
+                            <small>@Model.RefereeRating.Value.ToString("0.00")</small>
+                        </li>
+                    }
+                </ul>
             }
-
-            @if (Model.RefereeRating != null)
-            {
-                <div class="col-md-4">
-                    <div class="profile-info">
-                        <i class="bi bi-star-fill text-warning"></i>
-                        <span>
-                            @Localizer["IGrade"] @Model.RefereeRating.Value.ToString("0.00") / 5
-                        </span>
-                    </div>
-                </div>
-            }
-
         </div>
 
-        <!-- Role Actions -->
-        <div class="text-center mt-4">
+        <span class="tg-chip tp-locker__mail">
+            <i class="bi bi-envelope-fill" aria-hidden="true"></i>@Model.Email
+        </span>
+    </aside>
 
-            @if (Model.Role == "Referee")
+    @* ============ DASHBOARD ============ *@
+    <div class="tp-dash">
+        <h1 class="tp-giant" data-split>@Localizer["TpHello"] <em>@Model.FirstName</em></h1>
+
+        <p class="tp-roleline">
+            <span class="tp-roleline__label">@Localizer["TpRole"]:</span>
+            @if (isReferee || isCoach)
             {
-                <form asp-action="RemoveRefereeRole" method="post">
-                    <button type="submit" class="btn btn-outline-danger profile-btn">
-                        <i class="bi bi-x-circle me-2"></i>
-                        @Localizer["IStopReferee"]
-                    </button>
-                </form>
+                <span class="tg-chip tg-chip--solid">
+                    <i class="bi @(isReferee ? "bi-flag-fill" : "bi-person-badge-fill")" aria-hidden="true"></i>@(isReferee ? Localizer["IReferee"] : Localizer["ICaoch"])
+                </span>
             }
-            else if (Model.Role == "Coach")
+            else
             {
-                <form asp-action="RemoveCoachRole" method="post">
-                    <button type="submit" class="btn btn-outline-danger profile-btn">
-                        <i class="bi bi-x-circle me-2"></i>
-                        @Localizer["IStopCoach"]
-                    </button>
-                </form>
+                <span class="tg-chip">
+                    <i class="bi bi-person-fill" aria-hidden="true"></i>@Localizer["INORole"]
+                </span>
             }
+        </p>
 
-        </div>
 
+        @* Key facts as stickers *@
+        @if (hasStats)
+        {
+            <div class="tp-statgrid">
+
+                @if (Model.Experience != null)
+                {
+                    <div class="tp-bigstat tp-bigstat--sun" style="--rot:-2deg" data-reveal>
+                        <i class="bi bi-graph-up" aria-hidden="true"></i>
+                        <div class="tp-bigstat__value" data-count="@Model.Experience">@Model.Experience</div>
+                        <div class="tp-bigstat__label">@Localizer["IYearsExp"]</div>
+                    </div>
+                }
+
+                @if (Model.TeamName != null)
+                {
+                    <div class="tp-bigstat tp-bigstat--mint" style="--rot:1.5deg" data-reveal>
+                        <i class="bi bi-people-fill" aria-hidden="true"></i>
+                        <div class="tp-bigstat__value tp-bigstat__value--text">@Model.TeamName</div>
+                        <div class="tp-bigstat__label">@Localizer["ITeam2"].Value.TrimEnd(':', ' ')</div>
+                    </div>
+                }
+
+                @if (Model.RefereeTournamentsCount != null)
+                {
+                    <div class="tp-bigstat tp-bigstat--lilac" style="--rot:-1deg" data-reveal>
+                        <i class="bi bi-trophy-fill" aria-hidden="true"></i>
+                        <div class="tp-bigstat__value" data-count="@Model.RefereeTournamentsCount">@Model.RefereeTournamentsCount</div>
+                        <div class="tp-bigstat__label">@Localizer["ITournaments"].Value.TrimEnd(':', ' ')</div>
+                    </div>
+                }
+
+                @if (Model.RefereeRating != null)
+                {
+                    <div class="tp-bigstat tp-bigstat--coral" style="--rot:2deg" data-reveal>
+                        <i class="bi bi-star-fill" aria-hidden="true"></i>
+                        <div class="tp-bigstat__value">@Model.RefereeRating.Value.ToString("0.00") <small>/ 5</small></div>
+                        <div class="tp-bigstat__label">@Localizer["IGrade"].Value.TrimEnd(':', ' ')</div>
+                    </div>
+                }
+
+            </div>
+        }
+
+
+        <a asp-area="Identity" asp-page="/Account/ChangePassword" class="btn btn-outline-dark tp-changepw">
+            <i class="bi bi-key-fill" aria-hidden="true"></i>@Localizer["CPTitle"]
+        </a>
+
+        @* E-mails about new tournaments: off unless the user turns them on (they advertise a paid service). *@
+        <section class="tp-prefs" aria-labelledby="tp-prefs-title">
+            <div>
+                <h2 class="tp-prefs__title" id="tp-prefs-title">
+                    <i class="bi bi-envelope-paper-fill" aria-hidden="true"></i>@Localizer["PrefEmailsTitle"]
+                </h2>
+                <span class="tg-chip tp-prefs__state @(Model.NewTournamentEmails ? "tg-chip--green" : "")">@(Model.NewTournamentEmails ? Localizer["PrefEmailsStateOn"] : Localizer["PrefEmailsStateOff"])</span>
+                <p class="tp-prefs__text">@Localizer["PrefEmailsText"]</p>
+
+                @if (TempData["ProfileMessage"] != null)
+                {
+                    <p class="tp-prefs__saved" role="status"><i class="bi bi-check-circle-fill" aria-hidden="true"></i> @TempData["ProfileMessage"]</p>
+                }
+            </div>
+
+            <form asp-action="NewTournamentEmails" method="post">
+                <input type="hidden" name="on" value="@(Model.NewTournamentEmails ? "false" : "true")" />
+                <button type="submit" class="btn @(Model.NewTournamentEmails ? "btn-outline-dark" : "btn-primary") w-100">
+                    <i class="bi @(Model.NewTournamentEmails ? "bi-envelope-x-fill" : "bi-envelope-check-fill")" aria-hidden="true"></i>
+                    @(Model.NewTournamentEmails ? Localizer["PrefEmailsTurnOff"] : Localizer["PrefEmailsTurnOn"])
+                </button>
+            </form>
+        </section>
+
+        @* Role management *@
+        @if (isReferee || isCoach)
+        {
+            <section class="tp-danger" aria-labelledby="tp-role-title">
+                <div>
+                    <span class="tp-danger__kicker">@Localizer["DCCareful"].Value.TrimEnd(':', ' ')</span>
+                    <h2 class="tp-danger__title" id="tp-role-title">
+                        <i class="bi @(isReferee ? "bi-flag-fill" : "bi-person-badge-fill")" aria-hidden="true"></i>@(isReferee ? Localizer["IReferee"] : Localizer["ICaoch"])
+                    </h2>
+                </div>
+
+                @if (isReferee)
+                {
+                    <form asp-action="RemoveRefereeRole" method="post">
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            <i class="bi bi-x-circle" aria-hidden="true"></i>
+                            @Localizer["IStopReferee"]
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <form asp-action="RemoveCoachRole" method="post">
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            <i class="bi bi-x-circle" aria-hidden="true"></i>
+                            @Localizer["IStopCoach"]
+                        </button>
+                    </form>
+                }
+            </section>
+        }
+
+        @* Account deletion - the organiser's account cannot be deleted *@
+        @if (!User.IsInRole(FootballProjectSoftUni.Core.Constants.RoleConstants.AdminRole))
+        {
+            <section class="tp-danger" aria-labelledby="tp-delete-title">
+                <div>
+                    <span class="tp-danger__kicker">@Localizer["DCCareful"].Value.TrimEnd(':', ' ')</span>
+                    <h2 class="tp-danger__title" id="tp-delete-title">
+                        <i class="bi bi-person-x-fill" aria-hidden="true"></i>@Localizer["DATitle"]
+                    </h2>
+                </div>
+
+                <a asp-area="Identity" asp-page="/Account/DeleteAccount" class="btn btn-outline-danger tp-danger__action">
+                    <i class="bi bi-trash3" aria-hidden="true"></i>@Localizer["DAOpen"]
+                </a>
+            </section>
+        }
     </div>
 
-</section>
+</div>

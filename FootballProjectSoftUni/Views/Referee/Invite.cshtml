@@ -1,4 +1,4 @@
-﻿@model FootballProjectSoftUni.Core.Models.Referee.RefereeInviteFormViewModel
+@model FootballProjectSoftUni.Core.Models.Referee.RefereeInviteFormViewModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 
@@ -6,69 +6,151 @@
     ViewData["Title"] = @Localizer["RInvite"];
 }
 
-<section class="container py-4">
+<div class="tp-transfer">
 
-    <div class="text-center mb-4">
-        <h2 class="page-title mb-1">
-            <i class="bi bi-person-plus-fill me-2"></i>
-            @ViewData["Title"]
-        </h2>
-    </div>
+    <header class="tp-transfer__head">
+        <span class="tg-kicker">@Localizer["TpContractLabel"]</span>
+        <h1 class="tp-giant tp-giant--md"><span class="tp-hl">@ViewData["Title"]</span></h1>
+        <p class="tp-lead">@Localizer["IChoose"]</p>
+    </header>
 
-    <div class="admin-form-card mx-auto">
+    @* Live preview: the chosen referee card + the offer letter *@
+    <aside class="tp-transfer__preview">
+        <div class="tp-preview-stage">
+            <span class="tp-burst" aria-hidden="true"></span>
 
-        <form asp-action="Invite" method="post" class="admin-form">
+            <div class="tp-fut tp-fut--silver" data-tilt="14" aria-hidden="true">
+                <div class="tp-fut__rate">
+                    <span class="tp-fut__num"><i class="bi bi-send-fill"></i></span>
+                    <span class="tp-fut__pos">@Localizer["TpPosRef"]</span>
+                    <span class="tp-fut__crest"><i class="bi bi-flag-fill"></i></span>
+                </div>
+                <div class="tp-fut__medal"><span data-tp-bind="RefereeId" data-tp-mode="initials" data-tp-empty="?">?</span></div>
+                <div class="tp-fut__name" data-tp-bind="RefereeId" data-tp-empty="@Localizer["IReferee2"]">@Localizer["IReferee2"]</div>
+                <ul class="tp-fut__stats" style="--cols:1">
+                    <li class="tp-fut__stat"><b>@BgTime.Today.ToString("dd.MM.yyyy")</b><small>@Localizer["IDate"]</small></li>
+                </ul>
+            </div>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label fw-bold">
-                    <i class="bi bi-whistle-fill me-2"></i>@Localizer["IReferee2"]
-                </label>
+        <div class="tp-letter" aria-hidden="true">
+            <span class="tg-chip tg-chip--coral"><i class="bi bi-envelope-fill"></i>@Localizer["ITopic"]</span>
+            <strong class="tp-letter__subject" data-tp-bind="Subject" data-tp-empty="@Localizer["ISubjectPlaceholder"]">@Localizer["ISubjectPlaceholder"]</strong>
+            <p class="tp-letter__body" data-tp-bind="Content" data-tp-empty="@Localizer["IMessagePlaceholder"]">@Localizer["IMessagePlaceholder"]</p>
+        </div>
 
-                <select asp-for="RefereeId"
-                        asp-items="Model.Referees"
-                        class="form-select form-select-lg tg-select">
-                    <option value="">-- избери рефер --</option>
-                </select>
+        <p class="tp-preview-hint"><i class="bi bi-magic" aria-hidden="true"></i>@Localizer["TpLiveHint"]</p>
+    </aside>
 
-                <span asp-validation-for="RefereeId" class="text-danger small"></span>
+    @* The offer *@
+    <div class="tp-transfer__body">
+        <form asp-action="Invite" method="post" class="tp-paper">
+
+            <div class="tp-paper__top">
+                <span><b>Tournament Galaxy</b> &middot; @Localizer["TpContractLabel"]</span>
+                <span>@BgTime.Today.ToString("dd.MM.yyyy")</span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Subject" class="form-label fw-bold">
-                    <i class="bi bi-chat-left-text-fill me-2"></i>@Localizer["ITopic"]
-                </label>
+            <div class="tp-clause">
+                <span class="tp-clause__no" aria-hidden="true">§1</span>
+                <div>
+                    <label asp-for="RefereeId" class="form-label">
+                        <i class="bi bi-flag-fill" aria-hidden="true"></i>@Localizer["IReferee2"]
+                    </label>
 
-                <input asp-for="Subject"
-                       class="form-control tg-input"
-                       placeholder="Напр. Покана за турнир..." />
+                    <select asp-for="RefereeId"
+                            asp-items="Model.Referees"
+                            class="form-select form-select-lg">
+                        <option value="">@Localizer["IPickReferee"]</option>
+                    </select>
 
-                <span asp-validation-for="Subject" class="text-danger small"></span>
+                    <span asp-validation-for="RefereeId" class="text-danger small"></span>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Content" class="form-label fw-bold">
-                    <i class="bi bi-pencil-square me-2"></i>@Localizer["IMessage"]
-                </label>
+            <div class="tp-clause">
+                <span class="tp-clause__no" aria-hidden="true">§2</span>
+                <div>
+                    <label asp-for="Subject" class="form-label">
+                        <i class="bi bi-chat-left-text-fill" aria-hidden="true"></i>@Localizer["ITopic"]
+                    </label>
 
-                <textarea asp-for="Content"
-                          class="form-control tg-input"
-                          rows="6"
-                          placeholder="Напиши текста на поканата..."></textarea>
+                    <input asp-for="Subject"
+                           class="form-control"
+                           placeholder="@Localizer["ISubjectPlaceholder"]" />
 
-                <span asp-validation-for="Content" class="text-danger small"></span>
+                    <span asp-validation-for="Subject" class="text-danger small"></span>
+                </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-lg w-100 tg-action-btn">
-                <i class="bi bi-send-fill me-2"></i>
-                @Localizer["ISendInvite"]
-            </button>
+            <div class="tp-clause">
+                <span class="tp-clause__no" aria-hidden="true">§3</span>
+                <div>
+                    <label asp-for="Content" class="form-label">
+                        <i class="bi bi-pencil-square" aria-hidden="true"></i>@Localizer["IMessage"]
+                    </label>
+
+                    <textarea asp-for="Content"
+                              class="form-control"
+                              rows="6"
+                              placeholder="@Localizer["IMessagePlaceholder"]"></textarea>
+
+                    <span asp-validation-for="Content" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="tp-paper__sign">
+                <div class="tp-sig" aria-hidden="true">
+                    <span class="tp-sig__val">Tournament Galaxy</span>
+                    <span class="tp-sig__line">@Localizer["TpDecSignature"]</span>
+                </div>
+
+                <button type="submit" class="btn btn-accent btn-lg">
+                    <i class="bi bi-send-fill" aria-hidden="true"></i>
+                    @Localizer["ISendInvite"]
+                </button>
+            </div>
 
         </form>
-
     </div>
 
-</section>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Live preview: [data-tp-bind="inputId"] mirrors that field (selects use the chosen option text)
+        (function () {
+            var outs = document.querySelectorAll("[data-tp-bind]");
+
+            function initials(s) {
+                var p = s.split(/\s+/).filter(Boolean);
+                if (!p.length) { return ""; }
+                return (p[0].charAt(0) + (p.length > 1 ? p[p.length - 1].charAt(0) : "")).toUpperCase();
+            }
+
+            function read(el) {
+                if (el.tagName === "SELECT") {
+                    var o = el.options[el.selectedIndex];
+                    return o && o.value ? o.text : "";
+                }
+                return el.value || "";
+            }
+
+            function render() {
+                outs.forEach(function (out) {
+                    var src = document.getElementById(out.getAttribute("data-tp-bind"));
+                    if (!src) { return; }
+                    var v = read(src).trim();
+                    if (out.getAttribute("data-tp-mode") === "initials") { v = initials(v); }
+                    out.textContent = v || out.getAttribute("data-tp-empty") || "";
+                });
+            }
+
+            document.addEventListener("input", render);
+            document.addEventListener("change", render);
+            render();
+        })();
+    </script>
 }

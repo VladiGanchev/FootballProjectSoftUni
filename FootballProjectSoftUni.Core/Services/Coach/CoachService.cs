@@ -52,7 +52,7 @@ namespace FootballProjectSoftUni.Core.Services.Coach
             }
 
             var referee = await context.Referees
-                .FirstOrDefaultAsync(r => r.Id == userId);
+                .FirstOrDefaultAsync(r => r.Id == userId && r.IsActive);
 
             if (referee != null)
             {
@@ -72,7 +72,7 @@ namespace FootballProjectSoftUni.Core.Services.Coach
             var tournaments = await context.TournamentsParticipants
                 .Where(x => x.ParticipantId == userId
                          && x.Role == "Coach"
-                         && x.Tournament.EndDate > DateTime.Now)
+                         && x.Tournament.EndDate > BgTime.Now)
                 .Select(x => new TournamentViewModel()
                 {
                     Id = x.TournamentId,
@@ -104,7 +104,7 @@ namespace FootballProjectSoftUni.Core.Services.Coach
                 return false;
             }
 
-            if (DateTime.Now >= tournament.StartDate)
+            if (BgTime.Now >= tournament.StartDate)
             {
                 return false;
             }
@@ -167,10 +167,11 @@ namespace FootballProjectSoftUni.Core.Services.Coach
 
             var teamId = coach.TeamId;
 
+            // Tournament dates are stored in Bulgarian time, so compare with Bulgarian time too.
             var isParticipatingInActiveTournament = await context.TournamentsParticipants
                 .AnyAsync(tp => tp.ParticipantId == userId
                    && tp.Role == "Coach"
-                   && tp.Tournament.EndDate > DateTime.UtcNow);
+                   && tp.Tournament.EndDate > BgTime.Now);
 
             if (isParticipatingInActiveTournament)
             {
@@ -182,7 +183,7 @@ namespace FootballProjectSoftUni.Core.Services.Coach
 
             var coachParticipations = await context.TournamentsParticipants
                 .Where(tp => tp.ParticipantId == userId && tp.Role == "Coach")
-                .Where(tp => tp.Tournament.EndDate > DateTime.UtcNow)
+                .Where(tp => tp.Tournament.EndDate > BgTime.Now)
                 .ToListAsync();
 
             if (coachParticipations.Any())
@@ -194,7 +195,7 @@ namespace FootballProjectSoftUni.Core.Services.Coach
             {
                 var activeTournamentTeams = await context.TournamentsTeams
                     .Where(tt => tt.TeamId == teamId.Value)
-                    .Where(tt => tt.Tournament.EndDate > DateTime.UtcNow)
+                    .Where(tt => tt.Tournament.EndDate > BgTime.Now)
                     .ToListAsync();
 
                 if (activeTournamentTeams.Any())

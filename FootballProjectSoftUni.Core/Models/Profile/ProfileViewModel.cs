@@ -13,6 +13,9 @@ namespace FootballProjectSoftUni.Core.Models.Profile
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
 
+        /// <summary>The user wants an e-mail when there is a new tournament in a city where they played.</summary>
+        public bool NewTournamentEmails { get; set; }
+
         public string? Role { get; set; }
 
         public int? Experience { get; set; }

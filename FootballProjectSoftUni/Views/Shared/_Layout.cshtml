@@ -1,11 +1,20 @@
-﻿@using FootballProjectSoftUni.Extensions
+@using FootballProjectSoftUni.Extensions
 @using Microsoft.AspNetCore.Identity
 @using FootballProjectSoftUni.Infrastructure.Data.Models
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 @inject SignInManager<ApplicationUser> SignInManager
+@inject Microsoft.Extensions.Options.IOptions<FootballProjectSoftUni.Core.Models.Settings.SiteSettings> SiteOptions
+
+@{
+    bool fullWidth = ViewData["FullWidth"] is true;
+    bool signedIn = SignInManager.IsSignedIn(User);
+    string ctrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
+    string act = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty;
+    string Tab(bool on) => on ? "is-active" : string.Empty;
+}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,6 +22,7 @@
     <meta name="description" content="Tournament Galaxy е платформа за турнири, мачове, класиране и управление на футболни състезания." />
     <link rel="canonical" href="https://tournamentgalaxy.bg/" />
     <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#f5f1e8" />
     <meta property="og:title" content="Tournament Galaxy" />
     <meta property="og:description" content="Платформа за турнири, мачове, класиране и управление на футболни състезания." />
     <meta property="og:type" content="website" />
@@ -27,42 +37,86 @@
         }
     </script>
 
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    @* Fonts and icons are the site's own files: visitors' browsers don't contact Google or a CDN (GDPR). *@
+    <link rel="stylesheet" href="~/lib/fonts/fonts.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" asp-append-version="true" />
 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/home.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/city-partner.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/tournament.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/team-people.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/messages.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FootballProjectSoftUni.styles.css" asp-append-version="true" />
+
+    @* What used to sit in inline onerror / onclick / onsubmit attributes, which the Content-Security-Policy
+       blocks. In the head, so that it also catches pictures that fail while the page is still loading. *@
+    <script>
+        (function () {
+            // A picture that can't be loaded: hidden, or its frame marked as broken.
+            document.addEventListener('error', function (e) {
+                var img = e.target;
+                if (!img || img.tagName !== 'IMG') { return; }
+                if (img.hasAttribute('data-hide-on-error')) { img.style.display = 'none'; }
+                if (img.hasAttribute('data-broken-parent') && img.parentElement) { img.parentElement.classList.add('is-broken'); }
+            }, true);
+
+            // Forms that ask "Are you sure?" before they are sent.
+            document.addEventListener('submit', function (e) {
+                var question = e.target.getAttribute && e.target.getAttribute('data-confirm');
+                if (question && !window.confirm(question)) { e.preventDefault(); }
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest) { return; }
+
+                if (e.target.closest('[data-history-back]')) {
+                    history.back();
+                    return;
+                }
+
+                var copy = e.target.closest('[data-copy]');
+                if (copy && navigator.clipboard) {
+                    navigator.clipboard.writeText(copy.getAttribute('data-copy'));
+                    var label = copy.querySelector('span');
+                    if (label) { label.textContent = copy.getAttribute('data-done'); }
+                }
+            });
+        })();
+    </script>
 </head>
 
 <body class="tg-body d-flex flex-column min-vh-100">
     <header class="tg-header">
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light tg-navbar">
+        <nav class="navbar navbar-expand-lg tg-navbar">
             <div class="container-xl">
-                <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
-                    <span class="tg-brand-mark">
-                        <i class="bi bi-trophy-fill"></i>
-                    </span>
-                    <span class="tg-brand-text">Tournament Galaxy</span>
-                </a>
+                <div class="tg-nav-shell">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" aria-label="Tournament Galaxy">
+                        <span class="tg-logo"><partial name="_Logo" /></span>
+                        <span class="tg-wordmark">Tournament <b>Galaxy</b></span>
+                    </a>
 
-                <button class="navbar-toggler" type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target=".navbar-collapse"
-                        aria-controls="navbarSupportedContent"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                    <button class="navbar-toggler" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#tgNav"
+                            aria-controls="tgNav"
+                            aria-expanded="false"
+                            aria-label="Toggle navigation">
+                        <i class="bi bi-list fs-4"></i>
+                    </button>
 
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    @await Component.InvokeAsync(nameof(MainMenuComponent))
+                    <div class="navbar-collapse collapse align-items-lg-center" id="tgNav">
+                        @await Component.InvokeAsync(nameof(MainMenuComponent))
 
-                    <div class="d-flex align-items-center gap-2">
-                        @if (SignInManager.IsSignedIn(User))
-                        {
-                            @await Component.InvokeAsync(nameof(NotificationComponent))
-                        }
-                        <partial name="_LoginPartial" />
+                        <div class="d-flex align-items-center gap-2 flex-wrap pb-2 pb-lg-0">
+                            @if (signedIn)
+                            {
+                                @await Component.InvokeAsync(nameof(NotificationComponent))
+                            }
+                            <partial name="_LoginPartial" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -70,38 +124,88 @@
     </header>
 
     <main role="main" class="tg-main flex-grow-1">
-        <div class="container-xl pb-4">
+        @if (fullWidth)
+        {
             @RenderBody()
-        </div>
+        }
+        else
+        {
+            <div class="container-xl tg-page">
+                @RenderBody()
+            </div>
+        }
     </main>
 
-    <footer class="tg-footer border-top">
-        <div class="container-xl d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 py-3">
-            <div class="d-flex align-items-center gap-2">
-                <span class="tg-footer-logo">
-                    <i class="bi bi-stars"></i>
-                </span>
-                <span class="text-muted">
-                    &copy; @DateTime.Today.Year - Tournament Galaxy
-                </span>
+    <footer class="tg-footer">
+        <div class="container-xl pt-5">
+            <div class="row g-4 align-items-start pb-4">
+                <div class="col-lg-5">
+                    <a class="navbar-brand mb-3" asp-area="" asp-controller="Home" asp-action="Index" aria-label="Tournament Galaxy">
+                        <span class="tg-logo"><partial name="_Logo" /></span>
+                        <span class="tg-wordmark">Tournament <b>Galaxy</b></span>
+                    </a>
+                    <p class="mb-0 mt-3" style="max-width: 36ch;">@Localizer["FooterTagline"]</p>
+                </div>
+
+                <div class="col-6 col-lg-3 offset-lg-1">
+                    <div class="tg-footer-title">@Localizer["FooterExplore"]</div>
+                    <ul class="list-unstyled tg-footer-nav d-grid gap-2 mb-0">
+                        <li><a asp-area="" asp-controller="Home" asp-action="Index">@Localizer["DHome"]</a></li>
+                        <li><a asp-area="" asp-controller="City" asp-action="All">@Localizer["DCities"]</a></li>
+                        <li><a asp-area="" asp-controller="Partner" asp-action="All">@Localizer["DPartners"]</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Faq">@Localizer["FaqLink"]</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-6 col-lg-3">
+                    @if (signedIn && !User.IsAdmin())
+                    {
+                        <div class="tg-footer-title">@Localizer["FooterSupport"]</div>
+                        <a asp-controller="ContactMessage" asp-action="Create" class="tg-footer-link">
+                            <i class="bi bi-chat-dots-fill"></i>@Localizer["LayoutContact"]
+                        </a>
+                    }
+                </div>
             </div>
 
-            <div class="d-flex align-items-center gap-3">
-                @if (SignInManager.IsSignedIn(User) && !User.IsAdmin())
-                {
-                    <a asp-controller="ContactMessage"
-                       asp-action="Create"
-                       class="tg-footer-link text-decoration-none">
-                        <i class="bi bi-chat-dots-fill me-2"></i>
-                        @Localizer["LayoutContact"]
-                    </a>
-                }
+            <div class="tg-footer-giant" aria-hidden="true">Tournament Galaxy</div>
+
+            <hr class="my-0" />
+            <div class="d-flex flex-column flex-md-row justify-content-between gap-2 small py-4">
+                <span>&copy; @BgTime.Today.Year Tournament Galaxy</span>
+
+                @* Terms, privacy and a contact address: the law wants them reachable from every page. *@
+                <nav class="tg-footer-legal" aria-label="@Localizer["FooterLegal"]">
+                    <a asp-area="" asp-controller="Home" asp-action="Terms">@Localizer["LegalTermsLink"]</a>
+                    <a asp-area="" asp-controller="Home" asp-action="Privacy">@Localizer["LegalPrivacyLink"]</a>
+                    @if (!string.IsNullOrWhiteSpace(SiteOptions.Value.ContactEmail))
+                    {
+                        <a href="mailto:@SiteOptions.Value.ContactEmail">@SiteOptions.Value.ContactEmail</a>
+                    }
+                </nav>
             </div>
         </div>
     </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @* App-style tab bar on phones *@
+    <nav class="tg-tabbar" aria-label="Quick navigation">
+        <a class="@Tab(ctrl == "Home" && act == "Index")" asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door-fill"></i>@Localizer["DHome"]</a>
+        <a class="@Tab(ctrl == "City" || ctrl == "Tournament")" asp-area="" asp-controller="City" asp-action="All"><i class="bi bi-geo-alt-fill"></i>@Localizer["DCities"]</a>
+        @if (signedIn)
+        {
+            <a class="@Tab(ctrl == "Referee")" asp-area="" asp-controller="Referee" asp-action="Referees"><i class="bi bi-flag-fill"></i>@Localizer["DReferees"]</a>
+            <a class="@Tab(ctrl == "Notification" || ctrl == "ContactMessage")" asp-area="" asp-controller="Notification" asp-action="All"><i class="bi bi-bell-fill"></i>@Localizer["TabInbox"]</a>
+            <a class="@Tab(ctrl == "Profile")" asp-area="" asp-controller="Profile" asp-action="Index"><i class="bi bi-person-fill"></i>@Localizer["LPProfile"]</a>
+        }
+        else
+        {
+            <a class="@Tab(ctrl == "Partner")" asp-area="" asp-controller="Partner" asp-action="All"><i class="bi bi-people-fill"></i>@Localizer["DPartners"]</a>
+            <a class="@Tab(Context.Request.Path.Value?.Contains("/Account/") == true)" asp-area="Identity" asp-page="/Account/Login"><i class="bi bi-box-arrow-in-right"></i>@Localizer["LGLogin"]</a>
+        }
+    </nav>
+
+    <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

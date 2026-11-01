@@ -50,12 +50,16 @@ namespace FootballProjectSoftUni.Core.Services.Referee
                 };
             }
 
+            // Busy only while the tournament he referees has not ended; after that he can take another one
+            // (the finished tournament keeps him in its history).
+            var now = BgTime.Now;
             var activeRefereeInAnotherTournament = await context.Referees
                 .AnyAsync(r =>
                     r.Id == userId &&
-                    r.TournamentId != null &&       
-                    r.TournamentId != tournamentId  
-                );
+                    r.IsActive &&
+                    r.TournamentId != null &&
+                    r.TournamentId != tournamentId &&
+                    r.Tournament!.EndDate > now);
 
             if (activeRefereeInAnotherTournament)
             {
@@ -68,6 +72,14 @@ namespace FootballProjectSoftUni.Core.Services.Referee
             var tournament = await context.Tournaments
                 .Where(x => x.Id == tournamentId)
                 .FirstOrDefaultAsync();
+
+            if (tournament == null)
+            {
+                return new ServiceError()
+                {
+                    Message = "Tournament not found."
+                };
+            }
 
             if (tournament.RefereeId != null)
             {
@@ -112,6 +124,18 @@ namespace FootballProjectSoftUni.Core.Services.Referee
      string userId,
      DateTime birthdate)
         {
+            var targetTournament = await context.Tournaments.FirstOrDefaultAsync(t => t.Id == id);
+            if (targetTournament == null)
+            {
+                return false;
+            }
+
+            // Never replace a referee that is already assigned to the tournament.
+            if (targetTournament.RefereeId != null && targetTournament.RefereeId != userId)
+            {
+                return false;
+            }
+
             var referee = await context.Referees
                 .FirstOrDefaultAsync(r => r.Id == userId);
 
@@ -122,14 +146,19 @@ namespace FootballProjectSoftUni.Core.Services.Referee
                     Id = userId,
                     Name = model.Name,
                     Birthdate = birthdate,
-                    Experience = model.Experience,
-                    RefereedTournamentsCount = 0 
+                    Experience = model.Experience
                 };
 
                 context.Referees.Add(referee);
             }
-
-            referee.RefereedTournamentsCount++;
+            else
+            {
+                // Becoming a referee again: the old profile comes back, with all its ratings and comments.
+                referee.IsActive = true;
+                referee.Name = model.Name;
+                referee.Birthdate = birthdate;
+                referee.Experience = model.Experience;
+            }
 
             referee.TournamentId = id;
 
@@ -149,15 +178,21 @@ namespace FootballProjectSoftUni.Core.Services.Referee
 
             await context.SaveChangesAsync();
 
-            TournamentParticipant tp = new TournamentParticipant()
-            {
-                ParticipantId = userId,
-                TournamentId = id,
-                Role = "Referee"
-            };
+            var alreadyParticipant = await context.TournamentsParticipants
+                .AnyAsync(x => x.ParticipantId == userId && x.TournamentId == id && x.Role == "Referee");
 
-            context.TournamentsParticipants.Add(tp);
-            await context.SaveChangesAsync();
+            if (!alreadyParticipant)
+            {
+                TournamentParticipant tp = new TournamentParticipant()
+                {
+                    ParticipantId = userId,
+                    TournamentId = id,
+                    Role = "Referee"
+                };
+
+                context.TournamentsParticipants.Add(tp);
+                await context.SaveChangesAsync();
+            }
 
             return true;
         }
@@ -183,19 +218,26 @@ namespace FootballProjectSoftUni.Core.Services.Referee
                 return false;
             }
 
-            var cityId = tournament.TournamentCities.FirstOrDefault()?.CityId;
-
+            // Like coaches: only before the start. Nobody can sign up as referee after it, so the
+            // tournament would stay without one.
+            if (BgTime.Now >= tournament.StartDate)
+            {
+                return false;
+            }
 
             context.TournamentsParticipants.Remove(tp);
 
-            var referee = await context.Referees.FirstOrDefaultAsync(r => r.TournamentId == tournamentId);
+            var referee = await context.Referees.FirstOrDefaultAsync(r => r.Id == userId && r.TournamentId == tournamentId);
 
             if (referee != null)
             {
                 referee.TournamentId = null;
             }
 
-            tournament.RefereeId = null;
+            if (tournament.RefereeId == userId)
+            {
+                tournament.RefereeId = null;
+            }
 
             await context.SaveChangesAsync();
 
@@ -205,8 +247,11 @@ namespace FootballProjectSoftUni.Core.Services.Referee
         public async Task<IEnumerable<RefereeListItemViewModel>> GetAllRefereesWithRatingsAsync(string userId)
         {
             var referees = await context.Referees
+                .Where(r => r.IsActive)
                 .Include(r => r.Ratings)
                 .ToListAsync();
+
+            var finishedTournaments = await FinishedTournamentsCountAsync();
 
             var result = referees
                 .Select(r =>
@@ -222,7 +267,7 @@ namespace FootballProjectSoftUni.Core.Services.Referee
                         Id = r.Id,
                         Name = r.Name,
                         Experience = r.Experience,
-                        TournamentsCount = r.RefereedTournamentsCount,
+                        TournamentsCount = finishedTournaments.TryGetValue(r.Id, out var count) ? count : 0,
                         AverageRating = avg
                     };
                 })
@@ -238,8 +283,13 @@ namespace FootballProjectSoftUni.Core.Services.Referee
                 throw new ArgumentException("Rating must be between 1 and 5.");
             }
 
+            if (refereeId == userId)
+            {
+                throw new InvalidOperationException("You cannot rate yourself.");
+            }
+
             var referee = await context.Referees
-                .FirstOrDefaultAsync(r => r.Id == refereeId);
+                .FirstOrDefaultAsync(r => r.Id == refereeId && r.IsActive);
 
             if (referee == null)
             {
@@ -271,7 +321,7 @@ namespace FootballProjectSoftUni.Core.Services.Referee
         public async Task<bool> AssignExistingRefereeToTournamentAsync(string userId, int tournamentId)
         {
             var referee = await context.Referees
-                .FirstOrDefaultAsync(r => r.Id == userId);
+                .FirstOrDefaultAsync(r => r.Id == userId && r.IsActive);
 
             if (referee == null)
             {
@@ -290,8 +340,6 @@ namespace FootballProjectSoftUni.Core.Services.Referee
             {
                 return false;
             }
-
-            referee.RefereedTournamentsCount++;
 
             referee.TournamentId = tournamentId;
             tournament.RefereeId = referee.Id;
@@ -320,14 +368,29 @@ namespace FootballProjectSoftUni.Core.Services.Referee
 
         public async Task<Infrastructure.Data.Models.Referee?> GetRefereeByUserIdAsync(string userId)
         {
+            // A switched-off profile ("stopped being a referee") does not count as a referee.
             return await context.Referees
-                .FirstOrDefaultAsync(r => r.Id == userId);
+                .FirstOrDefaultAsync(r => r.Id == userId && r.IsActive);
+        }
+
+        /// <summary>Finished tournaments per referee: what he really refereed (joining and leaving do not count).</summary>
+        private async Task<Dictionary<string, int>> FinishedTournamentsCountAsync()
+        {
+            var now = BgTime.Now;
+
+            var counts = await context.Tournaments
+                .Where(t => t.RefereeId != null && t.EndDate < now)
+                .GroupBy(t => t.RefereeId!)
+                .Select(g => new { RefereeId = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            return counts.ToDictionary(c => c.RefereeId, c => c.Count);
         }
 
         public async Task<RefereeCommentsPageViewModel> GetCommentsAsync(string refereeId)
         {
             var referee = await context.Referees
-                .FirstOrDefaultAsync(r => r.Id == refereeId);
+                .FirstOrDefaultAsync(r => r.Id == refereeId && r.IsActive);
 
             if (referee == null)
             {
@@ -339,6 +402,8 @@ namespace FootballProjectSoftUni.Core.Services.Referee
        .OrderByDescending(c => c.CreatedOn)
        .Select(c => new RefereeCommentViewModel
        {
+           Id = c.Id,
+           UserId = c.UserId,
            Content = c.Content,
            CreatedOn = c.CreatedOn,
            UserName = context.Users
@@ -355,6 +420,12 @@ namespace FootballProjectSoftUni.Core.Services.Referee
             };
         }
 
+        public async Task<bool> CanCommentAsync(string userId)
+        {
+            var since = DateTime.UtcNow.AddSeconds(-30);
+            return !await context.RefereeComments.AnyAsync(c => c.UserId == userId && c.CreatedOn >= since);
+        }
+
         public async Task AddCommentAsync(string refereeId, string userId, string content)
         {
             var comment = new RefereeComment
@@ -366,6 +437,42 @@ namespace FootballProjectSoftUni.Core.Services.Referee
 
             context.RefereeComments.Add(comment);
             await context.SaveChangesAsync();
+        }
+
+        public async Task<RefereeCommentViewModel?> GetCommentAsync(int commentId)
+        {
+            return await context.RefereeComments
+                .Where(c => c.Id == commentId)
+                .Select(c => new RefereeCommentViewModel
+                {
+                    Id = c.Id,
+                    UserId = c.UserId,
+                    Content = c.Content,
+                    CreatedOn = c.CreatedOn,
+                    RefereeId = c.RefereeId,
+                    RefereeName = c.Referee.Name,
+                    UserName = context.Users
+                        .Where(u => u.Id == c.UserId)
+                        .Select(u => u.FirstName + " " + u.LastName)
+                        .FirstOrDefault() ?? string.Empty
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<RefereeCommentViewModel?> DeleteCommentAsync(int commentId)
+        {
+            var deleted = await GetCommentAsync(commentId);
+            var comment = await context.RefereeComments.FindAsync(commentId);
+
+            if (deleted == null || comment == null)
+            {
+                return null;
+            }
+
+            context.RefereeComments.Remove(comment);
+            await context.SaveChangesAsync();
+
+            return deleted;
         }
 
         public async Task<string> GetRefereeEmail(string userId)

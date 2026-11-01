@@ -1,73 +1,143 @@
-﻿@using FootballProjectSoftUni.Core.Models.City
+@using FootballProjectSoftUni.Core.Models.City
 @model List<CityViewModel>
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
-<section class="container py-4">
+@{
+    ViewData["Title"] = "Search";
+    ViewData["FullWidth"] = true;
 
-    <div class="text-center mb-4">
-        <h2 class="page-title">
-            <i class="bi bi-search me-2"></i>
-            @Localizer["SearchResults"]
-        </h2>
-    </div>
+    var currentSearch = Context.Request.Query["searchString"].ToString();
+}
+
+<div class="container-xl cp-page">
+
+    @* Hero: the query echoed back on a sticker *@
+    <section class="cp-hero" aria-labelledby="searchTitle">
+        <div class="cp-hero__top">
+            <a asp-controller="City" asp-action="All" class="btn btn-outline-dark btn-sm">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>@Localizer["GBTBack"]
+            </a>
+        </div>
+
+        <h1 class="cp-mega cp-mega--sm" id="searchTitle" data-split>@Localizer["SearchResults"]</h1>
+
+        <div class="cp-echo">
+            @if (!string.IsNullOrWhiteSpace(currentSearch))
+            {
+                <span class="tg-sticker tg-sticker--coral cp-query" style="--rot:-3deg">
+                    <i class="bi bi-search" aria-hidden="true"></i>&ldquo;@currentSearch&rdquo;
+                </span>
+            }
+            <span class="cp-tally" role="status">
+                <span class="cp-tally__num tg-num">@Model.Count</span>
+                <small>@Localizer["DCities"]</small>
+            </span>
+        </div>
+
+        <form method="get" action="@Url.Action("Search")" class="cp-cmd" role="search">
+            <i class="bi bi-search cp-cmd__icon" aria-hidden="true"></i>
+            <input type="text"
+                   id="citySearch"
+                   class="cp-cmd__input"
+                   name="searchString"
+                   value="@currentSearch"
+                   autocomplete="off"
+                   placeholder="@Localizer["AllSearch"]"
+                   aria-label="@Localizer["AllSearch"]"
+                   aria-keyshortcuts="/" />
+            <button class="btn btn-primary cp-cmd__go" type="submit" aria-label="@Localizer["AllSearch"]">
+                <span class="cp-cmd__go-text">@Localizer["AllSearch"]</span>
+                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </button>
+        </form>
+    </section>
 
     @if (Model.Any())
     {
-        <div class="row g-4">
-
-            @foreach (var city in Model)
-            {
-                <div class="col-12 col-sm-6 col-lg-4">
-
-                    <div class="city-card h-100">
-
-                        <div class="city-cover">
-                            <img src="@city.ImageUrl" alt="City Image" />
-
-                            <div class="city-cover__overlay"></div>
-
-                            <div class="city-name">
-                                <h5 class="mb-0">@city.Name</h5>
-                            </div>
-                        </div>
-
-                        <div class="city-actions p-3">
-                            <a asp-controller="Tournament"
-                               asp-action="CityTournaments"
-                               asp-route-id="@city.Id"
-                               class="btn btn-warning w-100 fw-bold city-btn">
-
-                                <i class="bi bi-trophy-fill me-2"></i>
-                                @Localizer["SearchTournaments"]
-                            </a>
-                            <a asp-controller="City"
-                               asp-action="GetBestTeams"
-                               asp-route-id="@city.Id"
-                               class="btn btn-outline-dark w-100 fw-bold city-btn mt-2">
-                                <i class="bi bi-bar-chart-fill me-2"></i>@Localizer["SearchLeaders"]
-                            </a>
-                        </div>
-
-                    </div>
-
-                </div>
-            }
-
+        <div class="cp-index-head">
+            <span>&#8470; &middot; @Localizer["UPLCity"]</span>
+            <span class="cp-index-head__swipe"><i class="bi bi-arrow-left-right" aria-hidden="true"></i>@Localizer["CPSwipe"]</span>
         </div>
+
+        <ol class="cp-index" data-hover-reveal aria-label="@Localizer["SearchResults"]">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var city = Model[i];
+                var no = (i + 1).ToString("00");
+
+                <li class="cp-row" data-name="@city.Name" data-reveal>
+                    <a class="cp-row__main"
+                       data-img="@city.ImageUrl"
+                       asp-controller="Tournament"
+                       asp-action="CityTournaments"
+                       asp-route-id="@city.Id">
+                        <span class="cp-row__num" aria-hidden="true">@no</span>
+                        <span class="cp-row__photo" aria-hidden="true">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <img src="@city.ImageUrl" alt="" loading="lazy" draggable="false" data-hide-on-error />
+                        </span>
+                        <span class="cp-row__name">@city.Name</span>
+                    </a>
+
+                    <div class="cp-row__actions">
+                        <a asp-controller="Tournament"
+                           asp-action="CityTournaments"
+                           asp-route-id="@city.Id"
+                           class="btn btn-primary btn-sm">
+                            <i class="bi bi-trophy-fill" aria-hidden="true"></i>@Localizer["SearchTournaments"]
+                        </a>
+
+                        <a asp-controller="City"
+                           asp-action="GetBestTeams"
+                           asp-route-id="@city.Id"
+                           class="btn btn-sun btn-sm">
+                            <i class="bi bi-bar-chart-fill" aria-hidden="true"></i>@Localizer["SearchLeaders"]
+                        </a>
+                    </div>
+                </li>
+            }
+        </ol>
     }
     else
     {
-        <div class="empty-state text-center">
-
-            <i class="bi bi-search display-4 text-muted"></i>
-
-            <h5 class="mt-3">@Localizer["NoCity"]</h5>
-
-            <p class="text-muted">
-                @Localizer["SearchNoCity"]
-            </p>
-
+        <div class="tg-empty cp-empty">
+            <span class="cp-empty__zero" aria-hidden="true">0</span>
+            <h5>@Localizer["NoCity"]</h5>
+            <p class="text-muted mb-4">@Localizer["SearchNoCity"]</p>
+            <a asp-controller="City" asp-action="All" class="btn btn-primary">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>@Localizer["GBTBack"]
+            </a>
         </div>
     }
+</div>
 
-</section>
+@section Scripts {
+    <script>
+        (function () {
+            var input = document.getElementById('citySearch');
+            if (!input) { return; }
+            var rows = Array.prototype.slice.call(document.querySelectorAll('.cp-row[data-name]'));
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) { return; }
+                var t = e.target;
+                if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) { return; }
+                e.preventDefault();
+                input.focus();
+                input.select();
+            });
+
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') { input.blur(); }
+            });
+
+            input.addEventListener('input', function () {
+                var q = input.value.trim().toLowerCase();
+                rows.forEach(function (row) {
+                    var name = (row.getAttribute('data-name') || '').toLowerCase();
+                    row.classList.toggle('is-dim', q.length > 0 && name.indexOf(q) !== 0);
+                });
+            });
+        })();
+    </script>
+}

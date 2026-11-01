@@ -12,6 +12,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Threading.Tasks;
+using static FootballProjectSoftUni.Infrastructure.Data.Constants.DataConstants;
 
 namespace FootballProjectSoftUni.Areas.Identity.Pages.Account
 {
@@ -41,16 +42,16 @@ namespace FootballProjectSoftUni.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = RequireErrorMessage)]
+            [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
             public string Email { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage = RequireErrorMessage)]
+            [StringLength(100, ErrorMessage = StringLengthErrorMessage, MinimumLength = 8)]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
@@ -67,25 +68,32 @@ namespace FootballProjectSoftUni.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            [Required(ErrorMessage = RequireErrorMessage)]
             public string Code { get; set; }
 
         }
 
         public IActionResult OnGet(string code = null)
         {
+            // A missing or damaged link (e.g. cut by an e-mail client): let the user ask for a new one.
             if (code == null)
             {
-                return BadRequest("A code must be supplied for password reset.");
+                return RedirectToPage("./ForgotPassword");
             }
-            else
+
+            try
             {
                 Input = new InputModel
                 {
                     Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
                 };
-                return Page();
             }
+            catch (FormatException)
+            {
+                return RedirectToPage("./ForgotPassword");
+            }
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()

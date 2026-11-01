@@ -1,71 +1,143 @@
-﻿@model FootballProjectSoftUni.Core.Models.Partner.PartnerViewModel
+@model FootballProjectSoftUni.Core.Models.Partner.PartnerViewModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
-
 
 @{
     ViewData["Title"] = "Add Partner";
+    ViewData["FullWidth"] = true;
 }
 
-<section class="container py-4">
-    <div class="admin-form-card mx-auto">
+<div class="container-xl cp-page">
+    <header class="cp-studio__head">
+        <h1 class="cp-mega cp-mega--md" data-split>@Localizer["DAddPartner"]</h1>
+        <p class="cp-lead">@Localizer["CPAddPartnerSub"]</p>
+    </header>
 
-        <form method="post">
+    <form method="post" enctype="multipart/form-data" class="cp-studio__grid">
 
-            <div class="mb-3">
-                <label asp-for="Name" class="form-label fw-bold">
-                    <i class="bi bi-building me-2"></i>@Localizer["APPartnerName"]
-                </label>
+        <div class="tg-form-card cp-studio__form">
 
-                <input asp-for="Name"
-                       class="form-control form-control-lg tg-input" />
-
-                <span asp-validation-for="Name" class="text-danger small"></span>
+            <div class="cp-fstep">
+                <span class="cp-fstep__no" aria-hidden="true">01</span>
+                <div class="cp-fstep__body">
+                    <label asp-for="Name" class="form-label">@Localizer["APPartnerName"]</label>
+                    <input asp-for="Name"
+                           class="form-control form-control-lg"
+                           autocomplete="off" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="ImageUrl" class="form-label fw-bold">
-                    <i class="bi bi-image-fill me-2"></i>@Localizer["APImage"]
-                </label>
-
-                <input asp-for="ImageUrl"
-                       class="form-control form-control-lg tg-input"
-                       placeholder="https://..."
-                       id="imageInput" />
-
-                <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+            <div class="cp-fstep">
+                <span class="cp-fstep__no" aria-hidden="true">02</span>
+                <div class="cp-fstep__body">
+                    <label for="image" class="form-label">@Localizer["APImage"]</label>
+                    <partial name="_PicturePicker" model='new PicturePickerViewModel { Required = true, Hint = Localizer["CPLogoHint"].Value }' />
+                </div>
             </div>
 
-            <!-- Preview -->
-            <div class="text-center mb-3">
-                <img id="previewImage"
-                     class="partner-preview shadow"
-                     style="display:none;" />
+            <div class="tg-form-actions">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>@Localizer["APAP"]
+                </button>
+                <a asp-action="All" class="btn btn-outline-dark btn-lg">
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>@Localizer["DCCancel"]
+                </a>
+            </div>
+        </div>
+
+        @* Live preview: the wall tile + the sponsor tape it will ride on *@
+        <aside class="cp-studio__preview" aria-label="@Localizer["CPPreview"]">
+            <span class="tg-sticker tg-sticker--coral cp-pin" style="--rot:-5deg">
+                <i class="bi bi-eye-fill" aria-hidden="true"></i>@Localizer["CPPreview"]
+            </span>
+
+            <div class="cp-logo-card" id="logoPreview" data-tilt="12">
+                <span class="cp-logo-card__no" aria-hidden="true">01</span>
+                <div class="cp-logo-card__stage">
+                    <div class="cp-logo-card__empty">
+                        <i class="bi bi-image" aria-hidden="true"></i>
+                        <span>@Localizer["CPPreviewEmpty"]</span>
+                    </div>
+                    <img id="previewImage" alt="" hidden />
+                </div>
+                <div class="cp-logo-card__name" id="previewName" data-default="@Localizer["APPartnerName"]">@Localizer["APPartnerName"]</div>
             </div>
 
-            <button class="btn btn-primary btn-lg w-100 tg-action-btn">
-                <i class="bi bi-plus-circle-fill me-2"></i>@Localizer["APAP"]
-            </button>
+            <div class="tg-marquee tg-marquee--ink cp-mini-tape" data-marquee aria-hidden="true">
+                <div class="tg-marquee__track">
+                    @for (int k = 0; k < 4; k++)
+                    {
+                        <span class="tg-marquee__item cp-mq__item">
+                            <span class="cp-mq__logo">
+                                <i class="bi bi-image cp-mq__initial"></i>
+                                <img data-pv-img alt="" hidden />
+                            </span>
+                            <span data-pv-name>@Localizer["APPartnerName"]</span>
+                        </span>
+                    }
+                </div>
+            </div>
+        </aside>
 
-        </form>
-
-    </div>
-
-</section>
+    </form>
+</div>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/picture-picker.js" asp-append-version="true"></script>
+
     <script>
-        document.getElementById("imageInput").addEventListener("input", function () {
+        (function () {
+            var picker = document.querySelector("[data-picture-picker]");
+            var nameInput = document.getElementById("Name");
+            var img = document.getElementById("previewImage");
+            var box = document.getElementById("logoPreview");
+            var label = document.getElementById("previewName");
+            if (!picker || !img || !box) { return; }
 
-            const img = document.getElementById("previewImage");
-            const url = this.value;
+            // site.js has already cloned the tape track, so these include the clones
+            var tapeNames = document.querySelectorAll("[data-pv-name]");
+            var tapeImgs = document.querySelectorAll("[data-pv-img]");
+            var fallbackName = label ? label.getAttribute("data-default").trim() : "";
 
-            if (url && url.startsWith("http")) {
-                img.src = url;
-                img.style.display = "block";
-            } else {
-                img.style.display = "none";
+            function each(list, fn) { Array.prototype.forEach.call(list, fn); }
+
+            function showName() {
+                var value = (nameInput && nameInput.value.trim()) || fallbackName;
+                if (label) { label.textContent = value; }
+                each(tapeNames, function (el) { el.textContent = value; });
             }
 
-        });
+            function hideTapeLogos() {
+                each(tapeImgs, function (el) { el.hidden = true; el.removeAttribute("src"); });
+            }
+
+            function clearImage() {
+                img.hidden = true;
+                img.removeAttribute("src");
+                box.classList.remove("is-loaded");
+                hideTapeLogos();
+            }
+
+            img.addEventListener("load", function () {
+                img.hidden = false;
+                box.classList.remove("is-loaded");
+                void box.offsetWidth;
+                box.classList.add("is-loaded");
+                each(tapeImgs, function (el) { el.src = img.src; el.hidden = false; });
+            });
+
+            img.addEventListener("error", function () {
+                img.hidden = true;
+                box.classList.remove("is-loaded");
+                hideTapeLogos();
+            });
+
+            picker.addEventListener("picture:chosen", function (e) { img.src = e.detail.url; });
+            picker.addEventListener("picture:cleared", clearImage);
+            if (nameInput) { nameInput.addEventListener("input", showName); }
+
+            showName();
+        })();
     </script>
 }

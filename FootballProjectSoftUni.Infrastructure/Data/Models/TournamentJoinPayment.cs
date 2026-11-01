@@ -10,8 +10,13 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
     {
         public int Id { get; set; }
 
-        public int TournamentId { get; set; }
-        public Tournament Tournament { get; set; } = null!;
+        // Null once the tournament is deleted: the payment itself is always kept as a record.
+        public int? TournamentId { get; set; }
+        public Tournament? Tournament { get; set; }
+
+        // Copied from the tournament when it is deleted, so the payment still shows what it was for.
+        public string? TournamentCity { get; set; }
+        public DateTime? TournamentStartDate { get; set; }
 
         public string UserId { get; set; } = null!; 
 

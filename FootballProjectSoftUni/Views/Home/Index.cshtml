@@ -1,86 +1,208 @@
-﻿@model FootballProjectSoftUni.Core.Models.Home.HomeViewModel
+@model FootballProjectSoftUni.Core.Models.Home.HomeViewModel
 @inject IStringLocalizer<SharedResource> Localizer
 @{
     ViewData["Title"] = "Tournament Galaxy";
+    ViewData["FullWidth"] = true;
+
+    // 4-3-3 vs 4-3-3, coordinates in % of the pitch
+    var home = new (int X, int Y)[] { (5, 50), (18, 18), (17, 39), (17, 61), (18, 82), (31, 30), (29, 50), (31, 70), (43, 20), (46, 50), (43, 80) };
+    var away = new (int X, int Y)[] { (95, 50), (82, 22), (83, 42), (83, 58), (82, 78), (69, 28), (71, 50), (69, 72), (57, 25), (55, 50), (57, 75) };
 }
 
-<section class="hero">
-    <div class="hero__bg"
-         style="background-image:url('https://fcdynamo.com/img/4ed49bb5-4123-4d5c-b5ce-7e6b1d5aa1e9/3fd4154410720ba54ec935ce9e460a191210.jpg?fm=jpg&q=80&fit=max&crop=900%2C506%2C0%2C0');">
+@if (TempData["SuccessMessage"] != null)
+{
+    @* e.g. after the user deleted their account *@
+    <div class="container-xl pt-3">
+        <div class="alert alert-success mb-0" role="status">
+            <i class="bi bi-check-circle-fill me-2" aria-hidden="true"></i>@TempData["SuccessMessage"]
+        </div>
     </div>
-    <div class="hero__overlay"></div>
+}
 
-    <div class="container position-relative">
-        <div class="row align-items-center g-4 py-5">
-            <div class="col-lg-7">
-                <h1 class="hero-title mb-3">Tournament Galaxy</h1>
+@* ============ HERO: headline + 3D pitch ============ *@
+<section class="hm-hero">
+    <div class="container-xl">
+        <h1 class="hm-headline" data-split>
+            <span class="hm-headline__l1">@Localizer["HomeHeadline1"]</span>
+            <span class="hm-headline__l2">@Localizer["HomeHeadline2"]</span>
+            <span class="hm-headline__l3">@Localizer["HomeHeadline3"]</span>
+        </h1>
+
+        <div class="hm-hero__grid">
+            <div class="hm-hero__copy">
+                <p class="hm-lead">@Localizer["HeroTagline"]</p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a asp-controller="City" asp-action="All" class="btn btn-primary btn-lg" data-magnetic>
+                        @Localizer["HeroBrowseCities"]<i class="bi bi-arrow-right"></i>
+                    </a>
+                    <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-sun btn-lg" data-magnetic>
+                        @Localizer["HeroCreateAccount"]
+                    </a>
+                </div>
             </div>
 
-            <div class="col-lg-5">
-                <div class="hero-card p-4 p-md-5">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <h5 class="mb-0">@Localizer["IndexOurAchievements"]</h5>
-                    </div>
+            <div class="hm-stage" aria-hidden="true">
+                <div class="hm-field">
+                    <svg class="tg-pitch-lines" viewBox="0 0 100 64" preserveAspectRatio="none">
+                        <rect x="2" y="2" width="96" height="60" rx="1" />
+                        <line x1="50" y1="2" x2="50" y2="62" />
+                        <circle cx="50" cy="32" r="8" />
+                        <rect x="2" y="17" width="13" height="30" />
+                        <rect x="2" y="25" width="5" height="14" />
+                        <rect x="85" y="17" width="13" height="30" />
+                        <rect x="93" y="25" width="5" height="14" />
+                    </svg>
+                    @foreach (var p in home)
+                    {
+                        <span class="hm-dot hm-dot--home" style="left:@(p.X)%;top:@(p.Y)%"></span>
+                    }
+                    @foreach (var p in away)
+                    {
+                        <span class="hm-dot hm-dot--away" style="left:@(p.X)%;top:@(p.Y)%"></span>
+                    }
+                    <span class="hm-ball"></span>
+                </div>
 
-                    <div class="row g-3">
-                        <div class="col-6">
-                            <div class="stat stat--primary">
-                                <div class="stat__icon"><i class="bi bi-trophy"></i></div>
-                                <div class="stat__value">@Model.TournamentsCount</div>
-                                <div class="stat__label">@Localizer["IndexTournaments"]</div>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="stat stat--success">
-                                <div class="stat__icon"><i class="bi bi-people"></i></div>
-                                <div class="stat__value">@Model.TeamsCount</div>
-                                <div class="stat__label">@Localizer["IndexTeams"]</div>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="stat stat--danger">
-                                <div class="stat__icon"><i class="bi bi-person-badge"></i></div>
-                                <div class="stat__value">@Model.PlayersCount</div>
-                                <div class="stat__label">@Localizer["IndexPlayers"]</div>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="stat stat--warning">
-                                <div class="stat__icon"><i class="bi bi-calendar-event"></i></div>
-                                <div class="stat__value">@Model.YearOfFoundation</div>
-                                <div class="stat__label">@Localizer["IndexFounded"]</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr class="hr-soft my-4" />
+                <div class="hm-float hm-float--a" style="--rot:-6deg">
+                    <span class="tg-num" data-count="@Model.TournamentsCount">@Model.TournamentsCount</span>
+                    <small>@Localizer["IndexTournaments"]</small>
+                </div>
+                <div class="hm-float hm-float--b" style="--rot:5deg">
+                    <span class="tg-num" data-count="@Model.TeamsCount">@Model.TeamsCount</span>
+                    <small>@Localizer["IndexTeams"]</small>
+                </div>
+                <div class="hm-float hm-float--c" style="--rot:-3deg">
+                    <span class="tg-num" data-count="@Model.PlayersCount">@Model.PlayersCount</span>
+                    <small>@Localizer["IndexPlayers"]</small>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="container py-5">
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="feature-card">
-                <div class="feature-icon"><i class="bi bi-lightning-charge-fill"></i></div>
-                <h5 class="mb-2">@Localizer["IndexTFastManagement"]</h5>
-                <p class="mb-0 text-muted">@Localizer["IndexCreateTeam"]</p>
+@* ============ CITIES STRIP ============ *@
+<section class="hm-band">
+    <div class="container-xl">
+        <div class="hm-band__head">
+            <div>
+                <h2 class="hm-h2">@Localizer["HomeCitiesTitle"]</h2>
+                <p class="text-muted mb-0">@Localizer["HomeCitiesSub"]</p>
+            </div>
+            <a asp-controller="City" asp-action="All" class="btn btn-outline-dark">@Localizer["HomeSeeAll"]<i class="bi bi-arrow-right"></i></a>
+        </div>
+    </div>
+    @await Component.InvokeAsync("CityStripComponent", new { take = 12 })
+</section>
+
+@* ============ BENTO ============ *@
+<section class="hm-band pt-0">
+    <div class="container-xl">
+        <div class="hm-bento">
+            <article class="hm-tile hm-tile--feature tg-card tg-card--pitch" data-spotlight>
+                <svg class="tg-pitch-lines" viewBox="0 0 100 64" preserveAspectRatio="none" aria-hidden="true">
+                    <circle cx="100" cy="64" r="26" /><circle cx="100" cy="64" r="44" />
+                </svg>
+                <span class="tg-icon-tile"><i class="bi bi-lightning-charge-fill"></i></span>
+                <h3>@Localizer["IndexTFastManagement"]</h3>
+                <p>@Localizer["IndexCreateTeam"]</p>
+            </article>
+
+            <article class="hm-tile hm-tile--stat tg-card tg-card--sun" data-tilt="8">
+                <span class="hm-tile__num tg-num" data-count="@Model.TournamentsCount">@Model.TournamentsCount</span>
+                <span class="hm-tile__label">@Localizer["IndexTournaments"]</span>
+                <i class="bi bi-trophy-fill hm-tile__icon"></i>
+            </article>
+
+            <article class="hm-tile hm-tile--stat tg-card" data-tilt="8">
+                <span class="hm-tile__num tg-num" data-count="@Model.TeamsCount">@Model.TeamsCount</span>
+                <span class="hm-tile__label">@Localizer["IndexTeams"]</span>
+                <i class="bi bi-shield-fill hm-tile__icon"></i>
+            </article>
+
+            <article class="hm-tile hm-tile--wide tg-card tg-card--lilac" data-spotlight>
+                <span class="tg-icon-tile tg-icon-tile--white"><i class="bi bi-diagram-3-fill"></i></span>
+                <div>
+                    <h3>@Localizer["IndexClearStructure"]</h3>
+                    <p>@Localizer["IndexTeamPlayers"]</p>
+                </div>
+            </article>
+
+            <article class="hm-tile hm-tile--stat tg-card tg-card--coral" data-tilt="8">
+                <span class="hm-tile__num tg-num" data-count="@Model.PlayersCount">@Model.PlayersCount</span>
+                <span class="hm-tile__label">@Localizer["IndexPlayers"]</span>
+                <i class="bi bi-person-arms-up hm-tile__icon"></i>
+            </article>
+
+            <article class="hm-tile hm-tile--long tg-card tg-card--ink" data-spotlight>
+                <span class="tg-icon-tile tg-icon-tile--coral"><i class="bi bi-graph-up-arrow"></i></span>
+                <div>
+                    <h3>@Localizer["IndexFollowResults"]</h3>
+                    <p>@Localizer["IndexFollowRanking"]</p>
+                </div>
+                <span class="hm-whistle tg-sticker" style="--rot:8deg">90'</span>
+            </article>
+        </div>
+    </div>
+</section>
+
+@* ============ MATCH TIMELINE (how it works) ============ *@
+<section class="hm-band hm-timeline-band">
+    <div class="container-xl">
+        <span class="tg-kicker">@Localizer["IndexHowTitle"]</span>
+        <h2 class="hm-h2 mb-5">@Localizer["IndexHowSubtitle"]</h2>
+
+        <div class="hm-timeline" data-scroll-progress>
+            <div class="hm-timeline__rail"><span></span></div>
+
+            <div class="hm-timeline__step">
+                <span class="hm-minute">0'</span>
+                <div class="tg-card tg-card--pad tg-card--pop">
+                    <span class="tg-icon-tile tg-icon-tile--sm"><i class="bi bi-geo-alt-fill"></i></span>
+                    <h4>@Localizer["IndexStep1Title"]</h4>
+                    <p>@Localizer["IndexStep1Text"]</p>
+                </div>
+            </div>
+            <div class="hm-timeline__step">
+                <span class="hm-minute">45'</span>
+                <div class="tg-card tg-card--pad tg-card--pop">
+                    <span class="tg-icon-tile tg-icon-tile--sm tg-icon-tile--coral"><i class="bi bi-people-fill"></i></span>
+                    <h4>@Localizer["IndexStep2Title"]</h4>
+                    <p>@Localizer["IndexStep2Text"]</p>
+                </div>
+            </div>
+            <div class="hm-timeline__step">
+                <span class="hm-minute">90'</span>
+                <div class="tg-card tg-card--pad tg-card--pop">
+                    <span class="tg-icon-tile tg-icon-tile--sm tg-icon-tile--pitch"><i class="bi bi-trophy-fill"></i></span>
+                    <h4>@Localizer["IndexStep3Title"]</h4>
+                    <p>@Localizer["IndexStep3Text"]</p>
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="feature-card">
-                <div class="feature-icon"><i class="bi bi-diagram-3-fill"></i></div>
-                <h5 class="mb-2">@Localizer["IndexClearStructure"]</h5>
-                <p class="mb-0 text-muted">@Localizer["IndexTeamPlayers"]</p>
+    </div>
+</section>
+
+@* ============ TICKET CTA ============ *@
+<section class="hm-band pb-0">
+    <div class="container-xl">
+        <div class="tg-ticket hm-ticket">
+            <div class="hm-ticket__main">
+                <span class="tg-kicker">@Localizer["HomeTicketLabel"]</span>
+                <h2 class="hm-h2">@Localizer["IndexCtaTitle"]</h2>
+                <p class="hm-lead mb-4">@Localizer["IndexCtaText"]</p>
+                <div class="hm-ticket__meta">
+                    <div><small>@Localizer["HomeTicketGate"]</small><strong>@Localizer["HomeTicketGateValue"]</strong></div>
+                    <div><small>@Localizer["HomeTicketKickoff"]</small><strong>@Localizer["HomeTicketKickoffValue"]</strong></div>
+                    <div><small>@Localizer["HomeSeason"]</small><strong>@BgTime.Today.Year</strong></div>
+                </div>
+                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-accent btn-lg mt-4" data-magnetic>
+                    @Localizer["HeroCreateAccount"]<i class="bi bi-arrow-right"></i>
+                </a>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="feature-card">
-                <div class="feature-icon"><i class="bi bi-award-fill"></i></div>
-                <h5 class="mb-2">@Localizer["IndexFollowResults"]</h5>
-                <p class="mb-0 text-muted">@Localizer["IndexFollowRanking"]</p>
+            <div class="tg-ticket__stub hm-ticket__stub">
+                <span class="hm-ticket__admit">@Localizer["HomeTicketAdmit"]</span>
+                <span class="hm-barcode" aria-hidden="true"></span>
+                <span class="hm-ticket__no">No. @BgTime.Today.ToString("ddMM")-@Model.TournamentsCount</span>
             </div>
         </div>
     </div>

@@ -117,6 +117,26 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             Assert.IsNotNull(result);
             Assert.That(result!.Id, Is.EqualTo(partner.Id));
             Assert.That(result.Name, Is.EqualTo("FindMe"));
+            Assert.That(result.ImageUrl, Is.EqualTo("img"));
+        }
+
+        [Test]
+        public async Task ChangePartnerImageAsync_StoresTheNewLogo_AndReturnsTheOldOne()
+        {
+            var partner = new Partner { Name = "Logo", ImageUrl = "/images/covers/partners/old.png" };
+            await _data.Partners.AddAsync(partner);
+            await _data.SaveChangesAsync();
+
+            var old = await partnerService.ChangePartnerImageAsync(partner.Id, "/images/covers/partners/new.png");
+
+            Assert.That(old, Is.EqualTo("/images/covers/partners/old.png"));
+            Assert.That((await _data.Partners.AsNoTracking().FirstAsync(p => p.Id == partner.Id)).ImageUrl, Is.EqualTo("/images/covers/partners/new.png"));
+        }
+
+        [Test]
+        public async Task ChangePartnerImageAsync_ReturnsNull_WhenPartnerNotFound()
+        {
+            Assert.IsNull(await partnerService.ChangePartnerImageAsync(99999, "/images/covers/partners/new.png"));
         }
 
     }

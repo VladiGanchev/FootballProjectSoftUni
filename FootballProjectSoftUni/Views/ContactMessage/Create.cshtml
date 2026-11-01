@@ -1,63 +1,176 @@
-﻿@using FootballProjectSoftUni.Core.Models.Message
+@using FootballProjectSoftUni.Core.Models.Message
 @model ContactFormViewModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "Свържи се с организаторите";
+    ViewData["Title"] = Localizer["LayoutContact"].Value;
+
+    // Decorative postmark (built as a string: SVG <text> would clash with Razor's <text> tag)
+    var pmYear = BgTime.Today.Year;
+    var pmDate = BgTime.Today.ToString("dd.MM.yy", System.Globalization.CultureInfo.InvariantCulture);
+    var postmarkText =
+        "<text class=\"msg-postmark__ring\"><textPath href=\"#msgPmArc\" textLength=\"228\" lengthAdjust=\"spacing\">TOURNAMENT GALAXY • " + pmYear + " •</textPath></text>" +
+        "<text class=\"msg-postmark__date\" x=\"50\" y=\"54\" text-anchor=\"middle\">" + pmDate + "</text>";
 }
 
-<section class="container py-4">
+<section class="msg-post">
+
+    <header class="msg-post__head">
+        <h1 class="msg-post__title" data-split>@Localizer["LayoutContact"]</h1>
+        <p class="msg-post__sub">@Localizer["ContactSub"]</p>
+        <span class="tg-sticker tg-sticker--coral msg-post__air d-none d-md-inline-flex" style="--rot:7deg">
+            <i class="bi bi-airplane-fill" aria-hidden="true"></i>@Localizer["MsgAirmail"]
+        </span>
+    </header>
 
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            @TempData["ErrorMessage"]
+        <div class="alert alert-danger msg-alert" role="alert">
+            <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+            <div>@TempData["ErrorMessage"]</div>
         </div>
     }
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i>
-            @TempData["SuccessMessage"]
+        <div class="alert alert-success msg-alert" role="alert">
+            <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+            <div>@TempData["SuccessMessage"]</div>
         </div>
     }
 
-    <div class="admin-form-card mx-auto">
-        <form asp-action="Create" method="post" class="admin-form">
+    <div class="msg-post__grid">
 
-            <div class="mb-3">
-                <label asp-for="Subject" class="form-label fw-bold">
-                    <i class="bi bi-chat-left-text-fill me-2"></i>@Localizer["CTheme"]
-                </label>
+        @* ===== The postcard (straightens up while you write) ===== *@
+        <div class="msg-postcard" data-reveal>
+            <div class="msg-postcard__inner">
 
-                <input asp-for="Subject" class="form-control tg-input" />
-                <span asp-validation-for="Subject" class="text-danger small"></span>
+                <form asp-action="Create" method="post" class="msg-postcard__msg">
+                    <span class="msg-postcard__eyebrow">
+                        <i class="bi bi-postcard-fill" aria-hidden="true"></i>@Localizer["MsgCompose"]
+                    </span>
+
+                    <div class="msg-field">
+                        <label asp-for="Subject" class="form-label">
+                            <i class="bi bi-chat-left-text-fill" aria-hidden="true"></i>@Localizer["CTheme"]
+                        </label>
+
+                        <input asp-for="Subject" class="form-control form-control-lg msg-postcard__subject" autocomplete="off" />
+                        <div class="msg-field__foot">
+                            <span asp-validation-for="Subject" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="msg-field">
+                        <label asp-for="Content" class="form-label">
+                            <i class="bi bi-pencil-square" aria-hidden="true"></i>@Localizer["CMessage"]
+                        </label>
+
+                        <textarea asp-for="Content"
+                                  class="form-control msg-postcard__lines"
+                                  rows="7"
+                                  data-msg-counter="#msgContentCounter"></textarea>
+
+                        <div class="msg-field__foot">
+                            <span asp-validation-for="Content" class="text-danger small"></span>
+                            <span id="msgContentCounter" class="msg-counter" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-accent btn-lg msg-postcard__send">
+                        <i class="bi bi-send-fill" aria-hidden="true"></i>
+                        @Localizer["CSend"]
+                    </button>
+                </form>
+
+                <div class="msg-postcard__addr">
+                    <div class="msg-franking" aria-hidden="true">
+                        <span class="msg-stamp">
+                            <span class="msg-stamp__art">
+                                <partial name="_Logo" />
+                                <span class="msg-stamp__val">TG &middot; @pmYear</span>
+                            </span>
+                        </span>
+
+                        <svg class="msg-postmark" viewBox="0 0 200 100" focusable="false">
+                            <defs>
+                                <path id="msgPmArc" d="M13 50 a37 37 0 1 1 74 0 a37 37 0 1 1 -74 0" />
+                            </defs>
+                            <circle cx="50" cy="50" r="46" />
+                            <circle cx="50" cy="50" r="29" />
+                            @Html.Raw(postmarkText)
+                            <path d="M104 30 q12 -8 24 0 t24 0 t24 0 t24 0" />
+                            <path d="M104 44 q12 -8 24 0 t24 0 t24 0 t24 0" />
+                            <path d="M104 58 q12 -8 24 0 t24 0 t24 0 t24 0" />
+                            <path d="M104 72 q12 -8 24 0 t24 0 t24 0 t24 0" />
+                        </svg>
+                    </div>
+
+                    <div class="msg-addr">
+                        <div class="msg-addr__line">
+                            <span class="msg-addr__to">@Localizer["MsgPostTo"]</span>
+                            <span class="msg-addr__name">Tournament Galaxy</span>
+                        </div>
+                        <div class="msg-addr__line" aria-hidden="true"></div>
+                        <div class="msg-addr__line" aria-hidden="true"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        @* ===== How it works: a flight route ===== *@
+        <aside class="msg-route" aria-label="@Localizer["ContactSideTitle"]">
+            <h2 class="msg-route__title">
+                <i class="bi bi-signpost-split-fill" aria-hidden="true"></i>@Localizer["ContactSideTitle"]
+            </h2>
+
+            <div class="msg-route__track" data-scroll-progress>
+                <span class="msg-route__plane" aria-hidden="true"><i class="bi bi-airplane-fill"></i></span>
+                <ol class="msg-route__list">
+                    <li class="msg-route__step">
+                        <span class="msg-route__no" aria-hidden="true">1</span>
+                        <p class="msg-route__text"><i class="bi bi-send-fill" aria-hidden="true"></i>@Localizer["ContactStep1"]</p>
+                    </li>
+                    <li class="msg-route__step">
+                        <span class="msg-route__no" aria-hidden="true">2</span>
+                        <p class="msg-route__text"><i class="bi bi-bell-fill" aria-hidden="true"></i>@Localizer["ContactStep2"]</p>
+                    </li>
+                    <li class="msg-route__step">
+                        <span class="msg-route__no" aria-hidden="true">3</span>
+                        <p class="msg-route__text"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i>@Localizer["ContactStep3"]</p>
+                    </li>
+                </ol>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Content" class="form-label fw-bold">
-                    <i class="bi bi-pencil-square me-2"></i>@Localizer["CMessage"]
-                </label>
+            <a asp-controller="Notification" asp-action="All" class="btn btn-sun msg-route__link">
+                <i class="bi bi-bell-fill" aria-hidden="true"></i>@Localizer["TabInbox"]<i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </a>
+        </aside>
 
-                <textarea asp-for="Content"
-                          class="form-control tg-input"
-                          rows="6" ></textarea>
-
-                <span asp-validation-for="Content" class="text-danger small"></span>
-            </div>
-
-            <button type="submit" class="btn btn-success btn-lg w-100 tg-action-btn">
-                <i class="bi bi-send-fill me-2"></i>
-                @Localizer["CSend"]
-            </button>
-
-        </form>
     </div>
 
 </section>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        (function () {
+            var ta = document.querySelector('[data-msg-counter]');
+            if (!ta) return;
+            var out = document.querySelector(ta.getAttribute('data-msg-counter'));
+            if (!out) return;
+            var max = parseInt(ta.getAttribute('data-val-length-max'), 10) || 0;
+
+            function update() {
+                var len = ta.value.length;
+                out.textContent = max ? len + ' / ' + max : String(len);
+                out.classList.toggle('is-over', max > 0 && len > max);
+            }
+
+            ta.addEventListener('input', update);
+            update();
+        })();
+    </script>
 }

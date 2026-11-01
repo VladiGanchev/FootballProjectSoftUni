@@ -1,0 +1,29 @@
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+@inject Microsoft.Extensions.Options.IOptions<FootballProjectSoftUni.Core.Models.Settings.SiteSettings> SiteOptions
+
+@* Who runs the site (Site section of appsettings). Empty values are left out. *@
+@{
+    var site = SiteOptions.Value;
+    var name = string.IsNullOrWhiteSpace(site.OperatorName) ? "Tournament Galaxy" : site.OperatorName;
+}
+
+<address class="tg-legal__operator">
+    <strong>@name</strong>
+    @if (!string.IsNullOrWhiteSpace(site.OperatorCompanyId))
+    {
+        <span>@Localizer["LegalCompanyId"]: @site.OperatorCompanyId</span>
+    }
+    @if (!string.IsNullOrWhiteSpace(site.OperatorAddress))
+    {
+        <span>@Localizer["LegalAddress"]: @site.OperatorAddress</span>
+    }
+    @if (!string.IsNullOrWhiteSpace(site.ContactEmail))
+    {
+        <span>@Localizer["LegalEmail"]: <a href="mailto:@site.ContactEmail">@site.ContactEmail</a></span>
+    }
+    @if (!string.IsNullOrWhiteSpace(site.ContactPhone))
+    {
+        <span>@Localizer["LegalPhone"]: @site.ContactPhone</span>
+    }
+    <span>@Localizer["LegalContactForm"]</span>
+</address>

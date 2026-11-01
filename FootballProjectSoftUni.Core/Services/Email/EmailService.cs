@@ -33,7 +33,7 @@ namespace FootballProjectSoftUni.Core.Services.Email
 
             using var client = new SmtpClient(settings.SmtpHost, settings.SmtpPort)
             {
-                EnableSsl = true,
+                EnableSsl = settings.EnableSsl,   // Email:EnableSsl (true by default)
                 UseDefaultCredentials = false,
                 Credentials = new NetworkCredential(settings.SmtpUser, settings.SmtpPass),
                 DeliveryMethod = SmtpDeliveryMethod.Network

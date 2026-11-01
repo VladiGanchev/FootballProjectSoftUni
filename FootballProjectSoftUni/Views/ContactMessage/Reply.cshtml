@@ -1,65 +1,136 @@
-﻿@using FootballProjectSoftUni.Core.Models.Message
+@using FootballProjectSoftUni.Core.Models.Message
 @model ReplyFormViewModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "Отговор на съобщение";
+    ViewData["Title"] = Localizer["MWReply"].Value;
+
+    var hasPrevious = !string.IsNullOrWhiteSpace(Model.PreviousMessageText);
+    var hasCurrent = !string.IsNullOrWhiteSpace(Model.CurrentMessageText);
 }
 
-<section class="container py-4">
+<section class="msg-chat">
 
-    <div class="text-center mb-4">
-        <h2 class="page-title mb-1">
-            <i class="bi bi-reply-all-fill me-2"></i>
-            @ViewData["Title"]
-        </h2>
-    </div>
+    @* ===== Top bar ===== *@
+    <header class="msg-chat__bar">
+        <a asp-controller="ContactMessage"
+           asp-action="OpenMessage"
+           asp-route-messageId="@Model.ParentMessageId"
+           class="msg-chat__back"
+           aria-label="@Localizer["IMessage"]"
+           title="@Localizer["IMessage"]">
+            <i class="bi bi-arrow-left" aria-hidden="true"></i>
+        </a>
+        <span class="msg-chat__crest" aria-hidden="true"><span class="tg-logo"><partial name="_Logo" /></span></span>
+        <div class="msg-chat__heading">
+            <span class="msg-chat__label">@Localizer["IMessage"]</span>
+            <h1 class="msg-chat__title">@Localizer["MWReply"]</h1>
+        </div>
+    </header>
 
-    <div class="admin-form-card mx-auto">
-        <form asp-action="Reply" method="post" class="admin-form">
-            <input type="hidden" asp-for="ParentMessageId" />
+    @* ===== Conversation on the pitch ===== *@
+    <div class="msg-chat__pitch">
+        <span class="msg-chalk msg-chalk--line" aria-hidden="true"></span>
+        <span class="msg-chalk msg-chalk--circle" aria-hidden="true"></span>
+        <span class="msg-chalk msg-chalk--box-l" aria-hidden="true"></span>
+        <span class="msg-chalk msg-chalk--box-r" aria-hidden="true"></span>
 
-            <div class="message-box message-box--previous mb-3">
-                <div class="message-box__title">
-                    <i class="bi bi-envelope-fill me-2"></i>
-                    @Localizer["RLastMessage"]
+        <div class="msg-thread">
+            <div class="msg-sep msg-sep--ref">
+                <span><i class="bi bi-megaphone-fill" aria-hidden="true"></i>@Localizer["RWriteResponse"]</span>
+            </div>
+
+            @if (hasPrevious)
+            {
+                <div class="msg-sep"><span><i class="bi bi-clock-history" aria-hidden="true"></i>@Localizer["MWPrevious"]</span></div>
+
+                <div class="msg-turn msg-turn--mine">
+                    <span class="msg-turn__ava" aria-hidden="true"><i class="bi bi-person-check-fill"></i></span>
+                    <article class="msg-bubble" style="--d:.1s">
+                        <p class="msg-bubble__text">@Model.PreviousMessageText</p>
+                        <span class="msg-bubble__ticks" aria-hidden="true"><i class="bi bi-check2-all"></i></span>
+                    </article>
                 </div>
-                <p class="mb-0">@Model.CurrentMessageText</p>
-            </div>
+            }
 
-            <div class="mb-3">
-                <label asp-for="Subject" class="form-label fw-bold">
-                    <i class="bi bi-chat-left-text-fill me-2"></i>@Localizer["RTopic"]
-                </label>
+            @if (hasCurrent)
+            {
+                <div class="msg-sep"><span><i class="bi bi-envelope-fill" aria-hidden="true"></i>@Localizer["RLastMessage"]</span></div>
 
-                <input asp-for="Subject"
-                       class="form-control tg-input" />
-
-                <span asp-validation-for="Subject" class="text-danger small"></span>
-            </div>
-
-
-            <div class="mb-3">
-                <label asp-for="Content" class="form-label fw-bold">
-                    <i class="bi bi-pencil-square me-2"></i>@Localizer["RYourResponse"]
-                </label>
-
-                <textarea asp-for="Content"
-                          class="form-control tg-input"
-                          rows="6" ></textarea>
-
-                <span asp-validation-for="Content" class="text-danger small"></span>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-lg w-100 tg-action-btn">
-                <i class="bi bi-send-fill me-2"></i>
-                @Localizer["RSendReply"]
-            </button>
-        </form>
+                <div class="msg-turn msg-turn--theirs">
+                    <span class="msg-turn__ava" aria-hidden="true"><i class="bi bi-person-fill"></i></span>
+                    <article class="msg-bubble" style="--d:.35s">
+                        <p class="msg-bubble__text">@Model.CurrentMessageText</p>
+                    </article>
+                </div>
+            }
+        </div>
     </div>
+
+    @* ===== Sticky composer ===== *@
+    <form asp-action="Reply" method="post" class="msg-composer">
+        <input type="hidden" asp-for="ParentMessageId" />
+
+        <div class="msg-composer__topic">
+            <label asp-for="Subject" class="msg-composer__label">
+                <i class="bi bi-chat-left-text-fill" aria-hidden="true"></i>@Localizer["RTopic"]
+            </label>
+            <input asp-for="Subject" class="form-control msg-composer__subject" autocomplete="off" />
+        </div>
+        <div class="msg-composer__hint">
+            <span asp-validation-for="Subject" class="text-danger small"></span>
+        </div>
+
+        <div class="msg-composer__row">
+            <div class="msg-composer__field">
+                <label asp-for="Content" class="visually-hidden">@Localizer["RYourResponse"]</label>
+                <textarea asp-for="Content"
+                          class="form-control msg-composer__input"
+                          rows="2"
+                          placeholder="@Localizer["RYourResponse"]"
+                          data-msg-counter="#msgContentCounter"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-accent msg-composer__go">
+                <i class="bi bi-send-fill" aria-hidden="true"></i>
+                <span class="msg-composer__go-label">@Localizer["RSendReply"]</span>
+            </button>
+        </div>
+
+        <div class="msg-composer__foot">
+            <span asp-validation-for="Content" class="text-danger small"></span>
+            <span id="msgContentCounter" class="msg-counter" aria-hidden="true"></span>
+        </div>
+    </form>
 
 </section>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        (function () {
+            var ta = document.querySelector('[data-msg-counter]');
+            if (!ta) return;
+            var out = document.querySelector(ta.getAttribute('data-msg-counter'));
+            if (!out) return;
+            var max = parseInt(ta.getAttribute('data-val-length-max'), 10) || 0;
+
+            function update() {
+                var len = ta.value.length;
+                out.textContent = max ? len + ' / ' + max : String(len);
+                out.classList.toggle('is-over', max > 0 && len > max);
+            }
+
+            // UI only: the composer grows with the text (capped by CSS max-height)
+            function grow() {
+                ta.style.height = 'auto';
+                ta.style.height = ta.scrollHeight + 4 + 'px';
+            }
+
+            ta.addEventListener('input', function () { update(); grow(); });
+            update();
+            if (ta.value) { grow(); }
+        })();
+    </script>
 }

@@ -1,0 +1,109 @@
+@page
+@using FootballProjectSoftUni.Core.Models.Profile
+@model DeleteAccountModel
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
+@{
+    ViewData["Title"] = Localizer["DATitle"].Value;
+
+    var check = Model.Check;
+    var start = check.TournamentStart?.ToString("dd.MM.yyyy HH:mm") ?? string.Empty;
+    var end = check.TournamentEnd?.ToString("dd.MM.yyyy HH:mm") ?? string.Empty;
+
+    string blockedText = check.Block switch
+    {
+        AccountDeletionBlock.Organizer => Localizer["DABlockedOrganizer"].Value,
+        AccountDeletionBlock.CoachInTournament when check.TournamentStarted => Localizer["DABlockedCoachRunning", end].Value,
+        AccountDeletionBlock.CoachInTournament => Localizer["DABlockedCoachUpcoming", check.TournamentCity ?? string.Empty, start].Value,
+        AccountDeletionBlock.RefereeInTournament when check.TournamentStarted => Localizer["DABlockedRefereeRunning", end].Value,
+        AccountDeletionBlock.RefereeInTournament => Localizer["DABlockedRefereeUpcoming", check.TournamentCity ?? string.Empty, start].Value,
+        _ => string.Empty
+    };
+}
+
+<section class="auth-solo">
+    <svg class="auth-solo__ball" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <circle cx="50" cy="50" r="46" />
+        <polygon points="50,33 66,45 60,64 40,64 34,45" />
+        <path d="M50 33 L50 6 M66 45 L92 36 M60 64 L76 86 M40 64 L24 86 M34 45 L8 36" />
+    </svg>
+
+    <div class="auth-solo__card" data-reveal>
+        <div class="auth-badge auth-badge--coral" aria-hidden="true">
+            <i class="bi bi-person-x-fill auth-badge__icon"></i>
+        </div>
+
+        <div class="auth-solo__head">
+            <h1 class="auth-solo__title">@Localizer["DATitle"]</h1>
+            <p class="auth-solo__sub">@Localizer["DASub"]</p>
+        </div>
+
+        @if (!check.CanDelete)
+        {
+            <div class="cp-warn" role="alert">
+                <i class="bi bi-lock-fill" aria-hidden="true"></i>
+                <div>@blockedText</div>
+            </div>
+        }
+        else
+        {
+            <div class="cp-warn" role="alert">
+                <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                <div>
+                    <strong>@Localizer["DADeletedTitle"]</strong>
+                    @Localizer["DADeletedList"]
+                </div>
+            </div>
+
+            <p class="auth-note">
+                <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
+                <span><strong>@Localizer["DAKeptTitle"]</strong> @Localizer["DAKeptList"]</span>
+            </p>
+
+            <form method="post" class="auth-form">
+                <div asp-validation-summary="ModelOnly" class="auth-summary alert alert-danger" role="alert"></div>
+
+                <div class="auth-field">
+                    <label asp-for="Input.Password" class="auth-label">@Localizer["DAPassword"]</label>
+                    <div class="auth-input-wrap">
+                        <i class="bi bi-lock-fill auth-input-icon" aria-hidden="true"></i>
+                        <input asp-for="Input.Password" class="form-control auth-input auth-input--pw" autocomplete="current-password" aria-required="true" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+                        <button type="button" class="auth-eye" data-auth-toggle aria-pressed="false" aria-label="@Localizer["AuthShowPassword"]" title="@Localizer["AuthShowPassword"]">
+                            <i class="bi bi-eye-fill" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Input.Password" class="auth-error text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-danger btn-lg auth-btn">
+                    <i class="bi bi-trash3-fill" aria-hidden="true"></i>
+                    <span>@Localizer["DASubmit"]</span>
+                </button>
+            </form>
+        }
+
+        <div class="auth-foot auth-foot--center">
+            <a class="auth-back" asp-area="" asp-controller="Profile" asp-action="Index">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                <span>@Localizer["LPProfile"]</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelectorAll('[data-auth-toggle]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var input = btn.parentElement.querySelector('input');
+                if (!input) { return; }
+                var show = input.type === 'password';
+                input.type = show ? 'text' : 'password';
+                btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+                var icon = btn.querySelector('i');
+                if (icon) { icon.className = show ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'; }
+            });
+        });
+    </script>
+}

@@ -12,11 +12,9 @@ namespace FootballProjectSoftUni.Infrastructure.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, bool seed = true)
             : base(options)
         {
-            if (Database.IsRelational())
-            {
-                Database.Migrate();
-            }
-            else
+            // Only the tests' in-memory database is created here. The real one is migrated once, when the site
+            // starts (Program.cs) - not every time a context is created, i.e. on every request.
+            if (!Database.IsRelational())
             {
                 Database.EnsureCreated();
             }
@@ -133,6 +131,27 @@ namespace FootballProjectSoftUni.Infrastructure.Data
                 .WithMany()
                 .HasForeignKey(c => c.RefereeId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Stripe webhooks look orders up by these ids; a checkout session belongs to exactly one order.
+            // Payments are never deleted with their tournament (they are a financial record).
+            builder.Entity<TournamentJoinPayment>(b =>
+            {
+                b.HasOne(p => p.Tournament)
+                    .WithMany()
+                    .HasForeignKey(p => p.TournamentId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                b.Property(p => p.TournamentCity).HasMaxLength(200);
+
+                b.Property(p => p.StripeSessionId).HasMaxLength(255);
+                b.Property(p => p.StripePaymentIntentId).HasMaxLength(255);
+
+                b.HasIndex(p => p.StripeSessionId)
+                    .IsUnique()
+                    .HasFilter("[StripeSessionId] IS NOT NULL");
+
+                b.HasIndex(p => p.StripePaymentIntentId);
+            });
 
 
             if (_seedDb)

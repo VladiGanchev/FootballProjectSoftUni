@@ -1,0 +1,84 @@
+@page
+@model ResendEmailConfirmationModel
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["RECTitle"].Value;
+}
+
+<section class="auth-solo">
+    <svg class="auth-solo__ball" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <circle cx="50" cy="50" r="46" />
+        <polygon points="50,33 66,45 60,64 40,64 34,45" />
+        <path d="M50 33 L50 6 M66 45 L92 36 M60 64 L76 86 M40 64 L24 86 M34 45 L8 36" />
+    </svg>
+
+    @if (Model.Sent)
+    {
+        <div class="auth-solo__card auth-solo__card--center" data-reveal>
+            <div class="auth-badge auth-badge--fly" aria-hidden="true">
+                <span class="auth-badge__trail"><span></span><span></span><span></span></span>
+                <i class="bi bi-envelope-check-fill auth-badge__icon"></i>
+            </div>
+
+            <div class="auth-solo__head">
+                <span class="tg-sticker tg-sticker--mint auth-solo__sticker" style="--rot:3deg">@Localizer["AuthPassSent"]</span>
+                <h1 class="auth-solo__title">@Localizer["RCTitle"]</h1>
+                <p class="auth-solo__sub">@Localizer["RECDone"]</p>
+            </div>
+
+            <p class="auth-note">
+                <i class="bi bi-lightbulb-fill" aria-hidden="true"></i>
+                <span>@Localizer["AuthCheckSpam"]</span>
+            </p>
+
+            <a asp-page="./Login" class="btn btn-primary btn-lg auth-btn">
+                <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
+                <span>@Localizer["FPCBackToLogin"]</span>
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="auth-solo__card" data-reveal>
+            <div class="auth-badge auth-badge--coral" aria-hidden="true">
+                <i class="bi bi-envelope-fill auth-badge__icon"></i>
+                <span class="auth-badge__bubble">?</span>
+            </div>
+
+            <div class="auth-solo__head">
+                <span class="tg-sticker tg-sticker--white auth-solo__sticker" style="--rot:-3deg">@Localizer["RECKicker"]</span>
+                <h1 class="auth-solo__title">@Localizer["RECTitle"]</h1>
+                <p class="auth-solo__sub">@Localizer["RECSub"]</p>
+            </div>
+
+            <form method="post" class="auth-form">
+                <div asp-validation-summary="ModelOnly" class="auth-summary alert alert-danger" role="alert"></div>
+
+                <div class="auth-field">
+                    <label asp-for="Input.Email" class="auth-label">@Localizer["FPEmail"]</label>
+                    <div class="auth-input-wrap">
+                        <i class="bi bi-envelope-fill auth-input-icon" aria-hidden="true"></i>
+                        <input asp-for="Input.Email" class="form-control auth-input" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                    </div>
+                    <span asp-validation-for="Input.Email" class="auth-error text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg auth-btn">
+                    <i class="bi bi-send-fill" aria-hidden="true"></i>
+                    <span>@Localizer["RECSend"]</span>
+                </button>
+            </form>
+
+            <div class="auth-foot auth-foot--center">
+                <a class="auth-back" asp-page="./Login">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                    <span>@Localizer["FPBackToLogin"]</span>
+                </a>
+            </div>
+        </div>
+    }
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

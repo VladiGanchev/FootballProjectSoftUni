@@ -1,53 +1,112 @@
-﻿@using Microsoft.AspNetCore.Mvc.Rendering
+@using Microsoft.AspNetCore.Mvc.Rendering
 @model FootballProjectSoftUni.Core.Models.City.UpdateCityBestTeamViewModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
-
-
 @{
     ViewBag.Title = "Update City Leaders";
+    ViewData["FullWidth"] = true;
 }
 
-<section class="container py-4">
-    <div class="admin-form-card mx-auto">
-        <form asp-action="UpdateCityLeaders" method="post" class="admin-form">
+<div class="container-xl cp-page">
+    <div class="cp-sb-page">
 
-            <div class="mb-3">
-                <label asp-for="CityId" class="form-label fw-bold">
-                    <i class="bi bi-geo-alt-fill me-2"></i>@Localizer["UPLCity"]
-                </label>
+        <header>
+            <h1 class="cp-mega cp-mega--md" data-split>@Localizer["DUCL"]</h1>
+            <p class="cp-lead">@Localizer["CPUpdateLeadersSub"]</p>
+        </header>
 
-                <select asp-for="CityId"
-                        class="form-select form-select-lg tg-select"
-                        asp-items="@(new SelectList(Model.Cities, "Id", "Name"))">
-                </select>
+        <form asp-action="UpdateCityLeaders" method="post" class="cp-sb">
 
-                <span asp-validation-for="CityId" class="text-danger small"></span>
+            @* Stadium scoreboard mirrors the selection *@
+            <div class="cp-sb__board" aria-hidden="true">
+                <div class="cp-sb__lamps">
+                    @for (int k = 0; k < 18; k++)
+                    {
+                        <i style="--k:@k"></i>
+                    }
+                </div>
+
+                <div class="cp-sb__screen">
+                    <div class="cp-sb__slot">
+                        <small>@Localizer["UPLCity"]</small>
+                        <strong id="sbCity">&mdash;</strong>
+                    </div>
+
+                    <div class="cp-sb__plus">
+                        <span class="cp-sb__digits" id="sbDigits">+1</span>
+                        <small>@Localizer["CPWin"]</small>
+                    </div>
+
+                    <div class="cp-sb__slot cp-sb__slot--team">
+                        <small>@Localizer["UPLTeam"]</small>
+                        <strong id="sbTeam">&mdash;</strong>
+                    </div>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="TeamId" class="form-label fw-bold">
-                    <i class="bi bi-people-fill me-2"></i>@Localizer["UPLTeam"]
-                </label>
+            @* Control desk *@
+            <div class="cp-sb__desk">
+                <div class="cp-sb__field">
+                    <label asp-for="CityId" class="form-label">
+                        <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>@Localizer["UPLCity"]
+                    </label>
+                    <select asp-for="CityId"
+                            class="form-select form-select-lg"
+                            asp-items="@(new SelectList(Model.Cities, "Id", "Name"))">
+                    </select>
+                    <span asp-validation-for="CityId" class="text-danger small"></span>
+                </div>
 
-                <select asp-for="TeamId"
-                        class="form-select form-select-lg tg-select"
-                        asp-items="@(new SelectList(Model.Teams, "Id", "Name"))">
-                </select>
+                <div class="cp-sb__field">
+                    <label asp-for="TeamId" class="form-label">
+                        <i class="bi bi-shield-fill" aria-hidden="true"></i>@Localizer["UPLTeam"]
+                    </label>
+                    <select asp-for="TeamId"
+                            class="form-select form-select-lg"
+                            asp-items="@(new SelectList(Model.Teams, "Id", "Name"))">
+                    </select>
+                    <span asp-validation-for="TeamId" class="text-danger small"></span>
+                </div>
 
-                <span asp-validation-for="TeamId" class="text-danger small"></span>
+                <button type="submit" class="btn btn-sun btn-lg cp-sb__go">
+                    <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>@Localizer["UPLAddWin"]
+                </button>
             </div>
-
-            <button type="submit" class="btn btn-success btn-lg w-100 tg-action-btn">
-                <i class="bi bi-plus-circle-fill me-2"></i>
-                @Localizer["UPLAddWin"]
-            </button>
 
         </form>
     </div>
-
-</section>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        (function () {
+            var city = document.getElementById('CityId');
+            var team = document.getElementById('TeamId');
+            var outCity = document.getElementById('sbCity');
+            var outTeam = document.getElementById('sbTeam');
+            var digits = document.getElementById('sbDigits');
+            if (!city || !team || !outCity || !outTeam) { return; }
+
+            function label(select) {
+                var option = select.options[select.selectedIndex];
+                return option ? option.text : '—';
+            }
+
+            function sync(bump) {
+                outCity.textContent = label(city);
+                outTeam.textContent = label(team);
+                if (bump && digits) {
+                    digits.classList.remove('is-bump');
+                    void digits.offsetWidth;
+                    digits.classList.add('is-bump');
+                }
+            }
+
+            city.addEventListener('change', function () { sync(true); });
+            team.addEventListener('change', function () { sync(true); });
+            sync(false);
+        })();
+    </script>
 }

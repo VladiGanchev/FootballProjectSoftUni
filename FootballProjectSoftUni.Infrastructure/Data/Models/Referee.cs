@@ -26,6 +26,11 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
 
         public ICollection<RefereeRating> Ratings { get; set; } = new List<RefereeRating>();
 
+        // Not used any more: the number of refereed tournaments is counted from the finished tournaments.
         public int RefereedTournamentsCount { get; set; }
+
+        // "Stop being a referee" switches the profile off instead of deleting it, so the ratings and
+        // comments stay; becoming a referee again switches the same profile back on.
+        public bool IsActive { get; set; } = true;
     }
 }

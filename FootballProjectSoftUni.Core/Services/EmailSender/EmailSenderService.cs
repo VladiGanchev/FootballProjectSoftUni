@@ -10,12 +10,16 @@ namespace FootballProjectSoftUni.Core.Services.EmailSender
 {
     public class EmailSenderService : IEmailSender
     {
-        private readonly IEmailService emailService;
+        private readonly IEmailQueue emailQueue;
 
-        public EmailSenderService(IEmailService emailService)
-            => this.emailService = emailService;
+        public EmailSenderService(IEmailQueue emailQueue)
+            => this.emailQueue = emailQueue;
 
+        // Queued, not sent here: a slow or failing mail server must not break registration or a password reset.
         public Task SendEmailAsync(string email, string subject, string htmlMessage)
-            => emailService.SendAsync(email, subject, htmlMessage);
+        {
+            emailQueue.Enqueue(email, subject, htmlMessage);
+            return Task.CompletedTask;
+        }
     }
 }

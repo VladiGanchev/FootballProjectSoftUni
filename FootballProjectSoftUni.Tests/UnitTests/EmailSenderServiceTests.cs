@@ -9,21 +9,17 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 {
     public class EmailSenderServiceTests
     {
-        private class FakeEmailService : IEmailService
+        private class FakeEmailQueue : IEmailQueue
         {
             public List<(string to, string subject, string body)> Sent { get; } = new();
 
-            public Task SendAsync(string to, string subject, string htmlBody)
-            {
-                Sent.Add((to, subject, htmlBody));
-                return Task.CompletedTask;
-            }
+            public void Enqueue(string to, string subject, string htmlBody) => Sent.Add((to, subject, htmlBody));
         }
 
         [Test]
-        public async Task SendEmailAsync_ShouldCallEmailService_WithSameParameters()
+        public async Task SendEmailAsync_ShouldQueueTheEmail_WithSameParameters()
         {
-            var fake = new FakeEmailService();
+            var fake = new FakeEmailQueue();
             var sender = new EmailSenderService(fake);
 
             await sender.SendEmailAsync("test@test.com", "Subject", "<b>Hello</b>");
@@ -39,7 +35,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         [Test]
         public async Task SendEmailAsync_ShouldForwardMultipleCalls()
         {
-            var fake = new FakeEmailService();
+            var fake = new FakeEmailQueue();
             var sender = new EmailSenderService(fake);
 
             await sender.SendEmailAsync("a@test.com", "S1", "B1");

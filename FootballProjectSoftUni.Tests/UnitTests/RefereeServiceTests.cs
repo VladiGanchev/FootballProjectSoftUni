@@ -114,7 +114,8 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             {
                 Id = 9,
                 StartDate = DateTime.Now,
-                EndDate = DateTime.Now,
+                // Not ended yet: only then is the referee busy (a finished tournament no longer blocks him).
+                EndDate = DateTime.Now.AddDays(1),
                 CreatedOn = DateTime.Now,
                 Description = "lkjhgfdvbjkiuytrdvbnjiuytfgbnjuytghjuytg",
                 NumberOfTeams = 0,
@@ -460,60 +461,122 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         }
 
         [Test]
-        public async Task LevaeTournament_ShouldBeTrue()
+        public async Task LeaveTournament_BeforeTheStart_FreesTheTournament()
         {
-            var tournament = new Tournament()
-            {
-                Id = 15,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now,
-                CreatedOn = DateTime.Now,
-                Description = "lkjhgfdvbjkiuytrdvbnjiuytfgbnjuytghjuytg",
-                NumberOfTeams = 0,
-                Status = FootballProjectSoftUni.Infrastructure.Data.Enums.TournamentStatus.Finished,
-                OrganiserId = "600bafb9-a73d-4489-a387-643c3b8ae96c",
-                RefereeId = null
-            };
-
+            var tournament = RefTournament(15, DateTime.Now.AddDays(2));
             _data.Tournaments.Add(tournament);
+            _data.TournamentsParticipants.Add(new TournamentParticipant { ParticipantId = "ref-leave", TournamentId = 15, Role = "Referee" });
+            _data.Referees.Add(new Referee { Id = "ref-leave", Name = "Ref", Birthdate = DateTime.Now.AddYears(-30), Experience = 5, TournamentId = 15 });
+            tournament.RefereeId = "ref-leave";
+            await _data.SaveChangesAsync();
 
-            _data.SaveChanges();
-
-            var tp = new TournamentParticipant()
-            {
-                ParticipantId = "2dd70b49-a983-4df6-abc4-9f297e417b74",
-                TournamentId = 15,
-                Role = "Referee"
-            };
-
-            _data.TournamentsParticipants.Add(tp);
-
-            _data.SaveChanges();
-
-            var referee = new Referee()
-            {
-                Id = "01bd2ve2-415b-4514-a6hb-11042df2acca",
-                Birthdate = DateTime.Now.AddYears(-20),
-                Name = "goshow",
-                Experience = 5,
-                Tournament = tournament,
-                TournamentId = tournament.Id
-            };
-
-            _data.Referees.Add(referee);
-
-            _data.SaveChanges();
-
-            tournament.Referee = referee;
-            tournament.RefereeId = referee.Id;
-            _data.SaveChanges();
-
-            var result = await _refereeService.LeaveTournamentAsync(15, "2dd70b49-a983-4df6-abc4-9f297e417b74");
+            var result = await _refereeService.LeaveTournamentAsync(15, "ref-leave");
 
             Assert.IsTrue(result);
-
-            Assert.IsNull(tournament.RefereeId);
+            Assert.IsNull((await _data.Tournaments.FirstAsync(t => t.Id == 15)).RefereeId);
+            Assert.IsNull((await _data.Referees.FirstAsync(x => x.Id == "ref-leave")).TournamentId);
         }
+
+        [Test]
+        public async Task LeaveTournament_AfterTheStart_IsRefused()
+        {
+            var tournament = RefTournament(16, DateTime.Now.AddHours(-1));
+            tournament.RefereeId = "ref-run";
+            _data.Tournaments.Add(tournament);
+            _data.TournamentsParticipants.Add(new TournamentParticipant { ParticipantId = "ref-run", TournamentId = 16, Role = "Referee" });
+            _data.Referees.Add(new Referee { Id = "ref-run", Name = "Ref", Birthdate = DateTime.Now.AddYears(-30), Experience = 5, TournamentId = 16 });
+            await _data.SaveChangesAsync();
+
+            var result = await _refereeService.LeaveTournamentAsync(16, "ref-run");
+
+            Assert.IsFalse(result, "Nobody could replace him after the start.");
+            Assert.That((await _data.Tournaments.FirstAsync(t => t.Id == 16)).RefereeId, Is.EqualTo("ref-run"));
+        }
+
+        [Test]
+        public async Task CheckForErrors_RefereeOfAFinishedTournament_CanTakeAnotherOne()
+        {
+            _data.Tournaments.Add(RefTournament(17, DateTime.Now.AddDays(-3)));      // finished
+            _data.Tournaments.Add(RefTournament(18, DateTime.Now.AddDays(3)));       // new one
+            _data.Referees.Add(new Referee { Id = "ref-free", Name = "Ref", Birthdate = DateTime.Now.AddYears(-30), Experience = 5, TournamentId = 17 });
+            await _data.SaveChangesAsync();
+
+            Assert.IsNull(await _refereeService.CheckForErrorsAsync(18, "ref-free"));
+        }
+
+        [Test]
+        public async Task CheckForErrors_RefereeOfAnUnfinishedTournament_IsBusy()
+        {
+            _data.Tournaments.Add(RefTournament(19, DateTime.Now.AddDays(2)));
+            _data.Tournaments.Add(RefTournament(20, DateTime.Now.AddDays(3)));
+            _data.Referees.Add(new Referee { Id = "ref-busy", Name = "Ref", Birthdate = DateTime.Now.AddYears(-30), Experience = 5, TournamentId = 19 });
+            await _data.SaveChangesAsync();
+
+            var error = await _refereeService.CheckForErrorsAsync(20, "ref-busy");
+
+            Assert.IsNotNull(error);
+            StringAssert.Contains("already participate in another one as a referee", error!.Message);
+        }
+
+        [Test]
+        public async Task RefereeList_ShowsOnlyActiveReferees_AndCountsFinishedTournaments()
+        {
+            _data.Referees.Add(new Referee { Id = "ref-a", Name = "Active", Experience = 5, RefereedTournamentsCount = 99 });
+            _data.Referees.Add(new Referee { Id = "ref-off", Name = "Stopped", Experience = 5, IsActive = false });
+
+            var finished1 = RefTournament(21, DateTime.Now.AddDays(-10)); finished1.RefereeId = "ref-a";
+            var finished2 = RefTournament(22, DateTime.Now.AddDays(-5)); finished2.RefereeId = "ref-a";
+            var upcoming = RefTournament(23, DateTime.Now.AddDays(5)); upcoming.RefereeId = "ref-a";
+            _data.Tournaments.AddRange(finished1, finished2, upcoming);
+            await _data.SaveChangesAsync();
+
+            var list = (await _refereeService.GetAllRefereesWithRatingsAsync("any")).ToList();
+
+            Assert.That(list.Select(x => x.Id), Is.EquivalentTo(new[] { "ref-a" }));
+            Assert.That(list[0].TournamentsCount, Is.EqualTo(2), "Only finished tournaments count, not the old counter.");
+        }
+
+        [Test]
+        public async Task RateReferee_Yourself_IsRefused()
+        {
+            _data.Referees.Add(new Referee { Id = "ref-self", Name = "Ref", Experience = 5 });
+            await _data.SaveChangesAsync();
+
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                await _refereeService.RateRefereeAsync("ref-self", "ref-self", 5));
+        }
+
+        [Test]
+        public async Task BecomingRefereeAgain_BringsBackTheOldProfileWithItsRatings()
+        {
+            _data.Tournaments.Add(RefTournament(24, DateTime.Now.AddDays(4)));
+            _data.Referees.Add(new Referee { Id = "ref-back", Name = "Old", Experience = 2, Birthdate = DateTime.Now.AddYears(-40), IsActive = false });
+            _data.RefereesRatings.Add(new RefereeRating { RefereeId = "ref-back", UserId = "u1", Value = 1 });
+            await _data.SaveChangesAsync();
+
+            var model = new RefereeFormViewMOdel { Name = "New Name", Experience = 6 };
+            var result = await _refereeService.CreateRefereeToTournamentAsync(model, 24, "ref-back", DateTime.Now.AddYears(-40));
+
+            Assert.IsTrue(result);
+            var referee = await _data.Referees.FirstAsync(x => x.Id == "ref-back");
+            Assert.IsTrue(referee.IsActive);
+            Assert.That(referee.Name, Is.EqualTo("New Name"));
+            Assert.That(await _data.RefereesRatings.CountAsync(x => x.RefereeId == "ref-back"), Is.EqualTo(1), "The bad rating is still there.");
+        }
+
+        private static Tournament RefTournament(int id, DateTime start) => new Tournament
+        {
+            Id = id,
+            StartDate = start,
+            EndDate = start.AddHours(8),
+            CreatedOn = DateTime.Now,
+            Description = "Referee test",
+            NumberOfTeams = 0,
+            Status = TournamentStatus.Upcoming,
+            OrganiserId = "org",
+            ImageUrl = "https://example.com/t.jpg",
+            RefereeId = null
+        };
 
         [Test]
         public async Task GetAllRefereesWithRatingsAsync_ReturnsCorrectData()
@@ -720,7 +783,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         }
 
         [Test]
-        public async Task AssignExistingRefereeToTournamentAsync_WhenValid_AssignsReferee_IncrementsCount_AddsTp()
+        public async Task AssignExistingRefereeToTournamentAsync_WhenValid_AssignsReferee_AddsTp()
         {
             var userId = "r1";
             var tournamentId = 1;
@@ -754,7 +817,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             Assert.AreEqual(true, result);
 
             var referee = await _data.Referees.FirstAsync(r => r.Id == userId);
-            Assert.AreEqual(8, referee.RefereedTournamentsCount); 
+            Assert.AreEqual(7, referee.RefereedTournamentsCount, "Joining is not counted any more (finished tournaments are).");
             Assert.AreEqual(tournamentId, referee.TournamentId);
 
             var tournament = await _data.Tournaments.FirstAsync(t => t.Id == tournamentId);
@@ -922,6 +985,38 @@ namespace FootballProjectSoftUni.Tests.UnitTests
                 await _refereeService.GetRefereeEmail("missing-id"));
         }
 
+        [Test]
+        public async Task DeleteCommentAsync_RemovesTheComment_AndReturnsWhatTheAuthorIsToldAbout()
+        {
+            await _data.Users.AddAsync(new ApplicationUser { Id = "author", Email = "au@test.com", UserName = "au@test.com", FirstName = "Ivan", LastName = "Petrov" });
+            _data.Referees.Add(new Referee { Id = "ref-c", Name = "Ref C", Experience = 5 });
+            var comment = new RefereeComment { RefereeId = "ref-c", UserId = "author", Content = "bad words" };
+            _data.RefereeComments.Add(comment);
+            await _data.SaveChangesAsync();
 
+            var found = await _refereeService.GetCommentAsync(comment.Id);
+            Assert.That(found, Is.Not.Null);
+            Assert.That((found!.UserName, found.RefereeName, found.RefereeId, found.UserId), Is.EqualTo(("Ivan Petrov", "Ref C", "ref-c", "author")));
+
+            var deleted = await _refereeService.DeleteCommentAsync(comment.Id);
+
+            Assert.That(deleted?.UserId, Is.EqualTo("author"));
+            Assert.That(await _data.RefereeComments.AnyAsync(c => c.Id == comment.Id), Is.False);
+            Assert.That(await _refereeService.DeleteCommentAsync(comment.Id), Is.Null);
+            Assert.That(await _refereeService.GetCommentAsync(comment.Id), Is.Null);
+        }
+
+        [Test]
+        public async Task GetCommentsAsync_TellsWhoWroteEachComment()
+        {
+            _data.Referees.Add(new Referee { Id = "ref-w", Name = "Ref W", Experience = 5, IsActive = true });
+            _data.RefereeComments.Add(new RefereeComment { RefereeId = "ref-w", UserId = "writer", Content = "ok" });
+            await _data.SaveChangesAsync();
+
+            var page = await _refereeService.GetCommentsAsync("ref-w");
+
+            Assert.That(page.Comments.Single().UserId, Is.EqualTo("writer"));
+            Assert.That(page.Comments.Single().Id, Is.GreaterThan(0));
+        }
     }
 }

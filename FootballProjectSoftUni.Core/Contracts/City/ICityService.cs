@@ -15,6 +15,10 @@ namespace FootballProjectSoftUni.Core.Contracts.City
         Task<DeleteCityViewModel> FindTownAsync(CityViewModel model, int id);
         Task<IEnumerable<CityViewModel>> SearchAsync(string searchString);
         Task<bool> DeleteCityAsync(int id);
+
+        /// <summary>Gives the city a new picture.</summary>
+        /// <returns>The address of its old picture, or null when there is no such city.</returns>
+        Task<string?> ChangeCityImageAsync(int id, string imageUrl);
         Task<List<BestTeamViewModel>> GetBestTeamsAsync(int cityId);
         Task<UpdateCityBestTeamViewModel> GetUpdateCityBestTeamFormAsync();
         Task IncrementTeamWinsInCityAsync(int cityId, int teamId);

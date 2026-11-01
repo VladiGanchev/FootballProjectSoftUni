@@ -1,0 +1,27 @@
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["Err429Title"].Value;
+}
+
+@* Shown when too many login / register / password attempts came from one IP address. *@
+<section class="err-var err-var--single">
+    <div class="err-var__copy">
+        <span class="tg-kicker">429</span>
+        <h1 class="err-mega err-mega--md" data-split>@Localizer["Err429Title"]</h1>
+        <span class="tg-chip err-var__chip">@Localizer["Err429Wait"]</span>
+
+        <p class="err-lead">@Localizer["Err429Text"]</p>
+
+        <div class="err-actions">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">
+                <i class="bi bi-house-fill" aria-hidden="true"></i>
+                <span>@Localizer["DHome"]</span>
+            </a>
+            <button type="button" data-history-back class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                <span>@Localizer["ErrGoBack"]</span>
+            </button>
+        </div>
+    </div>
+
+</section>

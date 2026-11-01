@@ -1,121 +1,278 @@
-﻿@using FootballProjectSoftUni.Extensions
+@using FootballProjectSoftUni.Extensions
 @model IEnumerable<FootballProjectSoftUni.Core.Models.Referee.RefereeListItemViewModel>
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 
 @{
     ViewData["Title"] = "Referees";
+
+    string Initials(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return "?";
+        }
+
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var first = parts[0].Substring(0, 1);
+        var last = parts.Length > 1 ? parts[parts.Length - 1].Substring(0, 1) : string.Empty;
+        return (first + last).ToUpperInvariant();
+    }
+
+    // Card tier by average rating: gold >= 4, silver >= 2.5, bronze below, rookie = no ratings yet
+    string Tier(double? rating)
+    {
+        if (!rating.HasValue)
+        {
+            return "rookie";
+        }
+
+        if (rating.Value >= 4)
+        {
+            return "gold";
+        }
+
+        return rating.Value >= 2.5 ? "silver" : "bronze";
+    }
+
+    string TierKey(string tier)
+    {
+        switch (tier)
+        {
+            case "gold": return "TpTierGold";
+            case "silver": return "TpTierSilver";
+            case "bronze": return "TpTierBronze";
+            default: return "TpTierNew";
+        }
+    }
+
+    // FUT-style collectible card (plain markup only, no tag helpers)
+    void FutCard(FootballProjectSoftUni.Core.Models.Referee.RefereeListItemViewModel r, string size)
+    {
+        var tier = Tier(r.AverageRating);
+        var rounded = r.AverageRating.HasValue ? (int)Math.Round(r.AverageRating.Value, MidpointRounding.AwayFromZero) : 0;
+        var ratingText = r.AverageRating.HasValue ? r.AverageRating.Value.ToString("0.0") : "–";
+        var starsLabel = r.AverageRating.HasValue ? r.AverageRating.Value.ToString("0.00") + " / 5" : Localizer["RNoGrades"].Value;
+
+        <div class="tp-fut tp-fut--@tier @size" data-tilt="14">
+            <div class="tp-fut__rate">
+                <span class="visually-hidden">@Localizer["RAverage"]:</span>
+                <span class="tp-fut__num">@ratingText</span>
+                <span class="tp-fut__pos">@Localizer["TpPosRef"]</span>
+                <span class="tp-fut__crest" aria-hidden="true"><i class="bi bi-flag-fill"></i></span>
+            </div>
+
+            <div class="tp-fut__medal" aria-hidden="true"><span>@Initials(r.Name)</span></div>
+
+            <h3 class="tp-fut__name">@r.Name</h3>
+
+            <ul class="tp-fut__stats">
+                <li class="tp-fut__stat">
+                    <b>@r.TournamentsCount</b>
+                    <small aria-hidden="true">@Localizer["TpFutTrn"]</small>
+                    <span class="visually-hidden">@Localizer["RCount"]</span>
+                </li>
+                <li class="tp-fut__stat">
+                    <b>@r.Experience</b>
+                    <small aria-hidden="true">@Localizer["TpFutExp"]</small>
+                    <span class="visually-hidden">@Localizer["RExp"]</span>
+                </li>
+                <li class="tp-fut__stat">
+                    <span class="tp-fut__stars" role="img" aria-label="@starsLabel">
+                        @for (int s = 1; s <= 5; s++)
+                        {
+                            <i class="bi bi-star-fill @(s > rounded ? "is-off" : "")" aria-hidden="true"></i>
+                        }
+                    </span>
+                    <small>@Localizer[TierKey(tier)]</small>
+                </li>
+            </ul>
+        </div>
+    }
 }
 
-<section class="container py-4">
+@if (TempData["Success"] != null || TempData["ErrorMessage"] != null)
+{
+    <div class="tp-alerts">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success" role="status">
+                <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                <div>@TempData["Success"]</div>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                <div>@TempData["ErrorMessage"]</div>
+            </div>
+        }
+    </div>
+}
 
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+@if (Model == null || !Model.Any())
+{
+    <header class="tg-page-head">
+        <div>
+            <h1 class="tg-page-head__title">@Localizer["DReferees"] <em>@Localizer["TpRefTitle2"]</em></h1>
+        </div>
 
         @if (User.IsAdmin())
         {
-            <a asp-action="Invite" class="btn btn-primary tg-action-btn">
-                <i class="bi bi-person-plus-fill me-2"></i>
-                @Localizer["RInvite"]
-            </a>
-        }
-    </div>
-
-    @if (Model == null || !Model.Any())
-    {
-        <div class="empty-state text-center">
-            <i class="bi bi-person-x display-4 text-muted"></i>
-            <h5 class="mt-3">@Localizer["RNoCurrent"]</h5>
-            <p class="text-muted mb-0">@Localizer["RWhen"]</p>
-        </div>
-    }
-    else
-    {
-        <div class="tg-table-card">
-            <div class="table-responsive">
-                <table class="table align-middle mb-0 tg-table">
-                    <thead>
-                        <tr>
-                            <th>@Localizer["Rname"]</th>
-                            <th>@Localizer["RExp"]</th>
-                            <th>@Localizer["RCount"]</th>
-                            <th>@Localizer["RAverage"]</th>
-                            <th>@Localizer["RGrade"]</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @foreach (var r in Model)
-                        {
-                            <tr>
-                                <td class="fw-bold">
-                                    <i class="bi bi-person-badge-fill me-1"></i>
-                                    @r.Name
-                                </td>
-
-                                <td>
-                                    <span class="badge bg-light text-dark fw-bold">
-                                        @r.Experience г.
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <i class="bi bi-trophy-fill me-1 text-warning"></i>
-                                    @r.TournamentsCount
-                                </td>
-
-                                <td>
-                                    @if (r.AverageRating.HasValue)
-                                    {
-                                        <span class="rating-badge">
-                                            <i class="bi bi-star-fill me-1"></i>
-                                            @r.AverageRating.Value.ToString("0.00") / 5
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">@Localizer["RNoGrades"]</span>
-                                    }
-                                </td>
-
-                                <td>
-                                    <div class="d-flex align-items-center gap-2 flex-wrap">
-
-                                        <form asp-action="Rate"
-                                              method="post"
-                                              class="d-flex align-items-center gap-2 m-0">
-                                            <input type="hidden" name="refereeId" value="@r.Id" />
-
-                                            <select name="rating"
-                                                    class="form-select form-select-sm tg-select w-auto">
-                                                @for (int i = 1; i <= 5; i++)
-                                                {
-                                                    <option value="@i">@i</option>
-                                                }
-                                            </select>
-
-                                            <button type="submit"
-                                                    class="btn btn-sm btn-success tg-action-btn">
-                                                <i class="bi bi-check-lg me-1"></i>
-                                                @Localizer["RSave"]
-                                            </button>
-                                        </form>
-
-                                        <a asp-action="Comments"
-                                           asp-route-id="@r.Id"
-                                           class="btn btn-sm btn-outline-secondary">
-                                            <i class="bi bi-chat-dots-fill me-1"></i>
-                                            @Localizer["RComments"]
-                                        </a>
-
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-
-                </table>
+            <div class="tg-page-head__actions">
+                <a asp-action="Invite" class="btn btn-primary">
+                    <i class="bi bi-person-plus-fill" aria-hidden="true"></i>
+                    @Localizer["RInvite"]
+                </a>
             </div>
-        </div>
-    }
+        }
+    </header>
 
-</section>
+    <div class="tg-empty">
+        <span class="tg-empty__icon" aria-hidden="true"><i class="bi bi-person-x"></i></span>
+        <h5>@Localizer["RNoCurrent"]</h5>
+        <p class="text-muted mb-0">@Localizer["RWhen"]</p>
+    </div>
+}
+else
+{
+    var referees = Model.ToList();
+    var totalTournaments = referees.Sum(x => x.TournamentsCount);
+    var rated = referees.Where(x => x.AverageRating.HasValue).ToList();
+    double? overall = rated.Any() ? rated.Average(x => x.AverageRating.GetValueOrDefault()) : (double?)null;
+    var featured = rated
+        .OrderByDescending(x => x.AverageRating)
+        .ThenByDescending(x => x.TournamentsCount)
+        .FirstOrDefault();
+
+    @* ============ HERO: poster headline + "referee of the season" card ============ *@
+    <section class="tp-refhero">
+        <div class="tp-refhero__copy">
+            <h1 class="tp-giant" data-split>@Localizer["DReferees"] <em>@Localizer["TpRefTitle2"]</em></h1>
+            <p class="tp-lead">@Localizer["TpRefSub"]</p>
+
+            <div class="tp-stickers">
+                <span class="tg-sticker" style="--rot:-4deg">
+                    <i class="bi bi-flag-fill" aria-hidden="true"></i>
+                    <b class="tp-sticker-num" data-count="@referees.Count">@referees.Count</b>
+                    @Localizer["DReferees"]
+                </span>
+                <span class="tg-sticker tg-sticker--mint" style="--rot:3deg">
+                    <i class="bi bi-trophy-fill" aria-hidden="true"></i>
+                    <b class="tp-sticker-num" data-count="@totalTournaments">@totalTournaments</b>
+                    @Localizer["RCount"]
+                </span>
+                <span class="tg-sticker tg-sticker--white" style="--rot:-2deg">
+                    <i class="bi bi-star-fill" aria-hidden="true"></i>
+                    <b class="tp-sticker-num">@(overall.HasValue ? overall.Value.ToString("0.00") : "-")</b>
+                    @Localizer["RAverage"]
+                </span>
+            </div>
+
+            @if (User.IsAdmin())
+            {
+                <a asp-action="Invite" class="btn btn-accent btn-lg" data-magnetic>
+                    <i class="bi bi-person-plus-fill" aria-hidden="true"></i>
+                    @Localizer["RInvite"]
+                </a>
+            }
+        </div>
+
+        <div class="tp-refhero__stage">
+            <span class="tp-burst" aria-hidden="true"></span>
+
+            @if (featured != null)
+            {
+                <a class="tp-refhero__feat" href="#ref-@featured.Id" aria-label="@Localizer["TpRefTop"]: @featured.Name">
+                    <span class="tg-sticker tg-sticker--coral tp-refhero__badge" style="--rot:-8deg" aria-hidden="true">
+                        <i class="bi bi-trophy-fill"></i>@Localizer["TpRefTop"]
+                    </span>
+                    @{ FutCard(featured, "tp-fut--xl"); }
+                </a>
+            }
+            else
+            {
+                <div class="tp-pack" data-tilt="12" aria-hidden="true">
+                    <span class="tp-pack__q">?</span>
+                    <span class="tp-pack__label">@Localizer["RNoGrades"]</span>
+                </div>
+            }
+        </div>
+    </section>
+
+    @* ============ ALBUM: every referee as a card on the pitch ============ *@
+    <section class="tp-album tg-pitch" aria-labelledby="tp-album-title">
+        <svg class="tg-pitch-lines" viewBox="0 0 100 64" preserveAspectRatio="none" aria-hidden="true">
+            <rect x="2" y="2" width="96" height="60" rx="1" />
+            <line x1="50" y1="2" x2="50" y2="62" />
+            <circle cx="50" cy="32" r="8" />
+            <rect x="2" y="17" width="13" height="30" />
+            <rect x="85" y="17" width="13" height="30" />
+        </svg>
+
+        <div class="tp-album__bar">
+            <h2 class="tp-album__count" id="tp-album-title">
+                <span>@referees.Count</span>@Localizer["DReferees"]
+            </h2>
+            <ul class="tp-legend">
+                <li class="is-gold"><i aria-hidden="true"></i>@Localizer["TpTierGold"] &ge; 4.0</li>
+                <li class="is-silver"><i aria-hidden="true"></i>@Localizer["TpTierSilver"] &ge; 2.5</li>
+                <li class="is-bronze"><i aria-hidden="true"></i>@Localizer["TpTierBronze"] &lt; 2.5</li>
+                <li class="is-rookie"><i aria-hidden="true"></i>@Localizer["TpTierNew"]</li>
+            </ul>
+        </div>
+
+        <div class="tp-album__grid">
+            @for (int n = 0; n < referees.Count; n++)
+            {
+                var r = referees[n];
+                var rot = (n % 3) == 0 ? "-2.2deg" : (n % 3) == 1 ? "1.6deg" : "-.6deg";
+
+                <article class="tp-slot" id="ref-@r.Id" data-reveal>
+                    <div class="tp-slot__card" style="--rot:@rot">
+                        @{ FutCard(r, string.Empty); }
+                    </div>
+
+                    <div class="tp-dock">
+                        @if (r.Id != User.Id())
+                        {
+                            <form asp-action="Rate" method="post" class="tp-rate">
+                                <input type="hidden" name="refereeId" value="@r.Id" />
+
+                                <fieldset class="tp-pick">
+                                    <legend class="visually-hidden">@Localizer["RGrade"] &middot; @r.Name</legend>
+                                    <span class="tp-pick__label" aria-hidden="true">@Localizer["RGrade"]</span>
+                                    <div class="tp-pick__stars">
+                                        @for (int i = 5; i >= 1; i--)
+                                        {
+                                            var rateId = $"rate-{r.Id}-{i}";
+                                            <input type="radio" name="rating" id="@rateId" value="@i" required />
+                                            <label for="@rateId" title="@i / 5">
+                                                <i class="bi bi-star-fill" aria-hidden="true"></i>
+                                                <span class="visually-hidden">@i</span>
+                                            </label>
+                                        }
+                                    </div>
+                                </fieldset>
+
+                                <button type="submit" class="btn btn-sm btn-sun">
+                                    <i class="bi bi-check-lg" aria-hidden="true"></i>
+                                    @Localizer["RSave"]
+                                </button>
+                            </form>
+                        }
+
+                        <a asp-action="Comments"
+                           asp-route-id="@r.Id"
+                           class="tp-dock__link">
+                            <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>
+                            @Localizer["RComments"]
+                            <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </article>
+            }
+        </div>
+    </section>
+}

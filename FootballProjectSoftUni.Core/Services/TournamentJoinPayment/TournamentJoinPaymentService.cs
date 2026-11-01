@@ -30,6 +30,7 @@ namespace FootballProjectSoftUni.Core.Services.TournamentJoinPayment
                 .Select(o => new TournamentJoinPaymentViewModel
                 {
                     Id = o.Id,
+                    UserId = o.UserId,
                     Status = o.Status,
                     TournamentId = o.TournamentId,
                     TeamId = o.TeamId,

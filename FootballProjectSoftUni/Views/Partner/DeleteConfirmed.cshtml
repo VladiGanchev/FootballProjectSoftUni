@@ -1,52 +1,64 @@
-﻿@using FootballProjectSoftUni.Core.Models.Partner
+@using FootballProjectSoftUni.Core.Models.Partner
 @model PartnerViewModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
-
 @{
     ViewData["Title"] = "Delete Partner";
+    ViewData["FullWidth"] = true;
 }
 
-<section class="container py-4">
+<div class="container-xl cp-page">
+    <div class="cp-rc">
 
-    <div class="text-center mb-4">
-        <h2 class="page-title text-danger mb-1">
-            <i class="bi bi-trash-fill me-2"></i>
-            @Localizer["DCDP"]
-        </h2>
-        <p class="text-muted mb-0">
-            @Localizer["DCConfirm"]
-        </p>
-    </div>
+        <div class="cp-rc__stage">
+            <span class="cp-card cp-card--yellow" aria-hidden="true"></span>
 
-    <div class="admin-form-card mx-auto">
+            <div class="cp-card cp-card--red">
+                <div class="cp-card__top" aria-hidden="true">
+                    <i class="bi bi-x-octagon-fill"></i>
+                </div>
 
-        <div class="text-center">
-            <div class="delete-icon">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-            </div>
+                <div class="cp-card__subject">
+                    <span class="cp-card__thumb cp-card__thumb--logo">
+                        <i class="bi bi-image" aria-hidden="true"></i>
+                        @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+                        {
+                            <img src="@Model.ImageUrl" alt="@Model.Name" data-hide-on-error />
+                        }
+                    </span>
+                    <span class="cp-card__eyebrow">@Localizer["DCDP"]</span>
+                    <p class="cp-card__name">@Model.Name</p>
+                </div>
 
-            <h3 class="mt-3 mb-2 fw-bold">@Model.Name</h3>
-
-            <div class="delete-warning mt-3">
-                @Localizer["DCAreYousure"]
+                <div class="cp-card__foot" aria-hidden="true">@Localizer["CPRedCard"]</div>
             </div>
         </div>
 
-        <form asp-action="DeleteConfirmed" method="post" class="mt-4">
-            <input type="hidden" asp-for="Id" />
-
-            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                <button type="submit" class="btn btn-danger btn-lg tg-action-btn px-4">
-                    <i class="bi bi-trash3-fill me-2"></i>@Localizer["DCCD"]
-                </button>
-
-                <a asp-action="All" class="btn btn-outline-secondary btn-lg px-4">
-                    <i class="bi bi-x-lg me-2"></i>@Localizer["DCCancel"]
-                </a>
+        <div class="tg-form-card cp-rc__panel">
+            <div class="tg-form-card__head">
+                <h1 class="tg-form-card__title">@Localizer["DCDP"]</h1>
+                <p class="tg-form-card__sub">@Localizer["DCConfirm"]</p>
             </div>
-        </form>
+
+            <div class="cp-warn" role="alert">
+                <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                <div>@Localizer["DCAreYousure"]</div>
+            </div>
+
+            <form asp-action="DeleteConfirmed" method="post">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="tg-form-actions">
+                    <button type="submit" class="btn btn-danger btn-lg">
+                        <i class="bi bi-trash3-fill" aria-hidden="true"></i>@Localizer["DCCD"]
+                    </button>
+
+                    <a asp-action="All" class="btn btn-outline-dark btn-lg">
+                        <i class="bi bi-x-lg" aria-hidden="true"></i>@Localizer["DCCancel"]
+                    </a>
+                </div>
+            </form>
+        </div>
 
     </div>
-
-</section>
+</div>

@@ -14,7 +14,10 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Localization;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
+using static FootballProjectSoftUni.Core.Constants.RoleConstants;
+using static FootballProjectSoftUni.Infrastructure.Data.Constants.DataConstants;
 
 namespace FootballProjectSoftUni.Areas.Identity.Pages.Account
 {
@@ -22,11 +25,15 @@ namespace FootballProjectSoftUni.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger, UserManager<ApplicationUser> userManager, IStringLocalizer<SharedResource> localizer)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager = userManager;
+            _localizer = localizer;
         }
 
         /// <summary>
@@ -55,6 +62,9 @@ namespace FootballProjectSoftUni.Areas.Identity.Pages.Account
         [TempData]
         public string ErrorMessage { get; set; }
 
+        /// <summary>The password was right but the e-mail isn't confirmed: the page offers a new link.</summary>
+        public bool NotConfirmed { get; set; }
+
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -65,15 +75,15 @@ namespace FootballProjectSoftUni.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = RequireErrorMessage)]
+            [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
             public string Email { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            [Required(ErrorMessage = RequireErrorMessage)]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
@@ -92,7 +102,7 @@ namespace FootballProjectSoftUni.Areas.Identity.Pages.Account
                 ModelState.AddModelError(string.Empty, ErrorMessage);
             }
 
-            returnUrl ??= Url.Content("~/");
+            returnUrl = LocalOrHome(returnUrl);
 
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
@@ -102,17 +112,34 @@ namespace FootballProjectSoftUni.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
         }
 
+        // Only addresses of this site: a link with a foreign returnUrl used to end with an error page after logging in.
+        private string LocalOrHome(string returnUrl) =>
+            Url.IsLocalUrl(returnUrl) ? returnUrl : Url.Content("~/");
+
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
+            returnUrl = LocalOrHome(returnUrl);
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             if (ModelState.IsValid)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var existingUser = await _userManager.FindByEmailAsync(Input.Email);
+
+                // Administrators are never locked out: anybody who knows the address could otherwise keep the
+                // organiser out of the site with a few wrong passwords. Their guessing is still limited per IP
+                // address (AuthRateLimitMiddleware) and the admin password has to be long.
+                var isAdmin = existingUser != null && await _userManager.IsInRoleAsync(existingUser, AdminRole);
+
+                // Accounts created before lockout was turned on have it disabled: switch it on for everybody else,
+                // and off for administrators (which also lifts a lockout they already got).
+                if (existingUser != null && existingUser.LockoutEnabled == isAdmin)
+                {
+                    await _userManager.SetLockoutEnabledAsync(existingUser, !isAdmin);
+                }
+
+                // Wrong passwords count towards lockout (5 attempts -> 15 minutes, see ServiceCollectionExtension).
+                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: !isAdmin);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
@@ -120,16 +147,49 @@ namespace FootballProjectSoftUni.Areas.Identity.Pages.Account
                 }
                 if (result.RequiresTwoFactor)
                 {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+                    // The site has no two-factor pages (they are switched off), so nobody can turn 2FA on.
+                    ModelState.AddModelError(string.Empty, _localizer["LoginTwoFactorUnsupported"].Value);
+                    return Page();
+                }
+                if (result.IsNotAllowed && existingUser != null)
+                {
+                    // The e-mail isn't confirmed yet. Identity stops before it looks at the password or the lockout,
+                    // so both are checked here - otherwise the password of such an account could be guessed without limit.
+                    if (await _userManager.IsLockedOutAsync(existingUser))
+                    {
+                        ModelState.AddModelError(string.Empty, _localizer["LoginLockedOut"].Value);
+                        return Page();
+                    }
+
+                    if (await _userManager.CheckPasswordAsync(existingUser, Input.Password))
+                    {
+                        // The right password. (With a wrong one the answer stays "wrong e-mail or password",
+                        // so strangers don't learn which addresses have an account.)
+                        NotConfirmed = true;
+                        ModelState.AddModelError(string.Empty, _localizer["LoginNotConfirmed"].Value);
+                        return Page();
+                    }
+
+                    if (!isAdmin)
+                    {
+                        await _userManager.AccessFailedAsync(existingUser);
+
+                        if (await _userManager.IsLockedOutAsync(existingUser))
+                        {
+                            ModelState.AddModelError(string.Empty, _localizer["LoginLockedOut"].Value);
+                            return Page();
+                        }
+                    }
                 }
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
-                    return RedirectToPage("./Lockout");
+                    ModelState.AddModelError(string.Empty, _localizer["LoginLockedOut"].Value);
+                    return Page();
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, _localizer["LoginInvalid"].Value);
                     return Page();
                 }
             }

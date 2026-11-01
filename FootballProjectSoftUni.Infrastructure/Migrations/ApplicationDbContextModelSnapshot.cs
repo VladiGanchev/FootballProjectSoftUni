@@ -57,6 +57,9 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<bool>("NewTournamentEmails")
+                        .HasColumnType("bit");
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -521,6 +524,9 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
 
                     b.Property<int>("Experience")
                         .HasColumnType("int");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -646,6 +652,9 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("LowTeamsWarningSent")
+                        .HasColumnType("bit");
+
 
                     b.Property<int>("NumberOfTeams")
                         .HasColumnType("int");
@@ -754,25 +763,40 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StripePaymentIntentId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("StripeRefundId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StripeSessionId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int?>("TeamId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TournamentId")
+                    b.Property<string>("TournamentCity")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int?>("TournamentId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("TournamentStartDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StripePaymentIntentId");
+
+                    b.HasIndex("StripeSessionId")
+                        .IsUnique()
+                        .HasFilter("[StripeSessionId] IS NOT NULL");
 
                     b.HasIndex("TournamentId");
 
@@ -1154,8 +1178,7 @@ namespace FootballProjectSoftUni.Infrastructure.Migrations
                     b.HasOne("FootballProjectSoftUni.Infrastructure.Data.Models.Tournament", "Tournament")
                         .WithMany()
                         .HasForeignKey("TournamentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Tournament");
                 });

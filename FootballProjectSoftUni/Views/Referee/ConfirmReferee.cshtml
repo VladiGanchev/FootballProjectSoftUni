@@ -1,0 +1,27 @@
+@model string
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
+@{
+    ViewBag.Title = Localizer["BecomeReferee"];
+    var tournamentId = (int)ViewBag.TournamentId;
+}
+
+@* Existing referees join a tournament with an explicit POST (protected by the antiforgery token). *@
+<div class="tg-form-wrap">
+    <div class="tg-form-card tg-form-card--sm">
+        <div class="tg-form-card__head">
+            <span class="tg-icon-tile tg-icon-tile--pitch" aria-hidden="true"><i class="bi bi-flag-fill"></i></span>
+            <h1 class="tg-form-card__title">@Localizer["CTBecome"]</h1>
+            <p class="tg-form-card__sub">@Localizer["ConfirmRefereeText"] <strong>@Model</strong></p>
+        </div>
+
+        <form asp-controller="Referee" asp-action="AssignExistingReferee" asp-route-id="@tournamentId" method="post">
+            <div class="tg-form-actions">
+                <button type="submit" class="btn btn-accent btn-lg">
+                    <i class="bi bi-check2-circle" aria-hidden="true"></i>@Localizer["CTBecome"]
+                </button>
+                <a asp-controller="City" asp-action="All" class="btn btn-outline-dark btn-lg">@Localizer["DCCancel"]</a>
+            </div>
+        </form>
+    </div>
+</div>

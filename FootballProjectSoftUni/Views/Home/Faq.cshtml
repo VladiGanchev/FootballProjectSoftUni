@@ -1,0 +1,151 @@
+@using Microsoft.AspNetCore.Identity
+@using FootballProjectSoftUni.Infrastructure.Data.Models
+@inject IStringLocalizer<SharedResource> Localizer
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    ViewData["Title"] = Localizer["FaqTitle"].Value;
+
+    // Category key, icon, question numbers (FaqQ{n} / FaqA{n} in the resource files)
+    var categories = new (string Key, string Icon, int[] Items)[]
+    {
+        ("Account",     "bi-person-circle",     new[] { 1, 2, 3, 4 }),
+        ("Tournaments", "bi-trophy-fill",       new[] { 5, 6, 7, 8, 26 }),
+        ("Teams",       "bi-people-fill",       new[] { 9, 10, 11 }),
+        ("Payments",    "bi-credit-card-fill",  new[] { 12, 13, 14, 15, 16 }),
+        ("Referees",    "bi-flag-fill",         new[] { 17, 18 }),
+        ("Matches",     "bi-diagram-3-fill",    new[] { 19, 20, 21, 22 }),
+        ("Contact",     "bi-bell-fill",         new[] { 23, 24, 25 }),
+    };
+}
+
+<section class="faq">
+    <header class="tg-page-head faq-head">
+        <div>
+            <h1 class="tg-page-head__title" data-split>@Localizer["FaqTitle"]</h1>
+            <p class="tg-page-head__sub">@Localizer["FaqSub"]</p>
+        </div>
+        <span class="faq-head__ball" aria-hidden="true"><i class="bi bi-question-lg"></i></span>
+    </header>
+
+    <div class="faq-tools">
+        <label class="faq-search">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <span class="visually-hidden">@Localizer["FaqSearch"]</span>
+            <input type="search" class="form-control" placeholder="@Localizer["FaqSearch"]" data-faq-search autocomplete="off" />
+        </label>
+
+        <div class="faq-chips" role="group" aria-label="@Localizer["FaqTitle"]">
+            <button type="button" class="faq-chip is-active" data-faq-filter="all">@Localizer["FaqAll"]</button>
+            @foreach (var c in categories)
+            {
+                <button type="button" class="faq-chip" data-faq-filter="@c.Key">
+                    <i class="bi @c.Icon" aria-hidden="true"></i>@Localizer["FaqCat" + c.Key]
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="faq-list">
+        @foreach (var c in categories)
+        {
+            <section class="faq-cat" data-faq-cat="@c.Key" aria-labelledby="faq-cat-@c.Key">
+                <h2 class="faq-cat__title" id="faq-cat-@c.Key">
+                    <span class="tg-icon-tile tg-icon-tile--sm" aria-hidden="true"><i class="bi @c.Icon"></i></span>
+                    @Localizer["FaqCat" + c.Key]
+                </h2>
+
+                @foreach (var n in c.Items)
+                {
+                    <details class="faq-item" data-faq-item>
+                        <summary class="faq-item__q">
+                            <span class="faq-item__num" aria-hidden="true">@n.ToString("00")</span>
+                            <span class="faq-item__text">@Localizer["FaqQ" + n]</span>
+                            <span class="faq-item__icon" aria-hidden="true"><i class="bi bi-plus-lg"></i></span>
+                        </summary>
+                        <div class="faq-item__a">
+                            <p>@Localizer["FaqA" + n]</p>
+                        </div>
+                    </details>
+                }
+            </section>
+        }
+
+        <div class="tg-empty faq-empty" data-faq-empty hidden>
+            <span class="tg-empty__icon" aria-hidden="true"><i class="bi bi-search"></i></span>
+            <h5>@Localizer["FaqNoResults"]</h5>
+        </div>
+    </div>
+
+    <aside class="faq-cta tg-card tg-card--pitch">
+        <div>
+            <h2>@Localizer["FaqStillTitle"]</h2>
+            <p>@Localizer["FaqStillText"]</p>
+        </div>
+        @if (SignInManager.IsSignedIn(User))
+        {
+            <a asp-controller="ContactMessage" asp-action="Create" class="btn btn-sun btn-lg">
+                <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>@Localizer["LayoutContact"]
+            </a>
+        }
+        else
+        {
+            <div class="faq-cta__guest">
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-sun btn-lg">
+                    <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>@Localizer["LGLogin"]
+                </a>
+                <small>@Localizer["FaqStillLogin"]</small>
+            </div>
+        }
+    </aside>
+</section>
+
+@section Scripts {
+    <script>
+        (function () {
+            var search = document.querySelector('[data-faq-search]');
+            var chips = Array.prototype.slice.call(document.querySelectorAll('[data-faq-filter]'));
+            var cats = Array.prototype.slice.call(document.querySelectorAll('[data-faq-cat]'));
+            var empty = document.querySelector('[data-faq-empty]');
+            var activeCat = 'all';
+
+            function apply() {
+                var term = (search.value || '').trim().toLowerCase();
+                var anyVisible = false;
+
+                cats.forEach(function (cat) {
+                    var catMatches = activeCat === 'all' || cat.getAttribute('data-faq-cat') === activeCat;
+                    var visibleInCat = 0;
+
+                    cat.querySelectorAll('[data-faq-item]').forEach(function (item) {
+                        var textMatches = !term || item.textContent.toLowerCase().indexOf(term) !== -1;
+                        var show = catMatches && textMatches;
+                        item.hidden = !show;
+                        if (show) { visibleInCat++; }
+                        // Open matching answers while searching, so the result is visible right away.
+                        if (term && show) { item.open = true; }
+                    });
+
+                    cat.hidden = visibleInCat === 0;
+                    if (visibleInCat > 0) { anyVisible = true; }
+                });
+
+                empty.hidden = anyVisible;
+            }
+
+            search.addEventListener('input', apply);
+
+            chips.forEach(function (chip) {
+                chip.addEventListener('click', function () {
+                    activeCat = chip.getAttribute('data-faq-filter');
+                    chips.forEach(function (c) {
+                        var on = c === chip;
+                        c.classList.toggle('is-active', on);
+                        c.setAttribute('aria-pressed', on ? 'true' : 'false');
+                    });
+                    apply();
+                });
+            });
+        })();
+    </script>
+}

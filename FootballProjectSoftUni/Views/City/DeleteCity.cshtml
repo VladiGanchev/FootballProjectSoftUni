@@ -1,54 +1,145 @@
-﻿@using FootballProjectSoftUni.Core.Models.City
+@using FootballProjectSoftUni.Core.Models.City
 @model List<CityViewModel>
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
-<section class="container py-4">
-    <div class="admin-form-card mx-auto">
+@{
+    ViewData["Title"] = "Delete City";
+    ViewData["FullWidth"] = true;
+}
 
-        <form asp-action="Delete" method="post">
+<div class="container-xl cp-page">
+    <div class="cp-rc">
 
-            <div class="mb-3">
-                <label class="form-label fw-bold">
-                    <i class="bi bi-geo-alt-fill me-2"></i>@Localizer["DeleteSelectCity"]
-                </label>
+        @* The referee raises the red card: it shows the city you pick *@
+        <div class="cp-rc__stage">
+            <span class="cp-card cp-card--yellow" aria-hidden="true"></span>
 
-                <select name="cityId"
-                        id="cityId"
-                        class="form-select form-select-lg tg-select">
+            <div class="cp-card cp-card--red" id="cityCard">
+                <div class="cp-card__top" aria-hidden="true">
+                    <i class="bi bi-x-octagon-fill"></i>
+                </div>
 
-                    @foreach (var city in Model)
-                    {
-                        <option value="@city.Id">@city.Name</option>
-                    }
-                </select>
+                <div class="cp-card__subject" id="citySubject" aria-live="polite" hidden>
+                    <span class="cp-card__thumb">
+                        <img id="citySubjectImg" alt="" hidden />
+                        <i class="bi bi-geo-alt-fill" id="citySubjectIcon" aria-hidden="true"></i>
+                    </span>
+                    <span class="cp-card__eyebrow">@Localizer["DeleteDeleteCity"]</span>
+                    <p class="cp-card__name" id="citySubjectName"></p>
+                </div>
+
+                <div class="cp-card__placeholder" aria-hidden="true">?</div>
+                <div class="cp-card__foot" aria-hidden="true">@Localizer["CPRedCard"]</div>
+            </div>
+        </div>
+
+        <div class="tg-form-card cp-rc__panel">
+            <div class="tg-form-card__head">
+                <h1 class="tg-form-card__title">@Localizer["DeleteDeleteCity"]</h1>
+                <p class="tg-form-card__sub">@Localizer["CPDeletePickCity"]</p>
             </div>
 
-            <a id="deleteButton"
-               class="btn btn-danger btn-lg w-100 tg-action-btn disabled">
+            <form asp-action="Delete" method="post">
 
-                <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                @Localizer["DeleteDeleteCity"]
-            </a>
+                <div class="cp-field">
+                    <label class="form-label" for="cityId">@Localizer["DeleteSelectCity"]</label>
 
-        </form>
+                    <select name="cityId"
+                            id="cityId"
+                            class="form-select form-select-lg">
+
+                        <option value="">-- @Localizer["DeleteSelectCity"] --</option>
+
+                        @foreach (var city in Model)
+                        {
+                            <option value="@city.Id" data-img="@city.ImageUrl">@city.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="cp-warn">
+                    <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                    <div>
+                        <strong>@Localizer["DCCareful"]</strong> @Localizer["DCWithDeletion"]
+                    </div>
+                </div>
+
+                <div class="tg-form-actions">
+                    <a id="deleteButton"
+                       role="button"
+                       aria-disabled="true"
+                       tabindex="-1"
+                       class="btn btn-danger btn-lg disabled">
+                        <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                        @Localizer["DeleteDeleteCity"]
+                    </a>
+                    <a asp-action="All" class="btn btn-outline-dark btn-lg">
+                        <i class="bi bi-x-lg" aria-hidden="true"></i>@Localizer["DCCancel"]
+                    </a>
+                </div>
+
+            </form>
+        </div>
 
     </div>
+</div>
 
-</section>
+@section Scripts {
+    <script>
+        (function () {
+            var citySelect = document.getElementById('cityId');
+            var deleteButton = document.getElementById('deleteButton');
+            var subject = document.getElementById('citySubject');
+            var subjectImg = document.getElementById('citySubjectImg');
+            var subjectIcon = document.getElementById('citySubjectIcon');
+            var subjectName = document.getElementById('citySubjectName');
+            var card = document.getElementById('cityCard');
+            if (!citySelect || !deleteButton) { return; }
 
-<script>
-    const citySelect = document.getElementById('cityId');
-    const deleteButton = document.getElementById('deleteButton');
+            function sync() {
+                var option = citySelect.options[citySelect.selectedIndex];
 
-    citySelect.addEventListener('change', function () {
+                if (citySelect.value) {
+                    deleteButton.href = '/City/DeleteConfirmed/' + citySelect.value;
+                    deleteButton.classList.remove('disabled');
+                    deleteButton.setAttribute('aria-disabled', 'false');
+                    deleteButton.removeAttribute('tabindex');
 
-        if (this.value) {
-            deleteButton.href = '/City/DeleteConfirmed/' + this.value;
-            deleteButton.classList.remove('disabled');
-        } else {
-            deleteButton.href = '#';
-            deleteButton.classList.add('disabled');
-        }
+                    subjectName.textContent = option.text;
+                    var img = option.getAttribute('data-img');
+                    if (img) {
+                        subjectImg.src = img;
+                        subjectImg.hidden = false;
+                        subjectIcon.hidden = true;
+                    } else {
+                        subjectImg.hidden = true;
+                        subjectIcon.hidden = false;
+                    }
+                    subject.hidden = false;
+                } else {
+                    deleteButton.removeAttribute('href');
+                    deleteButton.classList.add('disabled');
+                    deleteButton.setAttribute('aria-disabled', 'true');
+                    deleteButton.setAttribute('tabindex', '-1');
+                    subject.hidden = true;
+                }
+            }
 
-    });
-</script>
+            // Re-raise the card whenever a new city is picked
+            function flash() {
+                if (!card) { return; }
+                card.classList.remove('is-flash');
+                void card.offsetWidth;
+                card.classList.add('is-flash');
+            }
+
+            subjectImg.addEventListener('error', function () {
+                subjectImg.hidden = true;
+                subjectIcon.hidden = false;
+            });
+
+            citySelect.addEventListener('change', function () { sync(); flash(); });
+            sync();
+        })();
+    </script>
+}

@@ -121,7 +121,7 @@
     <value>Add City</value>
   </data>
   <data name="AddCityImage" xml:space="preserve">
-    <value>Image URL</value>
+    <value>Picture</value>
   </data>
   <data name="AddCityName" xml:space="preserve">
     <value>City Name</value>
@@ -515,7 +515,7 @@
     <value>Partner Name</value>
   </data>
   <data name="APImage" xml:space="preserve">
-    <value>Image URL</value>
+    <value>Logo</value>
   </data>
   <data name="APAP" xml:space="preserve">
     <value>Add Partner</value>
@@ -722,7 +722,7 @@
     <value>Start</value>
   </data>
   <data name="ATImage" xml:space="preserve">
-    <value>Image URL</value>
+    <value>Picture</value>
   </data>
   <data name="ATDesc" xml:space="preserve">
     <value>Description</value>
@@ -857,7 +857,7 @@
     <value>Edit Topic</value>
   </data>
   <data name="EImaGE" xml:space="preserve">
-    <value>Image URL</value>
+    <value>Picture</value>
   </data>
   <data name="EEdit" xml:space="preserve">
     <value>Edit the tournament information and save the changes.</value>
@@ -941,16 +941,16 @@
     <value>✅ The payment of {0} € was successful! Team {1} has been registered for a tournament in {2}.</value>
   </data>
   <data name="PaymentSuccessSubject" xml:space="preserve">
-    <value>Successful payment ⚽</value>
+    <value>Payment successful ⚽</value>
   </data>
   <data name="PaymentSuccessBody" xml:space="preserve">
-    <value />
+    <value>&lt;p&gt;Hi!&lt;/p&gt;&lt;p&gt;Your participation fee of &lt;b&gt;{1} €&lt;/b&gt; has been paid. Team &lt;b&gt;{0}&lt;/b&gt; is registered for the tournament in &lt;b&gt;{2}&lt;/b&gt; on {3}.&lt;/p&gt;&lt;p&gt;We will send you a reminder the day before it starts. Good luck on the pitch! ⚽&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;</value>
   </data>
   <data name="RefundSuccessSubject" xml:space="preserve">
-    <value> Refund successful! ⚽</value>
+    <value>Your refund is on its way ⚽</value>
   </data>
   <data name="RefundSuccessBody" xml:space="preserve">
-    <value />
+    <value>&lt;p&gt;Hi!&lt;/p&gt;&lt;p&gt;We have refunded &lt;b&gt;{0} €&lt;/b&gt; to the card you used to pay the fee for the tournament in &lt;b&gt;{1}&lt;/b&gt; on {2}.&lt;/p&gt;&lt;p&gt;It usually appears on your statement within 5–10 business days, depending on your bank.&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;</value>
   </data>
   <data name="ATFirstPlacePrize" xml:space="preserve">
     <value>1st place:</value>
@@ -989,18 +989,18 @@
     <value>⏳ Payment received. Waiting for confirmation… (if it doesn't update in 10-15 seconds, refresh the page)</value>
   </data>
   <data name="TournamentDeclaration" xml:space="preserve">
-    <value>I hereby declare that I voluntarily wish to participate in a football tournament organized through the Tournament Galaxy platform.
+    <value>I hereby declare that, as a coach, I am entering my team in a football tournament organised through the Tournament Galaxy platform.
 
-1. I declare that I am in good physical and health condition to participate in sports activities, including football matches.
-2. I understand and accept the risks associated with participating in a football tournament, including but not limited to: physical injuries, accidents, and other adverse events.
-3. I voluntarily assume all risks associated with my participation in the tournament, both during matches and outside them.
-4. I release the organizers, their representatives, partners, and employees from any liability for damages, injuries, losses, or harm arising from my participation, to the extent permitted by applicable law.
-5. I declare that I will follow the tournament rules and the instructions of organizers and referees.
-6. I agree that my personal data may be processed for the purposes of tournament organization and payment.
-7. I declare that I have read, understood, and voluntarily accept this declaration.</value>
+1. The players of my team know about the participation and agree to take part; for players under 18, their parents or guardians agree as well.
+2. To the best of my knowledge, everybody who will play for the team is in good physical and health condition and able to take part in football matches.
+3. I know and accept that taking part in a football tournament carries risks, including physical injuries and accidents.
+4. The organisers are not liable for damage arising from the participation unless it was caused intentionally or by gross negligence, or where the law does not allow liability to be limited.
+5. The team will follow the tournament rules and the instructions of the organisers and referees.
+6. I know that the participation fee is not subject to the 14-day right of withdrawal, because the participation is in an event on a specific date, and that it is refunded only in the cases described in the Terms and Conditions (for example, if the tournament is cancelled).
+7. I accept the Terms and Conditions and I have read the Privacy Policy.</value>
   </data>
   <data name="DDeclaration" xml:space="preserve">
-    <value>Declaration of consent</value>
+    <value>Participation declaration</value>
   </data>
   <data name="DAccept" xml:space="preserve">
     <value>I agree with the declaration</value>
@@ -1012,6 +1012,1574 @@
     <value>Become Referee</value>
   </data>
   <data name="NoCity" xml:space="preserve">
-    <value>Няма открите градове</value>
+    <value>No cities found</value>
+  </data>
+  <data name="HeroEyebrow" xml:space="preserve">
+    <value>Football tournament platform</value>
+  </data>
+  <data name="HeroTagline" xml:space="preserve">
+    <value>Organise, join and follow football tournaments across Bulgaria — teams, matches, rankings and payments in one place.</value>
+  </data>
+  <data name="HeroBrowseCities" xml:space="preserve">
+    <value>Browse cities</value>
+  </data>
+  <data name="HeroCreateAccount" xml:space="preserve">
+    <value>Create account</value>
+  </data>
+  <data name="IndexHowTitle" xml:space="preserve">
+    <value>How it works</value>
+  </data>
+  <data name="IndexHowSubtitle" xml:space="preserve">
+    <value>From sign-up to the final in three steps</value>
+  </data>
+  <data name="IndexStep1Title" xml:space="preserve">
+    <value>Pick a city</value>
+  </data>
+  <data name="IndexStep1Text" xml:space="preserve">
+    <value>Find a tournament in your city and check the dates, prizes and entry fee.</value>
+  </data>
+  <data name="IndexStep2Title" xml:space="preserve">
+    <value>Register your team</value>
+  </data>
+  <data name="IndexStep2Text" xml:space="preserve">
+    <value>Add your players, accept the declaration and pay securely via Stripe.</value>
+  </data>
+  <data name="IndexStep3Title" xml:space="preserve">
+    <value>Play and follow results</value>
+  </data>
+  <data name="IndexStep3Text" xml:space="preserve">
+    <value>Get match notifications and follow the bracket and the winners.</value>
+  </data>
+  <data name="IndexCtaTitle" xml:space="preserve">
+    <value>Ready for your next tournament?</value>
+  </data>
+  <data name="IndexCtaText" xml:space="preserve">
+    <value>Create a free account and sign your team up in minutes.</value>
+  </data>
+  <data name="FooterTagline" xml:space="preserve">
+    <value>A platform for football tournaments, matches and rankings.</value>
+  </data>
+  <data name="FooterExplore" xml:space="preserve">
+    <value>Explore</value>
+  </data>
+  <data name="FooterSupport" xml:space="preserve">
+    <value>Support</value>
+  </data>
+  <data name="AuthShowPassword" xml:space="preserve">
+    <value>Show or hide password</value>
+  </data>
+  <data name="AuthPasswordHint" xml:space="preserve">
+    <value>At least 8 characters, with an uppercase letter, a lowercase letter, a number and a symbol.</value>
+  </data>
+  <data name="AuthCheckSpam" xml:space="preserve">
+    <value>Can't see it? Check your spam folder too.</value>
+  </data>
+  <data name="ErrOopsTitle" xml:space="preserve">
+    <value>Something went wrong</value>
+  </data>
+  <data name="ErrOopsText" xml:space="preserve">
+    <value>An error occurred while processing your request. Please try again later.</value>
+  </data>
+  <data name="Err401Title" xml:space="preserve">
+    <value>Access denied</value>
+  </data>
+  <data name="Err401Text" xml:space="preserve">
+    <value>Oops, you don't have permission to access this page.</value>
+  </data>
+  <data name="Err404Title" xml:space="preserve">
+    <value>Page not found</value>
+  </data>
+  <data name="Err404Text" xml:space="preserve">
+    <value>Oops, better check that URL. The page you are looking for does not exist.</value>
+  </data>
+  <data name="ErrGoBack" xml:space="preserve">
+    <value>Go back</value>
+  </data>
+  <data name="ErrRequestId" xml:space="preserve">
+    <value>Request ID</value>
+  </data>
+  <data name="ErrCopy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="ErrCopied" xml:space="preserve">
+    <value>Copied</value>
+  </data>
+  <data name="ATNoRefereeTournaments" xml:space="preserve">
+    <value>No tournaments to referee</value>
+  </data>
+  <data name="IPickReferee" xml:space="preserve">
+    <value>-- choose a referee --</value>
+  </data>
+  <data name="ISubjectPlaceholder" xml:space="preserve">
+    <value>E.g. Tournament invitation...</value>
+  </data>
+  <data name="IMessagePlaceholder" xml:space="preserve">
+    <value>Write the invitation text...</value>
+  </data>
+  <data name="CBackToReferees" xml:space="preserve">
+    <value>Back to referees</value>
+  </data>
+  <data name="ContactSub" xml:space="preserve">
+    <value>Have a question or suggestion? Write to us and we will reply as soon as possible.</value>
+  </data>
+  <data name="ContactSideTitle" xml:space="preserve">
+    <value>How it works</value>
+  </data>
+  <data name="ContactStep1" xml:space="preserve">
+    <value>Send a message to the organizers.</value>
+  </data>
+  <data name="ContactStep2" xml:space="preserve">
+    <value>You get a notification when we reply.</value>
+  </data>
+  <data name="ContactStep3" xml:space="preserve">
+    <value>Follow the conversation in Notifications.</value>
+  </data>
+  <data name="MsgCompose" xml:space="preserve">
+    <value>New message</value>
+  </data>
+  <data name="MsgBack" xml:space="preserve">
+    <value>Back to notifications</value>
+  </data>
+  <data name="NotifPageTitle" xml:space="preserve">
+    <value>Notifications and messages</value>
+  </data>
+  <data name="NotifNew" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="NotifDeleteConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete this notification?</value>
+  </data>
+  <data name="PayTitle" xml:space="preserve">
+    <value>Payments</value>
+  </data>
+  <data name="PaySub" xml:space="preserve">
+    <value>Review all payments and issue refunds.</value>
+  </data>
+  <data name="PayTotalOrders" xml:space="preserve">
+    <value>Total orders</value>
+  </data>
+  <data name="PayTotalPaid" xml:space="preserve">
+    <value>Paid total</value>
+  </data>
+  <data name="PayTotalRefunded" xml:space="preserve">
+    <value>Refunded payments</value>
+  </data>
+  <data name="PayStatusPaid" xml:space="preserve">
+    <value>Paid</value>
+  </data>
+  <data name="PayStatusRefunded" xml:space="preserve">
+    <value>Refunded</value>
+  </data>
+  <data name="PayStatusPending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="PayRefundConfirm" xml:space="preserve">
+    <value>Are you sure you want to refund this payment?</value>
+  </data>
+  <data name="CPAddCitySub" xml:space="preserve">
+    <value>Add a new city to the platform so tournaments can be created there.</value>
+  </data>
+  <data name="CPAddPartnerSub" xml:space="preserve">
+    <value>Add a partner whose logo will appear on the partners wall.</value>
+  </data>
+  <data name="CPUpdateLeadersSub" xml:space="preserve">
+    <value>Record a win for a team in the chosen city. It is added to the city leaderboard.</value>
+  </data>
+  <data name="CPDeletePickCity" xml:space="preserve">
+    <value>Choose a city to delete. You will be asked to confirm on the next step.</value>
+  </data>
+  <data name="CPDeletePickPartner" xml:space="preserve">
+    <value>Choose a partner to delete. You will be asked to confirm on the next step.</value>
+  </data>
+  <data name="CPPreview" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="CPPreviewEmpty" xml:space="preserve">
+    <value>Choose a picture to see a preview.</value>
+  </data>
+  <data name="CPCityNameHint" xml:space="preserve">
+    <value>The city name as it appears on its card.</value>
+  </data>
+  <data name="CPImageHint" xml:space="preserve">
+    <value>JPG, PNG, WEBP or GIF, up to 8 MB. A landscape photo works best.</value>
+  </data>
+  <data name="CPLogoHint" xml:space="preserve">
+    <value>PNG, JPG, WEBP or GIF, up to 8 MB. A PNG with a transparent background works best.</value>
+  </data>
+  <data name="TNTitle" xml:space="preserve">
+    <value>Tournaments</value>
+  </data>
+  <data name="TNStatusUpcoming" xml:space="preserve">
+    <value>Upcoming</value>
+  </data>
+  <data name="TNStatusStarted" xml:space="preserve">
+    <value>In progress</value>
+  </data>
+  <data name="TNStatusFinished" xml:space="preserve">
+    <value>Finished</value>
+  </data>
+  <data name="TNRound" xml:space="preserve">
+    <value>Round {0}</value>
+  </data>
+  <data name="TNTbd" xml:space="preserve">
+    <value>TBD</value>
+  </data>
+  <data name="TNNoReferee" xml:space="preserve">
+    <value>No referee assigned yet</value>
+  </data>
+  <data name="TNPrizePool" xml:space="preserve">
+    <value>Prize pool</value>
+  </data>
+  <data name="TNAddSub" xml:space="preserve">
+    <value>Fill in the details to create a new tournament.</value>
+  </data>
+  <data name="TNSecGeneral" xml:space="preserve">
+    <value>General information</value>
+  </data>
+  <data name="TNSecSchedule" xml:space="preserve">
+    <value>Schedule</value>
+  </data>
+  <data name="TNSecPrizes" xml:space="preserve">
+    <value>Prizes and fee</value>
+  </data>
+  <data name="TNSecLocation" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="TNDateHint" xml:space="preserve">
+    <value>Format: dd/MM/yyyy HH:mm</value>
+  </data>
+  <data name="TNImageHint" xml:space="preserve">
+    <value>JPG, PNG, WEBP or GIF, up to 8 MB.</value>
+  </data>
+  <data name="TNWinnerHint" xml:space="preserve">
+    <value>Filled in automatically from the result of the final. To change it, correct the result of the final.</value>
+  </data>
+  <data name="TNEnterResultSub" xml:space="preserve">
+    <value>Enter the final score of this match.</value>
+  </data>
+  <data name="TNClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="TNPrev" xml:space="preserve">
+    <value>Previous photo</value>
+  </data>
+  <data name="TNNext" xml:space="preserve">
+    <value>Next photo</value>
+  </data>
+  <data name="TNDropHint" xml:space="preserve">
+    <value>Drag photos here or click to browse</value>
+  </data>
+  <data name="TNSelectedCount" xml:space="preserve">
+    <value>Selected files: {0}</value>
+  </data>
+  <data name="HomeSeason" xml:space="preserve">
+    <value>Season</value>
+  </data>
+  <data name="HomeHeadline1" xml:space="preserve">
+    <value>Play.</value>
+  </data>
+  <data name="HomeHeadline2" xml:space="preserve">
+    <value>Win.</value>
+  </data>
+  <data name="HomeHeadline3" xml:space="preserve">
+    <value>Repeat.</value>
+  </data>
+  <data name="HomeCitiesTitle" xml:space="preserve">
+    <value>Pick your city</value>
+  </data>
+  <data name="HomeCitiesSub" xml:space="preserve">
+    <value>Tournaments are played all over Bulgaria. Swipe and choose where your next match is.</value>
+  </data>
+  <data name="HomeSeeAll" xml:space="preserve">
+    <value>See all</value>
+  </data>
+  <data name="HomeTicketLabel" xml:space="preserve">
+    <value>Ticket to the next tournament</value>
+  </data>
+  <data name="HomeTicketGate" xml:space="preserve">
+    <value>Gate</value>
+  </data>
+  <data name="HomeTicketGateValue" xml:space="preserve">
+    <value>Any city</value>
+  </data>
+  <data name="HomeTicketKickoff" xml:space="preserve">
+    <value>Kick-off</value>
+  </data>
+  <data name="HomeTicketKickoffValue" xml:space="preserve">
+    <value>Very soon</value>
+  </data>
+  <data name="HomeTicketAdmit" xml:space="preserve">
+    <value>Admit one team</value>
+  </data>
+  <data name="TabInbox" xml:space="preserve">
+    <value>Inbox</value>
+  </data>
+  <data name="CPCitiesLead" xml:space="preserve">
+    <value>Pick a city to see its tournaments and leaders.</value>
+  </data>
+  <data name="CPSwipe" xml:space="preserve">
+    <value>Swipe</value>
+  </data>
+  <data name="CPPage" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="CPStandings" xml:space="preserve">
+    <value>Standings</value>
+  </data>
+  <data name="CPWin" xml:space="preserve">
+    <value>Win</value>
+  </data>
+  <data name="CPPartnersLead" xml:space="preserve">
+    <value>The clubs, brands and people who make the tournaments possible.</value>
+  </data>
+  <data name="CPPartnersWall" xml:space="preserve">
+    <value>The partners wall</value>
+  </data>
+  <data name="CPRedCard" xml:space="preserve">
+    <value>Red card</value>
+  </data>
+  <data name="AuthLoginSlogan1" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="AuthLoginSlogan2" xml:space="preserve">
+    <value>on the pitch</value>
+  </data>
+  <data name="AuthRegisterSlogan1" xml:space="preserve">
+    <value>Pull on</value>
+  </data>
+  <data name="AuthRegisterSlogan2" xml:space="preserve">
+    <value>the shirt</value>
+  </data>
+  <data name="AuthJerseyName" xml:space="preserve">
+    <value>Your name</value>
+  </data>
+  <data name="AuthPlayerCard" xml:space="preserve">
+    <value>Player registration card</value>
+  </data>
+  <data name="AuthSecPlayer" xml:space="preserve">
+    <value>Player details</value>
+  </data>
+  <data name="AuthSecAccess" xml:space="preserve">
+    <value>Account access</value>
+  </data>
+  <data name="AuthLostKey" xml:space="preserve">
+    <value>Lost the locker-room key?</value>
+  </data>
+  <data name="AuthPassSent" xml:space="preserve">
+    <value>Pass delivered!</value>
+  </data>
+  <data name="AuthNewSeason" xml:space="preserve">
+    <value>New password, new season</value>
+  </data>
+  <data name="AuthGoal" xml:space="preserve">
+    <value>Goal!</value>
+  </data>
+  <data name="AuthStepInbox" xml:space="preserve">
+    <value>Inbox</value>
+  </data>
+  <data name="AuthStepDone" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="ErrOffside" xml:space="preserve">
+    <value>Offside!</value>
+  </data>
+  <data name="ErrFlagUp" xml:space="preserve">
+    <value>The flag is up</value>
+  </data>
+  <data name="ErrYou" xml:space="preserve">
+    <value>You</value>
+  </data>
+  <data name="ErrRedCard" xml:space="preserve">
+    <value>Red card</value>
+  </data>
+  <data name="ErrRedCardNote" xml:space="preserve">
+    <value>No pass, no pitch.</value>
+  </data>
+  <data name="ErrMinute" xml:space="preserve">
+    <value>Minute</value>
+  </data>
+  <data name="ErrOffence" xml:space="preserve">
+    <value>Offence</value>
+  </data>
+  <data name="ErrDecision" xml:space="preserve">
+    <value>Decision</value>
+  </data>
+  <data name="ErrVar" xml:space="preserve">
+    <value>VAR check</value>
+  </data>
+  <data name="ErrVarChecking" xml:space="preserve">
+    <value>Check in progress</value>
+  </data>
+  <data name="ErrVarNote" xml:space="preserve">
+    <value>The officials are reviewing the replay – try again in a moment.</value>
+  </data>
+  <data name="TNProgramme" xml:space="preserve">
+    <value>Matchday programme</value>
+  </data>
+  <data name="TNFinal" xml:space="preserve">
+    <value>Final</value>
+  </data>
+  <data name="TNSemiFinal" xml:space="preserve">
+    <value>Semi-final</value>
+  </data>
+  <data name="TNQuarterFinal" xml:space="preserve">
+    <value>Quarter-final</value>
+  </data>
+  <data name="TNRoundOf16" xml:space="preserve">
+    <value>Round of 16</value>
+  </data>
+  <data name="TNDragHint" xml:space="preserve">
+    <value>Drag to explore the bracket</value>
+  </data>
+  <data name="TNGoalPlus" xml:space="preserve">
+    <value>Add a goal</value>
+  </data>
+  <data name="TNGoalMinus" xml:space="preserve">
+    <value>Remove a goal</value>
+  </data>
+  <data name="TNPosterLive" xml:space="preserve">
+    <value>The poster updates as you type</value>
+  </data>
+  <data name="MsgSideSticker" xml:space="preserve">
+    <value>No offside in the inbox!</value>
+  </data>
+  <data name="MsgAirmail" xml:space="preserve">
+    <value>Air mail</value>
+  </data>
+  <data name="MsgPostTo" xml:space="preserve">
+    <value>To:</value>
+  </data>
+  <data name="PayFilterAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="PaySearch" xml:space="preserve">
+    <value>Search by #, user, tournament…</value>
+  </data>
+  <data name="PayNoMatch" xml:space="preserve">
+    <value>No payments match this filter.</value>
+  </data>
+  <data name="PayTotalPending" xml:space="preserve">
+    <value>Pending payments</value>
+  </data>
+  <data name="TpRefTitle2" xml:space="preserve">
+    <value>of the season</value>
+  </data>
+  <data name="TpRefSub" xml:space="preserve">
+    <value>Collectible cards of every referee. Rate them with stars and read what the teams say.</value>
+  </data>
+  <data name="TpRefTop" xml:space="preserve">
+    <value>Top referee</value>
+  </data>
+  <data name="TpTierGold" xml:space="preserve">
+    <value>Gold</value>
+  </data>
+  <data name="TpTierSilver" xml:space="preserve">
+    <value>Silver</value>
+  </data>
+  <data name="TpTierBronze" xml:space="preserve">
+    <value>Bronze</value>
+  </data>
+  <data name="TpTierNew" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="TpPosRef" xml:space="preserve">
+    <value>REF</value>
+  </data>
+  <data name="TpPosCoach" xml:space="preserve">
+    <value>MGR</value>
+  </data>
+  <data name="TpPosFan" xml:space="preserve">
+    <value>FAN</value>
+  </data>
+  <data name="TpFutTrn" xml:space="preserve">
+    <value>TRN</value>
+  </data>
+  <data name="TpFutExp" xml:space="preserve">
+    <value>EXP</value>
+  </data>
+  <data name="TpFutAge" xml:space="preserve">
+    <value>AGE</value>
+  </data>
+  <data name="TpHello" xml:space="preserve">
+    <value>Hey,</value>
+  </data>
+  <data name="TpJtTitle" xml:space="preserve">
+    <value>Build your squad</value>
+  </data>
+  <data name="TpJtMin" xml:space="preserve">
+    <value>At least 6 players needed</value>
+  </data>
+  <data name="TpJtReady" xml:space="preserve">
+    <value>Ready for kick-off!</value>
+  </data>
+  <data name="TpDecSign" xml:space="preserve">
+    <value>Tick to sign</value>
+  </data>
+  <data name="TpDecSigned" xml:space="preserve">
+    <value>Signed</value>
+  </data>
+  <data name="TpDecSignature" xml:space="preserve">
+    <value>Signature</value>
+  </data>
+  <data name="TpToday" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="TpContractLabel" xml:space="preserve">
+    <value>Transfer contract</value>
+  </data>
+  <data name="TpLiveHint" xml:space="preserve">
+    <value>The card updates as you type.</value>
+  </data>
+  <data name="TpExperience" xml:space="preserve">
+    <value>Experience</value>
+  </data>
+  <data name="TpRole" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="ERDrawNotAllowed" xml:space="preserve">
+    <value>A draw is not allowed. Please enter a winner.</value>
+  </data>
+  <data name="ERNegativeGoals" xml:space="preserve">
+    <value>Goals cannot be negative.</value>
+  </data>
+  <data name="ERMatchNotFound" xml:space="preserve">
+    <value>Match not found.</value>
+  </data>
+  <data name="JoinFailedRefundNotification" xml:space="preserve">
+    <value>Your payment was received, but your team could not be registered for the tournament (for example, it is already full). The amount is being refunded to your card automatically.</value>
+  </data>
+  <data name="LeaveTournamentConfirm" xml:space="preserve">
+    <value>Are you sure you want to leave the tournament? The participation fee is not refunded automatically – contact the organizers if you want your money back. If you rejoin the same tournament, you won't pay again.</value>
+  </data>
+  <data name="ConfirmRefereeText" xml:space="preserve">
+    <value>You will be registered as the referee of this tournament as</value>
+  </data>
+  <data name="GenericErrorMessage" xml:space="preserve">
+    <value>Something went wrong. Please try again later.</value>
+  </data>
+  <data name="RefundStripeError" xml:space="preserve">
+    <value>Stripe rejected the refund. Check the payment in the Stripe Dashboard.</value>
+  </data>
+  <data name="PaymentStartError" xml:space="preserve">
+    <value>The payment could not be started. Please try again in a moment.</value>
+  </data>
+  <data name="CPTitle" xml:space="preserve">
+    <value>Change password</value>
+  </data>
+  <data name="CPSub" xml:space="preserve">
+    <value>Enter your current password and choose a new one.</value>
+  </data>
+  <data name="CPCurrent" xml:space="preserve">
+    <value>Current password</value>
+  </data>
+  <data name="CPSubmit" xml:space="preserve">
+    <value>Save new password</value>
+  </data>
+  <data name="CPChanged" xml:space="preserve">
+    <value>Your password has been changed.</value>
+  </data>
+  <data name="CPWrongCurrent" xml:space="preserve">
+    <value>The current password is incorrect.</value>
+  </data>
+  <data name="FaqLink" xml:space="preserve">
+    <value>FAQ</value>
+  </data>
+  <data name="FaqTitle" xml:space="preserve">
+    <value>Frequently asked questions</value>
+  </data>
+  <data name="FaqSub" xml:space="preserve">
+    <value>Everything you need to know about tournaments, teams and payments. Can't find an answer? Write to us.</value>
+  </data>
+  <data name="FaqSearch" xml:space="preserve">
+    <value>Search a question…</value>
+  </data>
+  <data name="FaqAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="FaqNoResults" xml:space="preserve">
+    <value>No questions match your search.</value>
+  </data>
+  <data name="FaqStillTitle" xml:space="preserve">
+    <value>Didn't find your answer?</value>
+  </data>
+  <data name="FaqStillText" xml:space="preserve">
+    <value>The organizers answer every message. You will see the reply in your notifications.</value>
+  </data>
+  <data name="FaqStillLogin" xml:space="preserve">
+    <value>Log in to write to us.</value>
+  </data>
+  <data name="FaqCatAccount" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="FaqCatTournaments" xml:space="preserve">
+    <value>Tournaments</value>
+  </data>
+  <data name="FaqCatTeams" xml:space="preserve">
+    <value>Teams &amp; coaches</value>
+  </data>
+  <data name="FaqCatPayments" xml:space="preserve">
+    <value>Payments</value>
+  </data>
+  <data name="FaqCatReferees" xml:space="preserve">
+    <value>Referees</value>
+  </data>
+  <data name="FaqCatMatches" xml:space="preserve">
+    <value>Matches &amp; standings</value>
+  </data>
+  <data name="FaqCatContact" xml:space="preserve">
+    <value>Notifications &amp; contact</value>
+  </data>
+  <data name="FaqQ1" xml:space="preserve">
+    <value>How do I create an account?</value>
+  </data>
+  <data name="FaqA1" xml:space="preserve">
+    <value>Click “Register” in the top right corner and enter your first name, last name, email and a password. The password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number and a symbol.</value>
+  </data>
+  <data name="FaqQ2" xml:space="preserve">
+    <value>I forgot my password. What should I do?</value>
+  </data>
+  <data name="FaqA2" xml:space="preserve">
+    <value>On the login page click “Forgot password?” and enter your email. You will receive a link for setting a new password. If the email doesn't arrive, check your spam folder too.</value>
+  </data>
+  <data name="FaqQ3" xml:space="preserve">
+    <value>How do I change my password?</value>
+  </data>
+  <data name="FaqA3" xml:space="preserve">
+    <value>Open “My Profile” and click “Change password”. Enter your current password and the new one.</value>
+  </data>
+  <data name="FaqQ4" xml:space="preserve">
+    <value>How do I change the site language?</value>
+  </data>
+  <data name="FaqA4" xml:space="preserve">
+    <value>Use the globe button in the top menu and choose “Български” or “English”. Your choice is remembered.</value>
+  </data>
+  <data name="FaqQ5" xml:space="preserve">
+    <value>How do I find a tournament near me?</value>
+  </data>
+  <data name="FaqA5" xml:space="preserve">
+    <value>Open “Cities”, pick your city and click “Tournaments”. You will see current and upcoming tournaments, and past ones under “Finished”.</value>
+  </data>
+  <data name="FaqQ6" xml:space="preserve">
+    <value>How many teams can play in one tournament?</value>
+  </data>
+  <data name="FaqA6" xml:space="preserve">
+    <value>Up to 16 teams. When a tournament is full, registration closes automatically.</value>
+  </data>
+  <data name="FaqQ7" xml:space="preserve">
+    <value>Can I take part in several tournaments at the same time?</value>
+  </data>
+  <data name="FaqA7" xml:space="preserve">
+    <value>As a coach you can take part in only one active tournament. To join another one, leave the current tournament first or wait until it ends.</value>
+  </data>
+  <data name="FaqQ8" xml:space="preserve">
+    <value>Can I withdraw from a tournament?</value>
+  </data>
+  <data name="FaqA8" xml:space="preserve">
+    <value>Yes. Go to “Participation → As Coach” and click “Leave tournament”. This is possible only before the tournament starts. Leaving does not refund the fee automatically – contact the organizers for a refund.</value>
+  </data>
+  <data name="FaqQ9" xml:space="preserve">
+    <value>How do I register a team for a tournament?</value>
+  </data>
+  <data name="FaqA9" xml:space="preserve">
+    <value>Open the tournament and click “Join Tournament”. If you are not a coach yet, you first fill in a short form with your name and years of experience. Then you enter the team name and players, accept the declaration and pay the fee.</value>
+  </data>
+  <data name="FaqQ10" xml:space="preserve">
+    <value>How many players does a team need?</value>
+  </data>
+  <data name="FaqA10" xml:space="preserve">
+    <value>Between 6 and 10 players. The team name must be 3 to 15 characters long and must not match another team's name.</value>
+  </data>
+  <data name="FaqQ11" xml:space="preserve">
+    <value>Can I be both a coach and a referee?</value>
+  </data>
+  <data name="FaqA11" xml:space="preserve">
+    <value>No. An account is either a coach or a referee. You can give up your role in “My Profile”.</value>
+  </data>
+  <data name="FaqQ12" xml:space="preserve">
+    <value>How do I pay the participation fee?</value>
+  </data>
+  <data name="FaqA12" xml:space="preserve">
+    <value>After accepting the declaration you are taken to Stripe's secure payment page and pay by card. Your team is registered right after a successful payment and you get a notification.</value>
+  </data>
+  <data name="FaqQ13" xml:space="preserve">
+    <value>Is the payment safe?</value>
+  </data>
+  <data name="FaqA13" xml:space="preserve">
+    <value>Yes. The payment is handled entirely by Stripe, one of the world's largest payment providers. The site never sees or stores your card details.</value>
+  </data>
+  <data name="FaqQ14" xml:space="preserve">
+    <value>I paid but my team isn't registered. What happened?</value>
+  </data>
+  <data name="FaqA14" xml:space="preserve">
+    <value>If your team can't be registered after the payment (for example, the tournament filled up in the meantime), the amount is refunded to your card automatically and you get a notification. If you see neither a registration nor a notification, write to us.</value>
+  </data>
+  <data name="FaqQ15" xml:space="preserve">
+    <value>Can I get a refund?</value>
+  </data>
+  <data name="FaqA15" xml:space="preserve">
+    <value>Refunds are handled by the organizers. If you leave a tournament, the fee is not refunded automatically – write to us via “Contact the organizers” and mention your team and tournament. If you later rejoin the same tournament, you don't pay again. You will receive an email once the amount is refunded. If a tournament is cancelled (for example because not enough teams signed up), the fee is refunded automatically to the card you paid with.</value>
+  </data>
+  <data name="FaqQ16" xml:space="preserve">
+    <value>Will I be charged twice if I click “Pay” again?</value>
+  </data>
+  <data name="FaqA16" xml:space="preserve">
+    <value>No. If you already have a payment in progress, the site takes you back to it, and if you have already paid for the tournament, a second payment is not possible.</value>
+  </data>
+  <data name="FaqQ17" xml:space="preserve">
+    <value>How do I become a referee?</value>
+  </data>
+  <data name="FaqA17" xml:space="preserve">
+    <value>Open a tournament that has no referee yet and click “Become A Referee”. You must be at least 18 years old and have at least 2 years of experience. You can referee only one tournament at a time.</value>
+  </data>
+  <data name="FaqQ18" xml:space="preserve">
+    <value>How do I rate a referee?</value>
+  </data>
+  <data name="FaqA18" xml:space="preserve">
+    <value>On the “Referees” page choose 1 to 5 stars under the referee's card and click “Save”. Under “Comments” you can also leave a review.</value>
+  </data>
+  <data name="FaqQ19" xml:space="preserve">
+    <value>How does the tournament bracket work?</value>
+  </data>
+  <data name="FaqA19" xml:space="preserve">
+    <value>Tournaments are knockout competitions: round of 16, quarter-finals, semi-finals and the final. The winner of each match moves on. With fewer than 16 teams, the teams without an opponent in the first round go straight through. The bracket is on the “Tournament Details” page.</value>
+  </data>
+  <data name="FaqQ20" xml:space="preserve">
+    <value>Can a match end in a draw?</value>
+  </data>
+  <data name="FaqA20" xml:space="preserve">
+    <value>No. Every match must have a winner who moves on to the next round.</value>
+  </data>
+  <data name="FaqQ21" xml:space="preserve">
+    <value>Who enters the results?</value>
+  </data>
+  <data name="FaqA21" xml:space="preserve">
+    <value>The organizers enter the result after each match and it appears in the tournament bracket straight away.</value>
+  </data>
+  <data name="FaqQ22" xml:space="preserve">
+    <value>What are the “City Leaders”?</value>
+  </data>
+  <data name="FaqA22" xml:space="preserve">
+    <value>A ranking of the teams in a city by the number of wins they have there. Open “Cities” and click “City Leaders” for the city you want.</value>
+  </data>
+  <data name="FaqQ23" xml:space="preserve">
+    <value>What notifications will I get?</value>
+  </data>
+  <data name="FaqA23" xml:space="preserve">
+    <value>You get a notification after a successful payment, when a new tournament is created in a city where you have played before, about 24 hours before your tournament starts, and when the organizers reply to you. Some notifications are also sent by email.</value>
+  </data>
+  <data name="FaqQ24" xml:space="preserve">
+    <value>How can I suggest a tournament in my city?</value>
+  </data>
+  <data name="FaqA24" xml:space="preserve">
+    <value>Log in and write to us via “Contact the organizers” (the link is at the bottom of every page). You will see the reply in your notifications.</value>
+  </data>
+  <data name="FaqQ25" xml:space="preserve">
+    <value>Where can I see photos from the tournaments?</value>
+  </data>
+  <data name="FaqA25" xml:space="preserve">
+    <value>Open “Cities → Tournaments → Finished” and click “Gallery” for the tournament you want.</value>
+  </data>
+  <data name="LoginLockedOut" xml:space="preserve">
+    <value>Too many failed login attempts. The account is temporarily locked – try again in 15 minutes.</value>
+  </data>
+  <data name="LoginInvalid" xml:space="preserve">
+    <value>Invalid email or password.</value>
+  </data>
+  <data name="RefundDone" xml:space="preserve">
+    <value>The refund was started successfully.</value>
+  </data>
+  <data name="RefundDoneTeamRemoved" xml:space="preserve">
+    <value>The amount was refunded and the team was removed from the tournament.</value>
+  </data>
+  <data name="RefundTournamentStarted" xml:space="preserve">
+    <value>The tournament has already started – refunds are not possible.</value>
+  </data>
+  <data name="RefundStartedShort" xml:space="preserve">
+    <value>Started</value>
+  </data>
+  <data name="CTRegistrationClosed" xml:space="preserve">
+    <value>Registration closed</value>
+  </data>
+  <data name="Err429Title" xml:space="preserve">
+    <value>Too many attempts</value>
+  </data>
+  <data name="Err429Wait" xml:space="preserve">
+    <value>Wait 1 minute</value>
+  </data>
+  <data name="Err429Text" xml:space="preserve">
+    <value>Too many login or registration attempts were made in a short time. Wait about a minute and try again.</value>
+  </data>
+  <data name="SMBecomeCoachFirst" xml:space="preserve">
+    <value>You need to become a coach to join a team.</value>
+  </data>
+  <data name="SMTournamentNotFound" xml:space="preserve">
+    <value>Tournament not found.</value>
+  </data>
+  <data name="SMTournamentFinished" xml:space="preserve">
+    <value>This tournament has already finished.</value>
+  </data>
+  <data name="SMTournamentStarted" xml:space="preserve">
+    <value>This tournament has already started and registration is closed.</value>
+  </data>
+  <data name="SMAlreadyInTournament" xml:space="preserve">
+    <value>You already take part in another tournament. Leave it to join a new one.</value>
+  </data>
+  <data name="SMTournamentFull" xml:space="preserve">
+    <value>This tournament is full – the maximum number of teams has been reached.</value>
+  </data>
+  <data name="SMAlreadyCoachInTournament" xml:space="preserve">
+    <value>You already take part in this tournament as a coach.</value>
+  </data>
+  <data name="SMRefereeCannotBeCoach" xml:space="preserve">
+    <value>You cannot take part as a coach because you are the referee of this tournament.</value>
+  </data>
+  <data name="SMTeamNameTaken" xml:space="preserve">
+    <value>A team with this name already exists.</value>
+  </data>
+  <data name="SMAlreadyHaveTeam" xml:space="preserve">
+    <value>You already have a team.</value>
+  </data>
+  <data name="SMMinPlayers" xml:space="preserve">
+    <value>You must enter at least 6 players.</value>
+  </data>
+  <data name="SMCoachNotFound" xml:space="preserve">
+    <value>Coach profile not found.</value>
+  </data>
+  <data name="SMAlreadyPaid" xml:space="preserve">
+    <value>You have already paid for this tournament.</value>
+  </data>
+  <data name="SMPaymentProcessing" xml:space="preserve">
+    <value>Your payment for this tournament is already being processed.</value>
+  </data>
+  <data name="SMDeclarationRequired" xml:space="preserve">
+    <value>You must accept the declaration.</value>
+  </data>
+  <data name="SMFeeMissing" xml:space="preserve">
+    <value>The participation fee is not set. Please contact the organiser.</value>
+  </data>
+  <data name="SMTeamNotFound" xml:space="preserve">
+    <value>Team not found.</value>
+  </data>
+  <data name="SMTeamNotYours" xml:space="preserve">
+    <value>This team is not yours.</value>
+  </data>
+  <data name="SMRefereeTournamentStarted" xml:space="preserve">
+    <value>You cannot become the referee of a tournament that has already started.</value>
+  </data>
+  <data name="SMRefereeSlotTaken" xml:space="preserve">
+    <value>This tournament already has a referee.</value>
+  </data>
+  <data name="SMCoachCannotBeReferee" xml:space="preserve">
+    <value>You cannot be the referee because you take part in this tournament as a coach.</value>
+  </data>
+  <data name="SMRefereeElsewhere" xml:space="preserve">
+    <value>You are already the referee of another tournament. Leave it to referee a new one.</value>
+  </data>
+  <data name="SMCoachCannotBecomeReferee" xml:space="preserve">
+    <value>You cannot become a referee because you are already registered as a coach.</value>
+  </data>
+  <data name="SMRatingRange" xml:space="preserve">
+    <value>The rating must be between 1 and 5.</value>
+  </data>
+  <data name="SMAlreadyCoach" xml:space="preserve">
+    <value>You are already registered as a coach.</value>
+  </data>
+  <data name="SMRefereeCannotBecomeCoach" xml:space="preserve">
+    <value>You cannot become a coach because you are already registered as a referee.</value>
+  </data>
+  <data name="SMCoachStillPlaying" xml:space="preserve">
+    <value>You cannot stop being a coach while your team takes part in a tournament.</value>
+  </data>
+  <data name="SMOrderNotFound" xml:space="preserve">
+    <value>Payment not found.</value>
+  </data>
+  <data name="SMRefundOnlyPaid" xml:space="preserve">
+    <value>Only paid orders can be refunded.</value>
+  </data>
+  <data name="SMAlreadyRefunded" xml:space="preserve">
+    <value>This order is already refunded (or the refund has started).</value>
+  </data>
+  <data name="SMRefundNoPaymentIntent" xml:space="preserve">
+    <value>Stripe payment data is missing for this order.</value>
+  </data>
+  <data name="SMInvalidDate" xml:space="preserve">
+    <value>Invalid date, the format must be {0}.</value>
+  </data>
+  <data name="SMMinAge18" xml:space="preserve">
+    <value>You must be at least 18 years old to become a referee.</value>
+  </data>
+  <data name="SMChooseReferee" xml:space="preserve">
+    <value>Please choose a referee.</value>
+  </data>
+  <data name="SMEnterSubject" xml:space="preserve">
+    <value>Please enter a subject.</value>
+  </data>
+  <data name="SMEnterMessage" xml:space="preserve">
+    <value>Please enter a message.</value>
+  </data>
+  <data name="SMInviteSent" xml:space="preserve">
+    <value>The invitation was sent successfully!</value>
+  </data>
+  <data name="SMCommentEmpty" xml:space="preserve">
+    <value>The comment cannot be empty.</value>
+  </data>
+  <data name="SMCommentTooLong" xml:space="preserve">
+    <value>The comment can be at most {0} characters.</value>
+  </data>
+  <data name="SMCommentWait" xml:space="preserve">
+    <value>Please wait a little before posting another comment.</value>
+  </data>
+  <data name="TDTitle" xml:space="preserve">
+    <value>Delete tournament</value>
+  </data>
+  <data name="TDConfirm" xml:space="preserve">
+    <value>Delete tournament</value>
+  </data>
+  <data name="TDConfirmRefund" xml:space="preserve">
+    <value>Delete and refund</value>
+  </data>
+  <data name="TDPaidWarning" xml:space="preserve">
+    <value>Teams that have paid: {0} (total {1} €). Their money will be refunded automatically and they will be notified. This action cannot be undone.</value>
+  </data>
+  <data name="TDFinishedNote" xml:space="preserve">
+    <value>The tournament has finished – participation fees are not refunded and the payments stay in the history. This action cannot be undone.</value>
+  </data>
+  <data name="TDRunningBlocked" xml:space="preserve">
+    <value>This tournament is in progress and cannot be deleted until {0}.</value>
+  </data>
+  <data name="TDDeleted" xml:space="preserve">
+    <value>The tournament was deleted.</value>
+  </data>
+  <data name="TDDeletedRefunded" xml:space="preserve">
+    <value>The tournament was deleted. Teams refunded: {0}.</value>
+  </data>
+  <data name="TDRefundsFailed" xml:space="preserve">
+    <value>The tournament was not deleted because these teams could not be refunded: {0}. Teams that were refunded are already out of the tournament. Please try again.</value>
+  </data>
+  <data name="TDDeleteFailed" xml:space="preserve">
+    <value>The tournament could not be deleted because of a database error. Please try again.</value>
+  </data>
+  <data name="DCRunningBlocked" xml:space="preserve">
+    <value>A tournament in this city is in progress. The city cannot be deleted until {0}.</value>
+  </data>
+  <data name="DCPaidWarning" xml:space="preserve">
+    <value>In the tournaments that have not started yet, {0} teams have paid (total {1} €). Their money will be refunded automatically and they will be notified.</value>
+  </data>
+  <data name="DCDeleted" xml:space="preserve">
+    <value>The city was deleted.</value>
+  </data>
+  <data name="DCDeletedRefunded" xml:space="preserve">
+    <value>The city was deleted. Teams refunded: {0}.</value>
+  </data>
+  <data name="DCRefundsFailed" xml:space="preserve">
+    <value>The city was not deleted because these teams could not be refunded: {0}. Teams that were refunded are already out of their tournaments. Please try again.</value>
+  </data>
+  <data name="DCDeleteFailed" xml:space="preserve">
+    <value>The city could not be deleted because of a database error. Nothing in the city was deleted – please try again.</value>
+  </data>
+  <data name="TournamentCanceledRefundNotification" xml:space="preserve">
+    <value>The tournament in {0} on {1} was cancelled. The fee of {2} € will be refunded to the card you paid with.</value>
+  </data>
+  <data name="TournamentCanceledNotification" xml:space="preserve">
+    <value>The tournament in {0} on {1} was cancelled.</value>
+  </data>
+  <data name="TournamentCanceledSubject" xml:space="preserve">
+    <value>Tournament cancelled</value>
+  </data>
+  <data name="TournamentCanceledEmailBody" xml:space="preserve">
+    <value>&lt;p&gt;The tournament in &lt;b&gt;{0}&lt;/b&gt; on {1} was cancelled.&lt;/p&gt;&lt;p&gt;The fee of &lt;b&gt;{2} €&lt;/b&gt; will be refunded to the card you paid with. Refunds usually appear on your statement within 5–10 business days.&lt;/p&gt;</value>
+  </data>
+  <data name="PayDeletedTournament" xml:space="preserve">
+    <value>Deleted tournament</value>
+  </data>
+  <data name="LoginTwoFactorUnsupported" xml:space="preserve">
+    <value>Two-factor sign-in is not supported. Please contact the organizers.</value>
+  </data>
+  <data name="DATitle" xml:space="preserve">
+    <value>Delete account</value>
+  </data>
+  <data name="DASub" xml:space="preserve">
+    <value>This is permanent and cannot be undone.</value>
+  </data>
+  <data name="DAOpen" xml:space="preserve">
+    <value>Delete account</value>
+  </data>
+  <data name="DADeletedTitle" xml:space="preserve">
+    <value>Will be deleted:</value>
+  </data>
+  <data name="DADeletedList" xml:space="preserve">
+    <value>your account (name, e-mail, password), notifications, conversations with the organizers, your coach or referee profile, the players of your team, the ratings and comments you wrote, and the ratings and comments about you as a referee.</value>
+  </data>
+  <data name="DAKeptTitle" xml:space="preserve">
+    <value>Kept:</value>
+  </data>
+  <data name="DAKeptList" xml:space="preserve">
+    <value>payments (accounting records that must be kept by law) and your team's name in the history of played tournaments – without a coach or players.</value>
+  </data>
+  <data name="DAPassword" xml:space="preserve">
+    <value>Enter your password to confirm</value>
+  </data>
+  <data name="DASubmit" xml:space="preserve">
+    <value>Delete my account permanently</value>
+  </data>
+  <data name="DADeleted" xml:space="preserve">
+    <value>Your account was deleted. Sorry to see you go!</value>
+  </data>
+  <data name="DABlockedOrganizer" xml:space="preserve">
+    <value>The organizer's account cannot be deleted.</value>
+  </data>
+  <data name="DABlockedCoachUpcoming" xml:space="preserve">
+    <value>Your team is registered for a tournament in {0} on {1}. Leave the tournament first, then delete your account.</value>
+  </data>
+  <data name="DABlockedCoachRunning" xml:space="preserve">
+    <value>Your team is playing in a tournament right now. You can delete your account after it ends ({0}).</value>
+  </data>
+  <data name="DABlockedRefereeUpcoming" xml:space="preserve">
+    <value>You are the referee of a tournament in {0} on {1}. Leave the tournament first, then delete your account.</value>
+  </data>
+  <data name="DABlockedRefereeRunning" xml:space="preserve">
+    <value>You are refereeing a tournament right now. You can delete your account after it ends ({0}).</value>
+  </data>
+  <data name="DAWrongPassword" xml:space="preserve">
+    <value>Wrong password.</value>
+  </data>
+  <data name="TDInvalidDate" xml:space="preserve">
+    <value>Please choose a valid date and time.</value>
+  </data>
+  <data name="TDEndBeforeStart" xml:space="preserve">
+    <value>The tournament must end after it starts.</value>
+  </data>
+  <data name="BRInvalidBirthdate" xml:space="preserve">
+    <value>Please choose a valid date of birth.</value>
+  </data>
+  <data name="MBRequired" xml:space="preserve">
+    <value>This field is required.</value>
+  </data>
+  <data name="MBInvalidValue" xml:space="preserve">
+    <value>The value '{0}' is not valid.</value>
+  </data>
+  <data name="MBInvalid" xml:space="preserve">
+    <value>The value is not valid.</value>
+  </data>
+  <data name="MBNumber" xml:space="preserve">
+    <value>Please enter a number.</value>
+  </data>
+  <data name="RefundSuccessBodyShort" xml:space="preserve">
+    <value>&lt;p&gt;Hi!&lt;/p&gt;&lt;p&gt;We have refunded &lt;b&gt;{0} €&lt;/b&gt; to the card you used to pay the participation fee.&lt;/p&gt;&lt;p&gt;It usually appears on your statement within 5–10 business days, depending on your bank.&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;</value>
+  </data>
+  <data name="TNBye" xml:space="preserve">
+    <value>bye</value>
+  </data>
+  <data name="TournamentCanceledLowTeamsNotification" xml:space="preserve">
+    <value>The tournament in {0} on {1} was cancelled because not enough teams signed up (at least 8 are needed).</value>
+  </data>
+  <data name="TournamentCanceledLowTeamsRefundNotification" xml:space="preserve">
+    <value>The tournament in {0} on {1} was cancelled because not enough teams signed up (at least 8 are needed). The fee of {2} € will be refunded to the card you paid with.</value>
+  </data>
+  <data name="TournamentCanceledLowTeamsEmailBody" xml:space="preserve">
+    <value>&lt;p&gt;Hi!&lt;/p&gt;&lt;p&gt;The tournament in &lt;b&gt;{0}&lt;/b&gt; on {1} was cancelled because not enough teams signed up (at least 8 are needed).&lt;/p&gt;&lt;p&gt;The fee of &lt;b&gt;{2} €&lt;/b&gt; will be refunded to the card you paid with. It usually appears on your statement within 5–10 business days.&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;</value>
+  </data>
+  <data name="AdminLowTeamsWarningSubject" xml:space="preserve">
+    <value>Tournament with too few teams ⚠️</value>
+  </data>
+  <data name="AdminLowTeamsWarning" xml:space="preserve">
+    <value>Warning: the tournament in {0} on {1} has only {2} teams. If there are not at least {3} by the start, it will be cancelled automatically and the money refunded. To keep it, change its date.</value>
+  </data>
+  <data name="AdminAutoCanceledSubject" xml:space="preserve">
+    <value>Tournament cancelled automatically</value>
+  </data>
+  <data name="AdminAutoCanceled" xml:space="preserve">
+    <value>The tournament in {0} on {1} was cancelled automatically: only {2} teams signed up. Teams refunded: {3}.</value>
+  </data>
+  <data name="AdminAutoCancelFailed" xml:space="preserve">
+    <value>The automatic cancellation of the tournament in {0} on {1} failed: these teams could not be refunded: {2}. The site tries again every 5 minutes; you can also refund them in the Stripe Dashboard.</value>
+  </data>
+  <data name="FaqQ26" xml:space="preserve">
+    <value>What if not enough teams sign up?</value>
+  </data>
+  <data name="FaqA26" xml:space="preserve">
+    <value>A tournament takes place with at least 8 teams. If fewer have signed up when it starts, it is cancelled automatically and everyone who paid gets their money back to the card they used. You will get a notification and an e-mail.</value>
+  </data>
+  <data name="LeftTournamentNoRefund" xml:space="preserve">
+    <value>You left the tournament. The fee is not refunded automatically – contact the organizers if you want your money back. If you rejoin the same tournament, you won't pay again.</value>
+  </data>
+  <data name="LeaveNotAllowed" xml:space="preserve">
+    <value>You can't leave this tournament – it has already started or your team is not in it.</value>
+  </data>
+  <data name="RejoinedWithPaidFee" xml:space="preserve">
+    <value>Your team is registered for the tournament again, using the fee you had already paid.</value>
+  </data>
+  <data name="PayTeamLeft" xml:space="preserve">
+    <value>Team left</value>
+  </data>
+  <data name="PayTeamLeftHint" xml:space="preserve">
+    <value>The team left the tournament. The fee was not refunded automatically – the coach may ask for a refund.</value>
+  </data>
+  <data name="SMRefundInProgress" xml:space="preserve">
+    <value>The refund of your previous payment is still being processed – please try again in a few minutes.</value>
+  </data>
+  <data name="RefereeLeaveConfirm" xml:space="preserve">
+    <value>Are you sure you want to stop refereeing this tournament?</value>
+  </data>
+  <data name="RefereeLeaveNotAllowed" xml:space="preserve">
+    <value>You can't leave this tournament – it has already started or you are not its referee.</value>
+  </data>
+  <data name="RateSelfNotAllowed" xml:space="preserve">
+    <value>You can't rate yourself.</value>
+  </data>
+  <data name="CommentSelfNotAllowed" xml:space="preserve">
+    <value>You can't comment on yourself.</value>
+  </data>
+  <data name="RefereeNotFound" xml:space="preserve">
+    <value>Referee not found.</value>
+  </data>
+  <data name="SMRefereeStopRunning" xml:space="preserve">
+    <value>You can't stop being a referee while your tournament is in progress. You can do it after it ends.</value>
+  </data>
+  <data name="SMRefereeStopUpcoming" xml:space="preserve">
+    <value>You can't stop being a referee while you are assigned to an upcoming tournament. Leave it first.</value>
+  </data>
+  <data name="ErrFormExpiredTitle" xml:space="preserve">
+    <value>This form has expired</value>
+  </data>
+  <data name="ErrFormExpiredText" xml:space="preserve">
+    <value>The page was open for too long, or you signed in or out in another tab. Nothing was saved – open the form again and try once more.</value>
+  </data>
+  <data name="ErrFormExpiredRetry" xml:space="preserve">
+    <value>Open the form again</value>
+  </data>
+  <data name="ReminderSubject" xml:space="preserve">
+    <value>Tournament reminder ⚽</value>
+  </data>
+  <data name="ReminderNotification" xml:space="preserve">
+    <value>Reminder: you are taking part in the tournament in {2} on {0} at {1}.</value>
+  </data>
+  <data name="ReminderEmailBody" xml:space="preserve">
+    <value>&lt;p&gt;Hi!&lt;/p&gt;&lt;p&gt;A reminder that you are taking part in the tournament in &lt;b&gt;{2}&lt;/b&gt; on &lt;b&gt;{0}&lt;/b&gt; at &lt;b&gt;{1}&lt;/b&gt;.&lt;/p&gt;&lt;p&gt;Good luck! ⚽&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;</value>
+  </data>
+  <data name="ReminderUnknownCity" xml:space="preserve">
+    <value>an unknown city</value>
+  </data>
+  <data name="EmailConfirmSubject" xml:space="preserve">
+    <value>Confirm your email</value>
+  </data>
+  <data name="EmailConfirmBody" xml:space="preserve">
+    <value>&lt;p&gt;Hi!&lt;/p&gt;&lt;p&gt;Thanks for signing up for Tournament Galaxy. Please confirm your email using &lt;a href="{0}"&gt;this link&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;If you didn't sign up, you can simply ignore this email.&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;</value>
+  </data>
+  <data name="PasswordResetSubject" xml:space="preserve">
+    <value>Reset your password</value>
+  </data>
+  <data name="PasswordResetBody" xml:space="preserve">
+    <value>&lt;p&gt;Hi!&lt;/p&gt;&lt;p&gt;We received a request to reset the password of your Tournament Galaxy account. You can choose a new password using &lt;a href="{0}"&gt;this link&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;If you didn't ask for this, you can simply ignore this email – your password stays the same.&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;</value>
+  </data>
+  <data name="NewTournamentSubject" xml:space="preserve">
+    <value>New tournament in {0} ⚽</value>
+  </data>
+  <data name="NewTournamentNotification" xml:space="preserve">
+    <value>New tournament in {0}, starting on {1}. Sign up your team!</value>
+  </data>
+  <data name="NewTournamentEmailBody" xml:space="preserve">
+    <value>&lt;p&gt;Hi!&lt;/p&gt;&lt;p&gt;A new tournament has been created in &lt;b&gt;{0}&lt;/b&gt;, starting on {1}.&lt;/p&gt;&lt;p&gt;&lt;a href="{2}"&gt;See the tournaments in the city&lt;/a&gt; and sign up your team. Good luck! ⚽&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;&lt;p style="font-size:12px;color:#777"&gt;You get this e-mail because you asked to hear about new tournaments. &lt;a href="{3}"&gt;Unsubscribe&lt;/a&gt; or turn them off in your profile.&lt;/p&gt;</value>
+  </data>
+  <data name="CETitle" xml:space="preserve">
+    <value>Email confirmation</value>
+  </data>
+  <data name="CEConfirmedTitle" xml:space="preserve">
+    <value>Email confirmed</value>
+  </data>
+  <data name="CEConfirmedText" xml:space="preserve">
+    <value>Thank you! Your email is confirmed.</value>
+  </data>
+  <data name="CEFailedTitle" xml:space="preserve">
+    <value>This link is not valid</value>
+  </data>
+  <data name="CEFailedText" xml:space="preserve">
+    <value>The link is incomplete or has expired. Check that the whole link was copied.</value>
+  </data>
+  <data name="CEToSite" xml:space="preserve">
+    <value>Go to the site</value>
+  </data>
+  <data name="TDStartInPast" xml:space="preserve">
+    <value>The start must be in the future.</value>
+  </data>
+  <data name="TDDatesLocked" xml:space="preserve">
+    <value>The tournament has started – its dates can no longer be changed.</value>
+  </data>
+  <data name="TEditSaved" xml:space="preserve">
+    <value>The changes were saved.</value>
+  </data>
+  <data name="TEditSavedMoved" xml:space="preserve">
+    <value>The changes were saved. The participants got a notification and an email about the new date.</value>
+  </data>
+  <data name="TournamentMovedSubject" xml:space="preserve">
+    <value>New tournament date ⚽</value>
+  </data>
+  <data name="TournamentMovedNotification" xml:space="preserve">
+    <value>The tournament in {0} has been moved from {1} to {2}.</value>
+  </data>
+  <data name="TournamentMovedEmailBody" xml:space="preserve">
+    <value>&lt;p&gt;Hi!&lt;/p&gt;&lt;p&gt;The tournament in &lt;b&gt;{0}&lt;/b&gt; has been moved from {1} to &lt;b&gt;{2}&lt;/b&gt;.&lt;/p&gt;&lt;p&gt;Your registration stays valid.&lt;/p&gt;&lt;p&gt;&lt;a href="{3}"&gt;See the tournaments in the city&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;</value>
+  </data>
+  <data name="The field {0} is required." xml:space="preserve">
+    <value>This field is required.</value>
+  </data>
+  <data name="The field {0} must be between {2} and {1} symbols." xml:space="preserve">
+    <value>Must be between {2} and {1} characters.</value>
+  </data>
+  <data name="Prize must be a positive number." xml:space="preserve">
+    <value>The prize can't be negative.</value>
+  </data>
+  <data name="Second place prize must be a positive number." xml:space="preserve">
+    <value>The prize can't be negative.</value>
+  </data>
+  <data name="Third place prize must be a positive number." xml:space="preserve">
+    <value>The prize can't be negative.</value>
+  </data>
+  <data name="Participation fee must be a positive number." xml:space="preserve">
+    <value>The fee can't be negative.</value>
+  </data>
+  <data name="Referee experience must be between {1} and {2} years." xml:space="preserve">
+    <value>The experience must be between {1} and {2} years.</value>
+  </data>
+  <data name="The coach experience must be between {1} and {2} years." xml:space="preserve">
+    <value>The experience must be between {1} and {2} years.</value>
+  </data>
+  <data name="The coach experience must be at least {1} year." xml:space="preserve">
+    <value>The experience must be at least {1} year.</value>
+  </data>
+  <data name="RCTitle" xml:space="preserve">
+    <value>Check your email</value>
+  </data>
+  <data name="RCStepAccount" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="RCSentTo" xml:space="preserve">
+    <value>We sent a confirmation link to</value>
+  </data>
+  <data name="RCSent" xml:space="preserve">
+    <value>We sent you a confirmation link.</value>
+  </data>
+  <data name="RCOpenIt" xml:space="preserve">
+    <value>Open it to activate your account – then you can sign in.</value>
+  </data>
+  <data name="RCResend" xml:space="preserve">
+    <value>Didn't get it? Send the link again</value>
+  </data>
+  <data name="RECKicker" xml:space="preserve">
+    <value>Pass didn't arrive?</value>
+  </data>
+  <data name="RECTitle" xml:space="preserve">
+    <value>A new confirmation link</value>
+  </data>
+  <data name="RECSub" xml:space="preserve">
+    <value>Enter the email you registered with and we'll send you a new link.</value>
+  </data>
+  <data name="RECSend" xml:space="preserve">
+    <value>Send the link</value>
+  </data>
+  <data name="RECDone" xml:space="preserve">
+    <value>If there is an unconfirmed account with this email, we've sent a new link. A new link can be requested once every 5 minutes.</value>
+  </data>
+  <data name="LoginNotConfirmed" xml:space="preserve">
+    <value>Your email isn't confirmed yet. Open the link we sent you when you registered.</value>
+  </data>
+  <data name="LoginNoLink" xml:space="preserve">
+    <value>Didn't get the confirmation link?</value>
+  </data>
+  <data name="LoginNoLinkSend" xml:space="preserve">
+    <value>Send it again</value>
+  </data>
+  <data name="CENewLink" xml:space="preserve">
+    <value>Send a new link</value>
+  </data>
+  <data name="Please enter a valid email address." xml:space="preserve">
+    <value>Please enter a valid email address.</value>
+  </data>
+  <data name="IdDefaultError" xml:space="preserve">
+    <value>Something went wrong. Please try again.</value>
+  </data>
+  <data name="IdConcurrencyFailure" xml:space="preserve">
+    <value>The data was changed in the meantime. Please try again.</value>
+  </data>
+  <data name="IdPasswordMismatch" xml:space="preserve">
+    <value>Incorrect password.</value>
+  </data>
+  <data name="IdInvalidToken" xml:space="preserve">
+    <value>The link is invalid or has expired. Please request a new one.</value>
+  </data>
+  <data name="IdInvalidUserName" xml:space="preserve">
+    <value>'{0}' is not a valid email.</value>
+  </data>
+  <data name="IdInvalidEmail" xml:space="preserve">
+    <value>'{0}' is not a valid email.</value>
+  </data>
+  <data name="IdDuplicateUserName" xml:space="preserve">
+    <value>There is already an account with the email {0}.</value>
+  </data>
+  <data name="IdDuplicateEmail" xml:space="preserve">
+    <value>There is already an account with the email {0}.</value>
+  </data>
+  <data name="IdPasswordTooShort" xml:space="preserve">
+    <value>The password must be at least {0} characters long.</value>
+  </data>
+  <data name="IdPasswordRequiresUniqueChars" xml:space="preserve">
+    <value>The password must contain at least {0} different characters.</value>
+  </data>
+  <data name="IdPasswordRequiresNonAlphanumeric" xml:space="preserve">
+    <value>The password must contain at least one special character (such as ! @ # ?).</value>
+  </data>
+  <data name="IdPasswordRequiresDigit" xml:space="preserve">
+    <value>The password must contain at least one digit.</value>
+  </data>
+  <data name="IdPasswordRequiresLower" xml:space="preserve">
+    <value>The password must contain at least one lowercase letter.</value>
+  </data>
+  <data name="IdPasswordRequiresUpper" xml:space="preserve">
+    <value>The password must contain at least one uppercase letter.</value>
+  </data>
+  <data name="The password and confirmation password do not match." xml:space="preserve">
+    <value>The passwords don't match.</value>
+  </data>
+  <data name="SMTooManyPlayers" xml:space="preserve">
+    <value>A team can have at most {0} players.</value>
+  </data>
+  <data name="SMPlayerNameTooLong" xml:space="preserve">
+    <value>A player's name can be at most {0} characters long.</value>
+  </data>
+  <data name="SMRefundAmountPositive" xml:space="preserve">
+    <value>The refund amount must be greater than 0.</value>
+  </data>
+  <data name="SMRefundAmountTooHigh" xml:space="preserve">
+    <value>The refund amount can't be more than the amount paid.</value>
+  </data>
+  <data name="GLSelectPictures" xml:space="preserve">
+    <value>Please select at least one picture.</value>
+  </data>
+  <data name="GLTooManyFiles" xml:space="preserve">
+    <value>You can upload at most {0} pictures at once.</value>
+  </data>
+  <data name="GLNotAllowed" xml:space="preserve">
+    <value>"{0}" is not allowed. Only JPG, PNG, GIF and WEBP pictures can be uploaded.</value>
+  </data>
+  <data name="GLEmpty" xml:space="preserve">
+    <value>"{0}" is empty.</value>
+  </data>
+  <data name="GLTooLarge" xml:space="preserve">
+    <value>"{0}" is too large (max {1} MB).</value>
+  </data>
+  <data name="GLNotAnImage" xml:space="preserve">
+    <value>"{0}" is not a valid picture.</value>
+  </data>
+  <data name="GLSaveFailed" xml:space="preserve">
+    <value>The picture "{0}" could not be processed. Nothing from this upload was saved.</value>
+  </data>
+  <data name="GLUploaded" xml:space="preserve">
+    <value>The pictures were uploaded.</value>
+  </data>
+  <data name="GLDeleted" xml:space="preserve">
+    <value>The picture was deleted.</value>
+  </data>
+  <data name="GLFileNotFound" xml:space="preserve">
+    <value>The picture was not found.</value>
+  </data>
+  <data name="PaymentCheckEmail" xml:space="preserve">
+    <value>If the payment went through, you will get a confirmation email and your team will appear in the tournament.</value>
+  </data>
+  <data name="PaymentCanceledMessage" xml:space="preserve">
+    <value>❌ The payment was cancelled or interrupted.</value>
+  </data>
+  <data name="The participation fee must be at least {1} €." xml:space="preserve">
+    <value>The participation fee must be at least €{1}.</value>
+  </data>
+  <data name="PicChoose" xml:space="preserve">
+    <value>Choose a picture</value>
+  </data>
+  <data name="PicNone" xml:space="preserve">
+    <value>No file chosen</value>
+  </data>
+  <data name="PicRequired" xml:space="preserve">
+    <value>Choose a picture.</value>
+  </data>
+  <data name="PicChooseAgain" xml:space="preserve">
+    <value>Choose the picture again – the browser doesn't keep it when the form has an error.</value>
+  </data>
+  <data name="PicKeepCurrent" xml:space="preserve">
+    <value>If you don't choose a new one, the current picture stays.</value>
+  </data>
+  <data name="PicNew" xml:space="preserve">
+    <value>New picture</value>
+  </data>
+  <data name="PicNewLogo" xml:space="preserve">
+    <value>New logo</value>
+  </data>
+  <data name="PicSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="PicChanged" xml:space="preserve">
+    <value>The city's picture has been changed.</value>
+  </data>
+  <data name="PicLogoChanged" xml:space="preserve">
+    <value>The partner's logo has been changed.</value>
+  </data>
+  <data name="PicPickCity" xml:space="preserve">
+    <value>Choose a city.</value>
+  </data>
+  <data name="PicPickPartner" xml:space="preserve">
+    <value>Choose a partner.</value>
+  </data>
+  <data name="PicChangeShort" xml:space="preserve">
+    <value>Change picture</value>
+  </data>
+  <data name="PicChangeLogoShort" xml:space="preserve">
+    <value>Change logo</value>
+  </data>
+  <data name="CPChangeCityPicture" xml:space="preserve">
+    <value>Change a city's picture</value>
+  </data>
+  <data name="CPChangeCityPictureSub" xml:space="preserve">
+    <value>Choose a city and a new picture for it. The old picture is removed from the site.</value>
+  </data>
+  <data name="CPChangePartnerLogo" xml:space="preserve">
+    <value>Change a partner's logo</value>
+  </data>
+  <data name="CPChangePartnerLogoSub" xml:space="preserve">
+    <value>Choose a partner and a new logo. The old logo is removed from the site.</value>
+  </data>
+  <data name="PrefEmailsTitle" xml:space="preserve">
+    <value>E-mails about new tournaments</value>
+  </data>
+  <data name="PrefEmailsText" xml:space="preserve">
+    <value>An e-mail when there is a new tournament in a city where you played. The notifications on the site come anyway.</value>
+  </data>
+  <data name="PrefEmailsStateOn" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="PrefEmailsStateOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="PrefEmailsTurnOn" xml:space="preserve">
+    <value>Turn the e-mails on</value>
+  </data>
+  <data name="PrefEmailsTurnOff" xml:space="preserve">
+    <value>Turn the e-mails off</value>
+  </data>
+  <data name="PrefEmailsSavedOn" xml:space="preserve">
+    <value>You will get an e-mail about new tournaments.</value>
+  </data>
+  <data name="PrefEmailsSavedOff" xml:space="preserve">
+    <value>You won't get e-mails about new tournaments.</value>
+  </data>
+  <data name="UnsubTitle" xml:space="preserve">
+    <value>E-mails about new tournaments</value>
+  </data>
+  <data name="UnsubQuestion" xml:space="preserve">
+    <value>Stop the e-mails about new tournaments to this account?</value>
+  </data>
+  <data name="UnsubButton" xml:space="preserve">
+    <value>Unsubscribe me</value>
+  </data>
+  <data name="UnsubDone" xml:space="preserve">
+    <value>Done – you won't get e-mails about new tournaments any more. You can turn them on again in your profile.</value>
+  </data>
+  <data name="UnsubInvalid" xml:space="preserve">
+    <value>This link is not valid or has expired. You can turn the e-mails off in your profile.</value>
+  </data>
+  <data name="UnsubToProfile" xml:space="preserve">
+    <value>To my profile</value>
+  </data>
+  <data name="RegNewTournamentEmails" xml:space="preserve">
+    <value>I want an e-mail when there is a new tournament in a city where I played (optional).</value>
+  </data>
+  <data name="RegAcceptA" xml:space="preserve">
+    <value>I accept the</value>
+  </data>
+  <data name="RegAcceptB" xml:space="preserve">
+    <value>and I have read the</value>
+  </data>
+  <data name="RegTermsLink" xml:space="preserve">
+    <value>Terms and Conditions</value>
+  </data>
+  <data name="RegPrivacyLink" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="RegAcceptRequired" xml:space="preserve">
+    <value>You need to accept the Terms and Conditions.</value>
+  </data>
+  <data name="LegalTermsLink" xml:space="preserve">
+    <value>Terms and Conditions</value>
+  </data>
+  <data name="LegalPrivacyLink" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="LegalUpdated" xml:space="preserve">
+    <value>Last updated</value>
+  </data>
+  <data name="FooterLegal" xml:space="preserve">
+    <value>Legal</value>
+  </data>
+  <data name="TNRefereeAssigned" xml:space="preserve">
+    <value>Assigned</value>
+  </data>
+  <data name="TGRemovalNote" xml:space="preserve">
+    <value>If you are in one of the pictures and want it taken down, write to us:</value>
+  </data>
+  <data name="TGRemovalWrite" xml:space="preserve">
+    <value>message the organisers</value>
+  </data>
+  <data name="CRReport" xml:space="preserve">
+    <value>Report</value>
+  </data>
+  <data name="CRReportTitle" xml:space="preserve">
+    <value>Report a comment</value>
+  </data>
+  <data name="CRReportLead" xml:space="preserve">
+    <value>Report a comment that is insulting, defamatory or discriminatory, or that contains somebody's personal data. The organisers will review it and answer in your messages.</value>
+  </data>
+  <data name="CRReason" xml:space="preserve">
+    <value>What is wrong with it? (optional)</value>
+  </data>
+  <data name="CRSend" xml:space="preserve">
+    <value>Send the report</value>
+  </data>
+  <data name="CRReportSubject" xml:space="preserve">
+    <value>Report of a comment about referee {0}</value>
+  </data>
+  <data name="CRReportBody" xml:space="preserve">
+    <value>Report of comment #{0} about referee {1}.
+
+Author: {2}, {3}
+Comment: "{4}"
+
+Problem: {5}</value>
+  </data>
+  <data name="CRReportSent" xml:space="preserve">
+    <value>The report has been sent. We will answer in your messages.</value>
+  </data>
+  <data name="CRDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="CRDeleteConfirm" xml:space="preserve">
+    <value>Delete this comment? Its author will be notified.</value>
+  </data>
+  <data name="CRDeleted" xml:space="preserve">
+    <value>The comment has been deleted and its author notified.</value>
+  </data>
+  <data name="CRRemovedNotification" xml:space="preserve">
+    <value>Your comment about referee {0} from {1} was removed because it breaks the comment rules in the Terms and Conditions.</value>
+  </data>
+  <data name="LegalCompanyId" xml:space="preserve">
+    <value>Company No.</value>
+  </data>
+  <data name="LegalAddress" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="LegalEmail" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="LegalPhone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="LegalContactForm" xml:space="preserve">
+    <value>Registered users can also write to us through "Contact the organisers".</value>
   </data>
 </root>

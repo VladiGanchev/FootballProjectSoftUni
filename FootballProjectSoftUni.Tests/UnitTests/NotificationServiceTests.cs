@@ -1,14 +1,12 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Email;
 using FootballProjectSoftUni.Core.Contracts.Notification;
 using FootballProjectSoftUni.Core.Contracts.Partner;
-using FootballProjectSoftUni.Core.Models.Email;
-using FootballProjectSoftUni.Core.Services.Email;
+using FootballProjectSoftUni.Core.Models.Notification;
 using FootballProjectSoftUni.Core.Services.Notification;
 using FootballProjectSoftUni.Core.Services.Partner;
 using FootballProjectSoftUni.Infrastructure.Data.Enums;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,39 +15,31 @@ using System.Threading.Tasks;
 
 namespace FootballProjectSoftUni.Tests.UnitTests
 {
-    public class FakeEmailService : IEmailService
+    public class FakeEmailService : IEmailQueue
     {
         public List<(string to, string subject, string content)> Sent { get; } = new();
 
-        public Task SendAsync(string to, string subject, string content)
-        {
-            Sent.Add((to, subject, content));
-            return Task.CompletedTask;
-        }
+        public void Enqueue(string to, string subject, string htmlBody) => Sent.Add((to, subject, htmlBody));
     }
 
     public class NotificationServiceTests : UnitTestsBase
     {
         private INotificationService notificationService;
-        private IEmailService emailService;
 
         [SetUp]
         public void SetUp()
         {
-            var emailOptions = Options.Create(new EmailSettings
-            {
-                From = "Test <test@test.com>",
-                SmtpHost = "localhost",
-                SmtpPort = 25,
-                EnableSsl = false,
-                SmtpUser = "user",
-                SmtpPass = "pass",
-                OverrideTo = "override@test.com"
-            });
-
-            emailService = new EmailService(emailOptions);
-            notificationService = new NotificationService(_data, emailService);
+            notificationService = new NotificationService(_data, new FakeEmailService());
         }
+
+        private const string UnsubscribeUrl = "https://site.test/EmailPreferences/Unsubscribe";
+
+        private static AnnouncementText Texts(string culture) =>
+            new AnnouncementText($"subject-{culture}", $"note-{culture}", $"email-{culture}");
+
+        // An advertisement: the e-mail has a place for the person's own unsubscribe link.
+        private static AnnouncementText AdTexts(string culture) =>
+            new AnnouncementText($"subject-{culture}", $"note-{culture}", $"email-{culture} {AnnouncementText.UnsubscribeLinkPlaceholder}");
 
         [Test]
         public async Task GetUnreadCountAsync_ShouldReturn0_WhenNoNotifications()
@@ -223,7 +213,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             var fakeEmail = new FakeEmailService();
             var service = new NotificationService(_data, fakeEmail);
 
-            await service.CreateNotificationForCityCoachesAsync(cityId: 1, message: "Msg");
+            await service.CreateNotificationForCityCoachesAsync(cityId: 1, Texts, UnsubscribeUrl);
 
             var anyNotifications = await _data.Notifications.AnyAsync();
             Assert.That(anyNotifications, Is.False);
@@ -231,13 +221,14 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         }
 
         [Test]
-        public async Task CreateNotificationForCityCoachesAsync_ShouldCreateNotifications_AndSendEmails_ToDistinctCoachIds()
+        public async Task CreateNotificationForCityCoachesAsync_ShouldNotifyEveryCoach_ButEmailOnlyThoseWhoAskedForIt()
         {
             var fakeEmail = new FakeEmailService();
             var service = new NotificationService(_data, fakeEmail);
 
-            var coachUser1 = new ApplicationUser { Id = "coach1", Email = "c1@test.com", FirstName = "C1", LastName = "L1", UserName = "c1" };
-            var coachUser2 = new ApplicationUser { Id = "coach2", Email = "c2@test.com", FirstName = "C2", LastName = "L2", UserName = "c2" };
+            // coach1 asked for e-mails about new tournaments, coach2 did not.
+            var coachUser1 = new ApplicationUser { Id = "coach1", Email = "c1@test.com", FirstName = "C1", LastName = "L1", UserName = "c1", NewTournamentEmails = true, SecurityStamp = "stamp-1" };
+            var coachUser2 = new ApplicationUser { Id = "coach2", Email = "c2@test.com", FirstName = "C2", LastName = "L2", UserName = "c2", SecurityStamp = "stamp-2" };
             await _data.Users.AddRangeAsync(coachUser1, coachUser2);
 
             var t1 = new Tournament
@@ -285,17 +276,128 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 
             await _data.SaveChangesAsync();
 
-            await service.CreateNotificationForCityCoachesAsync(cityId: 1, message: "Hello Coaches");
+            await service.CreateNotificationForCityCoachesAsync(cityId: 1, AdTexts, UnsubscribeUrl);
 
-            var notifications = await _data.Notifications.Where(n => n.Message == "Hello Coaches").ToListAsync();
+            var notifications = await _data.Notifications.Where(n => n.Message == "note-bg").ToListAsync();
             Assert.That(notifications.Count, Is.EqualTo(2));
             Assert.That(notifications.Any(n => n.UserId == "coach1"), Is.True);
             Assert.That(notifications.Any(n => n.UserId == "coach2"), Is.True);
             Assert.That(notifications.All(n => n.IsRead == false), Is.True);
 
-            Assert.That(fakeEmail.Sent.Count, Is.EqualTo(2));
-            Assert.That(fakeEmail.Sent.Any(x => x.to == "c1@test.com" && x.subject == "Нов Турнир!" && x.content == "Hello Coaches"), Is.True);
-            Assert.That(fakeEmail.Sent.Any(x => x.to == "c2@test.com" && x.subject == "Нов Турнир!" && x.content == "Hello Coaches"), Is.True);
+            // One e-mail, with coach1's own link: it carries a key that is valid only for coach1.
+            var key = FootballProjectSoftUni.Core.Extensions.UnsubscribeKey.For("coach1", "stamp-1");
+            var link = $"{UnsubscribeUrl}?u=coach1&k={Uri.EscapeDataString(key!)}";
+
+            Assert.That(fakeEmail.Sent, Is.EquivalentTo(new[]
+            {
+                ("c1@test.com", "subject-bg", $"email-bg {System.Net.WebUtility.HtmlEncode(link)}")
+            }));
+            Assert.That(FootballProjectSoftUni.Core.Extensions.UnsubscribeKey.IsValid("coach1", "stamp-1", key), Is.True);
+            Assert.That(FootballProjectSoftUni.Core.Extensions.UnsubscribeKey.IsValid("coach2", "stamp-2", key), Is.False);
+        }
+
+        [Test]
+        public async Task CreateNotificationForTournamentParticipantsAsync_ShouldTellEveryParticipantInTheirLanguage()
+        {
+            var fakeEmail = new FakeEmailService();
+            var service = new NotificationService(_data, fakeEmail);
+
+            await _data.Users.AddRangeAsync(
+                new ApplicationUser { Id = "coach-en", Email = "en@test.com", FirstName = "E", LastName = "N", UserName = "en" },
+                new ApplicationUser { Id = "coach-bg", Email = "bg@test.com", FirstName = "B", LastName = "G", UserName = "bg" },
+                new ApplicationUser { Id = "referee", Email = "ref@test.com", FirstName = "R", LastName = "F", UserName = "ref" },
+                new ApplicationUser { Id = "outsider", Email = "out@test.com", FirstName = "O", LastName = "T", UserName = "out" });
+
+            await _data.TournamentsParticipants.AddRangeAsync(
+                new TournamentParticipant { ParticipantId = "coach-en", TournamentId = 7201, Role = "Coach" },
+                new TournamentParticipant { ParticipantId = "coach-bg", TournamentId = 7201, Role = "Coach" },
+                new TournamentParticipant { ParticipantId = "referee", TournamentId = 7201, Role = "Referee" },
+                // The account no longer exists.
+                new TournamentParticipant { ParticipantId = "deleted-user", TournamentId = 7201, Role = "Coach" },
+                // Another tournament.
+                new TournamentParticipant { ParticipantId = "outsider", TournamentId = 7202, Role = "Coach" });
+
+            await _data.TournamentJoinPayments.AddRangeAsync(
+                new TournamentJoinPayment { UserId = "coach-en", TournamentId = 7201, Culture = "en", Status = "Paid" },
+                new TournamentJoinPayment { UserId = "coach-bg", TournamentId = 7201, Culture = "bg", Status = "Paid" },
+                // English, but for another tournament.
+                new TournamentJoinPayment { UserId = "coach-bg", TournamentId = 7202, Culture = "en", Status = "Paid" });
+
+            await _data.SaveChangesAsync();
+
+            await service.CreateNotificationForTournamentParticipantsAsync(7201, Texts);
+
+            var notes = await _data.Notifications.ToDictionaryAsync(n => n.UserId, n => n.Message);
+            Assert.That(notes, Is.EquivalentTo(new Dictionary<string, string>
+            {
+                ["coach-en"] = "note-en",
+                ["coach-bg"] = "note-bg",
+                ["referee"] = "note-bg"
+            }));
+
+            Assert.That(fakeEmail.Sent, Is.EquivalentTo(new[]
+            {
+                ("en@test.com", "subject-en", "email-en"),
+                ("bg@test.com", "subject-bg", "email-bg"),
+                ("ref@test.com", "subject-bg", "email-bg")
+            }));
+        }
+
+        [Test]
+        public async Task CreateNotificationForCityCoachesAsync_ShouldUseTheLanguageOfEachCoachsLatestPayment()
+        {
+            var fakeEmail = new FakeEmailService();
+            var service = new NotificationService(_data, fakeEmail);
+
+            await _data.Users.AddRangeAsync(
+                new ApplicationUser { Id = "en-coach", Email = "en@test.com", FirstName = "E", LastName = "N", UserName = "en", NewTournamentEmails = true, SecurityStamp = "s1" },
+                new ApplicationUser { Id = "bg-again", Email = "bg@test.com", FirstName = "B", LastName = "G", UserName = "bg", NewTournamentEmails = true, SecurityStamp = "s2" },
+                new ApplicationUser { Id = "never-paid", Email = "np@test.com", FirstName = "N", LastName = "P", UserName = "np", NewTournamentEmails = true, SecurityStamp = "s3" });
+
+            await _data.Tournaments.AddAsync(new Tournament
+            {
+                Id = 7101,
+                StartDate = DateTime.Now.AddDays(5),
+                EndDate = DateTime.Now.AddDays(6),
+                Description = "T",
+                OrganiserId = "org1",
+                CreatedOn = DateTime.Now,
+                ImageUrl = "img",
+                Status = TournamentStatus.Upcoming
+            });
+            await _data.TournamentsCities.AddAsync(new TournamentCity { TournamentId = 7101, CityId = 1 });
+
+            await _data.TournamentsParticipants.AddRangeAsync(
+                new TournamentParticipant { ParticipantId = "en-coach", TournamentId = 7101, Role = "Coach" },
+                new TournamentParticipant { ParticipantId = "bg-again", TournamentId = 7101, Role = "Coach" },
+                new TournamentParticipant { ParticipantId = "never-paid", TournamentId = 7101, Role = "Coach" },
+                // The account no longer exists.
+                new TournamentParticipant { ParticipantId = "deleted-user", TournamentId = 7101, Role = "Coach" });
+
+            await _data.TournamentJoinPayments.AddRangeAsync(
+                new TournamentJoinPayment { UserId = "en-coach", Culture = "bg", Status = "Paid", CreatedOnUtc = DateTime.UtcNow.AddDays(-30) },
+                new TournamentJoinPayment { UserId = "en-coach", Culture = "en", Status = "Paid", CreatedOnUtc = DateTime.UtcNow.AddDays(-1) },
+                new TournamentJoinPayment { UserId = "bg-again", Culture = "en", Status = "Paid", CreatedOnUtc = DateTime.UtcNow.AddDays(-30) },
+                new TournamentJoinPayment { UserId = "bg-again", Culture = "bg", Status = "Expired", CreatedOnUtc = DateTime.UtcNow.AddDays(-1) });
+
+            await _data.SaveChangesAsync();
+
+            await service.CreateNotificationForCityCoachesAsync(cityId: 1, Texts, UnsubscribeUrl);
+
+            var notes = await _data.Notifications.ToDictionaryAsync(n => n.UserId, n => n.Message);
+            Assert.That(notes, Is.EquivalentTo(new Dictionary<string, string>
+            {
+                ["en-coach"] = "note-en",
+                ["bg-again"] = "note-bg",
+                ["never-paid"] = "note-bg"
+            }));
+
+            Assert.That(fakeEmail.Sent, Is.EquivalentTo(new[]
+            {
+                ("en@test.com", "subject-en", "email-en"),
+                ("bg@test.com", "subject-bg", "email-bg"),
+                ("np@test.com", "subject-bg", "email-bg")
+            }));
         }
 
 

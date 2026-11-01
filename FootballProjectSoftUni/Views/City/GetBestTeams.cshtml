@@ -1,62 +1,185 @@
-﻿@model List<FootballProjectSoftUni.Core.Models.City.BestTeamViewModel>
+@using FootballProjectSoftUni.Extensions
+@model List<FootballProjectSoftUni.Core.Models.City.BestTeamViewModel>
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
     ViewData["Title"] = "City Leaders";
+    ViewData["FullWidth"] = true;
+
+    var teams = Model ?? new List<BestTeamViewModel>();
+    var hasTeams = teams.Count > 0;
+    var maxWins = hasTeams ? Math.Max(1, teams.Max(t => t.WinsInCity)) : 1;
+
+    // Podium reads 2 - 1 - 3 from left to right
+    var podium = new List<int>();
+    if (teams.Count >= 2) { podium.Add(1); }
+    if (teams.Count >= 1) { podium.Add(0); }
+    if (teams.Count >= 3) { podium.Add(2); }
+
+    var confettiColors = new[] { "var(--tg-sun)", "var(--tg-coral)", "#fff", "var(--tg-mint)" };
+
+    // Coaches are named only to signed-in users (the controller leaves the names out for guests).
+    var showCoach = teams.Any(t => !string.IsNullOrEmpty(t.CoachName));
 }
 
-<section class="container py-4">
+<div class="container-xl cp-page">
+    <header class="cp-lb-head">
+        <div>
+            <h1 class="cp-mega cp-mega--md" data-split>@Localizer["GBTLeaders"]</h1>
+            <p class="cp-lead">@Localizer["GBTTop"]</p>
+        </div>
 
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
-        <a asp-controller="City" asp-action="All" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-2"></i>@Localizer["GBTBack"]
-        </a>
-    </div>
-
-    @if (Model != null && Model.Count > 0)
-    {
-        <div class="row g-4">
-            @foreach (var team in Model)
+        <div class="cp-lb-head__actions">
+            <a asp-controller="City" asp-action="All" class="btn btn-outline-dark">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>@Localizer["GBTBack"]
+            </a>
+            @if (User.IsAdmin())
             {
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="leader-card h-100">
-
-                        <div class="leader-card__top">
-                            <div class="leader-badge">
-                                <i class="bi bi-trophy-fill"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-0 fw-bold">@team.TeamName</h5>
-                                <div class="text-muted small">
-                                    <i class="bi bi-person-badge-fill me-1"></i>
-                                    @Localizer["GBTCoach"]: @team.CoachName
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr class="my-3" />
-
-                        <div class="leader-metric">
-                            <span class="text-muted">
-                                <i class="bi bi-check2-circle me-2"></i>@Localizer["GBTWins"]
-                            </span>
-                            <span class="leader-value">@team.WinsInCity</span>
-                        </div>
-
-                    </div>
-                </div>
+                <a asp-controller="City" asp-action="UpdateCityLeaders" class="btn btn-sun">
+                    <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>@Localizer["DUCL"]
+                </a>
             }
         </div>
-    }
-    else
-    {
-        <div class="empty-state text-center">
-            <i class="bi bi-people display-4 text-muted"></i>
-            <h5 class="mt-3">@Localizer["GBTNotTeams"]</h5>
-            <p class="text-muted mb-0">
-                @Localizer["GBTNot"]
-            </p>
-        </div>
-    }
+    </header>
+</div>
 
-</section>
+@if (hasTeams)
+{
+    @* ============ 3D podium in the floodlit arena ============ *@
+    <section class="cp-arena" aria-label="@Localizer["GBTLeaders"]">
+        <svg class="tg-pitch-lines" viewBox="0 0 200 100" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">
+            <line x1="-400" y1="100" x2="600" y2="100" />
+            <circle cx="100" cy="100" r="46" />
+            <circle cx="100" cy="100" r="2" />
+        </svg>
+
+        <div class="cp-confetti" aria-hidden="true">
+            @for (int k = 0; k < 18; k++)
+            {
+                var x = 28 + (k * 37 % 45);
+                var dur = 3200 + (k % 5) * 550;
+                var delay = (k * 430) % 4000;
+                var color = confettiColors[k % confettiColors.Length];
+                <i style="--x:@(x)%;--d:@(dur)ms;--dl:@(delay)ms;--c:@color"></i>
+            }
+        </div>
+
+        <div class="container-xl">
+            <div class="cp-podium" style="--n:@podium.Count" data-tilt="8">
+                @foreach (var idx in podium)
+                {
+                    var team = teams[idx];
+                    var rank = idx + 1;
+
+                    <div class="cp-step cp-step--@(rank)">
+                        <article class="cp-step__card">
+                            @if (rank == 1)
+                            {
+                                <span class="cp-crown" aria-hidden="true"><i class="bi bi-trophy-fill"></i></span>
+                            }
+                            <span class="cp-medal">@rank</span>
+                            <h2 class="cp-step__team">@team.TeamName</h2>
+                            @if (showCoach)
+                            {
+                                <p class="cp-step__coach">
+                                    <i class="bi bi-person-badge-fill" aria-hidden="true"></i>
+                                    <span class="visually-hidden">@Localizer["GBTCoach"]:</span>
+                                    @team.CoachName
+                                </p>
+                            }
+                            <div class="cp-step__wins">
+                                <span class="tg-num" data-count="@team.WinsInCity">@team.WinsInCity</span>
+                                <small>@Localizer["GBTWins"]</small>
+                            </div>
+                        </article>
+
+                        <div class="cp-block" aria-hidden="true">
+                            <span class="cp-block__side cp-block__side--l"></span>
+                            <span class="cp-block__side cp-block__side--r"></span>
+                            <span class="cp-block__top"></span>
+                            <span class="cp-block__front"><span class="cp-block__num">@rank</span></span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    @* ============ League table ============ *@
+    <div class="container-xl">
+        <section class="cp-league" aria-labelledby="standingsTitle">
+            <div class="cp-league__head">
+                <h2 class="cp-league__title" id="standingsTitle">@Localizer["CPStandings"]</h2>
+                <span class="tg-chip tg-chip--ink"><i class="bi bi-trophy-fill" aria-hidden="true"></i>@teams[0].TeamName</span>
+            </div>
+
+            <div class="tg-card tg-card--pop cp-league__card">
+                <div class="table-responsive">
+                    <table class="table cp-league__table">
+                        <caption class="visually-hidden">@Localizer["GBTLeaders"]</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="cp-league__pos">#</th>
+                                <th scope="col">@Localizer["UPLTeam"]</th>
+                                @if (showCoach)
+                                {
+                                    <th scope="col" class="d-none d-md-table-cell">@Localizer["GBTCoach"]</th>
+                                }
+                                <th scope="col" class="text-end">@Localizer["GBTWins"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < teams.Count; i++)
+                            {
+                                var row = teams[i];
+                                var pos = i + 1;
+                                var pct = (int)Math.Round(100.0 * row.WinsInCity / maxWins);
+                                var posClass = pos <= 3 ? "cp-pos cp-pos--" + pos : "cp-pos";
+
+                                <tr class="@(pos == 1 ? "is-leader" : null)">
+                                    <td><span class="@posClass">@pos</span></td>
+                                    <td>
+                                        <span class="cp-league__team">
+                                            @if (pos == 1)
+                                            {
+                                                <i class="bi bi-trophy-fill" aria-hidden="true"></i>
+                                            }
+                                            @row.TeamName
+                                        </span>
+                                        @if (showCoach)
+                                        {
+                                            <span class="cp-league__coach d-md-none">@row.CoachName</span>
+                                        }
+                                    </td>
+                                    @if (showCoach)
+                                    {
+                                        <td class="d-none d-md-table-cell">@row.CoachName</td>
+                                    }
+                                    <td class="text-end">
+                                        <span class="cp-league__wins">
+                                            <span class="cp-league__bar" aria-hidden="true"><span style="--pct:@pct"></span></span>
+                                            <span class="tg-num">@row.WinsInCity</span>
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+}
+else
+{
+    <div class="container-xl">
+        <div class="tg-empty cp-empty">
+            <span class="tg-empty__icon"><i class="bi bi-trophy" aria-hidden="true"></i></span>
+            <h5>@Localizer["GBTNotTeams"]</h5>
+            <p class="text-muted mb-4">@Localizer["GBTNot"]</p>
+            <a asp-controller="City" asp-action="All" class="btn btn-primary">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>@Localizer["GBTBack"]
+            </a>
+        </div>
+    </div>
+}

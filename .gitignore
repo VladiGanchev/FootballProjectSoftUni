@@ -369,3 +369,10 @@ appsettings.Development.json
 
 *.txt
 logs/
+
+# Gallery pictures uploaded through the site: runtime data that may contain people's photos,
+# never commit them (the public repo would publish them).
+/FootballProjectSoftUni/wwwroot/images/tournaments/
+
+# Pictures of cities, tournaments and partners uploaded through the site: runtime data, like the gallery.
+/FootballProjectSoftUni/wwwroot/images/covers/

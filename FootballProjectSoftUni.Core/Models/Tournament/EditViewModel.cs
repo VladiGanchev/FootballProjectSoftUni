@@ -19,7 +19,7 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
         [StringLength(TournamentDescriptionMaxLength, MinimumLength = TournamentDescriptionMinLength, ErrorMessage = StringLengthErrorMessage)]
         public string Description { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = RequireErrorMessage)]
+        // Display only: the edit form does not send it back and saving does not use it.
         public string CreatedOn { get; set; } = string.Empty;
 
         public string? RefereeId { get; set; } = string.Empty;
@@ -30,7 +30,7 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
         [Required(ErrorMessage = RequireErrorMessage)]
         public int NumberOfTeams { get; set; }
 
-        [Required(ErrorMessage = RequireErrorMessage)]
+        // The picture is uploaded as a file (not typed in); the site fills in its address.
         public string ImageUrl { get; set; } = string.Empty;
 
         public string? Winner { get; set; } = string.Empty;
@@ -43,5 +43,8 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
 
         [Range(0, double.MaxValue, ErrorMessage = "Third place prize must be a positive number.")]
         public decimal ThirdPlacePrize { get; set; }
+
+        // Display only (set by the server): the tournament has started, its dates can't be changed any more.
+        public bool DatesLocked { get; set; }
     }
 }

@@ -13,13 +13,14 @@ namespace FootballProjectSoftUni.Core.Models.Referee
         public int Id { get; set; }
 
         [Required(ErrorMessage = RequireErrorMessage)]
+        [StringLength(PersonNameMaxLength, MinimumLength = PersonNameMinLength, ErrorMessage = StringLengthErrorMessage)]
         public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = RequireErrorMessage)]
         public string Birthdate { get; set; } = string.Empty;
 
         [Required(ErrorMessage = RequireErrorMessage)]
-        [Range(RefereeExperienceMinYears, int.MaxValue, ErrorMessage = "You should have at least {1} years of experience to become a referee to this tournament")]
+        [Range(RefereeExperienceMinYears, ExperienceMaxYears, ErrorMessage = "Referee experience must be between {1} and {2} years.")]
         public int Experience { get; set; }
 
         [Required]

@@ -37,8 +37,19 @@ namespace FootballProjectSoftUni.Controllers
         [HttpGet]
         public async Task<IActionResult> Reply(int messageId)
         {
-            var model = await messageService.GetReplyModelAsync(messageId, User.Id());
-            return View(model);
+            try
+            {
+                var model = await messageService.GetReplyModelAsync(messageId, User.Id());
+                return View(model);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
+            catch (ArgumentException)
+            {
+                return NotFound();
+            }
         }
 
         [HttpPost]
@@ -48,11 +59,22 @@ namespace FootballProjectSoftUni.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            await messageService.ReplyAsync(
-                model.ParentMessageId,
-                User.Id(),
-                model.Subject,
-                model.Content);
+            try
+            {
+                await messageService.ReplyAsync(
+                    model.ParentMessageId,
+                    User.Id(),
+                    model.Subject,
+                    model.Content);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
+            catch (ArgumentException)
+            {
+                return NotFound();
+            }
 
             return RedirectToAction("All", "Notification");
         }
@@ -60,8 +82,19 @@ namespace FootballProjectSoftUni.Controllers
         [HttpGet]
         public async Task<IActionResult> OpenMessage(int messageId)
         {
-            var model = await messageService.GetReplyModelAsync(messageId, User.Id());
-            return View("MessageWindow", model);
+            try
+            {
+                var model = await messageService.GetReplyModelAsync(messageId, User.Id());
+                return View("MessageWindow", model);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
+            catch (ArgumentException)
+            {
+                return NotFound();
+            }
         }
     }
 }

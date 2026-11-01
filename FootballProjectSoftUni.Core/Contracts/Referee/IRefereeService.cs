@@ -21,7 +21,15 @@ namespace FootballProjectSoftUni.Core.Contracts.Referee
         Task<FootballProjectSoftUni.Infrastructure.Data.Models.Referee?> GetRefereeByUserIdAsync(string userId);
 
         Task<RefereeCommentsPageViewModel> GetCommentsAsync(string refereeId);
+        Task<bool> CanCommentAsync(string userId);
         Task AddCommentAsync(string refereeId, string userId, string content);
+
+        /// <summary>One comment with its referee, or null.</summary>
+        Task<RefereeCommentViewModel?> GetCommentAsync(int commentId);
+
+        /// <summary>Deletes a comment (the organisers remove one that breaks the rules).</summary>
+        /// <returns>The deleted comment (its author is told), or null when there is no such comment.</returns>
+        Task<RefereeCommentViewModel?> DeleteCommentAsync(int commentId);
         Task<string> GetRefereeEmail(string userId);
     }
 }

@@ -16,7 +16,7 @@ namespace FootballProjectSoftUni.Core.Models.Partner
         [Required(ErrorMessage = RequireErrorMessage)]
         public string Name { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = RequireErrorMessage)]
+        // The picture is uploaded as a file (not typed in); the site fills in its address.
         public string ImageUrl { get; set; } = string.Empty;
     }
 }

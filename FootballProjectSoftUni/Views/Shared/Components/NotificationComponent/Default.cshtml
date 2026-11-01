@@ -1,17 +1,20 @@
-﻿@model int
+@model int
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
-<li class="nav-item" style="list-style: none;">
+<li class="nav-item msg-bell-item">
     <a class="nav-link tg-bell position-relative"
        asp-area=""
        asp-controller="Notification"
-       asp-action="All">
+       asp-action="All"
+       title="@Localizer["AllIncomingNotifications"]">
 
-        <i class="bi bi-bell-fill"></i>
+        <i class="bi bi-bell-fill" aria-hidden="true"></i>
+        <span class="visually-hidden">@Localizer["AllIncomingNotifications"]</span>
 
         @if (Model > 0)
         {
             <span class="tg-bell-badge">
-                @Model
+                @(Model > 99 ? "99+" : Model.ToString())
             </span>
         }
     </a>

@@ -73,5 +73,8 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
 
         public bool ReminderSent { get; set; }
 
+        // The admin was told that fewer than the minimum number of teams signed up (sent once, 24 h before the start).
+        public bool LowTeamsWarningSent { get; set; }
+
     }
 }

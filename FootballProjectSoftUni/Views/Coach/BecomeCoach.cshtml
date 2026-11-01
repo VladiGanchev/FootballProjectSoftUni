@@ -1,59 +1,130 @@
-﻿@using FootballProjectSoftUni.Core.Models.Coach
+@using FootballProjectSoftUni.Core.Models.Coach
 @model CoachViewModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 
 @{
     ViewBag.Title = "Become a Coach";
+
+    object tournamentRef = ViewBag.TournamentId;
+    var tournamentText = tournamentRef == null ? "–" : "#" + tournamentRef;
 }
 
-<section class="container py-4">
+<div class="tp-transfer">
 
-    <div class="text-center mb-4">
-        <h2 class="page-title mb-1">
-            <i class="bi bi-person-badge-fill me-2"></i>
-            @Localizer["BCBC"]
-        </h2>
+    <header class="tp-transfer__head">
+        <span class="tg-kicker">@Localizer["TpContractLabel"]</span>
+        <h1 class="tp-giant tp-giant--md"><span class="tp-hl">@Localizer["BCBC"]</span></h1>
+        <p class="tp-lead">@Localizer["BCYouNedd"]</p>
+    </header>
 
-        <p class="text-muted mb-0">
-            @Localizer["BCYouNedd"]
-        </p>
-    </div>
+    @* Live preview card *@
+    <aside class="tp-transfer__preview">
+        <div class="tp-preview-stage">
+            <span class="tp-burst" aria-hidden="true"></span>
 
-    <div class="admin-form-card mx-auto">
+            <div class="tp-fut tp-fut--pitch" data-tilt="14" aria-hidden="true">
+                <div class="tp-fut__rate">
+                    <span class="tp-fut__num" data-tp-bind="Experience" data-tp-empty="0">0</span>
+                    <span class="tp-fut__pos">@Localizer["TpPosCoach"]</span>
+                    <span class="tp-fut__crest"><i class="bi bi-person-badge-fill"></i></span>
+                </div>
+                <div class="tp-fut__medal"><span data-tp-bind="Name" data-tp-mode="initials" data-tp-empty="?">?</span></div>
+                <div class="tp-fut__name" data-tp-bind="Name" data-tp-empty="@Localizer["BCName"]">@Localizer["BCName"]</div>
+                <ul class="tp-fut__stats" style="--cols:2">
+                    <li class="tp-fut__stat"><b data-tp-bind="Experience" data-tp-empty="0">0</b><small>@Localizer["TpFutExp"]</small></li>
+                    <li class="tp-fut__stat"><b>@tournamentText</b><small>@Localizer["ITournament"]</small></li>
+                </ul>
+            </div>
+        </div>
 
-        <form asp-action="BecomeCoach" method="post">
+        <p class="tp-preview-hint"><i class="bi bi-magic" aria-hidden="true"></i>@Localizer["TpLiveHint"]</p>
+    </aside>
+
+    @* The contract *@
+    <div class="tp-transfer__body">
+        <form asp-action="BecomeCoach" method="post" class="tp-paper">
             <input type="hidden" name="tournamentId" value="@ViewBag.TournamentId" />
 
-            <div class="mb-3">
-                <label asp-for="@Model.Name" class="form-label fw-bold">
-                    <i class="bi bi-person-fill me-2"></i>@Localizer["BCName"]
-                </label>
-
-                <input asp-for="@Model.Name"
-                       class="form-control form-control-lg tg-input" />
-
-                <span asp-validation-for="@Model.Name" class="text-danger small"></span>
+            <div class="tp-paper__top">
+                <span><b>Tournament Galaxy</b> &middot; @Localizer["TpContractLabel"]</span>
+                <span>@BgTime.Today.ToString("dd.MM.yyyy")</span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="@Model.Experience" class="form-label fw-bold">
-                    <i class="bi bi-graph-up me-2"></i>@Localizer["BCExperience"]
-                </label>
+            <div class="tp-clause">
+                <span class="tp-clause__no" aria-hidden="true">§1</span>
+                <div>
+                    <label asp-for="@Model.Name" class="form-label">
+                        <i class="bi bi-person-fill" aria-hidden="true"></i>@Localizer["BCName"]
+                    </label>
 
-                <input asp-for="@Model.Experience"
-                       class="form-control form-control-lg tg-input" />
+                    <input asp-for="@Model.Name"
+                           class="form-control form-control-lg"
+                           autocomplete="name" />
 
-                <span asp-validation-for="@Model.Experience" class="text-danger small"></span>
+                    <span asp-validation-for="@Model.Name" class="text-danger small"></span>
+                </div>
             </div>
 
-            <button class="btn btn-warning btn-lg w-100 tg-action-btn" type="submit">
-                <i class="bi bi-check-circle-fill me-2"></i>
-                @Localizer["BCBecome"]
-            </button>
+            <div class="tp-clause">
+                <span class="tp-clause__no" aria-hidden="true">§2</span>
+                <div>
+                    <label asp-for="@Model.Experience" class="form-label">
+                        <i class="bi bi-graph-up" aria-hidden="true"></i>@Localizer["BCExperience"]
+                    </label>
+
+                    <input asp-for="@Model.Experience"
+                           class="form-control form-control-lg"
+                           inputmode="numeric" />
+
+                    <span asp-validation-for="@Model.Experience" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="tp-paper__sign">
+                <div class="tp-sig" aria-hidden="true">
+                    <span class="tp-sig__val" data-tp-bind="Name" data-tp-empty="&nbsp;">&nbsp;</span>
+                    <span class="tp-sig__line">@Localizer["TpDecSignature"]</span>
+                </div>
+
+                <button class="btn btn-accent btn-lg" type="submit">
+                    <i class="bi bi-pen-fill" aria-hidden="true"></i>
+                    @Localizer["BCBecome"]
+                </button>
+            </div>
 
         </form>
-
     </div>
 
-</section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Live card preview: [data-tp-bind="inputId"] mirrors that input
+        (function () {
+            var outs = document.querySelectorAll("[data-tp-bind]");
+
+            function initials(s) {
+                var p = s.split(/\s+/).filter(Boolean);
+                if (!p.length) { return ""; }
+                return (p[0].charAt(0) + (p.length > 1 ? p[p.length - 1].charAt(0) : "")).toUpperCase();
+            }
+
+            function render() {
+                outs.forEach(function (out) {
+                    var src = document.getElementById(out.getAttribute("data-tp-bind"));
+                    if (!src) { return; }
+                    var v = (src.value || "").trim();
+                    if (out.getAttribute("data-tp-mode") === "initials") { v = initials(v); }
+                    out.textContent = v || out.getAttribute("data-tp-empty") || "";
+                });
+            }
+
+            document.addEventListener("input", render);
+            document.addEventListener("change", render);
+            render();
+        })();
+    </script>
+}

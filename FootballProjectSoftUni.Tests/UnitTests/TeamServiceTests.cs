@@ -47,11 +47,12 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         private Referee MakeReferee(string id)
             => new Referee { Id = id, Name = "Ref", Experience = 5, Birthdate = DateTime.Now.AddYears(-25) };
 
+        // Open for registration: starts tomorrow (teams can only join before the start).
         private Tournament ActiveTournament(int id) => new Tournament
         {
             Id = id,
-            StartDate = DateTime.Now.AddDays(-1),
-            EndDate = DateTime.Now.AddDays(1),
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now.AddDays(2),
             CreatedOn = DateTime.Now,
             Description = "test",
             NumberOfTeams = 0,
@@ -109,6 +110,38 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 
             Assert.IsNotNull(result);
             Assert.AreEqual("You cannot join a tournament that has already finished.", result!.Message);
+        }
+
+        [Test]
+        public async Task CheckForErrorsAsync_TournamentStarted_ReturnsStartedError()
+        {
+            var t = ActiveTournament(901);
+            t.StartDate = DateTime.Now.AddHours(-1);
+            _data.Tournaments.Add(t);
+            await _data.SaveChangesAsync();
+
+            var result = await _teamService.CheckForErrorsAsync(t.Id, "u1");
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("You cannot join a tournament that has already started.", result.Message);
+        }
+
+        [Test]
+        public async Task FinalizeJoinAsync_WhenTournamentStarted_Throws()
+        {
+            var t = ActiveTournament(902);
+            t.StartDate = DateTime.Now.AddHours(-1);
+            var coach = new Coach { Id = "late-coach", Name = "Coach", Experience = "3" };
+            var team = new Team { Id = 902, Name = "Late", CoachId = coach.Id, Coach = coach };
+            _data.Tournaments.Add(t);
+            _data.Coaches.Add(coach);
+            _data.Teams.Add(team);
+            await _data.SaveChangesAsync();
+
+            var ex = Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                await _teamService.FinalizeJoinAsync(t.Id, coach.Id, team.Id, 1));
+
+            Assert.AreEqual("Tournament already started.", ex!.Message);
         }
 
         [Test]

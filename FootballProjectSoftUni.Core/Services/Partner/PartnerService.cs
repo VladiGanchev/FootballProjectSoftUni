@@ -73,10 +73,28 @@ namespace FootballProjectSoftUni.Core.Services.Partner
             var ViewModel = new PartnerViewModel
             {
                 Id = partner.Id,
-                Name = partner.Name
+                Name = partner.Name,
+                ImageUrl = partner.ImageUrl
             };
 
             return ViewModel;
+        }
+
+        public async Task<string?> ChangePartnerImageAsync(int id, string imageUrl)
+        {
+            var partner = await data.Partners.FindAsync(id);
+
+            if (partner == null)
+            {
+                return null;
+            }
+
+            var oldImageUrl = partner.ImageUrl;
+            partner.ImageUrl = imageUrl;
+
+            await data.SaveChangesAsync();
+
+            return oldImageUrl;
         }
     }
 }

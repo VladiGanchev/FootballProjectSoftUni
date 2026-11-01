@@ -14,10 +14,13 @@ using FootballProjectSoftUni.Infrastructure.Data.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using FootballProjectSoftUni.Core.Models.Settings;
+using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using FootballProjectSoftUni.Services;
 using Microsoft.Extensions.Logging;
 using static FootballProjectSoftUni.Infrastructure.Data.Constants.DataConstants;
 
@@ -30,21 +33,21 @@ namespace FootballProjectSoftUni.Areas.Identity.Pages.Account
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
+        private readonly ConfirmationEmailSender _confirmationEmail;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            ConfirmationEmailSender confirmationEmail)
         {
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
-            _emailSender = emailSender;
+            _confirmationEmail = confirmationEmail;
         }
 
         /// <summary>
@@ -76,8 +79,8 @@ namespace FootballProjectSoftUni.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = RequireErrorMessage)]
+            [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
@@ -85,8 +88,8 @@ namespace FootballProjectSoftUni.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage = RequireErrorMessage)]
+            [StringLength(100, ErrorMessage = StringLengthErrorMessage, MinimumLength = 8)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
@@ -100,25 +103,36 @@ namespace FootballProjectSoftUni.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            [Required]
-            [StringLength(UserFirstNameMaxLength, MinimumLength = UserFirstNameMinLength)]
+            [Required(ErrorMessage = RequireErrorMessage)]
+            [StringLength(UserFirstNameMaxLength, ErrorMessage = StringLengthErrorMessage, MinimumLength = UserFirstNameMinLength)]
             public string FirstName { get; set; }
 
-            [Required]
-            [StringLength(UserLastNameMaxLength, MinimumLength = UserLastNameMinLength)]
+            [Required(ErrorMessage = RequireErrorMessage)]
+            [StringLength(UserLastNameMaxLength, ErrorMessage = StringLengthErrorMessage, MinimumLength = UserLastNameMinLength)]
             public string LastName { get; set; }
+
+            /// <summary>The Terms and Conditions are accepted (the Privacy Policy is only to be read, not accepted).</summary>
+            [FootballProjectSoftUni.Extensions.MustBeTrue(ErrorMessage = "RegAcceptRequired")]
+            public bool AcceptTerms { get; set; }
+
+            /// <summary>Optional consent to e-mails about new tournaments (they advertise a paid service).</summary>
+            public bool NewTournamentEmails { get; set; }
         }
 
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            ReturnUrl = returnUrl;
+            ReturnUrl = LocalOrHome(returnUrl);
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
+        // Only addresses of this site: a link with a foreign returnUrl used to end with an error page after registering.
+        private string LocalOrHome(string returnUrl) =>
+            Url.IsLocalUrl(returnUrl) ? returnUrl : Url.Content("~/");
+
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
+            returnUrl = LocalOrHome(returnUrl);
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
@@ -126,6 +140,7 @@ namespace FootballProjectSoftUni.Areas.Identity.Pages.Account
 
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
+                user.NewTournamentEmails = Input.NewTournamentEmails;
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
@@ -134,21 +149,13 @@ namespace FootballProjectSoftUni.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
-
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    await _confirmationEmail.SendAsync(user, Url, Request, returnUrl);
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        // The address goes to the next page in TempData, not in its URL.
+                        TempData["RegisteredEmail"] = Input.Email;
+                        return RedirectToPage("RegisterConfirmation");
                     }
                     else
                     {

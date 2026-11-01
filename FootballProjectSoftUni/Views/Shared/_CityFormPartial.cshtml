@@ -1,40 +1,66 @@
-﻿@model CityViewModel
+@model CityViewModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
-<div class="row">
-    <div class="col-12">
-        <form asp-action="AddCity" method="post" class="tg-form">
+@* Split form: fields on the left, a live polaroid on the right.
+   The live-preview script lives in the host view (AddCity) because partials cannot define sections. *@
+<form asp-controller="City" asp-action="AddCity" method="post" enctype="multipart/form-data" class="cp-studio__grid">
 
-            <div class="mb-3">
-                <label asp-for="@Model.Name" class="form-label fw-bold">
-                    <i class="bi bi-building me-2"></i>@Localizer["AddCityName"]
-                </label>
+    <div class="tg-form-card cp-studio__form">
 
+        <div class="cp-fstep">
+            <span class="cp-fstep__no" aria-hidden="true">01</span>
+            <div class="cp-fstep__body">
+                <label asp-for="@Model.Name" class="form-label">@Localizer["AddCityName"]</label>
                 <input asp-for="@Model.Name"
-                       class="form-control form-control-lg tg-input"
+                       class="form-control form-control-lg"
                        aria-required="true"
+                       autocomplete="off"
                        placeholder="e.g. Sofia" />
-
+                <div class="tg-field-hint">@Localizer["CPCityNameHint"]</div>
                 <span asp-validation-for="@Model.Name" class="text-danger small"></span>
             </div>
+        </div>
 
-            <div class="mb-3">
-                <label asp-for="@Model.ImageUrl" class="form-label fw-bold">
-                    <i class="bi bi-image-fill me-2"></i>@Localizer["AddCityImage"]
-                </label>
-
-                <input asp-for="@Model.ImageUrl"
-                       class="form-control form-control-lg tg-input"
-                       aria-required="true"
-                       placeholder="https://..." />
-
-                <span asp-validation-for="@Model.ImageUrl" class="text-danger small"></span>
+        <div class="cp-fstep">
+            <span class="cp-fstep__no" aria-hidden="true">02</span>
+            <div class="cp-fstep__body">
+                <label for="image" class="form-label">@Localizer["AddCityImage"]</label>
+                <partial name="_PicturePicker" model='new PicturePickerViewModel { Required = true, Hint = Localizer["CPImageHint"].Value }' />
             </div>
+        </div>
 
-            <button class="btn btn-warning btn-lg w-100 tg-action-btn" type="submit">
-                <i class="bi bi-plus-circle-fill me-2"></i>@Localizer["AddCityAddCity"]
+        <div class="tg-form-actions">
+            <button class="btn btn-primary btn-lg" type="submit">
+                <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>@Localizer["AddCityAddCity"]
             </button>
-
-        </form>
+            <a asp-controller="City" asp-action="All" class="btn btn-outline-dark btn-lg">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>@Localizer["DCCancel"]
+            </a>
+        </div>
     </div>
-</div>
+
+    <aside class="cp-studio__preview" aria-label="@Localizer["CPPreview"]">
+        <span class="tg-sticker tg-sticker--coral cp-pin" style="--rot:-5deg">
+            <i class="bi bi-eye-fill" aria-hidden="true"></i>@Localizer["CPPreview"]
+        </span>
+
+        <figure class="cp-polaroid" id="cityPreview" data-tilt="10">
+            <span class="cp-tape cp-tape--l" aria-hidden="true"></span>
+            <span class="cp-tape cp-tape--r" aria-hidden="true"></span>
+
+            <span class="cp-polaroid__img">
+                <span class="cp-polaroid__empty">
+                    <i class="bi bi-camera" aria-hidden="true"></i>
+                    <span>@Localizer["CPPreviewEmpty"]</span>
+                </span>
+                <img id="cityPreviewImg" alt="" />
+            </span>
+
+            <figcaption class="cp-polaroid__cap">
+                <span class="cp-polaroid__name" id="cityPreviewName" data-default="@Localizer["AddCityName"]">@Localizer["AddCityName"]</span>
+                <span class="cp-polaroid__go">@Localizer["AllTournaments"]<i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+            </figcaption>
+        </figure>
+    </aside>
+
+</form>

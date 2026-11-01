@@ -9,8 +9,9 @@ namespace FootballProjectSoftUni.Core.Models.TournamentJoinPayment
     public class TournamentJoinPaymentViewModel
     {
         public int Id { get; set; }
+        public string UserId { get; set; } = null!;
         public string Status { get; set; } = null!;
-        public int TournamentId { get; set; }
+        public int? TournamentId { get; set; }
         public int? TeamId { get; set; }
         public decimal Amount { get; set; }
         public string Currency { get; set; } = null!;

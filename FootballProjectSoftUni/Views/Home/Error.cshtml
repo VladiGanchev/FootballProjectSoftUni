@@ -1,39 +1,70 @@
-﻿@{
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+@{
     ViewData["Title"] = "Error";
 }
 
-<section class="container py-5">
+<section class="err-var">
+    <div class="err-var__copy">
+        <span class="tg-kicker">@Localizer["ErrOopsTitle"]</span>
+        <h1 class="err-mega err-mega--md" data-split>@Localizer["ErrVar"]</h1>
+        <span class="tg-chip tg-chip--live err-var__chip">@Localizer["ErrVarChecking"]</span>
 
-    <div class="admin-form-card mx-auto text-center">
-
-        <div class="delete-icon mb-3">
-            <i class="bi bi-exclamation-triangle-fill"></i>
-        </div>
-
-        <h2 class="page-title text-danger mb-2">
-            Something went wrong
-        </h2>
-
-        <p class="text-muted mb-4">
-            An error occurred while processing your request.
-            Please try again later.
+        <p class="err-lead">@Localizer["ErrOopsText"]</p>
+        <p class="err-note">
+            <i class="bi bi-camera-video-fill" aria-hidden="true"></i>
+            <span>@Localizer["ErrVarNote"]</span>
         </p>
 
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <a asp-controller="Home"
-               asp-action="Index"
-               class="btn btn-primary btn-lg tg-action-btn px-4">
-                <i class="bi bi-house-fill me-2"></i>
-                Go to Home
+        <div class="err-actions">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg" data-magnetic>
+                <i class="bi bi-house-fill" aria-hidden="true"></i>
+                <span>@Localizer["DHome"]</span>
             </a>
-
-            <button onclick="history.back()"
-                    class="btn btn-outline-secondary btn-lg px-4">
-                <i class="bi bi-arrow-left me-2"></i>
-                Go Back
+            <button type="button" data-history-back class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                <span>@Localizer["ErrGoBack"]</span>
             </button>
         </div>
-
     </div>
 
+    @* The VAR monitor: frozen replay, scanning line, zoom on the ball *@
+    <div class="err-monitor" data-tilt="6" aria-hidden="true">
+        <div class="err-monitor__bezel">
+            <div class="err-monitor__screen">
+                <svg class="tg-pitch-lines" viewBox="0 0 160 100" preserveAspectRatio="none">
+                    <rect x="4" y="4" width="152" height="92" />
+                    <line x1="80" y1="4" x2="80" y2="96" />
+                    <circle cx="80" cy="50" r="13" />
+                    <rect x="124" y="26" width="32" height="48" />
+                    <rect x="144" y="38" width="12" height="24" />
+                </svg>
+
+                <span class="err-p err-p--home" style="left:40%;top:30%"></span>
+                <span class="err-p err-p--home" style="left:47%;top:62%"></span>
+                <span class="err-p err-p--home" style="left:58%;top:44%"></span>
+                <span class="err-p err-p--home" style="left:74%;top:66%"></span>
+                <span class="err-p err-p--away" style="left:66%;top:28%"></span>
+                <span class="err-p err-p--away" style="left:69%;top:50%"></span>
+                <span class="err-p err-p--away" style="left:82%;top:40%"></span>
+                <span class="err-p err-p--away" style="left:93%;top:50%"></span>
+
+                <span class="err-calib" style="left:71%"></span>
+                <span class="err-target" style="left:76%;top:58%"><span class="err-target__ball"></span></span>
+
+                <span class="err-scan"></span>
+                <span class="err-hud err-hud--tl">VAR</span>
+                <span class="err-hud err-hud--tr"><i class="bi bi-record-circle-fill"></i>@Localizer["ErrVarChecking"]</span>
+                <span class="err-hud err-hud--bl">45'+3</span>
+                <span class="err-hud err-hud--br">CAM 4</span>
+            </div>
+
+            <div class="err-scrub">
+                <i class="bi bi-play-fill"></i>
+                <span class="err-scrub__track"><span class="err-scrub__head"></span></span>
+                <span>-00:03</span>
+            </div>
+        </div>
+        <div class="err-monitor__neck"></div>
+        <div class="err-monitor__foot"></div>
+    </div>
 </section>

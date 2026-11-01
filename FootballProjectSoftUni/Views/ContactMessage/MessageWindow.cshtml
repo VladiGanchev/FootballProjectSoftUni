@@ -1,62 +1,97 @@
-﻿@using FootballProjectSoftUni.Core.Models.Message
+@using FootballProjectSoftUni.Core.Models.Message
 @model ReplyFormViewModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
-
 @{
-    ViewData["Title"] = "Съобщение";
+    ViewData["Title"] = Localizer["IMessage"].Value;
+
+    var hasPrevious = !string.IsNullOrWhiteSpace(Model.PreviousMessageText);
+
+    // UI only: replies alternate sides. When the user may reply, the opened
+    // message came from the other side (left) and its parent was theirs (right).
+    var currentMine = !Model.CanReply;
+    var previousMine = Model.CanReply;
 }
 
-<section class="container py-4">
+<section class="msg-chat">
 
-    <div class="text-center mb-4">
-        <h2 class="page-title mb-1">
-            <i class="bi bi-envelope-open-fill me-2"></i>
-            @ViewData["Title"]
-        </h2>
-    </div>
-
-    <div class="admin-form-card mx-auto">
-
-        <div class="mb-3">
-            <span class="fw-bold text-muted">
-                <i class="bi bi-chat-left-text-fill me-2"></i>@Localizer["MWTopic"]
-            </span>
-            <h5 class="mt-1 fw-bold">@Model.Subject</h5>
+    @* ===== Top bar ===== *@
+    <header class="msg-chat__bar">
+        <a asp-controller="Notification" asp-action="All" class="msg-chat__back" aria-label="@Localizer["MsgBack"]" title="@Localizer["MsgBack"]">
+            <i class="bi bi-arrow-left" aria-hidden="true"></i>
+        </a>
+        <span class="msg-chat__crest" aria-hidden="true"><span class="tg-logo"><partial name="_Logo" /></span></span>
+        <div class="msg-chat__heading">
+            <span class="msg-chat__label">@Localizer["MWTopic"]</span>
+            <h1 class="msg-chat__title">@Model.Subject</h1>
         </div>
+    </header>
 
-        @if (!string.IsNullOrWhiteSpace(Model.PreviousMessageText))
-        {
-            <div class="message-box message-box--previous mb-3">
-                <div class="message-box__title">
-                    <i class="bi bi-clock-history me-2"></i>
-                    @Localizer["MWPrevious"]
+    @* ===== Conversation on the pitch ===== *@
+    <div class="msg-chat__pitch">
+        <span class="msg-chalk msg-chalk--line" aria-hidden="true"></span>
+        <span class="msg-chalk msg-chalk--circle" aria-hidden="true"></span>
+        <span class="msg-chalk msg-chalk--box-l" aria-hidden="true"></span>
+        <span class="msg-chalk msg-chalk--box-r" aria-hidden="true"></span>
+
+        <div class="msg-thread">
+            <div class="msg-sep msg-sep--ref">
+                <span><i class="bi bi-megaphone-fill" aria-hidden="true"></i>@Localizer["MWWatch"]</span>
+            </div>
+
+            @if (hasPrevious)
+            {
+                <div class="msg-sep"><span><i class="bi bi-clock-history" aria-hidden="true"></i>@Localizer["MWPrevious"]</span></div>
+
+                <div class="msg-turn @(previousMine ? "msg-turn--mine" : "msg-turn--theirs")">
+                    <span class="msg-turn__ava" aria-hidden="true"><i class="bi @(previousMine ? "bi-person-check-fill" : "bi-person-fill")"></i></span>
+                    <article class="msg-bubble" style="--d:.1s">
+                        <p class="msg-bubble__text">@Model.PreviousMessageText</p>
+                        @if (previousMine)
+                        {
+                            <span class="msg-bubble__ticks" aria-hidden="true"><i class="bi bi-check2-all"></i></span>
+                        }
+                    </article>
                 </div>
-                <p class="mb-0">@Model.PreviousMessageText</p>
-            </div>
-        }
+            }
 
-        <div class="message-box message-box--current mb-3">
-            <div class="message-box__title">
-                <i class="bi bi-reply-fill me-2"></i>
-                @Localizer["MWWatchReceived"]
+            <div class="msg-sep">
+                <span>
+                    <i class="bi @(currentMine ? "bi-envelope-fill" : "bi-reply-fill")" aria-hidden="true"></i>@(currentMine ? Localizer["IMessage"] : Localizer["MWWatchReceived"])
+                </span>
             </div>
-            <p class="mb-0">@Model.CurrentMessageText</p>
+
+            <div class="msg-turn @(currentMine ? "msg-turn--mine" : "msg-turn--theirs")">
+                <span class="msg-turn__ava" aria-hidden="true"><i class="bi @(currentMine ? "bi-person-check-fill" : "bi-person-fill")"></i></span>
+                <article class="msg-bubble" style="--d:.35s">
+                    <p class="msg-bubble__text">@Model.CurrentMessageText</p>
+                    @if (currentMine)
+                    {
+                        <span class="msg-bubble__ticks" aria-hidden="true"><i class="bi bi-check2-all"></i></span>
+                    }
+                </article>
+            </div>
         </div>
-
-        @if (Model.CanReply)
-        {
-            <div class="text-end">
-                <a asp-controller="ContactMessage"
-                   asp-action="Reply"
-                   asp-route-messageId="@Model.ParentMessageId"
-                   class="btn btn-primary tg-action-btn">
-                    <i class="bi bi-send-fill me-2"></i>
-                    @Localizer["MWReply"]
-                </a>
-            </div>
-        }
-
     </div>
+
+    @* ===== Composer (opens the reply form) ===== *@
+    @if (Model.CanReply)
+    {
+        <a asp-controller="ContactMessage"
+           asp-action="Reply"
+           asp-route-messageId="@Model.ParentMessageId"
+           class="msg-composer msg-composer--link">
+            <span class="msg-composer__fake"><i class="bi bi-reply-fill" aria-hidden="true"></i>@Localizer["MWReply"]&hellip;</span>
+            <span class="msg-composer__send" aria-hidden="true"><i class="bi bi-send-fill"></i></span>
+        </a>
+    }
+    else
+    {
+        <div class="msg-composer msg-composer--link">
+            <a asp-controller="Notification" asp-action="All" class="btn btn-outline-dark">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>@Localizer["MsgBack"]
+            </a>
+        </div>
+    }
 
 </section>

@@ -1,4 +1,4 @@
-﻿@using FootballProjectSoftUni.Core.Models.Tournament;
+@using FootballProjectSoftUni.Core.Models.Tournament;
 @using FootballProjectSoftUni.Extensions
 @using FootballProjectSoftUni.Infrastructure.Data.Enums;
 @model DetailsViewModel
@@ -7,252 +7,494 @@
 
 @{
     ViewBag.Title = "Tournament Details";
-}
+    ViewData["FullWidth"] = true;
 
-<section class="container py-4">
+    var eur = new System.Globalization.CultureInfo("de-DE");
+    var now = BgTime.Now;
+    const int maxTeams = 16;
 
-    <div class="tournament-details-card">
-        <div class="row g-4 justify-content-center">
+    string statusKey;
+    string statusSticker;
+    string statusIcon;
+    string statusText;
+    bool isLive = false;
 
-            <div class="col-12 col-lg-8">
-                <h3 class="fw-bold mb-3">
-                    <i class="bi bi-card-text me-2"></i>@Model.Description
-                </h3>
-
-                <div class="details-grid">
-                    <div class="details-item">
-                        <i class="bi bi-calendar-event-fill me-2"></i>
-                        <span class="fw-bold me-1">@Localizer["DStarting"]</span> @Model.StartDate
-                    </div>
-
-                    <div class="details-item">
-                        <i class="bi bi-calendar-check-fill me-2"></i>
-                        <span class="fw-bold me-1">@Localizer["DEnding"]</span> @Model.EndDate
-                    </div>
-
-                    <div class="details-item">
-                        <i class="bi bi-clock-history me-2"></i>
-                        <span class="fw-bold me-1">@Localizer["DCreated"]</span> @Model.CreatedOn
-                    </div>
-
-                    <div class="details-item">
-                        <i class="bi bi-people-fill me-2"></i>
-                        <span class="fw-bold me-1">@Localizer["DNumber"]</span> @Model.NumberOfTeams
-                    </div>
-
-                    <div class="details-item">
-                        <i class="bi bi-whistle-fill me-2"></i>
-                        <span class="fw-bold me-1">@Localizer["DReferee"]</span> @Model.RefereeName
-                    </div>
-
-                    <div class="details-item">
-                        <i class="bi bi-receipt-cutoff me-2"></i>
-                        <span class="fw-bold me-1">@Localizer["DParticipation"]</span>
-                        @Model.ParticipationFee.ToString("C2", new System.Globalization.CultureInfo("de-DE"))
-                    </div>
-
-                    <div class="details-item">
-                        <i class="bi bi-trophy-fill me-2"></i>
-                        <span class="fw-bold me-1">@Localizer["DFirstPlacePrize"]</span>
-                        @Model.Prize.ToString("C2", new System.Globalization.CultureInfo("de-DE"))
-                    </div>
-
-                    <div class="details-item">
-                        <i class="bi bi-award-fill me-2"></i>
-                        <span class="fw-bold me-1">@Localizer["DSecondPlacePrize"]</span>
-                        @Model.SecondPlacePrize.ToString("C2", new System.Globalization.CultureInfo("de-DE"))
-                    </div>
-
-                    <div class="details-item">
-                        <i class="bi bi-award me-2"></i>
-                        <span class="fw-bold me-1">@Localizer["DThirdPlacePrize"]</span>
-                        @Model.ThirdPlacePrize.ToString("C2", new System.Globalization.CultureInfo("de-DE"))
-                    </div>
-
-                    <div class="details-item">
-                        <i class="bi bi-activity me-2"></i>
-                        <span class="fw-bold me-1">@Localizer["DStatus"]</span>
-                        @{
-                            if (Model.StartDate > DateTime.Now)
-                            {
-                                <span class="tournament-status status-upcoming ms-2">
-                                    <i class="bi bi-clock-fill me-1"></i>@TournamentStatus.Upcoming
-                                </span>
-                            }
-                            else if (DateTime.Now > Model.StartDate && DateTime.Now < Model.EndDate)
-                            {
-                                <span class="tournament-status status-started ms-2">
-                                    <i class="bi bi-play-fill me-1"></i>@TournamentStatus.Started
-                                </span>
-                            }
-                            else if (DateTime.Now > Model.EndDate)
-                            {
-                                <span class="tournament-status status-finished ms-2">
-                                    <i class="bi bi-flag-fill me-1"></i>@TournamentStatus.Finished
-                                </span>
-                            }
-                        }
-                    </div>
-                </div>
-
-                <div class="participants-box mt-3">
-                    <div class="fw-bold mb-1">
-                        <i class="bi bi-diagram-3-fill me-2"></i>@Localizer["DParticipants"]
-                    </div>
-
-                    <div class="text-muted">
-                        @if (Model.ParticipantTeams != null && Model.ParticipantTeams.Any())
-                        {
-                            @string.Join(", ", Model.ParticipantTeams)
-                        }
-                        else
-                        {
-                            @:@Localizer["DNoTeams"]
-                        }
-                    </div>
-                </div>
-
-                @if (!string.IsNullOrWhiteSpace(Model.Winner))
-                {
-                    <div class="winner-box mt-3">
-                        <div class="fw-bold">
-                            <i class="bi bi-award-fill me-2"></i>@Localizer["DWinner2"]
-                        </div>
-                        <div class="fw-semibold">@Model.Winner</div>
-                    </div>
-                }
-
-                @* Actions moved under the descriptions *@
-                <div class="details-actions mt-4 d-grid gap-2">
-                    <a asp-controller="Tournament"
-                       asp-action="CityTournaments"
-                       asp-route-id="@Model.CityId"
-                       class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn">
-                        <i class="bi bi-geo-alt-fill me-2"></i>
-                        @Localizer["DBack"]
-                    </a>
-
-                    @if (User.IsAdmin())
-                    {
-                        <a asp-controller="Tournament"
-                           asp-action="Edit"
-                           asp-route-id="@Model.Id"
-                           class="btn btn-outline-dark btn-lg w-100 fw-bold tg-action-btn">
-                            <i class="bi bi-pencil-square me-2"></i>
-                            @Localizer["DEdit"]
-                        </a>
-                    }
-                </div>
-            </div>
-
-            @* Right column removed on purpose (actions are now under details) *@
-
-        </div>
-    </div>
-
-    @* Bracket / Matches *@
-    @if (Model.Matches != null && Model.Matches.Any())
+    if (Model.StartDate > now)
     {
-        <div class="mt-5">
-            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-                <h3 class="mb-0 fw-bold">
-                    <i class="bi bi-diagram-3-fill me-2"></i>
-                    @Localizer["DSchema"]
-                </h3>
-                <span class="text-muted small">
-                    @Localizer["DGrouped"]
-                </span>
-            </div>
-
-            @foreach (var roundGroup in Model.Matches.GroupBy(m => m.Round).OrderBy(g => g.Key))
-            {
-                <div class="round-card mt-3">
-                    <div class="round-head">
-                        <h5 class="mb-0 fw-bold">
-                            <i class="bi bi-layers-fill me-2"></i>Рунд @roundGroup.Key
-                        </h5>
-                    </div>
-
-                    <div class="table-responsive">
-                        <table class="table align-middle mb-0 tg-table">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">@Localizer["DTeam1"]</th>
-                                    <th class="text-center">@Localizer["DResult"]</th>
-                                    <th class="text-center">@Localizer["DTeam2"]</th>
-                                    <th class="text-center">@Localizer["DWinner"]</th>
-                                    <th class="text-center"></th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                @foreach (var match in roundGroup)
-                                {
-                                    <tr>
-                                        <td class="text-center fw-semibold">@match.Team1Name</td>
-
-                                        <td class="text-center">
-                                            @if (match.Team1Goals.HasValue && match.Team2Goals.HasValue)
-                                            {
-                                                <span class="score-pill">
-                                                    @($"{match.Team1Goals}:{match.Team2Goals}")
-                                                </span>
-                                            }
-                                            else
-                                            {
-                                                @: -
-                                            }
-                                        </td>
-
-                                        <td class="text-center fw-semibold">@match.Team2Name</td>
-
-                                        <td class="text-center">
-                                            @if (!string.IsNullOrEmpty(match.WinnerTeamName))
-                                            {
-                                                <span class="winner-pill">
-                                                    <i class="bi bi-trophy-fill me-1"></i>@match.WinnerTeamName
-                                                </span>
-                                            }
-                                            else
-                                            {
-                                                @: -
-                                            }
-                                        </td>
-
-                                        <td class="text-center">
-                                            @if (User.IsAdmin()
-                                                                            && match.Team1Id.HasValue
-                                                                            && match.Team2Id.HasValue)
-                                            {
-                                                <a asp-controller="Match"
-                                                   asp-action="EnterResult"
-                                                   asp-route-id="@match.Id"
-                                                   class="btn btn-sm btn-primary">
-                                                    <i class="bi bi-pencil-square me-1"></i>
-                                                    @Localizer["DEnter"]
-                                                </a>
-                                            }
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-
-                        </table>
-                    </div>
-                </div>
-            }
-        </div>
+        statusKey = "upcoming";
+        statusSticker = "tg-sticker tg-sticker--white";
+        statusIcon = "bi-clock-fill";
+        statusText = Localizer["TNStatusUpcoming"].Value;
+    }
+    else if (now > Model.EndDate)
+    {
+        statusKey = "finished";
+        statusSticker = "tg-sticker tg-sticker--ink";
+        statusIcon = "bi-flag-fill";
+        statusText = Localizer["TNStatusFinished"].Value;
     }
     else
     {
-        <div class="empty-state text-center mt-4">
-            <i class="bi bi-diagram-2 display-4 text-muted"></i>
-            <h5 class="mt-3">@Localizer["DNotYet"]</h5>
-            <p class="text-muted mb-0">@Localizer["DWehn"]</p>
-        </div>
+        statusKey = "started";
+        statusSticker = "tg-sticker tg-sticker--coral is-live";
+        statusIcon = "bi-play-fill";
+        statusText = Localizer["TNStatusStarted"].Value;
+        isLive = true;
     }
 
+    var pct = Math.Max(0, Math.Min(100, (int)Math.Round(Model.NumberOfTeams * 100.0 / maxTeams)));
+    bool hasWinner = !string.IsNullOrWhiteSpace(Model.Winner);
+    bool isAdmin = User.IsAdmin();
+    bool hasReferee = !string.IsNullOrWhiteSpace(Model.RefereeName);
+
+    var teams = Model.ParticipantTeams != null ? Model.ParticipantTeams.ToList() : new List<string>();
+    var rounds = Model.Matches != null
+        ? Model.Matches.GroupBy(m => m.Round).OrderBy(g => g.Key).ToList()
+        : null;
+    bool hasRounds = rounds != null && rounds.Count > 0;
+
+    // Champion shown at the end of the bracket: the tournament winner, otherwise the winner of the final.
+    string champion = hasWinner ? Model.Winner : null;
+    if (champion == null && hasRounds)
+    {
+        var lastRound = rounds[rounds.Count - 1].ToList();
+        if (lastRound.Count == 1 && !string.IsNullOrWhiteSpace(lastRound[0].WinnerTeamName))
+        {
+            champion = lastRound[0].WinnerTeamName;
+        }
+    }
+
+    // Title: the last word gets the sun highlighter.
+    var desc = (Model.Description ?? string.Empty).Trim();
+    int lastSpace = desc.LastIndexOf(' ');
+    string titleHead = lastSpace > 0 ? desc.Substring(0, lastSpace) : string.Empty;
+    string titleTail = lastSpace > 0 ? desc.Substring(lastSpace + 1) : desc;
+    string titleSize = desc.Length > 90 ? "is-xl" : (desc.Length > 42 ? "is-long" : string.Empty);
+
+    // Marquee under the poster: participants, or the programme sections when nobody has joined yet.
+    var marquee = teams.Count > 0
+        ? new List<string>(teams)
+        : new List<string> { Localizer["DParticipants"].Value, Localizer["TNPrizePool"].Value, Localizer["DSchema"].Value };
+    var marqueeItems = new List<string>();
+    while (marqueeItems.Count < 8)
+    {
+        marqueeItems.AddRange(marquee);
+    }
+
+    string Label(string key) => Localizer[key].Value.TrimEnd(':', ' ', '.');
+
+    string Initials(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) { return "?"; }
+        var parts = name.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var value = parts.Length > 1
+            ? parts[0].Substring(0, 1) + parts[1].Substring(0, 1)
+            : parts[0].Substring(0, Math.Min(2, parts[0].Length));
+        return value.ToUpperInvariant();
+    }
+
+    string Tone(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) { return "tbd"; }
+        var tones = new[] { "sun", "coral", "mint", "lilac", "sky", "pitch", "ink" };
+        int sum = 0;
+        foreach (var ch in name) { sum += ch; }
+        return tones[sum % tones.Length];
+    }
+
+    string RoundName(int matches, int round)
+    {
+        switch (matches)
+        {
+            case 1: return Localizer["TNFinal"].Value;
+            case 2: return Localizer["TNSemiFinal"].Value;
+            case 4: return Localizer["TNQuarterFinal"].Value;
+            case 8: return Localizer["TNRoundOf16"].Value;
+            default: return Localizer["TNRound", round].Value;
+        }
+    }
+}
+
+@* ================= POSTER HEADER ================= *@
+<section class="tn-hero tn-hero--@statusKey">
+    <div class="tn-hero__bg" aria-hidden="true">
+        <span class="tn-hero__beam tn-hero__beam--l"></span>
+        <span class="tn-hero__beam tn-hero__beam--r"></span>
+        <div class="tn-hero__field">
+            <svg class="tg-pitch-lines" viewBox="0 0 100 64" preserveAspectRatio="none">
+                <rect x="2" y="2" width="96" height="60" rx="1" />
+                <line x1="50" y1="2" x2="50" y2="62" />
+                <circle cx="50" cy="32" r="8" />
+                <rect x="2" y="17" width="13" height="30" />
+                <rect x="2" y="25" width="5" height="14" />
+                <rect x="85" y="17" width="13" height="30" />
+                <rect x="93" y="25" width="5" height="14" />
+            </svg>
+        </div>
+        <span class="tn-hero__year">@Model.StartDate.Year</span>
+    </div>
+
+    <div class="container-xl tn-hero__inner">
+        <div class="tn-hero__top">
+            <a asp-controller="Tournament"
+               asp-action="CityTournaments"
+               asp-route-id="@Model.CityId"
+               class="tn-back">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>@Localizer["DBack"]
+            </a>
+        </div>
+
+        <span class="@statusSticker tn-hero__status" style="--rot:-5deg">
+            @if (!isLive) { <i class="bi @statusIcon" aria-hidden="true"></i> }
+            @statusText
+        </span>
+
+        <h1 class="tn-hero__title @titleSize" data-split>@titleHead <span class="tn-hl">@titleTail</span></h1>
+
+        <div class="tn-hero__dates">
+            <div class="tn-hero__date">
+                <span class="tn-micro">@Label("DStarting")</span>
+                <strong>@Model.StartDate.ToString("dd.MM.yyyy")</strong>
+                <span class="tn-hero__time">@Model.StartDate.ToString("HH:mm")</span>
+            </div>
+
+            <span class="tn-hero__arrow" aria-hidden="true"><i class="bi bi-arrow-right"></i></span>
+
+            <div class="tn-hero__date">
+                <span class="tn-micro">@Label("DEnding")</span>
+                <strong>@Model.EndDate.ToString("dd.MM.yyyy")</strong>
+                <span class="tn-hero__time">@Model.EndDate.ToString("HH:mm")</span>
+            </div>
+
+            @if (hasWinner)
+            {
+                <span class="tg-sticker tn-hero__champ" style="--rot:3deg">
+                    <i class="bi bi-trophy-fill" aria-hidden="true"></i>@Localizer["DWinner2"]: @Model.Winner
+                </span>
+            }
+        </div>
+    </div>
+
+    <div class="tg-marquee tg-marquee--sun tn-hero__marquee" data-marquee aria-hidden="true">
+        <div class="tg-marquee__track">
+            @foreach (var item in marqueeItems)
+            {
+                <span class="tg-marquee__item">@item</span>
+            }
+        </div>
+    </div>
 </section>
+
+@* ================= PROGRAMME ================= *@
+<div class="container-xl tn-prog">
+
+    @* ---------- Fact rail ---------- *@
+    <aside class="tn-rail" aria-label="@Localizer["CTDetails"]">
+        <div class="tn-rail__card">
+            <div class="tn-rail__fee">
+                <span class="tn-micro">@Label("DParticipation")</span>
+                <strong class="tn-rail__money">@Model.ParticipationFee.ToString("C2", eur)</strong>
+                <i class="bi bi-ticket-perforated-fill tn-rail__ico" aria-hidden="true"></i>
+            </div>
+
+            <ul class="tn-facts">
+                <li class="tn-fact">
+                    <span class="tg-icon-tile tg-icon-tile--sm tg-icon-tile--mint"><i class="bi bi-people-fill" aria-hidden="true"></i></span>
+                    <div class="tn-fact__body">
+                        <span class="tn-micro">@Label("DNumber")</span>
+                        <span class="tn-fact__big"><span data-count="@Model.NumberOfTeams">@Model.NumberOfTeams</span> <small>/ @maxTeams</small></span>
+                        <div class="tg-progress"
+                             role="progressbar"
+                             aria-valuemin="0"
+                             aria-valuemax="@maxTeams"
+                             aria-valuenow="@Model.NumberOfTeams"
+                             aria-label="@Label("DNumber")">
+                            <span style="width:@(pct)%"></span>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="tn-fact">
+                    <span class="tg-icon-tile tg-icon-tile--sm tg-icon-tile--sky"><i class="bi bi-flag-fill" aria-hidden="true"></i></span>
+                    <div class="tn-fact__body">
+                        <span class="tn-micro">@Label("DReferee")</span>
+                        @if (hasReferee && User.Identity?.IsAuthenticated == true)
+                        {
+                            <span class="tn-fact__value">@Model.RefereeName</span>
+                        }
+                        else if (hasReferee)
+                        {
+                            @* Guests learn that there is a referee, not who it is. *@
+                            <span class="tn-fact__value">@Localizer["TNRefereeAssigned"]</span>
+                        }
+                        else
+                        {
+                            <span class="tn-fact__value is-empty">@Localizer["TNNoReferee"]</span>
+                        }
+                    </div>
+                </li>
+
+                <li class="tn-fact">
+                    <span class="tg-icon-tile tg-icon-tile--sm"><i class="bi bi-clock-history" aria-hidden="true"></i></span>
+                    <div class="tn-fact__body">
+                        <span class="tn-micro">@Label("DCreated")</span>
+                        <span class="tn-fact__value">@Model.CreatedOn.ToString("dd.MM.yyyy HH:mm")</span>
+                    </div>
+                </li>
+
+                <li class="tn-fact">
+                    <span class="tg-icon-tile tg-icon-tile--sm tg-icon-tile--coral"><i class="bi bi-trophy-fill" aria-hidden="true"></i></span>
+                    <div class="tn-fact__body">
+                        <span class="tn-micro">@Localizer["DWinner2"]</span>
+                        @if (hasWinner)
+                        {
+                            <span class="tn-fact__value">@Model.Winner</span>
+                        }
+                        else
+                        {
+                            <span class="tn-fact__value is-empty">@Localizer["TNTbd"]</span>
+                        }
+                    </div>
+                </li>
+            </ul>
+
+            <div class="tn-rail__actions">
+                <a asp-controller="Tournament"
+                   asp-action="CityTournaments"
+                   asp-route-id="@Model.CityId"
+                   class="btn btn-outline-dark">
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i>@Localizer["DBack"]
+                </a>
+
+                @if (isAdmin)
+                {
+                    <a asp-controller="Tournament"
+                       asp-action="Edit"
+                       asp-route-id="@Model.Id"
+                       class="btn btn-sun">
+                        <i class="bi bi-pencil-square" aria-hidden="true"></i>@Localizer["DEdit"]
+                    </a>
+                }
+            </div>
+
+            <div class="tn-rail__foot" aria-hidden="true">
+                <span class="tn-barcode"></span>
+                <span class="tn-rail__no">&#8470; @Model.Id.ToString("D4")</span>
+            </div>
+        </div>
+    </aside>
+
+    <div class="tn-prog__main">
+
+        @* ---------- 01 Prize podium ---------- *@
+        <section class="tn-block" aria-labelledby="tn-h-prizes">
+            <header class="tn-block__head">
+                <span class="tn-block__no" aria-hidden="true">01</span>
+                <h2 class="tn-block__title" id="tn-h-prizes">@Localizer["TNPrizePool"]</h2>
+            </header>
+
+            <div class="tn-podium" data-tilt="6">
+                <div class="tn-step tn-step--2">
+                    <div class="tn-step__card">
+                        <span class="tn-micro">@Label("DSecondPlacePrize")</span>
+                        <strong class="tn-step__amount">@Model.SecondPlacePrize.ToString("C2", eur)</strong>
+                    </div>
+                    <div class="tn-step__block"><span class="tn-step__place" aria-hidden="true">2</span></div>
+                </div>
+
+                <div class="tn-step tn-step--1">
+                    <div class="tn-step__card">
+                        <span class="tn-step__cup" aria-hidden="true"><i class="bi bi-trophy-fill"></i></span>
+                        <span class="tn-micro">@Label("DFirstPlacePrize")</span>
+                        <strong class="tn-step__amount">@Model.Prize.ToString("C2", eur)</strong>
+                        @if (hasWinner)
+                        {
+                            <span class="tn-step__who" title="@Model.Winner">@Model.Winner</span>
+                        }
+                    </div>
+                    <div class="tn-step__block"><span class="tn-step__place" aria-hidden="true">1</span></div>
+                </div>
+
+                <div class="tn-step tn-step--3">
+                    <div class="tn-step__card">
+                        <span class="tn-micro">@Label("DThirdPlacePrize")</span>
+                        <strong class="tn-step__amount">@Model.ThirdPlacePrize.ToString("C2", eur)</strong>
+                    </div>
+                    <div class="tn-step__block"><span class="tn-step__place" aria-hidden="true">3</span></div>
+                </div>
+            </div>
+            <div class="tn-podium__floor" aria-hidden="true"></div>
+        </section>
+
+        @* ---------- 02 Participants ---------- *@
+        <section class="tn-block" aria-labelledby="tn-h-teams">
+            <header class="tn-block__head">
+                <span class="tn-block__no" aria-hidden="true">02</span>
+                <h2 class="tn-block__title" id="tn-h-teams">@Localizer["DParticipants"]</h2>
+                <span class="tn-block__aside">
+                    <span class="tg-chip tg-chip--green"><i class="bi bi-people-fill" aria-hidden="true"></i><span class="tg-num">@teams.Count / @maxTeams</span></span>
+                </span>
+            </header>
+
+            @if (teams.Count == 0)
+            {
+                <p class="tn-crests__note"><i class="bi bi-info-circle me-1" aria-hidden="true"></i>@Localizer["DNoTeams"]</p>
+            }
+
+            @if (teams.Count > 0 || statusKey == "upcoming")
+            {
+                <ul class="tn-crests">
+                    @foreach (var team in teams)
+                    {
+                        bool isWinnerTeam = hasWinner && string.Equals(team, Model.Winner, StringComparison.OrdinalIgnoreCase);
+
+                        <li class="tn-crest-card @(isWinnerTeam ? "is-champ" : "")">
+                            <span class="tn-crest tn-crest--@Tone(team)" aria-hidden="true">@Initials(team)</span>
+                            <span class="tn-crest-card__name" title="@team">@team</span>
+                            @if (isWinnerTeam)
+                            {
+                                <span class="tn-crest-card__cup" title="@Localizer["DWinner2"]">
+                                    <i class="bi bi-trophy-fill" aria-hidden="true"></i><span class="visually-hidden">@Localizer["DWinner2"]</span>
+                                </span>
+                            }
+                        </li>
+                    }
+
+                    @if (statusKey == "upcoming")
+                    {
+                        for (int i = teams.Count; i < maxTeams; i++)
+                        {
+                            <li class="tn-crest-card is-open" aria-hidden="true">
+                                <span class="tn-crest tn-crest--open"><i class="bi bi-plus-lg"></i></span>
+                            </li>
+                        }
+                    }
+                </ul>
+            }
+        </section>
+
+        @* ---------- 03 Bracket ---------- *@
+        <section class="tn-block" aria-labelledby="tn-h-bracket">
+            <header class="tn-block__head">
+                <span class="tn-block__no" aria-hidden="true">03</span>
+                <h2 class="tn-block__title" id="tn-h-bracket">@Localizer["DSchema"]</h2>
+                @if (hasRounds)
+                {
+                    <span class="tn-block__aside">
+                        <span class="tn-block__hint"><i class="bi bi-arrow-left-right" aria-hidden="true"></i>@Localizer["TNDragHint"]</span>
+                    </span>
+                }
+            </header>
+
+            @if (hasRounds)
+            {
+                <div class="tn-bracket-wrap" data-drag-scroll tabindex="0" role="region" aria-label="@Localizer["DSchema"]">
+                    <div class="tn-bracket">
+                        @for (int r = 0; r < rounds.Count; r++)
+                        {
+                            var roundGroup = rounds[r];
+                            var roundMatches = roundGroup.OrderBy(m => m.IndexInRound).ToList();
+                            string roundCss = (r == 0 ? " is-first" : string.Empty) + (r == rounds.Count - 1 ? " is-final" : string.Empty);
+
+                            <section class="tn-round@(roundCss)" aria-label="@RoundName(roundMatches.Count, roundGroup.Key)">
+                                <header class="tn-round__head">
+                                    <span class="tn-micro">@Localizer["TNRound", roundGroup.Key]</span>
+                                    <h3 class="tn-round__name">@RoundName(roundMatches.Count, roundGroup.Key)</h3>
+                                </header>
+
+                                <div class="tn-round__body">
+                                    @foreach (var match in roundMatches)
+                                    {
+                                        bool played = match.Team1Goals.HasValue && match.Team2Goals.HasValue;
+                                        bool t1Win = match.WinnerTeamId.HasValue && match.WinnerTeamId == match.Team1Id;
+                                        bool t2Win = match.WinnerTeamId.HasValue && match.WinnerTeamId == match.Team2Id;
+                                        bool decided = t1Win || t2Win;
+                                        bool t1Tbd = string.IsNullOrWhiteSpace(match.Team1Name?.Trim('-', ' '));
+                                        bool t2Tbd = string.IsNullOrWhiteSpace(match.Team2Name?.Trim('-', ' '));
+                                        // A team without an opponent went through when the tournament started.
+                                        bool isBye = decided && !played && (t1Tbd || t2Tbd);
+                                        string emptyName = isBye ? Localizer["TNBye"].Value : Localizer["TNTbd"].Value;
+                                        string name1 = t1Tbd ? emptyName : match.Team1Name;
+                                        string name2 = t2Tbd ? emptyName : match.Team2Name;
+                                        bool canEnter = isAdmin && match.Team1Id.HasValue && match.Team2Id.HasValue;
+                                        string row1 = (t1Win ? "is-winner" : (decided ? "is-loser" : string.Empty)) + (t1Tbd ? " is-tbd" : string.Empty);
+                                        string row2 = (t2Win ? "is-winner" : (decided ? "is-loser" : string.Empty)) + (t2Tbd ? " is-tbd" : string.Empty);
+                                        string matchCss = (played ? " is-played" : string.Empty) + (t1Tbd && t2Tbd ? " is-empty" : string.Empty);
+
+                                        <div class="tn-slot @(decided ? "is-done" : "")">
+                                            <article class="tn-match@(matchCss)">
+                                                <span class="tn-match__no" aria-hidden="true">M@(match.IndexInRound + 1)</span>
+
+                                                <div class="tn-match__row @row1">
+                                                    <span class="tn-crest tn-crest--xs tn-crest--@(t1Tbd ? "tbd" : Tone(match.Team1Name))" aria-hidden="true">@(t1Tbd ? "?" : Initials(match.Team1Name))</span>
+                                                    <span class="tn-match__name" title="@name1">
+                                                        @name1
+                                                        @if (t1Win)
+                                                        {
+                                                            <i class="bi bi-trophy-fill tn-match__win" aria-hidden="true"></i><span class="visually-hidden">(@Localizer["DWinner2"])</span>
+                                                        }
+                                                    </span>
+                                                    <span class="tn-match__goals">@(played ? match.Team1Goals.ToString() : "-")</span>
+                                                </div>
+
+                                                <div class="tn-match__row @row2">
+                                                    <span class="tn-crest tn-crest--xs tn-crest--@(t2Tbd ? "tbd" : Tone(match.Team2Name))" aria-hidden="true">@(t2Tbd ? "?" : Initials(match.Team2Name))</span>
+                                                    <span class="tn-match__name" title="@name2">
+                                                        @name2
+                                                        @if (t2Win)
+                                                        {
+                                                            <i class="bi bi-trophy-fill tn-match__win" aria-hidden="true"></i><span class="visually-hidden">(@Localizer["DWinner2"])</span>
+                                                        }
+                                                    </span>
+                                                    <span class="tn-match__goals">@(played ? match.Team2Goals.ToString() : "-")</span>
+                                                </div>
+
+                                                @if (canEnter)
+                                                {
+                                                    <a asp-controller="Match"
+                                                       asp-action="EnterResult"
+                                                       asp-route-id="@match.Id"
+                                                       class="tn-match__enter"
+                                                       title="@Localizer["DEnter"]">
+                                                        <i class="bi bi-pencil-fill" aria-hidden="true"></i><span class="visually-hidden">@Localizer["DEnter"]: @name1 - @name2</span>
+                                                    </a>
+                                                }
+                                            </article>
+                                        </div>
+                                    }
+                                </div>
+                            </section>
+                        }
+
+                        <section class="tn-round tn-round--cup" aria-label="@Localizer["DWinner2"]">
+                            <header class="tn-round__head">
+                                <span class="tn-micro">&nbsp;</span>
+                                <h3 class="tn-round__name">@Localizer["DWinner2"]</h3>
+                            </header>
+                            <div class="tn-round__body">
+                                <div class="tn-slot">
+                                    <div class="tn-cup @(champion != null ? "has-champ" : "")">
+                                        <span class="tn-cup__icon" aria-hidden="true"><i class="bi bi-trophy-fill"></i></span>
+                                        <strong class="tn-cup__name">@(champion ?? Localizer["TNTbd"].Value)</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="tg-empty">
+                    <span class="tg-empty__icon" aria-hidden="true"><i class="bi bi-diagram-2"></i></span>
+                    <h5>@Localizer["DNotYet"]</h5>
+                    <p class="text-muted mb-0">@Localizer["DWehn"]</p>
+                </div>
+            }
+        </section>
+
+    </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

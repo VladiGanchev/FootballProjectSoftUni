@@ -134,6 +134,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 
             await _data.Users.AddAsync(user);
             await _data.Referees.AddAsync(referee);
+            await AddFinishedTournamentsAsync("ref1", 3, firstId: 6101);
 
             await _data.RefereesRatings.AddRangeAsync(
                 new RefereeRating { RefereeId = "ref1", UserId = "rater1", Value = 4 },
@@ -190,6 +191,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             await _data.Users.AddAsync(user);
             await _data.Coaches.AddAsync(coach);
             await _data.Referees.AddAsync(referee);
+            await AddFinishedTournamentsAsync("dual1", 2, firstId: 6201);
             await _data.SaveChangesAsync();
 
             var result = await _profileService.GetProfileAsync("dual1");
@@ -209,138 +211,128 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         }
 
         [Test]
-        public async Task RemoveRefereeRoleAsync_ShouldRemoveReferee_AndClearTournamentRefereeId()
+        public async Task RemoveRefereeRoleAsync_WhileAssignedToAnUpcomingTournament_IsRefused()
         {
-            var referee = new Referee
-            {
-                Id = "ref-remove",
-                Name = "Ref Remove",
-                Birthdate = DateTime.Now.AddYears(-30),
-                Experience = 5
-            };
-
-            var tournament = new Tournament
-            {
-                Id = 6001,
-                StartDate = DateTime.Now.AddDays(5),
-                EndDate = DateTime.Now.AddDays(10),
-                Description = "Test",
-                OrganiserId = "org1",
-                NumberOfTeams = 0,
-                CreatedOn = DateTime.Now,
-                ImageUrl = "img",
-                Status = TournamentStatus.Upcoming,
-                Prize = 0,
-                ParticipationFee = 0,
-                RefereeId = "ref-remove"
-            };
-
-            await _data.Referees.AddAsync(referee);
-            await _data.Tournaments.AddAsync(tournament);
+            await _data.Referees.AddAsync(new Referee { Id = "ref-remove", Name = "Ref Remove", Birthdate = DateTime.Now.AddYears(-30), Experience = 5 });
+            await _data.Tournaments.AddAsync(ProfileTournament(6001, DateTime.Now.AddDays(5), refereeId: "ref-remove"));
             await _data.SaveChangesAsync();
 
-            await _profileService.RemoveRefereeRoleAsync("ref-remove");
+            var error = await _profileService.RemoveRefereeRoleAsync("ref-remove");
 
-            var removedReferee = await _data.Referees.FindAsync("ref-remove");
-            var updatedTournament = await _data.Tournaments.FirstAsync(t => t.Id == 6001);
-
-            Assert.IsNull(removedReferee);
-            Assert.IsNull(updatedTournament.RefereeId);
+            Assert.IsNotNull(error);
+            StringAssert.Contains("upcoming tournament", error!.Message);
+            Assert.IsTrue((await _data.Referees.FirstAsync(r => r.Id == "ref-remove")).IsActive);
+            Assert.That((await _data.Tournaments.FirstAsync(t => t.Id == 6001)).RefereeId, Is.EqualTo("ref-remove"));
         }
 
         [Test]
-        public async Task RemoveRefereeRoleAsync_ShouldRemoveOnlyRefereeParticipations()
+        public async Task RemoveRefereeRoleAsync_WhileTheTournamentIsRunning_IsRefused()
         {
-            var referee = new Referee
-            {
-                Id = "ref-part",
-                Name = "Ref Part",
-                Birthdate = DateTime.Now.AddYears(-35),
-                Experience = 6
-            };
-
-            var tournament = new Tournament
-            {
-                Id = 6002,
-                StartDate = DateTime.Now.AddDays(5),
-                EndDate = DateTime.Now.AddDays(10),
-                Description = "Test",
-                OrganiserId = "org1",
-                NumberOfTeams = 0,
-                CreatedOn = DateTime.Now,
-                ImageUrl = "img",
-                Status = TournamentStatus.Upcoming,
-                Prize = 0,
-                ParticipationFee = 0
-            };
-
-            await _data.Referees.AddAsync(referee);
-            await _data.Tournaments.AddAsync(tournament);
-
-            await _data.TournamentsParticipants.AddRangeAsync(
-                new TournamentParticipant
-                {
-                    ParticipantId = "ref-part",
-                    TournamentId = 6002,
-                    Role = "Referee"
-                },
-                new TournamentParticipant
-                {
-                    ParticipantId = "player-1",
-                    TournamentId = 6002,
-                    Role = "Player"
-                }
-            );
-
+            await _data.Referees.AddAsync(new Referee { Id = "ref-part", Name = "Ref Part", Birthdate = DateTime.Now.AddYears(-35), Experience = 6 });
+            await _data.Tournaments.AddAsync(ProfileTournament(6002, DateTime.Now.AddHours(-1)));
+            await _data.TournamentsParticipants.AddAsync(new TournamentParticipant { ParticipantId = "ref-part", TournamentId = 6002, Role = "Referee" });
             await _data.SaveChangesAsync();
 
-            await _profileService.RemoveRefereeRoleAsync("ref-part");
+            var error = await _profileService.RemoveRefereeRoleAsync("ref-part");
 
-            var remaining = await _data.TournamentsParticipants
-                .Where(tp => tp.TournamentId == 6002)
-                .ToListAsync();
-
-            Assert.That(remaining.Count, Is.EqualTo(1));
-            Assert.That(remaining[0].ParticipantId, Is.EqualTo("player-1"));
-            Assert.That(remaining[0].Role, Is.EqualTo("Player"));
+            Assert.IsNotNull(error);
+            StringAssert.Contains("in progress", error!.Message);
         }
-
 
         [Test]
-        public async Task RemoveRefereeRoleAsync_ShouldRemoveReferee_AndParticipations_WhenNoTournamentAssigned()
+        public async Task RemoveRefereeRoleAsync_AfterFinishedTournaments_SwitchesTheProfileOff_AndKeepsEverything()
         {
-            var referee = new Referee
-            {
-                Id = "ref-only",
-                Name = "Ref Only",
-                Birthdate = DateTime.Now.AddYears(-28),
-                Experience = 4
-            };
-
-            await _data.Referees.AddAsync(referee);
-
-            await _data.TournamentsParticipants.AddAsync(
-                new TournamentParticipant
-                {
-                    ParticipantId = "ref-only",
-                    TournamentId = 6003,
-                    Role = "Referee"
-                });
-
+            await _data.Referees.AddAsync(new Referee { Id = "ref-only", Name = "Ref Only", Birthdate = DateTime.Now.AddYears(-28), Experience = 4, TournamentId = 6003 });
+            await _data.Tournaments.AddAsync(ProfileTournament(6003, DateTime.Now.AddDays(-5), refereeId: "ref-only"));
+            await _data.TournamentsParticipants.AddAsync(new TournamentParticipant { ParticipantId = "ref-only", TournamentId = 6003, Role = "Referee" });
+            await _data.RefereesRatings.AddAsync(new RefereeRating { RefereeId = "ref-only", UserId = "rater", Value = 2 });
             await _data.SaveChangesAsync();
 
-            await _profileService.RemoveRefereeRoleAsync("ref-only");
+            var error = await _profileService.RemoveRefereeRoleAsync("ref-only");
 
-            var removedReferee = await _data.Referees.FindAsync("ref-only");
-            var remainingParticipations = await _data.TournamentsParticipants
-                .Where(tp => tp.ParticipantId == "ref-only")
-                .ToListAsync();
-
-            Assert.IsNull(removedReferee);
-            Assert.IsEmpty(remainingParticipations);
+            Assert.IsNull(error);
+            var referee = await _data.Referees.FirstAsync(r => r.Id == "ref-only");
+            Assert.IsFalse(referee.IsActive);
+            Assert.IsNull(referee.TournamentId);
+            Assert.That(await _data.RefereesRatings.CountAsync(r => r.RefereeId == "ref-only"), Is.EqualTo(1), "Ratings stay.");
+            Assert.IsTrue(await _data.TournamentsParticipants.AnyAsync(tp => tp.ParticipantId == "ref-only"), "History stays.");
+            Assert.That((await _data.Tournaments.FirstAsync(t => t.Id == 6003)).RefereeId, Is.EqualTo("ref-only"));
         }
 
+        private static Tournament ProfileTournament(int id, DateTime start, string? refereeId = null) => new Tournament
+        {
+            Id = id,
+            StartDate = start,
+            EndDate = start.AddHours(8),
+            Description = "Test",
+            OrganiserId = "org1",
+            NumberOfTeams = 0,
+            CreatedOn = DateTime.Now,
+            ImageUrl = "img",
+            Status = TournamentStatus.Upcoming,
+            Prize = 0,
+            ParticipationFee = 0,
+            RefereeId = refereeId
+        };
 
+        private async Task AddFinishedTournamentsAsync(string refereeId, int count, int firstId)
+        {
+            for (var i = 0; i < count; i++)
+            {
+                await _data.Tournaments.AddAsync(ProfileTournament(firstId + i, DateTime.Now.AddDays(-10 - i), refereeId));
+            }
+        }
 
+        [Test]
+        public async Task NewTournamentEmails_AreOffUntilTurnedOn_AndShowInTheProfile()
+        {
+            await _data.Users.AddAsync(new ApplicationUser { Id = "mail-user", Email = "m@test.com", UserName = "m@test.com", FirstName = "M", LastName = "U", SecurityStamp = "stamp" });
+            await _data.SaveChangesAsync();
+
+            Assert.That((await _profileService.GetProfileAsync("mail-user"))!.NewTournamentEmails, Is.False);
+
+            await _profileService.SetNewTournamentEmailsAsync("mail-user", true);
+            Assert.That((await _profileService.GetProfileAsync("mail-user"))!.NewTournamentEmails, Is.True);
+
+            await _profileService.SetNewTournamentEmailsAsync("mail-user", false);
+            Assert.That((await _profileService.GetProfileAsync("mail-user"))!.NewTournamentEmails, Is.False);
+        }
+
+        [Test]
+        public async Task Unsubscribe_WorksOnlyWithTheKeyOfThatAccount()
+        {
+            await _data.Users.AddRangeAsync(
+                new ApplicationUser { Id = "sub-a", Email = "a@test.com", UserName = "a@test.com", FirstName = "A", LastName = "A", SecurityStamp = "stamp-a", NewTournamentEmails = true },
+                new ApplicationUser { Id = "sub-b", Email = "b@test.com", UserName = "b@test.com", FirstName = "B", LastName = "B", SecurityStamp = "stamp-b", NewTournamentEmails = true });
+            await _data.SaveChangesAsync();
+
+            var keyA = FootballProjectSoftUni.Core.Extensions.UnsubscribeKey.For("sub-a", "stamp-a");
+
+            // Somebody else's key, a made-up key, no key, an unknown account: nothing changes.
+            Assert.That(await _profileService.UnsubscribeAsync("sub-b", keyA), Is.False);
+            Assert.That(await _profileService.UnsubscribeAsync("sub-a", "made-up"), Is.False);
+            Assert.That(await _profileService.UnsubscribeAsync("sub-a", null), Is.False);
+            Assert.That(await _profileService.UnsubscribeAsync("nobody", keyA), Is.False);
+            Assert.That(await _data.Users.CountAsync(u => u.NewTournamentEmails), Is.EqualTo(2));
+
+            Assert.That(await _profileService.IsUnsubscribeKeyValidAsync("sub-a", keyA), Is.True);
+            Assert.That(await _profileService.UnsubscribeAsync("sub-a", keyA), Is.True);
+
+            Assert.That((await _data.Users.AsNoTracking().FirstAsync(u => u.Id == "sub-a")).NewTournamentEmails, Is.False);
+            Assert.That((await _data.Users.AsNoTracking().FirstAsync(u => u.Id == "sub-b")).NewTournamentEmails, Is.True);
+        }
+
+        [Test]
+        public void UnsubscribeKey_NeedsASecurityStamp_AndChangesWithIt()
+        {
+            Assert.That(FootballProjectSoftUni.Core.Extensions.UnsubscribeKey.For("u", null), Is.Null);
+            Assert.That(FootballProjectSoftUni.Core.Extensions.UnsubscribeKey.For("u", ""), Is.Null);
+            Assert.That(FootballProjectSoftUni.Core.Extensions.UnsubscribeKey.IsValid("u", null, "x"), Is.False);
+
+            // A new password gives the account a new security stamp: old links stop working.
+            var before = FootballProjectSoftUni.Core.Extensions.UnsubscribeKey.For("u", "old-stamp");
+            Assert.That(FootballProjectSoftUni.Core.Extensions.UnsubscribeKey.IsValid("u", "new-stamp", before), Is.False);
+            Assert.That(FootballProjectSoftUni.Core.Extensions.UnsubscribeKey.IsValid("u", "old-stamp", before), Is.True);
+        }
     }
 }

@@ -13,5 +13,9 @@ namespace FootballProjectSoftUni.Core.Contracts.Partner
         Task<IEnumerable<PartnerViewModel>> AllPartnersAsync();
         Task<bool> DeletePartnerAsync(int id);
         Task<PartnerViewModel> FindPartnerAsync(PartnerViewModel model, int id);
+
+        /// <summary>Gives the partner a new logo.</summary>
+        /// <returns>The address of its old logo, or null when there is no such partner.</returns>
+        Task<string?> ChangePartnerImageAsync(int id, string imageUrl);
     }
 }

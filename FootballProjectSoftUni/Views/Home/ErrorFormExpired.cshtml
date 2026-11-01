@@ -1,0 +1,26 @@
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["ErrFormExpiredTitle"].Value;
+    var retryUrl = ViewBag.RetryUrl as string ?? Url.Action("Index", "Home");
+}
+
+@* Shown when a form was sent with an expired security token (page open too long, signed in/out in another tab). *@
+<section class="err-var err-var--single">
+    <div class="err-var__copy">
+        <span class="tg-kicker">400</span>
+        <h1 class="err-mega err-mega--md" data-split>@Localizer["ErrFormExpiredTitle"]</h1>
+
+        <p class="err-lead">@Localizer["ErrFormExpiredText"]</p>
+
+        <div class="err-actions">
+            <a href="@retryUrl" class="btn btn-primary btn-lg">
+                <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+                <span>@Localizer["ErrFormExpiredRetry"]</span>
+            </a>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-house-fill" aria-hidden="true"></i>
+                <span>@Localizer["DHome"]</span>
+            </a>
+        </div>
+    </div>
+</section>

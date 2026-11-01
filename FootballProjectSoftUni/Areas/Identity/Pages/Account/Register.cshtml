@@ -1,84 +1,247 @@
-﻿@page
+@page
 @model RegisterModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
     ViewData["Title"] = "Register";
+    ViewData["FullWidth"] = true;
 }
 
-<div class="auth-wrap">
-    <div class="auth-card">
-        <div class="auth-head text-center">
-            <div class="auth-logo">
-                <i class="bi bi-person-plus-fill"></i>
+<section class="auth-split auth-split--register">
+
+    @* ============ PITCH HALF: the locker room, your shirt is waiting ============ *@
+    <div class="auth-pitch">
+        <div class="auth-pitch__inner">
+
+            <p class="auth-slogan" data-split>
+                <span class="auth-slogan__l1">@Localizer["AuthRegisterSlogan1"]</span>
+                <span class="auth-slogan__l2">@Localizer["AuthRegisterSlogan2"]</span>
+            </p>
+
+            <p class="auth-pitch__lead">@Localizer["IndexCtaText"]</p>
+
+            <div class="auth-locker" aria-hidden="true">
+                <div class="auth-jersey">
+                    <svg class="auth-jersey__svg" viewBox="0 0 300 340" focusable="false">
+                        <path class="auth-jersey__hook" d="M150 40 L150 24 A11 11 0 1 0 139 13" />
+                        <path class="auth-jersey__body" d="M110 38 Q150 62 190 38 L252 60 L296 122 L258 152 L236 130 L236 322 Q150 332 64 322 L64 130 L42 152 L4 122 L48 60 Z" />
+                        <path class="auth-jersey__trim" d="M112 40 Q150 64 188 40" />
+                        <path class="auth-jersey__trim" d="M290 113 L250 144" />
+                        <path class="auth-jersey__trim" d="M10 113 L50 144" />
+                        <path class="auth-jersey__edge" d="M110 38 Q150 62 190 38 L252 60 L296 122 L258 152 L236 130 L236 322 Q150 332 64 322 L64 130 L42 152 L4 122 L48 60 Z" />
+                    </svg>
+                    <span class="auth-jersey__name" data-jersey-name>@Localizer["AuthJerseyName"]</span>
+                    <span class="auth-jersey__number" data-jersey-number>10</span>
+                </div>
+
+                <span class="tg-sticker auth-min auth-min--a" style="--rot:-5deg"><b>0'</b>@Localizer["IndexStep1Title"]</span>
+                <span class="tg-sticker tg-sticker--coral auth-min auth-min--b" style="--rot:4deg"><b>45'</b>@Localizer["IndexStep2Title"]</span>
+                <span class="tg-sticker tg-sticker--mint auth-min auth-min--c" style="--rot:-3deg"><b>90'</b>@Localizer["IndexStep3Title"]</span>
             </div>
-            <h1 class="auth-title mb-1">@Localizer["RegisterRegister"]</h1>
-            <p class="auth-subtitle mb-0">@Localizer["RegisterCreate"]</p>
         </div>
-
-        <hr class="auth-hr" />
-
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="auth-form">
-            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
-
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control auth-input" autocomplete="username" aria-required="true" placeholder="Email" />
-                <label asp-for="Input.Email">
-                    <i class="bi bi-envelope-fill me-2"></i>@Localizer["RegisterEmail"]
-                </label>
-                <span asp-validation-for="Input.Email" class="text-danger small"></span>
-            </div>
-
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control auth-input" autocomplete="new-password" aria-required="true" placeholder="Password" />
-                <label asp-for="Input.Password">
-                    <i class="bi bi-lock-fill me-2"></i>@Localizer["RegisterPass"]
-                </label>
-                <span asp-validation-for="Input.Password" class="text-danger small"></span>
-            </div>
-
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control auth-input" autocomplete="new-password" aria-required="true" placeholder="Confirm Password" />
-                <label asp-for="Input.ConfirmPassword">
-                    <i class="bi bi-shield-lock-fill me-2"></i>@Localizer["RegisterConfirmPass"]
-                </label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
-            </div>
-
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <div class="form-floating">
-                        <input asp-for="Input.FirstName" class="form-control auth-input" autocomplete="given-name" aria-required="true" placeholder="First Name" />
-                        <label asp-for="Input.FirstName">
-                            <i class="bi bi-person-fill me-2"></i>@Localizer["RegisterFirstName"]
-                        </label>
-                        <span asp-validation-for="Input.FirstName" class="text-danger small"></span>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="form-floating">
-                        <input asp-for="Input.LastName" class="form-control auth-input" autocomplete="family-name" aria-required="true" placeholder="Last Name" />
-                        <label asp-for="Input.LastName">
-                            <i class="bi bi-person-vcard-fill me-2"></i>@Localizer["RegisterLastName"]
-                        </label>
-                        <span asp-validation-for="Input.LastName" class="text-danger small"></span>
-                    </div>
-                </div>
-            </div>
-
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary auth-btn mt-3">
-                <i class="bi bi-person-check-fill me-2"></i>@Localizer["RegisterRegister"]
-            </button>
-
-            <div class="text-center mt-3">
-                <span class="text-muted">@Localizer["RegisterAlreadyHave"]</span>
-                <a class="auth-link ms-1" asp-page="./Login">@Localizer["RegisterLogin"]</a>
-            </div>
-        </form>
     </div>
-</div>
+
+    @* ============ FORM HALF: player registration card ============ *@
+    <div class="auth-side">
+        <div class="auth-side__inner">
+            <nav class="tg-switch auth-switch" aria-label="@Localizer["LGLogin"] / @Localizer["LGRegister"]">
+                <a asp-page="./Login">
+                    <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>@Localizer["LGLogin"]
+                </a>
+                <span class="is-active" aria-current="page">
+                    <i class="bi bi-person-plus-fill" aria-hidden="true"></i>@Localizer["LGRegister"]
+                </span>
+            </nav>
+
+            <div class="auth-card auth-card--reg" data-reveal>
+                <div class="auth-reg__band">
+                    <span><i class="bi bi-person-badge-fill" aria-hidden="true"></i>@Localizer["AuthPlayerCard"]</span>
+                    <span class="auth-reg__no">No. @BgTime.Today.ToString("yyyy")-@BgTime.Today.ToString("ddMM")</span>
+                </div>
+
+                <div class="auth-reg__body">
+                    <span class="auth-stamp" aria-hidden="true">
+                        <b>TG</b>
+                        <small>@Localizer["HomeSeason"] @BgTime.Today.Year</small>
+                    </span>
+
+                    <div class="auth-reg__head">
+                        <div class="auth-photo" data-card-photo aria-hidden="true">
+                            <i class="bi bi-person-fill"></i>
+                            <span class="auth-photo__ini" data-card-initials></span>
+                        </div>
+                        <div>
+                            <h1 class="auth-card__title">@Localizer["RegisterRegister"]</h1>
+                            <p class="auth-card__sub">@Localizer["RegisterCreate"]</p>
+                        </div>
+                    </div>
+
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="auth-form">
+                        <div asp-validation-summary="ModelOnly" class="auth-summary alert alert-danger" role="alert"></div>
+
+                        <div class="auth-sec" role="group" aria-labelledby="regSecPlayer">
+                            <div class="auth-sec__title" id="regSecPlayer"><span aria-hidden="true">01</span>@Localizer["AuthSecPlayer"]</div>
+                            <div class="auth-grid-2">
+                                <div class="auth-field">
+                                    <label asp-for="Input.FirstName" class="auth-label">@Localizer["RegisterFirstName"]</label>
+                                    <div class="auth-input-wrap">
+                                        <i class="bi bi-person-fill auth-input-icon" aria-hidden="true"></i>
+                                        <input asp-for="Input.FirstName" class="form-control auth-input" autocomplete="given-name" aria-required="true" placeholder="Ivan" />
+                                    </div>
+                                    <span asp-validation-for="Input.FirstName" class="auth-error text-danger"></span>
+                                </div>
+
+                                <div class="auth-field">
+                                    <label asp-for="Input.LastName" class="auth-label">@Localizer["RegisterLastName"]</label>
+                                    <div class="auth-input-wrap">
+                                        <i class="bi bi-person-vcard-fill auth-input-icon" aria-hidden="true"></i>
+                                        <input asp-for="Input.LastName" class="form-control auth-input" autocomplete="family-name" aria-required="true" placeholder="Petrov" />
+                                    </div>
+                                    <span asp-validation-for="Input.LastName" class="auth-error text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="auth-sec" role="group" aria-labelledby="regSecAccess">
+                            <div class="auth-sec__title" id="regSecAccess"><span aria-hidden="true">02</span>@Localizer["AuthSecAccess"]</div>
+
+                            <div class="auth-field">
+                                <label asp-for="Input.Email" class="auth-label">@Localizer["RegisterEmail"]</label>
+                                <div class="auth-input-wrap">
+                                    <i class="bi bi-envelope-fill auth-input-icon" aria-hidden="true"></i>
+                                    <input asp-for="Input.Email" class="form-control auth-input" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                                </div>
+                                <span asp-validation-for="Input.Email" class="auth-error text-danger"></span>
+                            </div>
+
+                            <div class="auth-grid-2">
+                                <div class="auth-field">
+                                    <label asp-for="Input.Password" class="auth-label">@Localizer["RegisterPass"]</label>
+                                    <div class="auth-input-wrap">
+                                        <i class="bi bi-lock-fill auth-input-icon" aria-hidden="true"></i>
+                                        <input asp-for="Input.Password" class="form-control auth-input auth-input--pw" autocomplete="new-password" aria-required="true" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+                                        <button type="button" class="auth-eye" data-auth-toggle aria-pressed="false" aria-label="@Localizer["AuthShowPassword"]" title="@Localizer["AuthShowPassword"]">
+                                            <i class="bi bi-eye-fill" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                    <span asp-validation-for="Input.Password" class="auth-error text-danger"></span>
+                                </div>
+
+                                <div class="auth-field">
+                                    <label asp-for="Input.ConfirmPassword" class="auth-label">@Localizer["RegisterConfirmPass"]</label>
+                                    <div class="auth-input-wrap">
+                                        <i class="bi bi-shield-lock-fill auth-input-icon" aria-hidden="true"></i>
+                                        <input asp-for="Input.ConfirmPassword" class="form-control auth-input auth-input--pw" autocomplete="new-password" aria-required="true" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+                                        <button type="button" class="auth-eye" data-auth-toggle aria-pressed="false" aria-label="@Localizer["AuthShowPassword"]" title="@Localizer["AuthShowPassword"]">
+                                            <i class="bi bi-eye-fill" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                    <span asp-validation-for="Input.ConfirmPassword" class="auth-error text-danger"></span>
+                                </div>
+                            </div>
+
+                            <p class="auth-hint">
+                                <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
+                                <span>@Localizer["AuthPasswordHint"]</span>
+                            </p>
+                        </div>
+
+                        @* The Terms have to be accepted; e-mails about new tournaments only if wanted (unticked). *@
+                        <div class="auth-consents">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="Input_AcceptTerms" name="Input.AcceptTerms" value="true"
+                                       required data-msg-required="@Localizer["RegAcceptRequired"]" checked="@(Model.Input?.AcceptTerms == true)" />
+                                <label class="form-check-label" for="Input_AcceptTerms">
+                                    @Localizer["RegAcceptA"]
+                                    <a asp-area="" asp-controller="Home" asp-action="Terms" target="_blank" rel="noopener">@Localizer["RegTermsLink"]</a>
+                                    @Localizer["RegAcceptB"]
+                                    <a asp-area="" asp-controller="Home" asp-action="Privacy" target="_blank" rel="noopener">@Localizer["RegPrivacyLink"]</a>.
+                                </label>
+                            </div>
+                            @Html.ValidationMessage("Input.AcceptTerms", new { @class = "auth-error text-danger" })
+
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" asp-for="Input.NewTournamentEmails" />
+                                <label class="form-check-label" asp-for="Input.NewTournamentEmails">@Localizer["RegNewTournamentEmails"]</label>
+                            </div>
+                        </div>
+
+                        <button id="registerSubmit" type="submit" class="btn btn-primary btn-lg auth-btn">
+                            <i class="bi bi-pen-fill" aria-hidden="true"></i>
+                            <span>@Localizer["RegisterRegister"]</span>
+                        </button>
+                    </form>
+
+                    <div class="auth-foot">
+                        <span>@Localizer["RegisterAlreadyHave"]</span>
+                        <a class="auth-foot__link" asp-page="./Login">
+                            @Localizer["RegisterLogin"]<i class="bi bi-arrow-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelectorAll('[data-auth-toggle]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var input = btn.parentElement.querySelector('input');
+                if (!input) { return; }
+                var show = input.type === 'password';
+                input.type = show ? 'text' : 'password';
+                btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+                var icon = btn.querySelector('i');
+                if (icon) { icon.className = show ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'; }
+            });
+        });
+
+        // Live preview: the typed name goes on the shirt and on the card photo slot
+        (function () {
+            var first = document.getElementById('Input_FirstName');
+            var last = document.getElementById('Input_LastName');
+            if (!first || !last) { return; }
+            var nameEl = document.querySelector('[data-jersey-name]');
+            var numEl = document.querySelector('[data-jersey-number]');
+            var photo = document.querySelector('[data-card-photo]');
+            var iniEl = document.querySelector('[data-card-initials]');
+            var fallback = nameEl ? nameEl.textContent : '';
+            var lastShown = null;
+
+            function bump(el) {
+                el.classList.remove('is-bump');
+                void el.offsetWidth;
+                el.classList.add('is-bump');
+            }
+
+            function update() {
+                var f = first.value.trim();
+                var l = last.value.trim();
+                var shown = l || f || fallback;
+                if (nameEl && shown !== lastShown) {
+                    nameEl.textContent = shown;
+                    if (lastShown !== null) { bump(nameEl); }
+                    lastShown = shown;
+                }
+                if (numEl) {
+                    var s = f + l, h = 0;
+                    for (var i = 0; i < s.length; i++) { h = (h * 31 + s.charCodeAt(i)) % 9973; }
+                    var n = s ? String(h % 99 + 1) : '10';
+                    if (numEl.textContent !== n) { numEl.textContent = n; }
+                }
+                if (iniEl && photo) {
+                    var ini = (f.charAt(0) + l.charAt(0)).toUpperCase();
+                    iniEl.textContent = ini;
+                    photo.classList.toggle('has-initials', ini.length > 0);
+                }
+            }
+
+            first.addEventListener('input', update);
+            last.addEventListener('input', update);
+            update();
+        })();
+    </script>
 }

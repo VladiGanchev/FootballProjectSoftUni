@@ -1,61 +1,139 @@
-﻿@using FootballProjectSoftUni.Core.Models.Partner
+@using FootballProjectSoftUni.Core.Models.Partner
 @model List<PartnerViewModel>
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
+@{
+    ViewData["Title"] = "Delete Partner";
+    ViewData["FullWidth"] = true;
+}
 
-<section class="container py-4">
-    <div class="admin-form-card mx-auto">
+<div class="container-xl cp-page">
+    <div class="cp-rc">
 
-        <form asp-action="DeleteConfirmed" method="get">
+        @* The referee raises the red card: it shows the partner you pick *@
+        <div class="cp-rc__stage">
+            <span class="cp-card cp-card--yellow" aria-hidden="true"></span>
 
-            <div class="mb-3">
-                <label class="form-label fw-bold">
-                    <i class="bi bi-handshake-fill me-2"></i>@Localizer["DPSelectPartner"]
-                </label>
+            <div class="cp-card cp-card--red" id="partnerCard">
+                <div class="cp-card__top" aria-hidden="true">
+                    <i class="bi bi-x-octagon-fill"></i>
+                </div>
 
-                <select name="id"
-                        id="partnerId"
-                        class="form-select form-select-lg tg-select">
+                <div class="cp-card__subject" id="partnerSubject" aria-live="polite" hidden>
+                    <span class="cp-card__thumb cp-card__thumb--logo">
+                        <img id="partnerSubjectImg" alt="" hidden />
+                        <i class="bi bi-image" id="partnerSubjectIcon" aria-hidden="true"></i>
+                    </span>
+                    <span class="cp-card__eyebrow">@Localizer["DPDeletePartner"]</span>
+                    <p class="cp-card__name" id="partnerSubjectName"></p>
+                </div>
 
-                    <option value="">-- Select Partner --</option>
+                <div class="cp-card__placeholder" aria-hidden="true">?</div>
+                <div class="cp-card__foot" aria-hidden="true">@Localizer["CPRedCard"]</div>
+            </div>
+        </div>
 
-                    @foreach (var partner in Model)
-                    {
-                        <option value="@partner.Id">@partner.Name</option>
-                    }
-
-                </select>
+        <div class="tg-form-card cp-rc__panel">
+            <div class="tg-form-card__head">
+                <h1 class="tg-form-card__title">@Localizer["DPDeletePartner"]</h1>
+                <p class="tg-form-card__sub">@Localizer["CPDeletePickPartner"]</p>
             </div>
 
-            <a id="deleteButton"
-               class="btn btn-danger btn-lg w-100 tg-action-btn disabled">
+            <form asp-action="DeleteConfirmed" method="get">
 
-                <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                @Localizer["DPDeletePartner"]
-            </a>
+                <div class="cp-field">
+                    <label class="form-label" for="partnerId">@Localizer["DPSelectPartner"]</label>
 
-        </form>
+                    <select name="id"
+                            id="partnerId"
+                            class="form-select form-select-lg">
+
+                        <option value="">-- @Localizer["DPSelectPartner"] --</option>
+
+                        @foreach (var partner in Model)
+                        {
+                            <option value="@partner.Id" data-img="@partner.ImageUrl">@partner.Name</option>
+                        }
+
+                    </select>
+                </div>
+
+                <div class="tg-form-actions">
+                    <a id="deleteButton"
+                       role="button"
+                       aria-disabled="true"
+                       tabindex="-1"
+                       class="btn btn-danger btn-lg disabled">
+                        <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                        @Localizer["DPDeletePartner"]
+                    </a>
+                    <a asp-action="All" class="btn btn-outline-dark btn-lg">
+                        <i class="bi bi-x-lg" aria-hidden="true"></i>@Localizer["DCCancel"]
+                    </a>
+                </div>
+
+            </form>
+        </div>
 
     </div>
+</div>
 
-</section>
+@section Scripts {
+    <script>
+        (function () {
+            var partnerSelect = document.getElementById('partnerId');
+            var deleteButton = document.getElementById('deleteButton');
+            var subject = document.getElementById('partnerSubject');
+            var subjectImg = document.getElementById('partnerSubjectImg');
+            var subjectIcon = document.getElementById('partnerSubjectIcon');
+            var subjectName = document.getElementById('partnerSubjectName');
+            var card = document.getElementById('partnerCard');
+            if (!partnerSelect || !deleteButton) { return; }
 
-<script>
+            function sync() {
+                var option = partnerSelect.options[partnerSelect.selectedIndex];
 
-    const partnerSelect = document.getElementById('partnerId');
-    const deleteButton = document.getElementById('deleteButton');
+                if (partnerSelect.value) {
+                    deleteButton.href = '/Partner/DeleteConfirmed?id=' + partnerSelect.value;
+                    deleteButton.classList.remove('disabled');
+                    deleteButton.setAttribute('aria-disabled', 'false');
+                    deleteButton.removeAttribute('tabindex');
 
-    partnerSelect.addEventListener('change', function () {
+                    subjectName.textContent = option.text;
+                    var img = option.getAttribute('data-img');
+                    if (img) {
+                        subjectImg.src = img;
+                        subjectImg.hidden = false;
+                        subjectIcon.hidden = true;
+                    } else {
+                        subjectImg.hidden = true;
+                        subjectIcon.hidden = false;
+                    }
+                    subject.hidden = false;
+                } else {
+                    deleteButton.removeAttribute('href');
+                    deleteButton.classList.add('disabled');
+                    deleteButton.setAttribute('aria-disabled', 'true');
+                    deleteButton.setAttribute('tabindex', '-1');
+                    subject.hidden = true;
+                }
+            }
 
-        if (this.value) {
-            deleteButton.href = '/Partner/DeleteConfirmed?id=' + this.value;
-            deleteButton.classList.remove('disabled');
-        }
-        else {
-            deleteButton.href = '#';
-            deleteButton.classList.add('disabled');
-        }
+            // Re-raise the card whenever a new partner is picked
+            function flash() {
+                if (!card) { return; }
+                card.classList.remove('is-flash');
+                void card.offsetWidth;
+                card.classList.add('is-flash');
+            }
 
-    });
+            subjectImg.addEventListener('error', function () {
+                subjectImg.hidden = true;
+                subjectIcon.hidden = false;
+            });
 
-</script>
+            partnerSelect.addEventListener('change', function () { sync(); flash(); });
+            sync();
+        })();
+    </script>
+}

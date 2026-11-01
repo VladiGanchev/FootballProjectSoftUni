@@ -1,0 +1,21 @@
+@model List<FootballProjectSoftUni.Core.Models.City.CityViewModel>
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
+@if (Model.Any())
+{
+    <div class="hm-strip" data-drag-scroll>
+        @{ int i = 0; }
+        @foreach (var city in Model)
+        {
+            <a class="hm-polaroid" style="--rot:@(i % 2 == 0 ? "-2.5deg" : "2deg")"
+               asp-controller="Tournament" asp-action="CityTournaments" asp-route-id="@city.Id">
+                <span class="hm-polaroid__img">
+                    <img src="@city.ImageUrl" alt="@city.Name" loading="lazy" draggable="false" data-hide-on-error />
+                </span>
+                <span class="hm-polaroid__name">@city.Name</span>
+                <span class="hm-polaroid__go">@Localizer["AllTournaments"] <i class="bi bi-arrow-right"></i></span>
+            </a>
+            i++;
+        }
+    </div>
+}

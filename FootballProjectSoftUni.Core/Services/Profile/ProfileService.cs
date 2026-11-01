@@ -1,5 +1,7 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Profile;
+using FootballProjectSoftUni.Core.Extensions;
 using FootballProjectSoftUni.Core.Models.Profile;
+using FootballProjectSoftUni.Core.Models.ServiceError;
 using FootballProjectSoftUni.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -27,7 +29,7 @@ namespace FootballProjectSoftUni.Core.Services.Profile
 
             if (user == null) return null;
 
-            var isReferee = await context.Referees.AsNoTracking().AnyAsync(r => r.Id == userId);
+            var isReferee = await context.Referees.AsNoTracking().AnyAsync(r => r.Id == userId && r.IsActive);
             var isCoach = await context.Coaches.AsNoTracking().AnyAsync(c => c.Id == userId);
 
             var model = new ProfileViewModel
@@ -35,6 +37,7 @@ namespace FootballProjectSoftUni.Core.Services.Profile
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
+                NewTournamentEmails = user.NewTournamentEmails,
                 Role = isReferee ? "Referee" : isCoach ? "Coach" : null
             };
 
@@ -67,7 +70,10 @@ namespace FootballProjectSoftUni.Core.Services.Profile
                     .FirstOrDefaultAsync(r => r.Id == userId);
 
                 model.Experience = referee?.Experience;
-                model.RefereeTournamentsCount = referee?.RefereedTournamentsCount ?? 0;
+                // What he really refereed: finished tournaments (joining and leaving do not count).
+                var now = BgTime.Now;
+                model.RefereeTournamentsCount = await context.Tournaments
+                    .CountAsync(t => t.RefereeId == userId && t.EndDate < now);
 
                 if (referee?.Ratings != null && referee.Ratings.Any())
                 {
@@ -78,33 +84,80 @@ namespace FootballProjectSoftUni.Core.Services.Profile
             return model;
         }
 
-        public async Task RemoveRefereeRoleAsync(string userId)
+        public async Task<ServiceError?> RemoveRefereeRoleAsync(string userId)
         {
             var referee = await context.Referees
-                .FirstOrDefaultAsync(r => r.Id == userId);
+                .FirstOrDefaultAsync(r => r.Id == userId && r.IsActive);
 
             if (referee == null)
             {
-                return;
+                return null;
             }
 
-            var refereeParticipations = await context.TournamentsParticipants
-                .Where(tp => tp.ParticipantId == userId && tp.Role == "Referee")
-                .ToListAsync();
+            // Like coaches: not while he referees a tournament that has not ended.
+            var now = BgTime.Now;
+            var current = await context.Tournaments
+                .Where(t => t.EndDate > now &&
+                            (t.RefereeId == userId ||
+                             t.TournamentParticipants.Any(tp => tp.ParticipantId == userId && tp.Role == "Referee")))
+                .OrderBy(t => t.StartDate)
+                .Select(t => new { t.StartDate })
+                .FirstOrDefaultAsync();
 
-            context.TournamentsParticipants.RemoveRange(refereeParticipations);
-
-            var tournament = await context.Tournaments
-                .FirstOrDefaultAsync(t => t.RefereeId == userId);
-
-            if (tournament != null)
+            if (current != null)
             {
-                tournament.RefereeId = null;
+                return new ServiceError
+                {
+                    Message = now >= current.StartDate
+                        ? "You cannot stop being a referee while your tournament is in progress."
+                        : "You cannot stop being a referee while you are assigned to an upcoming tournament. Leave it first."
+                };
             }
 
-            context.Referees.Remove(referee);
+            // The profile is switched off, not deleted: ratings, comments and the finished tournaments stay,
+            // so stopping and starting again does not give a clean record.
+            referee.IsActive = false;
+            referee.TournamentId = null;
 
             await context.SaveChangesAsync();
+            return null;
+        }
+
+        public async Task SetNewTournamentEmailsAsync(string userId, bool on)
+        {
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user != null)
+            {
+                user.NewTournamentEmails = on;
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> IsUnsubscribeKeyValidAsync(string? userId, string? key)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return false;
+            }
+
+            var stamp = await context.Users
+                .Where(u => u.Id == userId)
+                .Select(u => u.SecurityStamp)
+                .FirstOrDefaultAsync();
+
+            return UnsubscribeKey.IsValid(userId, stamp, key);
+        }
+
+        public async Task<bool> UnsubscribeAsync(string? userId, string? key)
+        {
+            if (!await IsUnsubscribeKeyValidAsync(userId, key))
+            {
+                return false;
+            }
+
+            await SetNewTournamentEmailsAsync(userId!, false);
+            return true;
         }
     }
 }

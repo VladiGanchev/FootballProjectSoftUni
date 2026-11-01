@@ -46,6 +46,8 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 
             Assert.NotNull(result);
             Assert.That(result!.Id, Is.EqualTo(9001));
+            // The payment page shows the state of an order only to this user.
+            Assert.That(result.UserId, Is.EqualTo("u1"));
             Assert.That(result.Status, Is.EqualTo("Paid"));
             Assert.That(result.TournamentId, Is.EqualTo(100));
             Assert.That(result.TeamId, Is.EqualTo(200));

@@ -1,76 +1,78 @@
-﻿@using FootballProjectSoftUni.Extensions;
+@using FootballProjectSoftUni.Extensions;
 @using FootballProjectSoftUni.Infrastructure.Data.Models;
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
+@{
+    string username = string.Empty;
+    string initials = string.Empty;
 
-
-    @{
-        string username = string.Empty;
-
-    @if (SignInManager.IsSignedIn(User))
+    if (SignInManager.IsSignedIn(User))
     {
+        // Null when the account was deleted while this browser was still signed in.
         var user = await UserManager.FindByIdAsync(User.Id());
-        username = $"{user.FirstName} {user.LastName}";
+        username = $"{user?.FirstName} {user?.LastName}".Trim();
+        initials = $"{user?.FirstName?.FirstOrDefault()}{user?.LastName?.FirstOrDefault()}".ToUpperInvariant();
     }
 
+    string lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToUpperInvariant();
+}
 
-    }
-<ul class="navbar-nav">
+<ul class="navbar-nav align-items-md-center flex-row flex-wrap gap-2">
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle text-dark"
+        <a class="tg-iconbtn tg-lang dropdown-toggle"
            href="#"
            id="langDropdown"
            role="button"
            data-bs-toggle="dropdown"
            aria-expanded="false"
            title="Language">
-            <i class="bi bi-globe2 fs-5"></i>
+            <i class="bi bi-globe2"></i><span>@lang</span>
         </a>
 
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
             <li>
-                <form asp-controller="Home" asp-action="SetLanguage" method="post" class="px-3 py-1">
+                <form asp-controller="Home" asp-action="SetLanguage" method="post">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="culture" value="bg" />
                     <input type="hidden" name="returnUrl" value="@($"{Context.Request.Path}{Context.Request.QueryString}")" />
-                    <button type="submit" class="dropdown-item">
-                        Български
-                    </button>
+                    <button type="submit" class="dropdown-item">Български</button>
                 </form>
             </li>
             <li>
-                <form asp-controller="Home" asp-action="SetLanguage" method="post" class="px-3 py-1">
+                <form asp-controller="Home" asp-action="SetLanguage" method="post">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="culture" value="en" />
                     <input type="hidden" name="returnUrl" value="@($"{Context.Request.Path}{Context.Request.QueryString}")" />
-                    <button type="submit" class="dropdown-item">
-                        English
-                    </button>
+                    <button type="submit" class="dropdown-item">English</button>
                 </form>
             </li>
         </ul>
     </li>
-@if (SignInManager.IsSignedIn(User))
-{
+
+    @if (SignInManager.IsSignedIn(User))
+    {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Profile" asp-action="Index">@Localizer["LPProfile"]</a>
+            <a class="tg-userchip" asp-controller="Profile" asp-action="Index" title="@Localizer["LPProfile"]">
+                <span class="tg-avatar">@(string.IsNullOrWhiteSpace(initials) ? "?" : initials)</span>
+                <span class="d-none d-lg-inline">@(string.IsNullOrWhiteSpace(username) ? Localizer["LPProfile"] : username)</span>
+            </a>
         </li>
-    <li class="nav-item">
-        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button type="submit" class="nav-link btn btn-link text-dark">@Localizer["LGLogOut"]</button>
-        </form>
-    </li>
-}
-else
-{
-    <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">@Localizer["LGRegister"]</a>
-    </li>
-    <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">@Localizer["LGLogin"]</a>
-    </li>
-}
+        <li class="nav-item">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="tg-link-quiet">@Localizer["LGLogOut"]</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="tg-link-quiet d-inline-block" asp-area="Identity" asp-page="/Account/Login">@Localizer["LGLogin"]</a>
+        </li>
+        <li class="nav-item">
+            <a class="btn btn-primary btn-sm" asp-area="Identity" asp-page="/Account/Register">@Localizer["LGRegister"]</a>
+        </li>
+    }
 </ul>

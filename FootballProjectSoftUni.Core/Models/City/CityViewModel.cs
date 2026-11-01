@@ -15,7 +15,7 @@ namespace FootballProjectSoftUni.Core.Models.City
         [Required(ErrorMessage = RequireErrorMessage)]
         public string Name { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = RequireErrorMessage)]
+        // The picture is uploaded as a file (not typed in); the site fills in its address.
         public string ImageUrl { get; set; } = string.Empty;
 
 

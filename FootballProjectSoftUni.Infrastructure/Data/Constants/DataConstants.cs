@@ -14,8 +14,18 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Constants
         public const int TournamentNumnerOfTeamsMinLength = 0;
         public const int TournamentNumnerOfTeamsMaxLength = 16;
 
+        // Every tournament is paid: joining always goes through Stripe (in euro).
+        public const int MinParticipationFee = 1;
+
         public const int TeamNameMinLength = 3;
         public const int TeamNameMaxLength = 15;
+
+        public const int MaxPlayersPerTeam = 10;
+        public const int PlayerNameMaxLength = 50;
+        public const int PersonNameMinLength = 2;
+        public const int PersonNameMaxLength = 50;
+        public const int ExperienceMaxYears = 60;
+        public const int RefereeCommentMaxLength = 500;
 
         public const int RefereeExperienceMinYears = 2;
 

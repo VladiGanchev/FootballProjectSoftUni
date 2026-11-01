@@ -261,9 +261,64 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 
             Assert.That(updated.Description, Is.EqualTo("New description"));
             Assert.That(updated.ImageUrl, Is.EqualTo("https://example.com/new.jpg"));
-            Assert.That(updated.Winner, Is.EqualTo("Team A"));
             Assert.That(updated.StartDate, Is.EqualTo(newStart));
             Assert.That(updated.EndDate, Is.EqualTo(newEnd));
+
+            // The winner comes from the result of the final, not from the edit form.
+            Assert.That(updated.Winner, Is.Null);
+        }
+
+        [Test]
+        public async Task EditTournamentAsync_WhenTheStartMoves_ShouldSendTheReminderAndTheWarningAgain()
+        {
+            var tournament = CreateTournament(202);
+            tournament.ReminderSent = true;
+            tournament.LowTeamsWarningSent = true;
+            await _data.Tournaments.AddAsync(tournament);
+            await _data.SaveChangesAsync();
+
+            var model = new EditViewModel { Id = 202, Description = "Moved", ImageUrl = "https://example.com/t.jpg" };
+
+            await _tournamentService.EditTournamentAsync(model, tournament.StartDate.AddDays(7), tournament.EndDate.AddDays(7));
+
+            var updated = await _data.Tournaments.FirstAsync(t => t.Id == 202);
+            Assert.That(updated.ReminderSent, Is.False);
+            Assert.That(updated.LowTeamsWarningSent, Is.False);
+        }
+
+        [Test]
+        public async Task EditTournamentAsync_WhenTheStartStaysTheSame_ShouldNotSendTheReminderAgain()
+        {
+            var tournament = CreateTournament(203);
+            tournament.ReminderSent = true;
+            tournament.LowTeamsWarningSent = true;
+            await _data.Tournaments.AddAsync(tournament);
+            await _data.SaveChangesAsync();
+
+            var model = new EditViewModel { Id = 203, Description = "New text", ImageUrl = "https://example.com/t.jpg" };
+
+            await _tournamentService.EditTournamentAsync(model, tournament.StartDate, tournament.EndDate.AddHours(2));
+
+            var updated = await _data.Tournaments.FirstAsync(t => t.Id == 203);
+            Assert.That(updated.ReminderSent, Is.True);
+            Assert.That(updated.LowTeamsWarningSent, Is.True);
+        }
+
+        [Test]
+        public void DatesLocked_ShouldBeFalseOnlyBeforeTheStart()
+        {
+            var upcoming = CreateTournament(204);
+            var startTimePassed = CreateTournament(205);
+            startTimePassed.StartDate = DateTime.Now.AddMinutes(-1);
+            var started = CreateTournament(206);
+            started.Status = TournamentStatus.Started;
+            var finished = CreateTournament(207);
+            finished.Status = TournamentStatus.Finished;
+
+            Assert.That(TournamentService.DatesLocked(upcoming), Is.False);
+            Assert.That(TournamentService.DatesLocked(startTimePassed), Is.True);
+            Assert.That(TournamentService.DatesLocked(started), Is.True);
+            Assert.That(TournamentService.DatesLocked(finished), Is.True);
         }
 
         [Test]
@@ -771,8 +826,9 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             Assert.That(result.ImageUrl, Is.EqualTo("https://example.com/701.jpg"));
             Assert.That(result.Winner, Is.EqualTo("Team X"));
 
-            Assert.That(result.StartDate, Is.EqualTo(tournament.StartDate.ToString("dd/MM/yyyy HH:mm")));
-            Assert.That(result.EndDate, Is.EqualTo(tournament.EndDate.ToString("dd/MM/yyyy HH:mm")));
+            // Date-picker values, independent of the site language.
+            Assert.That(result.StartDate, Is.EqualTo(tournament.StartDate.ToString("yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture)));
+            Assert.That(result.EndDate, Is.EqualTo(tournament.EndDate.ToString("yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture)));
             Assert.That(result.CreatedOn, Is.EqualTo(tournament.CreatedOn.ToString("dd/MM/yyyy HH:mm")));
         }
 
@@ -892,7 +948,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         }
 
         [Test]
-        public async Task AssignTeamToBracketAsync_ShouldAssignToFirstFreeTeam2Slot_WhenTeam1AlreadySet()
+        public async Task AssignTeamToBracketAsync_ShouldFillFirstPlacesOfAllMatches_BeforeSecondPlaces()
         {
             int tournamentId = 1002;
 
@@ -904,9 +960,12 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 
             await _tournamentService.AssignTeamToBracketAsync(tournamentId, teamId: 66);
 
+            // Every match gets one team first, so with fewer teams nobody is left without a second-round place.
             var match0 = await _data.Matches.FirstAsync(m => m.TournamentId == tournamentId && m.Round == 1 && m.IndexInRound == 0);
+            var match1 = await _data.Matches.FirstAsync(m => m.TournamentId == tournamentId && m.Round == 1 && m.IndexInRound == 1);
             Assert.That(match0.Team1Id, Is.EqualTo(11));
-            Assert.That(match0.Team2Id, Is.EqualTo(66));
+            Assert.That(match0.Team2Id, Is.Null);
+            Assert.That(match1.Team1Id, Is.EqualTo(66));
         }
 
         [Test]

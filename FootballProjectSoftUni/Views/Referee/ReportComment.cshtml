@@ -1,0 +1,41 @@
+@model FootballProjectSoftUni.Core.Models.Referee.RefereeCommentViewModel
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
+@{
+    ViewData["Title"] = Localizer["CRReportTitle"].Value;
+    var at = BgTime.FromUtc(Model.CreatedOn);
+}
+
+<div class="tg-form-wrap">
+    <div class="tg-form-card">
+        <div class="tg-form-card__head">
+            <h1 class="tg-form-card__title">@Localizer["CRReportTitle"]</h1>
+            <p class="tg-form-card__sub">@Localizer["CRReportLead"]</p>
+        </div>
+
+        @* The reported comment, as it is shown on the referee's page *@
+        <figure class="tp-report-quote">
+            <blockquote class="mb-2">@Model.Content</blockquote>
+            <figcaption class="small text-muted">
+                @Model.UserName &middot; @at.ToString("dd.MM.yyyy HH:mm") &middot; @Localizer["IReferee"]: @Model.RefereeName
+            </figcaption>
+        </figure>
+
+        <form asp-action="ReportComment" asp-route-id="@Model.Id" method="post">
+            <div class="mb-3">
+                <label for="reason" class="form-label">@Localizer["CRReason"]</label>
+                <textarea id="reason" name="reason" class="form-control" rows="3"
+                          maxlength="@FootballProjectSoftUni.Infrastructure.Data.Constants.DataConstants.RefereeCommentMaxLength"></textarea>
+            </div>
+
+            <div class="tg-form-actions">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-flag-fill" aria-hidden="true"></i>@Localizer["CRSend"]
+                </button>
+                <a asp-action="Comments" asp-route-id="@Model.RefereeId" class="btn btn-outline-dark btn-lg">
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>@Localizer["DCCancel"]
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

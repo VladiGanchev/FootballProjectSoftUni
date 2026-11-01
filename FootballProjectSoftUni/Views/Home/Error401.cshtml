@@ -1,44 +1,64 @@
-﻿@{
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+@{
     ViewData["Title"] = "Access Denied";
+    bool anonymous = User.Identity?.IsAuthenticated != true;
 }
 
-<section class="container py-5">
-
-    <div class="admin-form-card mx-auto text-center">
-
-        <div class="delete-icon mb-3">
-            <i class="bi bi-shield-lock-fill"></i>
+<section class="err-401">
+    @* The referee shows the card *@
+    <div class="err-401__stage" aria-hidden="true">
+        <div class="err-cards" data-tilt="10">
+            <div class="err-card err-card--yellow"></div>
+            <div class="err-card err-card--red">
+                <span class="err-card__corner">401 &middot; TG</span>
+                <span class="err-card__code">401</span>
+                <span class="err-card__corner err-card__corner--br">401 &middot; TG</span>
+            </div>
         </div>
-
-        <h2 class="page-title text-danger mb-2">
-            Access Denied
-        </h2>
-
-        <p class="text-muted mb-4">
-            Oops, you don't have permission to access this page.
-        </p>
-
-        <div class="access-image mb-4">
-            <img src="https://media.istockphoto.com/photos/rubber-stamp-picture-id545992942?k=6&m=545992942&s=612x612&w=0&h=XD1kddQeDrbG9DEQQxGNf6_3snw4gdFZv8GqSFta6Is="
-                 alt="Access denied"
-                 class="img-fluid rounded shadow-sm" />
-        </div>
-
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <a asp-controller="Home"
-               asp-action="Index"
-               class="btn btn-primary btn-lg tg-action-btn px-4">
-                <i class="bi bi-house-fill me-2"></i>
-                Go to Home
-            </a>
-
-            <button onclick="history.back()"
-                    class="btn btn-outline-secondary btn-lg px-4">
-                <i class="bi bi-arrow-left me-2"></i>
-                Go Back
-            </button>
-        </div>
-
+        <span class="tg-sticker tg-sticker--white err-401__min" style="--rot:7deg">
+            <i class="bi bi-stopwatch-fill"></i>401'
+        </span>
     </div>
 
+    <div class="err-401__copy">
+        <span class="tg-kicker">401</span>
+        <h1 class="err-mega err-mega--md err-mega--red" data-split>@Localizer["ErrRedCard"]</h1>
+        <p class="err-lead mt-3">@Localizer["Err401Text"] @Localizer["ErrRedCardNote"]</p>
+
+        @* Referee's notebook *@
+        <div class="err-notebook">
+            <div class="err-notebook__row">
+                <span class="err-notebook__label">@Localizer["ErrMinute"]</span>
+                <span class="err-notebook__value">401'</span>
+            </div>
+            <div class="err-notebook__row">
+                <span class="err-notebook__label">@Localizer["ErrOffence"]</span>
+                <span class="err-notebook__value">@Localizer["Err401Title"]</span>
+            </div>
+            <div class="err-notebook__row">
+                <span class="err-notebook__label">@Localizer["ErrDecision"]</span>
+                <span class="err-notebook__value"><span class="err-notebook__chip" aria-hidden="true"></span>@Localizer["ErrRedCard"]</span>
+            </div>
+        </div>
+
+        <div class="err-actions">
+            @if (anonymous)
+            {
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary btn-lg" data-magnetic>
+                    <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
+                    <span>@Localizer["LoginLogin"]</span>
+                </a>
+            }
+
+            <a asp-controller="Home" asp-action="Index" class="btn @(anonymous ? "btn-outline-secondary" : "btn-primary") btn-lg">
+                <i class="bi bi-house-fill" aria-hidden="true"></i>
+                <span>@Localizer["DHome"]</span>
+            </a>
+
+            <button type="button" data-history-back class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                <span>@Localizer["ErrGoBack"]</span>
+            </button>
+        </div>
+    </div>
 </section>

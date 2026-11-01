@@ -23,6 +23,9 @@ namespace FootballProjectSoftUni.Core.Contracts.Tournament
         Task<FootballProjectSoftUni.Infrastructure.Data.Models.Tournament> FindTournamentByIdAsync(int id);
         Task GenerateBracketAsync(int tournamentId);
         Task AssignTeamToBracketAsync(int tournamentId, int teamId);
+
+        /// <summary>At the start: fills holes left by old brackets and moves teams without an opponent forward.</summary>
+        Task PrepareBracketForStartAsync(int tournamentId);
         Task MoveWinnerToNextRoundAsync(int matchId);
         Task RemoveTeamFromBracketAsync(int tournamentId, int teamId);
         Task<EnterResultViewModel?> GetEnterResultModelAsync(int matchId);

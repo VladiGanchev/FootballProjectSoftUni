@@ -10,6 +10,7 @@ namespace FootballProjectSoftUni.Core.Models.Player
 {
     public class PlayerViewModel
     {
+        [StringLength(PlayerNameMaxLength, ErrorMessage = StringLengthErrorMessage)]
         public string? Name { get; set; } = string.Empty;
     }
 }

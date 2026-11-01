@@ -1,0 +1,35 @@
+@* Turns <time data-msg-time datetime="...Z"> into relative, localized labels ("преди 5 минути", "yesterday").
+   Pure UI: the server-rendered absolute time stays as the fallback and in the title attribute. *@
+<script>
+    (function () {
+        var els = document.querySelectorAll('[data-msg-time]');
+        if (!els.length || !window.Intl || !Intl.RelativeTimeFormat) { return; }
+
+        var lang = document.documentElement.lang || 'bg';
+        var rtf = new Intl.RelativeTimeFormat(lang, { numeric: 'auto' });
+        var now = Date.now();
+        var thisYear = new Date().getFullYear();
+
+        Array.prototype.forEach.call(els, function (el) {
+            var t = Date.parse(el.getAttribute('datetime'));
+            if (isNaN(t)) { return; }
+
+            var s = Math.round((t - now) / 1000);
+            var a = Math.abs(s);
+            var out;
+
+            if (a < 45) { out = rtf.format(0, 'second'); }
+            else if (a < 3600) { out = rtf.format(Math.round(s / 60), 'minute'); }
+            else if (a < 86400) { out = rtf.format(Math.round(s / 3600), 'hour'); }
+            else if (a < 604800) { out = rtf.format(Math.round(s / 86400), 'day'); }
+            else {
+                var d = new Date(t);
+                var opts = { day: 'numeric', month: 'short' };
+                if (d.getFullYear() !== thisYear) { opts.year = 'numeric'; }
+                out = d.toLocaleDateString(lang, opts);
+            }
+
+            el.textContent = out;
+        });
+    })();
+</script>

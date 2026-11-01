@@ -1,5 +1,6 @@
 ﻿using FootballProjectSoftUni.Core.Constants;
 using FootballProjectSoftUni.Core.Contracts.Message;
+using FootballProjectSoftUni.Core.Extensions;
 using FootballProjectSoftUni.Core.Models.ContactMessage;
 using FootballProjectSoftUni.Core.Models.Message;
 using FootballProjectSoftUni.Infrastructure.Data;
@@ -111,6 +112,11 @@ namespace FootballProjectSoftUni.Core.Services.Message
                 throw new ArgumentException("Message not found.");
 
             bool fromAdmin = await IsAdminAsync(userId);
+
+            // Users may only reply inside their own conversation; admins can reply to anyone.
+            if (!fromAdmin && parent.UserId != userId)
+                throw new UnauthorizedAccessException("You cannot reply to this message.");
+
             string receiverId = fromAdmin ? parent.UserId : await GetAdminIdAsync();
 
             var subjectToUse = string.IsNullOrWhiteSpace(subject)
@@ -223,7 +229,7 @@ namespace FootballProjectSoftUni.Core.Services.Message
                         ? (m.User.FirstName + " " + m.User.LastName)
                         : "Админ"
                 })
-                .ToPagedListAsync(pageNumber, pageSize);
+                .ToPagedListAsync(Paging.ValidPage(pageNumber), pageSize);
         }
 
     }

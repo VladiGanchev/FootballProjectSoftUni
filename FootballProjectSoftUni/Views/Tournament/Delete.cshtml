@@ -1,0 +1,105 @@
+@using FootballProjectSoftUni.Core.Models.Tournament
+@model TournamentDeletionPreview
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
+@{
+    ViewBag.Title = Localizer["TDTitle"].Value;
+    ViewData["FullWidth"] = true;
+
+    var refunds = !Model.IsRunning && !Model.IsFinished && Model.PaidTeams > 0;
+}
+
+<div class="container-xl cp-page">
+    <div class="cp-rc">
+
+        <div class="cp-rc__stage">
+            <span class="cp-card cp-card--yellow" aria-hidden="true"></span>
+
+            <div class="cp-card cp-card--red">
+                <div class="cp-card__top" aria-hidden="true">
+                    <i class="bi bi-x-octagon-fill"></i>
+                </div>
+
+                <div class="cp-card__subject">
+                    <span class="cp-card__thumb">
+                        <i class="bi bi-trophy-fill" aria-hidden="true"></i>
+                    </span>
+                    <span class="cp-card__eyebrow">@Localizer["TDTitle"]</span>
+                    <p class="cp-card__name">@Model.Title</p>
+                </div>
+
+                <div class="cp-card__foot" aria-hidden="true">@Localizer["CPRedCard"]</div>
+            </div>
+        </div>
+
+        <div class="tg-form-card cp-rc__panel">
+            <div class="tg-form-card__head">
+                <h1 class="tg-form-card__title">@Localizer["TDTitle"]</h1>
+                <p class="tg-form-card__sub">
+                    @Model.CityName · @Model.StartDate?.ToString("dd.MM.yyyy HH:mm") – @Model.EndDate?.ToString("dd.MM.yyyy HH:mm")
+                </p>
+            </div>
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>@TempData["ErrorMessage"]
+                </div>
+            }
+
+            @if (Model.IsRunning)
+            {
+                <div class="cp-warn" role="alert">
+                    <i class="bi bi-lock-fill" aria-hidden="true"></i>
+                    <div>@Localizer["TDRunningBlocked", Model.RunningUntil?.ToString("dd.MM.yyyy HH:mm") ?? string.Empty]</div>
+                </div>
+            }
+            else
+            {
+                <div class="cp-warn" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                    <div>
+                        <strong>@Localizer["DCCareful"]</strong>
+                        @if (refunds)
+                        {
+                            @Localizer["TDPaidWarning", Model.PaidTeams, Model.PaidTotal.ToString("0.00")]
+                        }
+                        else if (Model.IsFinished)
+                        {
+                            @Localizer["TDFinishedNote"]
+                        }
+                        else
+                        {
+                            @Localizer["DCCConfirmDeletion"]
+                        }
+                    </div>
+                </div>
+            }
+
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                <div class="tg-form-actions">
+                    @if (!Model.IsRunning)
+                    {
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="bi bi-trash3-fill" aria-hidden="true"></i>@(refunds ? Localizer["TDConfirmRefund"] : Localizer["TDConfirm"])
+                        </button>
+                    }
+
+                    @if (Model.CityId.HasValue)
+                    {
+                        <a asp-action="CityTournaments" asp-route-id="@Model.CityId" class="btn btn-outline-dark btn-lg">
+                            <i class="bi bi-x-lg" aria-hidden="true"></i>@Localizer["DCCancel"]
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="City" asp-action="All" class="btn btn-outline-dark btn-lg">
+                            <i class="bi bi-x-lg" aria-hidden="true"></i>@Localizer["DCCancel"]
+                        </a>
+                    }
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>

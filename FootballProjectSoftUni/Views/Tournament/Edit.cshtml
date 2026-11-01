@@ -1,149 +1,399 @@
-﻿@using FootballProjectSoftUni.Core.Models.Tournament;
+@using FootballProjectSoftUni.Core.Models.Tournament;
 @model EditViewModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 
 @{
-    ViewBag.Title = "Edit Tournament";
+    ViewBag.Title = Localizer["DEdit"].Value;
+    var nowText = BgTime.Now.ToDateTimeInput();
+    var startValue = string.IsNullOrWhiteSpace(Model.StartDate) ? nowText : Model.StartDate;
+    var endValue = string.IsNullOrWhiteSpace(Model.EndDate) ? nowText : Model.EndDate;
+
+    // ---- live preview (initial server render; the page script keeps it in sync) ----
+    var culture = System.Globalization.CultureInfo.CurrentCulture;
+    var eur = new System.Globalization.CultureInfo("de-DE");
+    var monthNames = string.Join("|", Enumerable.Range(1, 12)
+        .Select(i => culture.DateTimeFormat.GetAbbreviatedMonthName(i).ToUpper(culture).TrimEnd('.')));
+
+    // Same rules as the server: date-picker values (2026-11-03T18:00) and the older text formats.
+    DateTime? ParseDate(string s) => FormDates.TryParseDateTime(s, out var d) ? d : (DateTime?)null;
+
+    string Short(DateTime? d) => d.HasValue
+        ? d.Value.ToString("dd") + " " + d.Value.ToString("MMM", culture).ToUpper(culture).TrimEnd('.') + " · " + d.Value.ToString("HH:mm")
+        : "—";
+
+    var pvStart = ParseDate(startValue);
+    var pvEnd = ParseDate(endValue);
+    var pvNow = BgTime.Now;
+    string pvStatus = pvStart.HasValue && pvStart.Value <= pvNow
+        ? (pvEnd.HasValue && pvNow > pvEnd.Value ? Localizer["TNStatusFinished"].Value : Localizer["TNStatusStarted"].Value)
+        : Localizer["TNStatusUpcoming"].Value;
+
+    bool hasTitle = !string.IsNullOrWhiteSpace(Model.Description);
+    bool hasWinner = !string.IsNullOrWhiteSpace(Model.Winner);
 }
 
-<section class="container py-4">
+<header class="tg-page-head tn-builder-head">
+    <div>
+        <h1 class="tg-page-head__title" data-split>@Localizer["DEdit"]</h1>
+        <p class="tg-page-head__sub">@Localizer["EEdit"]</p>
+    </div>
+    <span class="tg-sticker tg-sticker--mint" style="--rot:4deg"><i class="bi bi-magic" aria-hidden="true"></i>@Localizer["TNPosterLive"]</span>
+</header>
 
-    <div class="admin-form-card mx-auto" style="max-width: 760px;">
+<div class="tn-builder">
 
-        <form asp-action="Edit" method="post" class="admin-form">
+    <form asp-action="Edit"
+          method="post"
+          enctype="multipart/form-data"
+          class="tn-builder__form"
+          data-tn-builder
+          data-months="@monthNames"
+          data-status-upcoming="@Localizer["TNStatusUpcoming"]"
+          data-status-started="@Localizer["TNStatusStarted"]"
+          data-status-finished="@Localizer["TNStatusFinished"]">
 
-            <div class="mb-3">
-                <label asp-for="@Model.ImageUrl" class="form-label fw-bold">
-                    <i class="bi bi-image-fill me-2"></i>@Localizer["EImaGE"]
-                </label>
+        <div asp-validation-summary="ModelOnly" class="tn-vsum alert alert-danger" role="alert"></div>
 
-                <input asp-for="@Model.ImageUrl"
-                       class="form-control tg-input"
-                       aria-required="true"
-                       placeholder="https://..." />
+        @* 01 General *@
+        <section class="tn-stepcard" aria-labelledby="tn-sec-general">
+            <span class="tn-stepcard__no" aria-hidden="true">01</span>
+            <h2 class="tn-stepcard__title" id="tn-sec-general"><i class="bi bi-card-text" aria-hidden="true"></i>@Localizer["TNSecGeneral"]</h2>
 
-                <span asp-validation-for="@Model.ImageUrl" class="text-danger small"></span>
-            </div>
+            <div class="tn-fields">
+                <div class="tn-field">
+                    <label asp-for="@Model.Description" class="form-label">
+                        <i class="bi bi-card-text" aria-hidden="true"></i>@Localizer["EEditTopic"]
+                    </label>
 
-            <div class="mb-3">
-                <label asp-for="@Model.Description" class="form-label fw-bold">
-                    <i class="bi bi-card-text me-2"></i>@Localizer["EEditTopic"]
-                </label>
+                    <input asp-for="@Model.Description"
+                           class="form-control"
+                           aria-required="true" />
 
-                <input asp-for="@Model.Description"
-                       class="form-control tg-input"
-                       aria-required="true"
-                       placeholder="Tournament description..." />
-
-                <span asp-validation-for="@Model.Description" class="text-danger small"></span>
-            </div>
-
-            <div class="row g-3">
-                <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="@Model.StartDate" class="form-label fw-bold">
-                            <i class="bi bi-calendar-event-fill me-2"></i>@Localizer["EStart"]
-                        </label>
-
-                        <input asp-for="@Model.StartDate"
-                               class="form-control tg-input"
-                               aria-required="true"
-                               value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")" />
-
-                        <span asp-validation-for="@Model.StartDate" class="text-danger small"></span>
-                    </div>
+                    <span asp-validation-for="@Model.Description" class="text-danger small"></span>
                 </div>
 
-                <div class="col-12 col-md-6">
-                    <div class="mb-3">
-                        <label asp-for="@Model.EndDate" class="form-label fw-bold">
-                            <i class="bi bi-calendar-check-fill me-2"></i>@Localizer["EEnd"]
-                        </label>
+                <div class="tn-field">
+                    <label for="image" class="form-label">
+                        <i class="bi bi-image-fill" aria-hidden="true"></i>@Localizer["EImaGE"]
+                    </label>
 
-                        <input asp-for="@Model.EndDate"
-                               class="form-control tg-input"
-                               aria-required="true"
-                               value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")" />
+                    @* Optional: an empty field keeps the current picture. *@
+                    <partial name="_PicturePicker" model='new PicturePickerViewModel { Hint = Localizer["TNImageHint"].Value + " " + Localizer["PicKeepCurrent"].Value }' />
+                </div>
 
-                        <span asp-validation-for="@Model.EndDate" class="text-danger small"></span>
-                    </div>
+                <div class="tn-field">
+                    <label asp-for="Winner" class="form-label">
+                        <i class="bi bi-award-fill" aria-hidden="true"></i>@Localizer["EWinner"]
+                    </label>
+
+                    @* Read-only: the winner comes from the result of the final. *@
+                    <input asp-for="Winner"
+                           class="form-control"
+                           readonly
+                           placeholder="—" />
+
+                    <div class="tg-field-hint">@Localizer["TNWinnerHint"]</div>
                 </div>
             </div>
+        </section>
 
-            <div class="mb-3">
-                <label asp-for="Winner" class="form-label fw-bold">
-                    <i class="bi bi-award-fill me-2"></i>@Localizer["EWinner"]
-                </label>
+        @* 02 Schedule *@
+        <section class="tn-stepcard" aria-labelledby="tn-sec-schedule">
+            <span class="tn-stepcard__no" aria-hidden="true">02</span>
+            <h2 class="tn-stepcard__title" id="tn-sec-schedule"><i class="bi bi-calendar-week-fill" aria-hidden="true"></i>@Localizer["TNSecSchedule"]</h2>
 
-                <input asp-for="Winner"
-                       class="form-control tg-input"
-                       placeholder="Winner team name (optional)..." />
+            @if (Model.DatesLocked)
+            {
+                <div class="tg-field-hint mb-3"><i class="bi bi-lock-fill" aria-hidden="true"></i> @Localizer["TDDatesLocked"]</div>
+            }
 
-                <span asp-validation-for="Winner" class="text-danger small"></span>
+            <div class="tn-fields tn-fields--2">
+                <div class="tn-field">
+                    <label asp-for="@Model.StartDate" class="form-label">
+                        <i class="bi bi-calendar-event-fill" aria-hidden="true"></i>@Localizer["EStart"]
+                    </label>
+
+                    <input asp-for="@Model.StartDate"
+                           type="datetime-local"
+                           class="form-control"
+                           aria-required="true"
+                           readonly="@Model.DatesLocked"
+                           value="@startValue" />
+
+                    <span asp-validation-for="@Model.StartDate" class="text-danger small"></span>
+                </div>
+
+                <div class="tn-field">
+                    <label asp-for="@Model.EndDate" class="form-label">
+                        <i class="bi bi-calendar-check-fill" aria-hidden="true"></i>@Localizer["EEnd"]
+                    </label>
+
+                    <input asp-for="@Model.EndDate"
+                           type="datetime-local"
+                           class="form-control"
+                           aria-required="true"
+                           readonly="@Model.DatesLocked"
+                           value="@endValue" />
+
+                    <span asp-validation-for="@Model.EndDate" class="text-danger small"></span>
+                </div>
             </div>
+        </section>
 
-            <div class="row g-3">
-                <div class="col-12 col-md-4">
-                    <div class="mb-3">
-                        <label asp-for="Prize" class="form-label fw-bold">
-                            <i class="bi bi-trophy-fill me-2"></i>@Localizer["EFirstPlacePrize"]
-                        </label>
+        @* 03 Prizes *@
+        <section class="tn-stepcard" aria-labelledby="tn-sec-money">
+            <span class="tn-stepcard__no" aria-hidden="true">03</span>
+            <h2 class="tn-stepcard__title" id="tn-sec-money"><i class="bi bi-cash-coin" aria-hidden="true"></i>@Localizer["TNPrizePool"]</h2>
 
+            <div class="tn-fields tn-fields--3">
+                <div class="tn-field">
+                    <label asp-for="Prize" class="form-label">
+                        <i class="bi bi-trophy-fill" aria-hidden="true"></i>@Localizer["EFirstPlacePrize"]
+                    </label>
+
+                    <div class="input-group">
+                        <span class="input-group-text" aria-hidden="true">€</span>
                         <input asp-for="Prize"
-                               class="form-control tg-input"
+                               value="@Model.Prize.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                               class="form-control"
                                type="number"
                                min="0"
                                step="0.01" />
-
-                        <span asp-validation-for="Prize" class="text-danger small"></span>
                     </div>
+
+                    <span asp-validation-for="Prize" class="text-danger small"></span>
                 </div>
 
-                <div class="col-12 col-md-4">
-                    <div class="mb-3">
-                        <label asp-for="SecondPlacePrize" class="form-label fw-bold">
-                            <i class="bi bi-award-fill me-2"></i>@Localizer["ESecondPlacePrize"]
-                        </label>
+                <div class="tn-field">
+                    <label asp-for="SecondPlacePrize" class="form-label">
+                        <i class="bi bi-award-fill" aria-hidden="true"></i>@Localizer["ESecondPlacePrize"]
+                    </label>
 
+                    <div class="input-group">
+                        <span class="input-group-text" aria-hidden="true">€</span>
                         <input asp-for="SecondPlacePrize"
-                               class="form-control tg-input"
+                               value="@Model.SecondPlacePrize.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                               class="form-control"
                                type="number"
                                min="0"
                                step="0.01" />
-
-                        <span asp-validation-for="SecondPlacePrize" class="text-danger small"></span>
                     </div>
+
+                    <span asp-validation-for="SecondPlacePrize" class="text-danger small"></span>
                 </div>
 
-                <div class="col-12 col-md-4">
-                    <div class="mb-3">
-                        <label asp-for="ThirdPlacePrize" class="form-label fw-bold">
-                            <i class="bi bi-award me-2"></i>@Localizer["EThirdPlacePrize"]
-                        </label>
+                <div class="tn-field">
+                    <label asp-for="ThirdPlacePrize" class="form-label">
+                        <i class="bi bi-award" aria-hidden="true"></i>@Localizer["EThirdPlacePrize"]
+                    </label>
 
+                    <div class="input-group">
+                        <span class="input-group-text" aria-hidden="true">€</span>
                         <input asp-for="ThirdPlacePrize"
-                               class="form-control tg-input"
+                               value="@Model.ThirdPlacePrize.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                               class="form-control"
                                type="number"
                                min="0"
                                step="0.01" />
-
-                        <span asp-validation-for="ThirdPlacePrize" class="text-danger small"></span>
                     </div>
+
+                    <span asp-validation-for="ThirdPlacePrize" class="text-danger small"></span>
                 </div>
             </div>
+        </section>
 
-            <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn">
-                <i class="bi bi-save2-fill me-2"></i>
-                @Localizer["EFinalEdit"]
+        <div class="tn-builder__actions">
+            <button type="submit" class="btn btn-accent btn-lg">
+                <i class="bi bi-save2-fill" aria-hidden="true"></i>@Localizer["EFinalEdit"]
             </button>
 
-        </form>
+            <a asp-controller="City" asp-action="All" class="btn btn-outline-dark btn-lg">
+                @Localizer["DCCancel"]
+            </a>
+        </div>
 
-    </div>
+    </form>
 
-</section>
+    @* ---------- Live poster preview ---------- *@
+    <aside class="tn-builder__preview" aria-hidden="true">
+
+        <div class="tn-poster" data-tilt="6">
+            <div class="tn-poster__img" data-tn-image-preview data-current="@Model.ImageUrl">
+                <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" />
+            </div>
+            <span class="tn-poster__shade"></span>
+            <span class="tn-poster__glow"></span>
+            <svg class="tg-pitch-lines" viewBox="0 0 100 125" preserveAspectRatio="none">
+                <rect x="4" y="4" width="92" height="117" rx="1" />
+                <line x1="4" y1="62.5" x2="96" y2="62.5" />
+                <circle cx="50" cy="62.5" r="11" />
+                <rect x="27" y="4" width="46" height="17" />
+                <rect x="27" y="104" width="46" height="17" />
+            </svg>
+
+            <div class="tn-poster__top">
+                <span class="tg-sticker tg-sticker--white" style="--rot:-5deg" data-pv="status">@pvStatus</span>
+                <span class="tn-poster__city">&#8470; @Model.Id.ToString("D4")</span>
+            </div>
+
+            <h2 class="tn-poster__title @(hasTitle ? "" : "is-placeholder")" data-pv="title" data-empty="@Localizer["EEditTopic"]">@(hasTitle ? Model.Description : Localizer["EEditTopic"].Value)</h2>
+
+            <span class="tg-sticker tn-poster__winner" style="--rot:-3deg" data-pv-winner-box hidden="@(!hasWinner)">
+                <i class="bi bi-trophy-fill"></i>@Localizer["EWinner"]: <span data-pv="winner">@Model.Winner</span>
+            </span>
+
+            <div class="tn-poster__dates">
+                <i class="bi bi-calendar-event-fill"></i>
+                <span data-pv="start">@Short(pvStart)</span>
+                <i class="bi bi-arrow-right"></i>
+                <span data-pv="end">@Short(pvEnd)</span>
+            </div>
+
+            <div class="tn-poster__prizes">
+                <div class="tn-poster__prize"><span class="tn-poster__place">1</span><b data-pv="p1">@Model.Prize.ToString("C2", eur)</b></div>
+                <div class="tn-poster__prize"><span class="tn-poster__place">2</span><b data-pv="p2">@Model.SecondPlacePrize.ToString("C2", eur)</b></div>
+                <div class="tn-poster__prize"><span class="tn-poster__place">3</span><b data-pv="p3">@Model.ThirdPlacePrize.ToString("C2", eur)</b></div>
+            </div>
+
+            <div class="tn-poster__brand"><span>Tournament Galaxy</span><span>@Localizer["HomeSeason"] @(pvStart?.Year ?? BgTime.Today.Year)</span></div>
+        </div>
+
+        <div class="tg-ticket tn-pvt">
+            <div class="tn-pvt__main">
+                <span class="tn-micro">@Localizer["HomeTicketAdmit"]</span>
+                <div class="tn-pvt__row">
+                    <div>
+                        <span class="tn-micro">@Localizer["ATCTeams"]</span>
+                        <span class="tn-pvt__val">@Model.NumberOfTeams / 16</span>
+                    </div>
+                </div>
+                <span class="tn-barcode"></span>
+            </div>
+            <div class="tg-ticket__stub tn-pvt__stub">
+                <span class="tn-pvt__day" data-pv="day">@(pvStart?.ToString("dd") ?? "--")</span>
+                <span class="tn-pvt__mon" data-pv="mon">@(pvStart.HasValue ? pvStart.Value.ToString("MMM", culture).ToUpper(culture).TrimEnd('.') : "---")</span>
+                <span class="tn-pvt__time" data-pv="time">@(pvStart?.ToString("HH:mm") ?? "--:--")</span>
+            </div>
+        </div>
+    </aside>
+
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/picture-picker.js" asp-append-version="true"></script>
+
+    <script>
+        (function () {
+            // Picture on the poster: the current one, or the newly chosen one.
+            var picker = document.querySelector('[data-picture-picker]');
+            var box = document.querySelector('[data-tn-image-preview]');
+            if (picker && box) {
+                var img = box.querySelector('img');
+                var blank = img.getAttribute('src');
+                var current = box.getAttribute('data-current') || '';
+
+                var show = function (url) {
+                    if (!url) {
+                        box.classList.remove('is-on');
+                        img.setAttribute('src', blank);
+                        return;
+                    }
+                    img.setAttribute('src', url);
+                };
+
+                img.addEventListener('load', function () {
+                    if (img.getAttribute('src') !== blank) { box.classList.add('is-on'); }
+                });
+                img.addEventListener('error', function () {
+                    box.classList.remove('is-on');
+                });
+                picker.addEventListener('picture:chosen', function (e) { show(e.detail.url); });
+                picker.addEventListener('picture:cleared', function () { show(current); });
+                show(current);
+            }
+
+            // Live poster: mirrors the form fields into the preview (display only).
+            var form = document.querySelector('[data-tn-builder]');
+            if (!form) { return; }
+
+            var months = (form.getAttribute('data-months') || '').split('|');
+            var money = null;
+            try { money = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }); } catch (e) { money = null; }
+
+            function pv(name) { return document.querySelector('[data-pv="' + name + '"]'); }
+            function setText(name, value) { var el = pv(name); if (el) { el.textContent = value; } }
+            function field(name) { return form.querySelector('[name="' + name + '"]'); }
+            function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+            function fmtMoney(v) {
+                var n = parseFloat(v);
+                if (isNaN(n) || n < 0) { n = 0; }
+                return money ? money.format(n) : n.toFixed(2) + ' €';
+            }
+
+            function parseDate(v) {
+                v = (v || '').trim();
+                // date pickers send 2026-11-03T18:00; older values look like 03/11/2026 18:00
+                var iso = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(v);
+                var m = iso
+                    ? [v, iso[3], iso[2], iso[1], iso[4], iso[5]]
+                    : /^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})\s+(\d{1,2}):(\d{2})$/.exec(v);
+                if (!m) { return null; }
+                var d = new Date(+m[3], +m[2] - 1, +m[1], +m[4], +m[5]);
+                return (isNaN(d.getTime()) || d.getMonth() !== +m[2] - 1) ? null : d;
+            }
+
+            function shortDate(d) {
+                return d ? pad(d.getDate()) + ' ' + (months[d.getMonth()] || '') + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) : '—';
+            }
+
+            function bind(name, fn) {
+                var el = field(name);
+                if (!el) { return; }
+                var run = function () { fn(el.value, el); };
+                el.addEventListener('input', run);
+                el.addEventListener('change', run);
+                run();
+            }
+
+            bind('Description', function (value) {
+                var title = pv('title');
+                if (!title) { return; }
+                var text = value.trim();
+                title.textContent = text || title.getAttribute('data-empty');
+                title.classList.toggle('is-placeholder', !text);
+            });
+
+            bind('Winner', function (value) {
+                var boxEl = document.querySelector('[data-pv-winner-box]');
+                var text = value.trim();
+                setText('winner', text);
+                if (boxEl) { boxEl.hidden = !text; }
+            });
+
+            function updateDates() {
+                var start = parseDate((field('StartDate') || {}).value);
+                var end = parseDate((field('EndDate') || {}).value);
+                var now = new Date();
+
+                setText('start', shortDate(start));
+                setText('end', shortDate(end));
+                setText('day', start ? pad(start.getDate()) : '--');
+                setText('mon', start ? (months[start.getMonth()] || '') : '---');
+                setText('time', start ? pad(start.getHours()) + ':' + pad(start.getMinutes()) : '--:--');
+
+                var status = 'upcoming';
+                if (start && start <= now) { status = (end && now > end) ? 'finished' : 'started'; }
+                setText('status', form.getAttribute('data-status-' + status));
+            }
+            bind('StartDate', updateDates);
+            bind('EndDate', updateDates);
+
+            bind('Prize', function (v) { setText('p1', fmtMoney(v)); });
+            bind('SecondPlacePrize', function (v) { setText('p2', fmtMoney(v)); });
+            bind('ThirdPlacePrize', function (v) { setText('p3', fmtMoney(v)); });
+        })();
+    </script>
 }

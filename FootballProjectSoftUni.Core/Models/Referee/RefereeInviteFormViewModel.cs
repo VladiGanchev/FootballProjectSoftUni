@@ -11,8 +11,10 @@ namespace FootballProjectSoftUni.Core.Models.Referee
     {
         public string RefereeId { get; set; } = string.Empty;
 
+        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string Subject { get; set; } = string.Empty;
 
+        [System.ComponentModel.DataAnnotations.StringLength(2000)]
         public string Content { get; set; } = string.Empty;
 
         public IEnumerable<SelectListItem> Referees { get; set; } = new List<SelectListItem>();

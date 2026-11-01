@@ -13,5 +13,8 @@ namespace FootballProjectSoftUni.Core.Models.City
         public string ImageUrl { get; set; } = string.Empty;
 
         public IEnumerable<CityViewModel> Cities { get; set; } = new List<CityViewModel>();
+
+        /// <summary>What deleting this city will do (refunds) or why it is not possible yet.</summary>
+        public FootballProjectSoftUni.Core.Models.Tournament.TournamentDeletionPreview? Deletion { get; set; }
     }
 }

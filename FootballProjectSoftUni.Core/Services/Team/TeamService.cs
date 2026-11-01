@@ -1,5 +1,6 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Team;
 using FootballProjectSoftUni.Core.Contracts.Tournament;
+using FootballProjectSoftUni.Core.Extensions;
 using FootballProjectSoftUni.Core.Models.ServiceError;
 using FootballProjectSoftUni.Core.Models.Team;
 using FootballProjectSoftUni.Core.Services.Tournament;
@@ -39,7 +40,7 @@ namespace FootballProjectSoftUni.Core.Services.Team
                 };
             }
 
-            if (DateTime.Now >= tournament.EndDate)
+            if (BgTime.Now >= tournament.EndDate)
             {
                 return new ServiceError
                 {
@@ -47,9 +48,19 @@ namespace FootballProjectSoftUni.Core.Services.Team
                 };
             }
 
+            // Teams can only join before kick-off: the bracket is already being played afterwards
+            // and refunds are no longer possible.
+            if (BgTime.Now >= tournament.StartDate)
+            {
+                return new ServiceError
+                {
+                    Message = "You cannot join a tournament that has already started."
+                };
+            }
+
             var tournametsTeamsCount = await context.TournamentsTeams.Where(x => x.TournamentId == id).CountAsync();
 
-            if (tournametsTeamsCount == TournamentNumnerOfTeamsMaxLength)
+            if (tournametsTeamsCount >= TournamentNumnerOfTeamsMaxLength)
             {
                 return new ServiceError()
                 {
@@ -99,7 +110,7 @@ namespace FootballProjectSoftUni.Core.Services.Team
                     t => t.Id,
                     (tp, t) => t
                 )
-                .AnyAsync(t => t.EndDate > DateTime.Now); 
+                .AnyAsync(t => t.EndDate > BgTime.Now); 
 
             if (hasActiveCoachParticipation)
             {
@@ -313,6 +324,12 @@ namespace FootballProjectSoftUni.Core.Services.Team
             var coach = await context.Coaches.FirstOrDefaultAsync(c => c.Id == userId);
             if (coach == null) throw new InvalidOperationException("Coach not found.");
 
+            if (coach.TeamId != null && await context.Teams.AnyAsync(t => t.Id == coach.TeamId))
+                throw new InvalidOperationException("You already have a team.");
+
+            if (viewModel.Players == null || viewModel.Players.Count > MaxPlayersPerTeam)
+                throw new InvalidOperationException($"A team can have at most {MaxPlayersPerTeam} players.");
+
             var nameExists = await context.Teams.AnyAsync(t => t.Name.ToLower() == viewModel.TeamName.ToLower());
             if (nameExists) throw new InvalidOperationException("A Team with the same name already exists");
 
@@ -323,6 +340,9 @@ namespace FootballProjectSoftUni.Core.Services.Team
 
             if (players.Count < 6)
                 throw new InvalidOperationException("You must enter at least 6 players.");
+
+            if (players.Any(p => p.Name.Length > PlayerNameMaxLength))
+                throw new InvalidOperationException($"Player names can be at most {PlayerNameMaxLength} characters.");
 
             context.Players.AddRange(players);
             await context.SaveChangesAsync();
@@ -356,12 +376,29 @@ namespace FootballProjectSoftUni.Core.Services.Team
             return teamId;
         }
 
+        // Joins are finalized from the Stripe webhook. Stripe can deliver several events at once,
+        // so the capacity check and the insert run one at a time to keep tournaments from being overfilled.
+        private static readonly SemaphoreSlim joinLock = new SemaphoreSlim(1, 1);
+
         public async Task FinalizeJoinAsync(int tournamentId, string userId, int teamId, int cityId)
+        {
+            await joinLock.WaitAsync();
+            try
+            {
+                await FinalizeJoinInternalAsync(tournamentId, userId, teamId, cityId);
+            }
+            finally
+            {
+                joinLock.Release();
+            }
+        }
+
+        private async Task FinalizeJoinInternalAsync(int tournamentId, string userId, int teamId, int cityId)
         {
             var tournament = await context.Tournaments.FirstOrDefaultAsync(t => t.Id == tournamentId);
             if (tournament == null) throw new ArgumentException("Tournament not found.");
 
-            if (DateTime.Now >= tournament.EndDate)
+            if (BgTime.Now >= tournament.EndDate)
                 throw new InvalidOperationException("Tournament already finished.");
 
             var team = await context.Teams.FirstOrDefaultAsync(t => t.Id == teamId);
@@ -369,6 +406,33 @@ namespace FootballProjectSoftUni.Core.Services.Team
 
             var existingTournamentTeam = await context.TournamentsTeams
                 .FirstOrDefaultAsync(tt => tt.TournamentId == tournamentId && tt.TeamId == teamId);
+
+            if (existingTournamentTeam == null)
+            {
+                // A new registration: re-check everything the pages check, the request may have been crafted.
+                if (team.CoachId != userId)
+                    throw new InvalidOperationException("This team does not belong to the paying user.");
+
+                // Paid while the tournament started (e.g. still on the Stripe page): the webhook refunds automatically.
+                if (BgTime.Now >= tournament.StartDate)
+                    throw new InvalidOperationException("Tournament already started.");
+
+                var teamsCount = await context.TournamentsTeams.CountAsync(tt => tt.TournamentId == tournamentId);
+                if (teamsCount >= TournamentNumnerOfTeamsMaxLength)
+                    throw new InvalidOperationException("The tournament is already full.");
+
+                var isRefereeHere = await context.TournamentsParticipants
+                    .AnyAsync(tp => tp.TournamentId == tournamentId && tp.ParticipantId == userId && tp.Role == "Referee");
+                if (isRefereeHere)
+                    throw new InvalidOperationException("The user is a referee in this tournament.");
+
+                var activeElsewhere = await context.TournamentsParticipants
+                    .Where(tp => tp.ParticipantId == userId && tp.Role == "Coach" && tp.TournamentId != tournamentId)
+                    .Join(context.Tournaments, tp => tp.TournamentId, t => t.Id, (tp, t) => t)
+                    .AnyAsync(t => t.EndDate > BgTime.Now);
+                if (activeElsewhere)
+                    throw new InvalidOperationException("The user already participates in another active tournament.");
+            }
 
             var addedTeamToTournament = false;
             if (existingTournamentTeam == null)
@@ -399,7 +463,7 @@ namespace FootballProjectSoftUni.Core.Services.Team
             await context.SaveChangesAsync();
 
             var exists = await context.CityBestTeams
-       .AnyAsync(cb => cb.CityId == cityId && cb.TeamId == teamId);
+                .AnyAsync(cb => cb.CityId == cityId && cb.TeamId == teamId);
 
             if (!exists)
             {
@@ -412,7 +476,6 @@ namespace FootballProjectSoftUni.Core.Services.Team
 
                 context.CityBestTeams.Add(entry);
             }
-
 
             await context.SaveChangesAsync();
 
@@ -428,6 +491,7 @@ namespace FootballProjectSoftUni.Core.Services.Team
                 await tournamentService.AssignTeamToBracketAsync(tournamentId, teamId);
             }
         }
+
         public async Task<int?> GetCoachTeamIdAsync(string userId)
         {
             return await context.Coaches

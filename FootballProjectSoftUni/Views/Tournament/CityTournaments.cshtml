@@ -1,4 +1,4 @@
-﻿@using FootballProjectSoftUni.Core.Models.Tournament;
+@using FootballProjectSoftUni.Core.Models.Tournament;
 @using System.Security.Claims;
 @using FootballProjectSoftUni.Extensions;
 @using X.PagedList
@@ -14,210 +14,358 @@
     ViewData["Title"] = "City Tournaments";
     var cityId = ViewBag.CityId as int? ?? 0;
     bool showPast = ViewBag.ShowPast != null && (bool)ViewBag.ShowPast;
+
+    var cityName = Model?.FirstOrDefault()?.CityName;
+    bool hasCity = !string.IsNullOrWhiteSpace(cityName);
+    bool isSignedIn = SignInManager.IsSignedIn(User);
+    bool isAdmin = isSignedIn && User.IsAdmin();
+    const int maxTeams = 16;
+    var culture = System.Globalization.CultureInfo.CurrentCulture;
+
+    bool hasItems = Model != null && Model.Any();
+    int total = Model?.TotalItemCount ?? 0;
+
+    // Fixture schedule: consecutive tournaments grouped by the month they kick off in
+    // (keeps the order the service returns).
+    var months = new List<(DateTime Month, List<TournamentViewModel> Items)>();
+    if (hasItems)
+    {
+        foreach (var t in Model)
+        {
+            var key = new DateTime(t.StartDate.Year, t.StartDate.Month, 1);
+            if (months.Count == 0 || months[months.Count - 1].Month != key)
+            {
+                months.Add((key, new List<TournamentViewModel>()));
+            }
+            months[months.Count - 1].Items.Add(t);
+        }
+    }
+
+    string Up(string s) => (s ?? string.Empty).ToUpper(culture).TrimEnd('.');
 }
 
-<section class="container py-4">
+<section>
 
     @* Alerts *@
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            @TempData["ErrorMessage"]
+        <div class="tn-alerts">
+            <div class="alert alert-danger" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                @TempData["ErrorMessage"]
+            </div>
         </div>
     }
 
-    @* Header *@
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
-
-        @* Toggle buttons *@
-        <div class="d-flex flex-wrap gap-2">
-            <a asp-controller="Tournament"
-               asp-action="CityTournaments"
-               asp-route-id="@cityId"
-               asp-route-showPast="false"
-               class="btn @(showPast ? "btn-outline-warning" : "btn-warning") tg-action-btn">
-                <i class="bi bi-clock-fill me-2"></i>
-                @Localizer["CTCurrent"]
-            </a>
-
-            <a asp-controller="Tournament"
-               asp-action="CityTournaments"
-               asp-route-id="@cityId"
-               asp-route-showPast="true"
-               class="btn @(showPast ? "btn-warning" : "btn-outline-warning") tg-action-btn">
-                <i class="bi bi-flag-fill me-2"></i>
-                @Localizer["CTFinished"]
-            </a>
-        </div>
-    </div>
-
-    @if (Model == null || !Model.Any())
+    @if (TempData["SuccessMessage"] != null)
     {
-        <div class="empty-state text-center">
-            <i class="bi bi-calendar-x display-4 text-muted"></i>
-            <h5 class="mt-3">@Localizer["CTTournamentsNo"]</h5>
-            <p class="text-muted mb-0">
-                @Localizer["CTNo"]
-            </p>
+        <div class="tn-alerts">
+            <div class="alert alert-success" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                @TempData["SuccessMessage"]
+            </div>
+        </div>
+    }
+
+    @* ---------- Poster head ---------- *@
+    <header class="tn-board">
+        <div class="tn-board__top">
+            @if (hasCity)
+            {
+                <span class="tg-kicker"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i> @Localizer["CTCity2"]</span>
+            }
+            else
+            {
+                <span></span>
+            }
+
+            <span class="tg-sticker tg-sticker--coral tn-board__count" style="--rot:5deg">
+                <i class="bi bi-ticket-perforated-fill" aria-hidden="true"></i>
+                <span class="tg-num" data-count="@total">@total</span>
+                @Localizer["TNTitle"]
+            </span>
+        </div>
+
+        <h1 class="tn-board__title" data-split><span class="tn-hl">@(hasCity ? cityName : Localizer["TNTitle"].Value)</span></h1>
+
+        <div class="tn-board__bar">
+            <p class="tn-board__sub">@(showPast ? Localizer["CTCity"].Value : Localizer["CTUPcoming"].Value)</p>
+
+            <div class="tn-board__controls">
+                <nav class="tg-switch" aria-label="@Localizer["TNTitle"]">
+                    <a asp-controller="Tournament"
+                       asp-action="CityTournaments"
+                       asp-route-id="@cityId"
+                       asp-route-showPast="false"
+                       class="@(showPast ? "" : "is-active")"
+                       aria-current="@(showPast ? null : "page")">
+                        <i class="bi bi-clock-fill" aria-hidden="true"></i>@Localizer["CTCurrent"]
+                    </a>
+
+                    <a asp-controller="Tournament"
+                       asp-action="CityTournaments"
+                       asp-route-id="@cityId"
+                       asp-route-showPast="true"
+                       class="@(showPast ? "is-active" : "")"
+                       aria-current="@(showPast ? "page" : null)">
+                        <i class="bi bi-flag-fill" aria-hidden="true"></i>@Localizer["CTFinished"]
+                    </a>
+                </nav>
+
+                @if (isAdmin)
+                {
+                    <a asp-controller="Tournament" asp-action="AddTournamentToCity" class="btn btn-accent">
+                        <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>@Localizer["DAddTournament"]
+                    </a>
+                }
+            </div>
+        </div>
+    </header>
+
+    @if (!hasItems)
+    {
+        <div class="tg-empty">
+            <span class="tg-empty__icon" aria-hidden="true"><i class="bi bi-calendar-x"></i></span>
+            <h5>@Localizer["CTTournamentsNo"]</h5>
+            <p class="text-muted mb-0">@Localizer["CTNo"]</p>
         </div>
     }
     else
     {
-        <div class="row g-4">
-            @foreach (var e in Model)
+        @* ---------- Fixture schedule ---------- *@
+        <div class="tn-fixtures">
+            @foreach (var month in months)
             {
-                <div class="col-12 col-sm-6 col-lg-4">
-                    <div class="tournament-card h-100">
+                var monthId = "tn-month-" + month.Month.ToString("yyyyMM");
 
-                        <div class="tournament-cover">
-                            <img src="@e.ImageUrl" alt="Tournament Image" />
-                            <div class="tournament-cover__overlay"></div>
+                <section class="tn-month" aria-labelledby="@monthId">
+                    <header class="tn-month__head">
+                        <span class="tn-month__num" aria-hidden="true">@month.Month.ToString("MM")</span>
+                        <h2 class="tn-month__name" id="@monthId">@Up(month.Month.ToString("MMMM", culture))</h2>
+                        <span class="tn-month__year">@month.Month.Year</span>
+                        <span class="tn-month__count">
+                            <i class="bi bi-ticket-perforated" aria-hidden="true"></i>
+                            <span class="tg-num">@month.Items.Count</span>
+                            <span class="visually-hidden">@Localizer["TNTitle"]</span>
+                        </span>
+                    </header>
 
-                            <div class="tournament-top">
-                                
+                    <ol class="tn-month__list">
+                        @foreach (var e in month.Items)
+                        {
+                            string statusKey;
+                            string statusChip;
+                            string statusIcon;
+                            string statusText;
 
-                                @{
-
-                                    var statusClass = e.Status.ToString().ToLower() switch
-                                    {
-                                        "upcoming" => "status-upcoming",
-                                        "started" => "status-started",
-                                        "finished" => "status-finished",
-                                        _ => "status-upcoming"
-                                    };
-                                }
-
-                                <span class="tournament-status @statusClass">
-                                    <i class="bi bi-info-circle-fill me-1"></i>@e.Status.ToString()
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="p-3">
-                            <div class="tournament-meta">
-                                <div class="tmeta">
-                                    <i class="bi bi-calendar-event-fill me-2"></i>
-                                    <span class="fw-bold me-1">@Localizer["CTStart"]</span> @e.StartDate
-                                </div>
-
-                                <div class="tmeta">
-                                    <i class="bi bi-calendar-check-fill me-2"></i>
-                                    <span class="fw-bold me-1">@Localizer["CTEnd"]</span> @e.EndDate
-                                </div>
-
-                                <div class="tmeta">
-                                    <i class="bi bi-people-fill me-2"></i>
-                                    <span class="fw-bold me-1">@Localizer["CTTeams"]</span> @($"{e.NumberOfTeams} / 16")
-                                </div>
-
-                                <div class="tmeta">
-                                    <i class="bi bi-activity me-2"></i>
-                                    <span class="fw-bold me-1">@Localizer["CTStatus"]</span> @e.Status.ToString()
-                                </div>
-                            </div>
-
-                            <a asp-controller="Tournament"
-                               asp-action="Details"
-                               asp-route-id="@e.Id"
-                               asp-route-information="@e.GetInformation()"
-                               class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn mt-3">
-                                <i class="bi bi-info-circle-fill me-2"></i>
-                                @Localizer["CTDetails"]
-                            </a>
-
-                            @* Finished tournaments actions *@
-                            @if (showPast)
+                            switch (e.Status.ToString().ToLowerInvariant())
                             {
-                                <a asp-controller="Gallery"
-                                   asp-action="TournamentGallery"
-                                   asp-route-id="@e.Id"
-                                   class="btn btn-outline-dark btn-lg w-100 fw-bold tg-action-btn mt-2">
-                                    <i class="bi bi-images me-2"></i>
-                                    @Localizer["CTGallery"]
-                                </a>
-
-                                @if (SignInManager.IsSignedIn(User) && User.IsAdmin())
-                                {
-                                    <a asp-controller="Gallery"
-                                       asp-action="UploadPictures"
-                                       asp-route-id="@e.Id"
-                                       class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn mt-2">
-                                        <i class="bi bi-cloud-upload-fill me-2"></i>
-                                        @Localizer["CTUpload"]
-                                    </a>
-                                }
+                                case "started":
+                                    statusKey = "started";
+                                    statusChip = "tg-chip tg-chip--green tg-chip--live";
+                                    statusIcon = "bi-play-fill";
+                                    statusText = Localizer["TNStatusStarted"].Value;
+                                    break;
+                                case "finished":
+                                    statusKey = "finished";
+                                    statusChip = "tg-chip tg-chip--ink";
+                                    statusIcon = "bi-flag-fill";
+                                    statusText = Localizer["TNStatusFinished"].Value;
+                                    break;
+                                default:
+                                    statusKey = "upcoming";
+                                    statusChip = "tg-chip tg-chip--sky";
+                                    statusIcon = "bi-clock-fill";
+                                    statusText = Localizer["TNStatusUpcoming"].Value;
+                                    break;
                             }
-                            else
-                            {
-                                @* Current/Upcoming actions *@
-                                @if (SignInManager.IsSignedIn(User))
-                                {
-                                    @if (User.IsAdmin())
-                                    {
-                                        <a asp-controller="Tournament"
-                                           asp-action="Edit"
-                                           asp-route-id="@e.Id"
-                                           class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn mt-2">
-                                            <i class="bi bi-pencil-square me-2"></i>
-                                            @Localizer["CTEdit"]
-                                        </a>
 
-                                        <a asp-controller="Tournament"
-                                           asp-action="Delete"
-                                           asp-route-id="@e.Id"
-                                           class="btn btn-outline-danger btn-lg w-100 fw-bold tg-action-btn mt-2">
-                                            <i class="bi bi-trash3-fill me-2"></i>
-                                            @Localizer["CTDelete"]
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        @if (e.RefereeId == null)
-                                        {
-                                            <a asp-controller="Referee"
-                                               asp-action="BecomeReferee"
+                            var pct = Math.Max(0, Math.Min(100, (int)Math.Round(e.NumberOfTeams * 100.0 / maxTeams)));
+
+                            <li class="tn-fx tn-fx--@statusKey">
+                                <article class="tg-ticket tn-tix tn-tix--@statusKey">
+                                    <div class="tn-tix__main">
+
+                                        <div class="tn-tix__thumb tg-cover" aria-hidden="true">
+                                            <i class="bi bi-trophy-fill"></i>
+                                            @if (!string.IsNullOrWhiteSpace(e.ImageUrl))
+                                            {
+                                                <img src="@e.ImageUrl" alt="" loading="lazy" data-hide-on-error />
+                                            }
+                                        </div>
+
+                                        <div class="tn-tix__info">
+                                            <div class="tn-tix__meta">
+                                                <span class="@statusChip">
+                                                    @if (statusKey != "started") { <i class="bi @statusIcon" aria-hidden="true"></i> }
+                                                    @statusText
+                                                </span>
+                                                <span class="tn-tix__no" aria-hidden="true">&#8470; @e.Id.ToString("D4")</span>
+                                            </div>
+
+                                            <h3 class="tn-tix__title" title="@e.Description">@e.Description</h3>
+
+                                            <dl class="tn-tix__when">
+                                                <div>
+                                                    <dt>@Localizer["CTStart"].Value.TrimEnd(':', ' ')</dt>
+                                                    <dd>@e.StartDate.ToString("dd.MM.yyyy HH:mm")</dd>
+                                                </div>
+                                                <div>
+                                                    <dt>@Localizer["CTEnd"].Value.TrimEnd(':', ' ')</dt>
+                                                    <dd>@e.EndDate.ToString("dd.MM.yyyy HH:mm")</dd>
+                                                </div>
+                                            </dl>
+
+                                            <div class="tn-tix__teams">
+                                                <span class="tn-micro">@Localizer["CTTeams"].Value.TrimEnd(':', ' ')</span>
+                                                <span class="tn-tix__num">@e.NumberOfTeams <small>/ @maxTeams</small></span>
+                                                <div class="tg-progress"
+                                                     role="progressbar"
+                                                     aria-valuemin="0"
+                                                     aria-valuemax="@maxTeams"
+                                                     aria-valuenow="@e.NumberOfTeams"
+                                                     aria-label="@Localizer["CTTeams"]">
+                                                    <span style="width:@(pct)%"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="tn-tix__actions">
+                                            @* Finished tournaments actions *@
+                                            @if (showPast)
+                                            {
+                                                <a asp-controller="Gallery"
+                                                   asp-action="TournamentGallery"
+                                                   asp-route-id="@e.Id"
+                                                   class="btn btn-sm btn-outline-dark">
+                                                    <i class="bi bi-images" aria-hidden="true"></i>@Localizer["CTGallery"]
+                                                </a>
+
+                                                if (isAdmin)
+                                                {
+                                                    <a asp-controller="Gallery"
+                                                       asp-action="UploadPictures"
+                                                       asp-route-id="@e.Id"
+                                                       class="btn btn-sm btn-sun">
+                                                        <i class="bi bi-cloud-upload-fill" aria-hidden="true"></i>@Localizer["CTUpload"]
+                                                    </a>
+
+                                                    <a asp-controller="Tournament"
+                                                       asp-action="Delete"
+                                                       asp-route-id="@e.Id"
+                                                       class="btn btn-sm btn-outline-danger">
+                                                        <i class="bi bi-trash3-fill" aria-hidden="true"></i>@Localizer["CTDelete"]
+                                                    </a>
+                                                }
+                                            }
+                                            else if (isSignedIn)
+                                            {
+                                                @* Current/Upcoming actions *@
+                                                if (User.IsAdmin())
+                                                {
+                                                    <a asp-controller="Tournament"
+                                                       asp-action="Edit"
+                                                       asp-route-id="@e.Id"
+                                                       class="btn btn-sm btn-outline-dark">
+                                                        <i class="bi bi-pencil-square" aria-hidden="true"></i>@Localizer["CTEdit"]
+                                                    </a>
+
+                                                    @* A tournament in progress cannot be deleted until it ends. *@
+                                                    if (BgTime.Now < e.StartDate)
+                                                    {
+                                                        <a asp-controller="Tournament"
+                                                           asp-action="Delete"
+                                                           asp-route-id="@e.Id"
+                                                           class="btn btn-sm btn-outline-danger">
+                                                            <i class="bi bi-trash3-fill" aria-hidden="true"></i>@Localizer["CTDelete"]
+                                                        </a>
+                                                    }
+                                                }
+                                                else if (BgTime.Now >= e.StartDate)
+                                                {
+                                                    @* Started: registration is closed *@
+                                                    <span class="tg-chip">
+                                                        <i class="bi bi-lock-fill" aria-hidden="true"></i>@Localizer["CTRegistrationClosed"]
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <a asp-controller="Team"
+                                                       asp-action="JoinTeam"
+                                                       asp-route-id="@e.Id"
+                                                       class="btn btn-sm btn-accent">
+                                                        <i class="bi bi-people-fill" aria-hidden="true"></i>@Localizer["CTJoin"]
+                                                    </a>
+
+                                                    if (e.RefereeId == null)
+                                                    {
+                                                        <a asp-controller="Referee"
+                                                           asp-action="BecomeReferee"
+                                                           asp-route-id="@e.Id"
+                                                           class="btn btn-sm btn-outline-dark">
+                                                            <i class="bi bi-flag-fill" aria-hidden="true"></i>@Localizer["CTBecome"]
+                                                        </a>
+                                                    }
+                                                }
+                                            }
+
+                                            <a asp-controller="Tournament"
+                                               asp-action="Details"
                                                asp-route-id="@e.Id"
-                                               class="btn btn-outline-secondary btn-lg w-100 fw-bold tg-action-btn mt-2">
-                                                <i class="bi bi-whistle-fill me-2"></i>
-                                                @Localizer["CTBecome"]
+                                               asp-route-information="@e.GetInformation()"
+                                               class="btn btn-sm btn-primary tn-tix__go">
+                                                @Localizer["CTDetails"]<i class="bi bi-arrow-right" aria-hidden="true"></i>
                                             </a>
-                                        }
+                                        </div>
+                                    </div>
 
-                                        <a asp-controller="Team"
-                                           asp-action="JoinTeam"
-                                           asp-route-id="@e.Id"
-                                           class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn mt-2">
-                                            <i class="bi bi-people-fill me-2"></i>
-                                            @Localizer["CTJoin"]
-                                        </a>
-                                    }
-                                }
-                            }
-                        </div>
-
-                    </div>
-                </div>
+                                    <div class="tg-ticket__stub tn-tix__stub" aria-hidden="true">
+                                        <span class="tn-tix__dow">@Up(e.StartDate.ToString("ddd", culture))</span>
+                                        <span class="tn-tix__day">@e.StartDate.ToString("dd")</span>
+                                        <span class="tn-tix__mon">@Up(e.StartDate.ToString("MMM", culture))</span>
+                                        <span class="tn-tix__time">@e.StartDate.ToString("HH:mm")</span>
+                                        <span class="tn-tix__state"><i class="bi @statusIcon"></i>@statusText</span>
+                                    </div>
+                                </article>
+                            </li>
+                        }
+                    </ol>
+                </section>
             }
         </div>
 
-        @if (Model != null && Model.PageCount > 1)
+        @if (Model.PageCount > 1)
         {
-            <nav class="mt-4 d-flex justify-content-center">
+            <nav class="tn-pager" aria-label="@Localizer["TNTitle"]">
                 @Html.PagedListPager(
-                Model,
-                page => Url.Action("CityTournaments", "Tournament",
-                new { id = cityId, showPast = showPast, page }),
-                new PagedListRenderOptions
-                {
-                    LiElementClasses = new[] { "page-item" },
-                    PageClasses = new[] { "page-link" }
-                }
+                    Model,
+                    page => Url.Action("CityTournaments", "Tournament",
+                        new { id = cityId, showPast = showPast, page }),
+                    new PagedListRenderOptions
+                    {
+                        LiElementClasses = new[] { "page-item" },
+                        PageClasses = new[] { "page-link" }
+                    }
                 )
-    </nav>
+            </nav>
         }
     }
 
     @Html.ValidationSummary(true, "", new { @class = "text-danger mt-3" })
 
 </section>
+
+@section Scripts {
+    <script>
+        (function () {
+            // Ask before following destructive links (delete tournament).
+            document.addEventListener('click', function (ev) {
+                var link = ev.target.closest ? ev.target.closest('a[data-tn-confirm]') : null;
+                if (!link) { return; }
+                if (!window.confirm(link.getAttribute('data-tn-confirm'))) {
+                    ev.preventDefault();
+                }
+            });
+        })();
+    </script>
+}

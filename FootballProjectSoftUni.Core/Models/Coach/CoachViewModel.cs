@@ -13,10 +13,11 @@ namespace FootballProjectSoftUni.Core.Models.Coach
         public string Id { get; set; } = string.Empty;
 
         [Required(ErrorMessage = RequireErrorMessage)]
+        [StringLength(PersonNameMaxLength, MinimumLength = PersonNameMinLength, ErrorMessage = StringLengthErrorMessage)]
         public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = RequireErrorMessage)]
-        [Range(CoachExperienceMinYears, int.MaxValue, ErrorMessage = CoachExperienceErrorMessage)]
+        [Range(CoachExperienceMinYears, ExperienceMaxYears, ErrorMessage = "The coach experience must be between {1} and {2} years.")]
         public string Experience { get; set; } = string.Empty;
 
         [Required]

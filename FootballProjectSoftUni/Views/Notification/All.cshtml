@@ -1,231 +1,292 @@
-﻿@using FootballProjectSoftUni.Core.Models.ContactMessage
+@using FootballProjectSoftUni.Core.Models.ContactMessage
 @using FootballProjectSoftUni.Core.Models.Notification
 @using X.PagedList
 @model NotificationAllPageViewModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
-
 @{
-    ViewData["Title"] = "Известия и съобщения";
+    ViewData["Title"] = Localizer["NotifPageTitle"].Value;
+
+    var isSent = Model.Box == "sent";
+    var boxName = isSent ? "sent" : "inbox";
+
+    var hasItems = isSent
+        ? (Model.SentMessages != null && Model.SentMessages.Any())
+        : (Model.Notifications != null && Model.Notifications.Any());
+
+    var pageNumber = isSent ? (Model.SentMessages?.PageNumber ?? 1) : (Model.Notifications?.PageNumber ?? 1);
+    var pageCount = isSent ? (Model.SentMessages?.PageCount ?? 1) : (Model.Notifications?.PageCount ?? 1);
+    var hasPrev = isSent ? (Model.SentMessages?.HasPreviousPage ?? false) : (Model.Notifications?.HasPreviousPage ?? false);
+    var hasNext = isSent ? (Model.SentMessages?.HasNextPage ?? false) : (Model.Notifications?.HasNextPage ?? false);
+    var previousPage = pageNumber - 1;
+    var nextPage = pageNumber + 1;
+
+    // UI only: folder total + avatar helpers
+    var totalItems = isSent ? (Model.SentMessages?.TotalItemCount ?? 0) : (Model.Notifications?.TotalItemCount ?? 0);
+
+    string Initials(string? name) => string.IsNullOrWhiteSpace(name)
+        ? "TG"
+        : string.Concat(name.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(p => char.ToUpperInvariant(p[0])));
+
+    var tones = new[] { "sun", "mint", "lilac", "sky", "coral" };
+    string Tone(string? name) => tones[(name ?? string.Empty).Sum(c => (int)c) % tones.Length];
+
+    string IsoUtc(DateTime d) => DateTime.SpecifyKind(d, DateTimeKind.Utc).ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", System.Globalization.CultureInfo.InvariantCulture);
 }
 
-<section class="container py-4">
+<section class="msg-app">
 
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
-        <div class="d-flex gap-2">
+    @* ===== Sidebar: title, compose, folders ===== *@
+    <aside class="msg-side tg-card tg-card--pop">
+        <div class="msg-side__head">
+            <h1 class="msg-side__title">@Localizer["NotifPageTitle"]</h1>
+        </div>
+
+        <a asp-controller="ContactMessage" asp-action="Create" class="btn btn-accent btn-lg msg-compose" data-magnetic=".12">
+            <i class="bi bi-pencil-square" aria-hidden="true"></i>@Localizer["MsgCompose"]
+        </a>
+
+        <nav class="msg-folders" aria-label="@Localizer["AllIncoming"] / @Localizer["AllSent"]">
             <a asp-controller="Notification"
                asp-action="All"
                asp-route-box="inbox"
-               class="btn @(Model.Box == "inbox" ? "btn-primary" : "btn-outline-primary") tg-action-btn">
-                <i class="bi bi-inbox-fill me-2"></i>@Localizer["AllIncoming"]
+               class="msg-folder @(isSent ? "" : "is-active")"
+               aria-current="@(isSent ? null : "page")">
+                <span class="msg-folder__ico" aria-hidden="true"><i class="bi bi-inbox-fill"></i></span>
+                <span class="msg-folder__label">@Localizer["AllIncoming"]</span>
+                @if (!isSent && totalItems > 0)
+                {
+                    <span class="msg-folder__count">@totalItems</span>
+                }
+                else if (isSent)
+                {
+                    <i class="bi bi-chevron-right msg-folder__go" aria-hidden="true"></i>
+                }
             </a>
 
             <a asp-controller="Notification"
                asp-action="All"
                asp-route-box="sent"
-               class="btn @(Model.Box == "sent" ? "btn-primary" : "btn-outline-primary") tg-action-btn">
-                <i class="bi bi-send-fill me-2"></i>@Localizer["AllSent"]
+               class="msg-folder @(isSent ? "is-active" : "")"
+               aria-current="@(isSent ? "page" : null)">
+                <span class="msg-folder__ico" aria-hidden="true"><i class="bi bi-send-fill"></i></span>
+                <span class="msg-folder__label">@Localizer["AllSent"]</span>
+                @if (isSent && totalItems > 0)
+                {
+                    <span class="msg-folder__count">@totalItems</span>
+                }
+                else if (!isSent)
+                {
+                    <i class="bi bi-chevron-right msg-folder__go" aria-hidden="true"></i>
+                }
             </a>
+        </nav>
+
+        <div class="msg-side__pitch" aria-hidden="true">
+            <span class="msg-side__goal"></span>
+            <span class="msg-side__ball"></span>
         </div>
-    </div>
+    </aside>
 
- 
-    @if (Model.Box == "sent")
-    {
-        <div class="tg-table-card">
-            <div class="p-3 border-bottom" style="background: rgba(0,0,0,.02);">
-                <h5 class="mb-0 fw-bold">
-                    <i class="bi bi-send-check-fill me-2"></i>
-                    @Localizer["AllSentMessages"]
-                </h5>
+    @* ===== Feed ===== *@
+    <div class="msg-feed tg-card tg-card--pop">
+
+        <header class="msg-feed__head">
+            <span class="tg-icon-tile tg-icon-tile--sm @(isSent ? "tg-icon-tile--mint" : "tg-icon-tile--sky")" aria-hidden="true">
+                <i class="bi @(isSent ? "bi-send-check-fill" : "bi-bell-fill")"></i>
+            </span>
+            <h2 class="msg-feed__title">@(isSent ? Localizer["AllSentMessages"] : Localizer["AllIncomingNotifications"])</h2>
+            <div class="msg-feed__meta">
+                @if (totalItems > 0)
+                {
+                    <span class="tg-chip tg-chip--ink"><i class="bi @(isSent ? "bi-send-fill" : "bi-inbox-fill")" aria-hidden="true"></i>@totalItems</span>
+                }
+                @if (pageCount > 1)
+                {
+                    <span class="tg-chip">@pageNumber / @pageCount</span>
+                }
             </div>
+        </header>
 
-            @if (Model.SentMessages == null || !Model.SentMessages.Any())
-            {
-                <div class="p-4">
-                    <div class="empty-state text-center">
-                        <i class="bi bi-envelope display-4 text-muted"></i>
-                        <h5 class="mt-3">@Localizer["AllNoSent"]</h5>
-                        <p class="text-muted mb-0">@Localizer["AllWhen"]</p>
-                    </div>
-                </div>
-            }
-            else
-            {
-                var paged = (IPagedList<SentMessageViewModel>)Model.SentMessages;
+        @if (!hasItems)
+        {
+            <div class="msg-quiet" data-reveal>
+                <partial name="~/Views/Notification/_QuietStadium.cshtml" />
 
-                <div class="list-group list-group-flush">
-                    @foreach (var msg in paged)
+                @if (isSent)
+                {
+                    <h3 class="msg-quiet__title">@Localizer["AllNoSent"]</h3>
+                    <p class="msg-quiet__text">@Localizer["AllWhen"]</p>
+                    <a asp-controller="ContactMessage" asp-action="Create" class="btn btn-primary">
+                        <i class="bi bi-pencil-square" aria-hidden="true"></i>@Localizer["MsgCompose"]
+                    </a>
+                }
+                else
+                {
+                    <h3 class="msg-quiet__title">@Localizer["AllNoNotifications"]</h3>
+                    <p class="msg-quiet__text">@Localizer["AllWhenYouHave"]</p>
+                }
+            </div>
+        }
+        else
+        {
+            <ul class="msg-list">
+                @if (isSent)
+                {
+                    foreach (var msg in Model.SentMessages!)
                     {
-                        <div class="list-group-item d-flex justify-content-between align-items-start gap-3">
-                            <div>
+                        var sentAva = "msg-ava msg-ava--" + Tone(msg.ToName);
+                        var sentWhen = BgTime.FromUtc(msg.CreatedOn).ToString("g");
+
+                        <li class="msg-row">
+                            <span class="@sentAva" aria-hidden="true">
+                                @Initials(msg.ToName)
+                                <span class="msg-ava__badge msg-ava__badge--mint"><i class="bi bi-send-check-fill"></i></span>
+                            </span>
+
+                            <div class="msg-row__main">
+                                <div class="msg-row__top">
+                                    <span>@Localizer["AllSentTo"] <strong class="msg-row__from">@msg.ToName</strong></span>
+                                </div>
                                 <a asp-controller="ContactMessage"
                                    asp-action="OpenMessage"
                                    asp-route-messageId="@msg.Id"
-                                   class="tg-msg-link">
-                                    <i class="bi bi-envelope-check-fill me-2 text-success"></i>
-                                    @msg.Subject
-                                </a>
-
-                                <div class="text-muted small mt-1">
-                                    <i class="bi bi-person-check-fill me-2"></i>
-                                    @Localizer["AllSentTo"] <strong>@msg.ToName</strong>
-                                </div>
-
-                                <div class="text-muted small mt-1">
-                                    <i class="bi bi-calendar-event-fill me-2"></i>
-                                    @msg.CreatedOn.ToLocalTime().ToString("g")
-                                </div>
+                                   class="msg-row__title msg-row__link">@msg.Subject</a>
+                                @if (!string.IsNullOrWhiteSpace(msg.Preview))
+                                {
+                                    <p class="msg-row__preview">@msg.Preview</p>
+                                }
                             </div>
-                        </div>
+
+                            <div class="msg-row__side">
+                                <time class="msg-time" datetime="@IsoUtc(msg.CreatedOn)" title="@sentWhen" data-msg-time>@sentWhen</time>
+                                <i class="bi bi-chevron-right msg-row__chev" aria-hidden="true"></i>
+                            </div>
+                        </li>
                     }
-                </div>
-
-                <nav class="mt-3 mb-3" aria-label="Page navigation">
-                    <ul class="pagination justify-content-center tg-pagination">
-                        @{
-                            var nextPage = paged.PageNumber + 1;
-                            var previousPage = paged.PageNumber - 1;
-                        }
-
-                        <li class="page-item @(paged.HasPreviousPage ? "" : "disabled")">
-                            <a class="page-link"
-                               href="@Url.Action("All", new { box = "sent", page = previousPage })"
-                               tabindex="-1">
-                                <i class="bi bi-chevron-left"></i>
-                            </a>
-                        </li>
-
-                        @for (int i = 1; i <= paged.PageCount; i++)
-                        {
-                            <li class="page-item @(i == paged.PageNumber ? "active" : "")">
-                                <a class="page-link"
-                                   href="@Url.Action("All", new { box = "sent", page = i })">@i</a>
-                            </li>
-                        }
-
-                        <li class="page-item @(paged.HasNextPage ? "" : "disabled")">
-                            <a class="page-link"
-                               href="@Url.Action("All", new { box = "sent", page = nextPage })">
-                                <i class="bi bi-chevron-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            }
-        </div>
-    }
-    else
-    {
-        <div class="tg-table-card">
-            <div class="p-3 border-bottom" style="background: rgba(0,0,0,.02);">
-                <h5 class="mb-0 fw-bold">
-                    <i class="bi bi-bell-fill me-2"></i>
-                    @Localizer["AllIncomingNotifications"]
-                </h5>
-            </div>
-
-            @if (Model.Notifications == null || !Model.Notifications.Any())
-            {
-                <div class="p-4">
-                    <div class="empty-state text-center">
-                        <i class="bi bi-bell-slash display-4 text-muted"></i>
-                        <h5 class="mt-3">@Localizer["AllNoNotifications"]</h5>
-                        <p class="text-muted mb-0">@Localizer["AllWhenYouHave"]</p>
-                    </div>
-                </div>
-            }
-            else
-            {
-                var paged = (IPagedList<NotificationViewModel>)Model.Notifications;
-
-                <div class="list-group list-group-flush">
-                    @foreach (var notification in paged)
+                }
+                else
+                {
+                    foreach (var notification in Model.Notifications!)
                     {
-                        <div class="list-group-item d-flex justify-content-between align-items-start gap-3 notification-item @(notification.IsRead ? "is-read" : "is-unread")">
-                            <div>
-                                @if (notification.ContactMessageId != null)
+                        var hasMessage = notification.ContactMessageId != null;
+                        var hasFrom = !string.IsNullOrWhiteSpace(notification.FromName);
+                        var avaClass = hasMessage ? "msg-ava msg-ava--" + Tone(notification.FromName) : "msg-ava msg-ava--system";
+                        var when = BgTime.FromUtc(notification.CreatedOn).ToString("g");
+
+                        <li class="msg-row @(notification.IsRead ? "is-read" : "is-unread")">
+                            <span class="@avaClass" aria-hidden="true">
+                                @if (hasMessage && hasFrom)
+                                {
+                                    @Initials(notification.FromName)
+                                }
+                                else if (hasMessage)
+                                {
+                                    <i class="bi bi-envelope-fill"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-bell-fill"></i>
+                                }
+
+                                @if (hasMessage)
+                                {
+                                    <span class="msg-ava__badge msg-ava__badge--sky"><i class="bi bi-envelope-fill"></i></span>
+                                }
+                            </span>
+
+                            <div class="msg-row__main">
+                                <div class="msg-row__top">
+                                    @if (hasMessage && hasFrom)
+                                    {
+                                        <span>@Localizer["AllReceivedFrom"] <strong class="msg-row__from">@notification.FromName</strong></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="msg-row__from">Tournament Galaxy</span>
+                                    }
+
+                                    @if (!notification.IsRead)
+                                    {
+                                        <span class="msg-new"><span class="msg-dot" aria-hidden="true"></span>@Localizer["NotifNew"]</span>
+                                    }
+                                </div>
+
+                                @if (hasMessage)
                                 {
                                     <a asp-controller="ContactMessage"
                                        asp-action="OpenMessage"
                                        asp-route-messageId="@notification.ContactMessageId"
-                                       class="tg-msg-link">
-                                        @notification.Message
-                                    </a>
-
-                                    @if (!string.IsNullOrWhiteSpace(notification.FromName))
-                                    {
-                                        <div class="text-muted small mt-1">
-                                            <i class="bi bi-person-fill me-2"></i>
-                                            @Localizer["AllReceivedFrom"] <strong>@notification.FromName</strong>
-                                        </div>
-                                    }
+                                       class="msg-row__title msg-row__link">@notification.Message</a>
                                 }
                                 else
                                 {
-                                    <div class="fw-semibold">@notification.Message</div>
+                                    <span class="msg-row__title msg-row__title--plain">@notification.Message</span>
                                 }
-
-                                <div class="text-muted small mt-1">
-                                    <i class="bi bi-calendar-event-fill me-2"></i>
-                                    @notification.CreatedOn.ToLocalTime().ToString("g")
-                                </div>
                             </div>
 
-                            <div class="d-flex align-items-center gap-2">
-                                @if (!notification.IsRead)
-                                {
-                                    <span class="badge bg-primary">New</span>
-                                }
+                            <div class="msg-row__side">
+                                <time class="msg-time" datetime="@IsoUtc(notification.CreatedOn)" title="@when" data-msg-time>@when</time>
 
                                 <form asp-controller="Notification"
                                       asp-action="Delete"
                                       method="post"
-                                      onsubmit="return confirm('Are you sure you want to delete this notification?');">
+                                      class="msg-del"
+                                      data-confirm="@Localizer["NotifDeleteConfirm"]">
                                     <input type="hidden" name="id" value="@notification.Id" />
                                     <input type="hidden" name="box" value="@Model.Box" />
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="bi bi-trash3"></i>
+                                    <input type="hidden" name="page" value="@pageNumber" />
+                                    <button type="submit"
+                                            class="msg-del__btn"
+                                            title="@Localizer["TGDelete"]"
+                                            aria-label="@Localizer["TGDelete"]">
+                                        <i class="bi bi-trash3" aria-hidden="true"></i>
                                     </button>
                                 </form>
                             </div>
-                        </div>
+                        </li>
                     }
-                </div>
+                }
+            </ul>
 
-                <nav class="mt-3 mb-3" aria-label="Page navigation">
-                    <ul class="pagination justify-content-center tg-pagination">
-                        @{
-                            var nextPage = paged.PageNumber + 1;
-                            var previousPage = paged.PageNumber - 1;
-                        }
-
-                        <li class="page-item @(paged.HasPreviousPage ? "" : "disabled")">
+            @if (pageCount > 1)
+            {
+                <nav class="msg-feed__foot" aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item @(hasPrev ? "" : "disabled")">
                             <a class="page-link"
-                               href="@Url.Action("All", new { box = "inbox", page = previousPage })"
-                               tabindex="-1">
-                                <i class="bi bi-chevron-left"></i>
+                               href="@Url.Action("All", new { box = boxName, page = previousPage })"
+                               aria-label="Previous"
+                               tabindex="@(hasPrev ? 0 : -1)">
+                                <i class="bi bi-chevron-left" aria-hidden="true"></i>
                             </a>
                         </li>
 
-                        @for (int i = 1; i <= paged.PageCount; i++)
+                        @for (int i = 1; i <= pageCount; i++)
                         {
-                            <li class="page-item @(i == paged.PageNumber ? "active" : "")">
+                            <li class="page-item @(i == pageNumber ? "active" : "")">
                                 <a class="page-link"
-                                   href="@Url.Action("All", new { box = "inbox", page = i })">@i</a>
+                                   href="@Url.Action("All", new { box = boxName, page = i })"
+                                   aria-current="@(i == pageNumber ? "page" : null)">@i</a>
                             </li>
                         }
 
-                        <li class="page-item @(paged.HasNextPage ? "" : "disabled")">
+                        <li class="page-item @(hasNext ? "" : "disabled")">
                             <a class="page-link"
-                               href="@Url.Action("All", new { box = "inbox", page = nextPage })">
-                                <i class="bi bi-chevron-right"></i>
+                               href="@Url.Action("All", new { box = boxName, page = nextPage })"
+                               aria-label="Next"
+                               tabindex="@(hasNext ? 0 : -1)">
+                                <i class="bi bi-chevron-right" aria-hidden="true"></i>
                             </a>
                         </li>
                     </ul>
                 </nav>
             }
-        </div>
-    }
+        }
+    </div>
 
 </section>
+
+@section Scripts {
+    <partial name="~/Views/Notification/_MsgTimeScript.cshtml" />
+}

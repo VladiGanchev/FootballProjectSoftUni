@@ -1,89 +1,113 @@
-﻿@model ErrorViewModel
+@model ErrorViewModel
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
     ViewData["Title"] = "Error";
 }
 
-<section class="container py-5">
+<section class="err-var">
+    <div class="err-var__copy">
+        <span class="tg-kicker">@Localizer["ErrOopsTitle"]</span>
+        <h1 class="err-mega err-mega--md" data-split>@Localizer["ErrVar"]</h1>
+        <span class="tg-chip tg-chip--live err-var__chip">@Localizer["ErrVarChecking"]</span>
 
-    <div class="admin-form-card mx-auto" style="max-width: 860px;">
+        <p class="err-lead">@Localizer["ErrOopsText"]</p>
+        <p class="err-note">
+            <i class="bi bi-camera-video-fill" aria-hidden="true"></i>
+            <span>@Localizer["ErrVarNote"]</span>
+        </p>
 
-        <div class="text-center">
-            <div class="delete-icon mb-3">
-                <i class="bi bi-exclamation-triangle-fill"></i>
+        <div class="err-actions">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg" data-magnetic>
+                <i class="bi bi-house-fill" aria-hidden="true"></i>
+                <span>@Localizer["DHome"]</span>
+            </a>
+            <button type="button" data-history-back class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                <span>@Localizer["ErrGoBack"]</span>
+            </button>
+        </div>
+    </div>
+
+    @* The VAR monitor: frozen replay, scanning line, zoom on the ball *@
+    <div class="err-monitor" data-tilt="6" aria-hidden="true">
+        <div class="err-monitor__bezel">
+            <div class="err-monitor__screen">
+                <svg class="tg-pitch-lines" viewBox="0 0 160 100" preserveAspectRatio="none">
+                    <rect x="4" y="4" width="152" height="92" />
+                    <line x1="80" y1="4" x2="80" y2="96" />
+                    <circle cx="80" cy="50" r="13" />
+                    <rect x="124" y="26" width="32" height="48" />
+                    <rect x="144" y="38" width="12" height="24" />
+                </svg>
+
+                <span class="err-p err-p--home" style="left:40%;top:30%"></span>
+                <span class="err-p err-p--home" style="left:47%;top:62%"></span>
+                <span class="err-p err-p--home" style="left:58%;top:44%"></span>
+                <span class="err-p err-p--home" style="left:74%;top:66%"></span>
+                <span class="err-p err-p--away" style="left:66%;top:28%"></span>
+                <span class="err-p err-p--away" style="left:69%;top:50%"></span>
+                <span class="err-p err-p--away" style="left:82%;top:40%"></span>
+                <span class="err-p err-p--away" style="left:93%;top:50%"></span>
+
+                <span class="err-calib" style="left:71%"></span>
+                <span class="err-target" style="left:76%;top:58%"><span class="err-target__ball"></span></span>
+
+                <span class="err-scan"></span>
+                <span class="err-hud err-hud--tl">VAR</span>
+                <span class="err-hud err-hud--tr"><i class="bi bi-record-circle-fill"></i>@Localizer["ErrVarChecking"]</span>
+                <span class="err-hud err-hud--bl">45'+3</span>
+                <span class="err-hud err-hud--br">CAM 4</span>
             </div>
 
-            <h2 class="page-title text-danger mb-2">
-                Error
-            </h2>
-
-            <p class="text-muted mb-0">
-                An error occurred while processing your request.
-            </p>
+            <div class="err-scrub">
+                <i class="bi bi-play-fill"></i>
+                <span class="err-scrub__track"><span class="err-scrub__head"></span></span>
+                <span>-00:03</span>
+            </div>
         </div>
+        <div class="err-monitor__neck"></div>
+        <div class="err-monitor__foot"></div>
+    </div>
 
+    <div class="err-detail">
         @if (Model.ShowRequestId)
         {
-            <div class="mt-4">
-                <div class="message-box message-box--previous">
-                    <div class="message-box__title">
-                        <i class="bi bi-fingerprint me-2"></i>
-                        Request ID
-                    </div>
-
-                    <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
-                        <code class="fw-bold">@Model.RequestId</code>
-
-                        <button type="button"
-                                class="btn btn-sm btn-outline-secondary"
-                                onclick="navigator.clipboard?.writeText('@Model.RequestId')">
-                            <i class="bi bi-clipboard me-1"></i>Copy
-                        </button>
-                    </div>
-                </div>
+            <div class="err-reqid">
+                <span class="err-reqid__label">
+                    <i class="bi bi-fingerprint" aria-hidden="true"></i>
+                    @Localizer["ErrRequestId"]
+                </span>
+                <code class="err-reqid__value">@Model.RequestId</code>
+                <button type="button"
+                        class="btn btn-sm btn-outline-secondary"
+                        data-copy="@Model.RequestId"
+                        data-done="@Localizer["ErrCopied"]">
+                    <i class="bi bi-clipboard me-1" aria-hidden="true"></i><span>@Localizer["ErrCopy"]</span>
+                </button>
             </div>
         }
 
-        <hr class="my-4" />
-
-        <div class="message-box message-box--current">
-            <div class="message-box__title">
-                <i class="bi bi-bug-fill me-2"></i>
+        <details class="err-dev">
+            <summary>
+                <i class="bi bi-bug-fill" aria-hidden="true"></i>
                 Development Mode
+            </summary>
+            <div class="err-dev__body">
+                <p>
+                    Swapping to <strong>Development</strong> environment will display more detailed information
+                    about the error that occurred.
+                </p>
+                <p>
+                    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
+                    It can result in displaying sensitive information from exceptions to end users.
+                </p>
+                <p>
+                    For local debugging, enable the <strong>Development</strong> environment by setting the
+                    <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
+                    and restarting the app.
+                </p>
             </div>
-
-            <p class="mb-2">
-                Swapping to <strong>Development</strong> environment will display more detailed information
-                about the error that occurred.
-            </p>
-
-            <p class="mb-2">
-                <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-                It can result in displaying sensitive information from exceptions to end users.
-            </p>
-
-            <p class="mb-0">
-                For local debugging, enable the <strong>Development</strong> environment by setting the
-                <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-                and restarting the app.
-            </p>
-        </div>
-
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
-            <a asp-controller="Home"
-               asp-action="Index"
-               class="btn btn-primary btn-lg tg-action-btn px-4">
-                <i class="bi bi-house-fill me-2"></i>
-                Go to Home
-            </a>
-
-            <button onclick="history.back()"
-                    class="btn btn-outline-secondary btn-lg px-4">
-                <i class="bi bi-arrow-left me-2"></i>
-                Go Back
-            </button>
-        </div>
-
+        </details>
     </div>
-
 </section>

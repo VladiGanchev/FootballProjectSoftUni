@@ -1,6 +1,7 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Email;
 using FootballProjectSoftUni.Core.Contracts.Notification;
 using FootballProjectSoftUni.Core.Contracts.TournamentReminder;
+using FootballProjectSoftUni.Core.Extensions;
 using FootballProjectSoftUni.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,81 +11,84 @@ namespace FootballProjectSoftUni.Core.Services.TournamentReminder
     {
         private readonly ApplicationDbContext data;
         private readonly INotificationService notificationService;
-        private readonly IEmailService emailService;
+        private readonly IEmailQueue emailQueue;
+        private readonly IReminderTexts texts;
 
         public TournamentReminderService(
             ApplicationDbContext data,
             INotificationService notificationService,
-            IEmailService emailService)
+            IEmailQueue emailQueue,
+            IReminderTexts texts)
         {
             this.data = data;
             this.notificationService = notificationService;
-            this.emailService = emailService;
+            this.emailQueue = emailQueue;
+            this.texts = texts;
         }
 
         public async Task Send24HourRemindersAsync()
         {
-            var now = DateTime.Now;
-            var from = now.AddHours(23);
-            var to = now.AddHours(25);
+            var now = BgTime.Now;
+            var until = now.AddHours(24);
 
-            var tournaments = await data.Tournaments
-                .Where(t => !t.ReminderSent
-                         && t.StartDate >= from
-                         && t.StartDate <= to)
+            // Less than 24 hours to the start and no reminder yet. (Not "exactly 23-25 hours": when the site
+            // was asleep at that moment, the reminder still goes out before the start instead of never.)
+            var due = await data.Tournaments
+                .Where(t => !t.ReminderSent && t.StartDate > now && t.StartDate <= until)
                 .Select(t => new
                 {
                     t.Id,
                     t.StartDate,
-                    CityName = t.TournamentCities
+                    City = t.TournamentCities
                         .Select(tc => tc.City.Name)
                         .FirstOrDefault()
                 })
                 .ToListAsync();
 
-            foreach (var t in tournaments)
+            foreach (var tournament in due)
             {
-                var cityName = string.IsNullOrWhiteSpace(t.CityName) ? "неизвестен град" : t.CityName;
+                // Marked before anything is sent: whatever fails below, nobody gets this reminder twice.
+                var entity = await data.Tournaments.FirstAsync(t => t.Id == tournament.Id);
+                entity.ReminderSent = true;
+                await data.SaveChangesAsync();
 
-                var userIds = await data.TournamentsParticipants
-                    .Where(tp => tp.TournamentId == t.Id)
+                var participantIds = await data.TournamentsParticipants
+                    .Where(tp => tp.TournamentId == tournament.Id)
                     .Select(tp => tp.ParticipantId)
                     .Distinct()
                     .ToListAsync();
 
-                if (userIds.Count == 0)
-                {
-                    var entityNoUsers = await data.Tournaments.FindAsync(t.Id);
-                    if (entityNoUsers != null) entityNoUsers.ReminderSent = true;
-                    continue;
-                }
-
                 var users = await data.Users
-                    .Where(u => userIds.Contains(u.Id))
+                    .Where(u => participantIds.Contains(u.Id))
                     .Select(u => new { u.Id, u.Email })
                     .ToListAsync();
 
-                var subject = "Напомняне за турнир";
-                var message =
-                    $"Напомняне: на {t.StartDate:dd.MM.yyyy} в {t.StartDate:HH:mm} " +
-                    $"имаш участие в турнир в {cityName}.";
+                // The language a coach paid in; everybody else (e.g. the referee) gets Bulgarian.
+                var englishUsers = await data.TournamentJoinPayments
+                    .Where(p => p.TournamentId == tournament.Id && p.Status == "Paid" && p.Culture == "en")
+                    .Select(p => p.UserId)
+                    .Distinct()
+                    .ToListAsync();
 
-                foreach (var u in users)
+                foreach (var user in users)
                 {
-                    await notificationService.CreateNotificationForUserAsync(u.Id, message);
+                    var text = texts.For(englishUsers.Contains(user.Id) ? "en" : "bg", tournament.City, tournament.StartDate);
 
-                    if (!string.IsNullOrWhiteSpace(u.Email))
+                    try
                     {
-                        await emailService.SendAsync(u.Email, subject, message);
+                        await notificationService.CreateNotificationForUserAsync(user.Id, text.Notification);
+                    }
+                    catch (Exception)
+                    {
+                        // The e-mail below still goes out; one failure must not stop the other participants.
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(user.Email))
+                    {
+                        emailQueue.Enqueue(user.Email, text.Subject, text.EmailHtml);
                     }
                 }
-
-                var entity = await data.Tournaments.FindAsync(t.Id);
-                if (entity != null)
-                    entity.ReminderSent = true;
             }
-
-            await data.SaveChangesAsync();
         }
     }
 }

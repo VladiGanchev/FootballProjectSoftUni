@@ -1,4 +1,4 @@
-﻿@using FootballProjectSoftUni.Core.Models.Referee;
+@using FootballProjectSoftUni.Core.Models.Referee;
 @model RefereeFormViewMOdel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
@@ -7,68 +7,161 @@
     ViewBag.Title = @Localizer["BecomeReferee"];
 }
 
-<section class="container py-4">
+<div class="tp-transfer">
 
-    <div class="text-center mb-4">
-        <h2 class="page-title mb-1">
-            <i class="bi bi-whistle-fill me-2"></i>
-            @ViewBag.Title
-        </h2>
-    </div>
+    <header class="tp-transfer__head">
+        <span class="tg-kicker">@Localizer["TpContractLabel"]</span>
+        <h1 class="tp-giant tp-giant--md"><span class="tp-hl">@ViewBag.Title</span></h1>
+        <p class="tp-lead">@Localizer["BRFill"]</p>
+    </header>
 
-    <div class="admin-form-card mx-auto">
+    @* Live preview card: a brand-new referee card *@
+    <aside class="tp-transfer__preview">
+        <div class="tp-preview-stage">
+            <span class="tp-burst" aria-hidden="true"></span>
 
-        <form asp-action="BecomeReferee" method="post" class="admin-form">
+            <div class="tp-fut tp-fut--rookie" data-tilt="14" aria-hidden="true">
+                <div class="tp-fut__rate">
+                    <span class="tp-fut__num" data-tp-bind="Experience" data-tp-empty="0">0</span>
+                    <span class="tp-fut__pos">@Localizer["TpPosRef"]</span>
+                    <span class="tp-fut__crest"><i class="bi bi-flag-fill"></i></span>
+                </div>
+                <div class="tp-fut__medal"><span data-tp-bind="Name" data-tp-mode="initials" data-tp-empty="?">?</span></div>
+                <div class="tp-fut__name" data-tp-bind="Name" data-tp-empty="@Localizer["BRFullName"]">@Localizer["BRFullName"]</div>
+                <ul class="tp-fut__stats">
+                    <li class="tp-fut__stat"><b data-tp-bind="Experience" data-tp-empty="0">0</b><small>@Localizer["TpFutExp"]</small></li>
+                    <li class="tp-fut__stat"><b data-tp-bind="Birthdate" data-tp-mode="age" data-tp-empty="–">–</b><small>@Localizer["TpFutAge"]</small></li>
+                    <li class="tp-fut__stat">
+                        <span class="tp-fut__stars">
+                            @for (int s = 1; s <= 5; s++)
+                            {
+                                <i class="bi bi-star-fill is-off"></i>
+                            }
+                        </span>
+                        <small>@Localizer["TpTierNew"]</small>
+                    </li>
+                </ul>
+            </div>
+        </div>
 
-            <div class="mb-3">
-                <label asp-for="@Model.Name" class="form-label fw-bold">
-                    <i class="bi bi-person-fill me-2"></i>@Localizer["BRFullName"]
-                </label>
+        <p class="tp-preview-hint"><i class="bi bi-magic" aria-hidden="true"></i>@Localizer["TpLiveHint"]</p>
+    </aside>
 
-                <input asp-for="@Model.Name"
-                       class="form-control tg-input"
-                       aria-required="true"
-                        />
+    @* The contract *@
+    <div class="tp-transfer__body">
+        <form asp-action="BecomeReferee" method="post" class="tp-paper">
 
-                <span asp-validation-for="@Model.Name" class="text-danger small"></span>
+            <div class="tp-paper__top">
+                <span><b>Tournament Galaxy</b> &middot; @Localizer["TpContractLabel"]</span>
+                <span>@BgTime.Today.ToString("dd.MM.yyyy")</span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="@Model.Birthdate" class="form-label fw-bold">
-                    <i class="bi bi-calendar-event-fill me-2"></i>@Localizer["BRBirthdate"]
-                </label>
+            <div class="tp-clause">
+                <span class="tp-clause__no" aria-hidden="true">§1</span>
+                <div>
+                    <label asp-for="@Model.Name" class="form-label">
+                        <i class="bi bi-person-fill" aria-hidden="true"></i>@Localizer["BRFullName"]
+                    </label>
 
-                <input asp-for="@Model.Birthdate"
-                       class="form-control tg-input"
-                       aria-required="true"
-                       value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")" />
+                    <input asp-for="@Model.Name"
+                           class="form-control form-control-lg"
+                           aria-required="true"
+                           autocomplete="name" />
 
-                <span asp-validation-for="@Model.Birthdate" class="text-danger small"></span>
+                    <span asp-validation-for="@Model.Name" class="text-danger small"></span>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="@Model.Experience" class="form-label fw-bold">
-                    <i class="bi bi-award-fill me-2"></i>@Localizer["BRExperience"]
-                </label>
+            <div class="tp-clause">
+                <span class="tp-clause__no" aria-hidden="true">§2</span>
+                <div>
+                    <label asp-for="@Model.Birthdate" class="form-label">
+                        <i class="bi bi-calendar-event-fill" aria-hidden="true"></i>@Localizer["BRBirthdate"]
+                    </label>
 
-                <input asp-for="@Model.Experience"
-                       class="form-control tg-input" />
-
-                <span asp-validation-for="@Model.Experience" class="text-danger small"></span>
+                    @* Calendar without a time (the same value in every language); referees are 18+. *@
+                    <input asp-for="@Model.Birthdate"
+                           type="date"
+                           class="form-control form-control-lg"
+                           aria-required="true"
+                           min="1920-01-01"
+                           max="@BgTime.Today.AddYears(-18).ToDateInput()" />
+                    <span asp-validation-for="@Model.Birthdate" class="text-danger small"></span>
+                </div>
             </div>
 
-            <button type="submit"
-                    class="btn btn-warning btn-lg w-100 fw-bold tg-action-btn">
-                <i class="bi bi-check-circle-fill me-2"></i>
-                @Localizer["BRApply"]
-            </button>
+            <div class="tp-clause">
+                <span class="tp-clause__no" aria-hidden="true">§3</span>
+                <div>
+                    <label asp-for="@Model.Experience" class="form-label">
+                        <i class="bi bi-award-fill" aria-hidden="true"></i>@Localizer["BRExperience"]
+                    </label>
+
+                    <input asp-for="@Model.Experience"
+                           class="form-control form-control-lg" />
+
+                    <span asp-validation-for="@Model.Experience" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="tp-paper__sign">
+                <div class="tp-sig" aria-hidden="true">
+                    <span class="tp-sig__val" data-tp-bind="Name" data-tp-empty="&nbsp;">&nbsp;</span>
+                    <span class="tp-sig__line">@Localizer["TpDecSignature"]</span>
+                </div>
+
+                <button type="submit" class="btn btn-accent btn-lg">
+                    <i class="bi bi-pen-fill" aria-hidden="true"></i>
+                    @Localizer["BRApply"]
+                </button>
+            </div>
 
         </form>
-
     </div>
 
-</section>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Live card preview: [data-tp-bind="inputId"] mirrors that input
+        (function () {
+            var outs = document.querySelectorAll("[data-tp-bind]");
+
+            function initials(s) {
+                var p = s.split(/\s+/).filter(Boolean);
+                if (!p.length) { return ""; }
+                return (p[0].charAt(0) + (p.length > 1 ? p[p.length - 1].charAt(0) : "")).toUpperCase();
+            }
+
+            // "1990-04-15" from the date picker (older "15.04.1990" style values too) -> full years
+            function age(s) {
+                var iso = /^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+                var m = iso ? [s, iso[3], iso[2], iso[1]] : /^(\d{1,2})\D(\d{1,2})\D(\d{4})/.exec(s);
+                if (!m) { return ""; }
+                var born = new Date(+m[3], +m[2] - 1, +m[1]);
+                var now = new Date();
+                var a = now.getFullYear() - born.getFullYear();
+                if (now.getMonth() < born.getMonth() || (now.getMonth() === born.getMonth() && now.getDate() < born.getDate())) { a--; }
+                return a > 0 && a < 120 ? String(a) : "";
+            }
+
+            function render() {
+                outs.forEach(function (out) {
+                    var src = document.getElementById(out.getAttribute("data-tp-bind"));
+                    if (!src) { return; }
+                    var v = (src.value || "").trim();
+                    var mode = out.getAttribute("data-tp-mode");
+                    if (mode === "initials") { v = initials(v); }
+                    if (mode === "age") { v = age(v); }
+                    out.textContent = v || out.getAttribute("data-tp-empty") || "";
+                });
+            }
+
+            document.addEventListener("input", render);
+            document.addEventListener("change", render);
+            render();
+        })();
+    </script>
 }

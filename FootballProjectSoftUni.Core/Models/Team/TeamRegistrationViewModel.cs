@@ -29,6 +29,11 @@ namespace FootballProjectSoftUni.Core.Models.Team
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+            if (Players.Count > MaxPlayersPerTeam)
+            {
+                yield return new ValidationResult($"A team can have at most {MaxPlayersPerTeam} players.");
+            }
+
             var filled = Players.Count(p => !string.IsNullOrWhiteSpace(p?.Name));
 
             if (filled < 6)

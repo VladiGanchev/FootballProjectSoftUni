@@ -2,8 +2,10 @@
 using FootballProjectSoftUni.Core.Contracts.Home;
 using FootballProjectSoftUni.Core.Contracts.Team;
 using FootballProjectSoftUni.Core.Contracts.Tournament;
+using FootballProjectSoftUni.Extensions;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
 using FootballProjectSoftUni.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,9 +40,43 @@ namespace FootballProjectSoftUni.Controllers
             return View(homePageModel);
         }
 
+        [HttpGet]
+        public IActionResult Faq()
+        {
+            return View();
+        }
+
+        // Terms.cshtml / Privacy.cshtml are in Bulgarian; Terms.en.cshtml / Privacy.en.cshtml are picked for English.
+        [HttpGet]
+        public IActionResult Terms()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        // The error page is shown again for the failed request - a POST when a form was rejected - so it must not
+        // check the form token itself (that check failing again used to leave a blank page).
+        [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error(int statusCode)
         {
+            if (statusCode == 400 && HttpContext.Items.ContainsKey(AntiforgeryFailureMarker.ItemKey))
+            {
+                // Back to the form (a fresh copy with a new token), when it came from this site.
+                var referer = Request.Headers["Referer"].ToString();
+                var refererUri = Uri.TryCreate(referer, UriKind.Absolute, out var uri) && uri.Host == Request.Host.Host
+                    ? uri.PathAndQuery
+                    : null;
+
+                ViewBag.RetryUrl = refererUri != null && Url.IsLocalUrl(refererUri) ? refererUri : Url.Action(nameof(Index));
+                return View("ErrorFormExpired");
+            }
 
             if (statusCode == 401)
             {
@@ -52,6 +88,11 @@ namespace FootballProjectSoftUni.Controllers
                 return View("Error404");
             }
 
+            if (statusCode == 429)
+            {
+                return View("Error429");
+            }
+
             return View();
         }
 
@@ -61,10 +102,12 @@ namespace FootballProjectSoftUni.Controllers
             Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,
                 CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+                // Only the server reads it; Secure and SameSite come from the cookie policy (Program.cs).
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1), HttpOnly = true, IsEssential = true }
             );
 
-            return LocalRedirect(string.IsNullOrWhiteSpace(returnUrl) ? "/" : returnUrl);
+            // Only addresses of this site (a foreign returnUrl used to end with an error page).
+            return LocalRedirect(Url.IsLocalUrl(returnUrl) ? returnUrl : "/");
         }
     }
 }

@@ -1,0 +1,70 @@
+@page
+@model RegisterConfirmationModel
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["RCTitle"].Value;
+}
+
+<section class="auth-solo">
+    <svg class="auth-solo__ball" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <circle cx="50" cy="50" r="46" />
+        <polygon points="50,33 66,45 60,64 40,64 34,45" />
+        <path d="M50 33 L50 6 M66 45 L92 36 M60 64 L76 86 M40 64 L24 86 M34 45 L8 36" />
+    </svg>
+
+    <div class="auth-solo__card auth-solo__card--center" data-reveal>
+        <div class="auth-badge auth-badge--fly" aria-hidden="true">
+            <span class="auth-badge__trail"><span></span><span></span><span></span></span>
+            <i class="bi bi-envelope-check-fill auth-badge__icon"></i>
+        </div>
+
+        <div class="auth-solo__head">
+            <span class="tg-sticker tg-sticker--mint auth-solo__sticker" style="--rot:3deg">@Localizer["AuthPassSent"]</span>
+
+            <ol class="auth-pass">
+                <li class="is-done">
+                    <span class="auth-pass__dot" aria-hidden="true"><i class="bi bi-check-lg"></i></span>
+                    <span>@Localizer["RCStepAccount"]</span>
+                </li>
+                <li class="is-current" aria-current="step">
+                    <span class="auth-pass__dot" aria-hidden="true"><i class="bi bi-inbox-fill"></i></span>
+                    <span>@Localizer["AuthStepInbox"]</span>
+                </li>
+                <li>
+                    <span class="auth-pass__dot" aria-hidden="true"><i class="bi bi-trophy-fill"></i></span>
+                    <span>@Localizer["AuthStepDone"]</span>
+                </li>
+            </ol>
+
+            <h1 class="auth-solo__title">@Localizer["RCTitle"]</h1>
+            <p class="auth-solo__sub">
+                @if (string.IsNullOrEmpty(Model.Email))
+                {
+                    <text>@Localizer["RCSent"]</text>
+                }
+                else
+                {
+                    <text>@Localizer["RCSentTo"] <b>@Model.Email</b>.</text>
+                }
+                @Localizer["RCOpenIt"]
+            </p>
+        </div>
+
+        <p class="auth-note">
+            <i class="bi bi-lightbulb-fill" aria-hidden="true"></i>
+            <span>@Localizer["AuthCheckSpam"]</span>
+        </p>
+
+        <a asp-page="./Login" class="btn btn-primary btn-lg auth-btn">
+            <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
+            <span>@Localizer["FPCBackToLogin"]</span>
+        </a>
+
+        <div class="auth-foot auth-foot--center">
+            <a class="auth-back" asp-page="./ResendEmailConfirmation">
+                <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+                <span>@Localizer["RCResend"]</span>
+            </a>
+        </div>
+    </div>
+</section>

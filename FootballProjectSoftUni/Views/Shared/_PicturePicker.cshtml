@@ -1,0 +1,34 @@
+@model PicturePickerViewModel
+@using FootballProjectSoftUni.Core.Services.Gallery
+@using FootballProjectSoftUni.Extensions
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
+@* A picture from the computer (not a link to another site). The browser checks the type and the size before
+   anything is sent (picture-picker.js) and the server checks the file again. The native input stays in the
+   page for the keyboard and the form validation; the button is its label. *@
+<div class="tg-picker"
+     data-picture-picker
+     data-max-bytes="@GalleryPicture.MaxFileBytes"
+     data-msg-type="@Localizer["GLNotAllowed"]"
+     data-msg-size="@Localizer["GLTooLarge"]">
+    @if (Model.Required)
+    {
+        <input type="file" name="image" id="image" class="tg-picker__input" accept="@UploadedPicture.Accept"
+               data-val="true" data-val-required="@Localizer["PicRequired"]" />
+    }
+    else
+    {
+        <input type="file" name="image" id="image" class="tg-picker__input" accept="@UploadedPicture.Accept" />
+    }
+    <label for="image" class="btn btn-outline-dark tg-picker__btn">
+        <i class="bi bi-upload" aria-hidden="true"></i>@Localizer["PicChoose"]
+    </label>
+    <span class="tg-picker__name" data-picture-name>@Localizer["PicNone"]</span>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(Model.Hint))
+{
+    <div class="tg-field-hint">@Model.Hint</div>
+}
+
+@Html.ValidationMessage("image", new { @class = "text-danger small", data_picture_error = "" })

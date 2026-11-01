@@ -18,5 +18,11 @@ namespace FootballProjectSoftUni.Infrastructure.Data.Models
         [Required]
         [MaxLength(UserLastNameMaxLength)]
         public string LastName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The user asked for an e-mail when a new tournament is created in a city where they played. Off unless
+        /// they turn it on: such e-mails advertise a paid service and need the person's consent.
+        /// </summary>
+        public bool NewTournamentEmails { get; set; }
     }
 }

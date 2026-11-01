@@ -1,5 +1,6 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.City;
 using FootballProjectSoftUni.Core.Contracts.Tournament;
+using FootballProjectSoftUni.Core.Extensions;
 using FootballProjectSoftUni.Core.Models.City;
 using FootballProjectSoftUni.Infrastructure.Data;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
@@ -43,7 +44,7 @@ namespace FootballProjectSoftUni.Core.Services.City
 
         public async Task<IEnumerable<CityViewModel>> AllCitiesAsync(int? page)
         {
-            var pageNumber = page ?? 1;
+            var pageNumber = Paging.ValidPage(page);
             var pageSize = 9;
 
             return await data.Cities
@@ -108,6 +109,12 @@ namespace FootballProjectSoftUni.Core.Services.City
             if (city == null)
                 return false;
 
+            // All or nothing: either the city and all its tournaments are deleted, or nothing is.
+            // (The in-memory test database has no transactions.)
+            using var transaction = data.Database.IsRelational()
+                ? await data.Database.BeginTransactionAsync()
+                : null;
+
             var tournamentIds = await data.TournamentsCities
                 .Where(tc => tc.CityId == cityId)
                 .Select(tc => tc.TournamentId)
@@ -125,12 +132,39 @@ namespace FootballProjectSoftUni.Core.Services.City
             if (stillHasLinks)
                 return false;
 
+            // The city ranking ("best teams") belongs to the city; the teams themselves stay.
+            var bestTeams = await data.CityBestTeams
+                .Where(b => b.CityId == cityId)
+                .ToListAsync();
+
+            data.CityBestTeams.RemoveRange(bestTeams);
             data.Cities.Remove(city);
             await data.SaveChangesAsync();
+
+            if (transaction != null)
+            {
+                await transaction.CommitAsync();
+            }
 
             return true;
         }
 
+        public async Task<string?> ChangeCityImageAsync(int id, string imageUrl)
+        {
+            var city = await data.Cities.FindAsync(id);
+
+            if (city == null)
+            {
+                return null;
+            }
+
+            var oldImageUrl = city.ImageUrl;
+            city.ImageUrl = imageUrl;
+
+            await data.SaveChangesAsync();
+
+            return oldImageUrl;
+        }
 
         public async Task<List<BestTeamViewModel>> GetBestTeamsAsync(int cityId)
         {

@@ -1,53 +1,150 @@
-﻿@model IEnumerable<FootballProjectSoftUni.Core.Models.Partner.PartnerViewModel>
+@using FootballProjectSoftUni.Extensions
+@using FootballProjectSoftUni.Core.Models.Partner
+@model IEnumerable<FootballProjectSoftUni.Core.Models.Partner.PartnerViewModel>
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
-
 
 @{
     ViewData["Title"] = "Our Partners";
+    ViewData["FullWidth"] = true;
+
+    var partners = Model?.ToList() ?? new List<PartnerViewModel>();
+    // repeat logos so each tape is long enough for a seamless loop
+    var reps = partners.Count == 0 ? 0 : Math.Max(1, (int)Math.Ceiling(10.0 / partners.Count));
+    var reversed = Enumerable.Reverse(partners).ToList();
+    var rotations = new[] { "-2deg", "1.5deg", "-1deg", "2.5deg", "-2.5deg", "1deg", "0deg" };
+
+    string Initial(string name) => string.IsNullOrWhiteSpace(name) ? "?" : name.Trim()[0].ToString().ToUpperInvariant();
 }
 
-<section class="container py-4">
+<div class="container-xl cp-page pb-0">
 
-    @if (Model.Any())
+    @if (TempData["PaymentMessage"] != null)
     {
-        <div class="row g-4 justify-content-center">
+        var type = TempData["PaymentType"]?.ToString() ?? "info";
+        <div class="cp-alerts">
+            <div class="alert alert-@type mb-0" role="alert">
+                <i class="bi bi-info-circle-fill me-2" aria-hidden="true"></i>
+                @TempData["PaymentMessage"]
+            </div>
+        </div>
+    }
 
-            @foreach (var partner in Model)
+    <section class="cp-hero" aria-labelledby="partnersTitle">
+        <div class="cp-hero__top">
+
+            @if (User.IsAdmin())
             {
-                <div class="col-6 col-md-4 col-lg-3 col-xl-2">
-
-                    <div class="partner-card text-center">
-
-                        <div class="partner-logo-wrapper">
-                            <img src="@partner.ImageUrl"
-                                 alt="@partner.Name"
-                                 class="partner-logo" />
-                        </div>
-
-                        <h6 class="partner-name mt-3">
-                            @partner.Name
-                        </h6>
-
-                    </div>
-
+                <div class="cp-admin">
+                    <a asp-controller="Partner" asp-action="AddPartner" class="btn btn-sun btn-sm">
+                        <i class="bi bi-plus-lg" aria-hidden="true"></i>@Localizer["DAddPartner"]
+                    </a>
+                    <a asp-controller="Partner" asp-action="DeletePartner" class="btn btn-outline-dark btn-sm">
+                        <i class="bi bi-person-x-fill" aria-hidden="true"></i>@Localizer["DDeletePartner"]
+                    </a>
+                    <a asp-controller="Partner" asp-action="ChangePicture" class="btn btn-outline-dark btn-sm">
+                        <i class="bi bi-image-fill" aria-hidden="true"></i>@Localizer["PicChangeLogoShort"]
+                    </a>
                 </div>
             }
-
         </div>
-    }
-    else
-    {
-        <div class="empty-state text-center">
 
-            <i class="bi bi-people display-4 text-muted"></i>
+        <h1 class="cp-mega cp-mega--partners" id="partnersTitle" data-split>
+            @Localizer["DPartners"]
+            @if (partners.Any())
+            {
+                <sup class="cp-mega__sup">@partners.Count</sup>
+            }
+        </h1>
 
-            <h5 class="mt-3">@Localizer["AllNoPartners"]</h5>
+        <p class="cp-lead">@Localizer["CPPartnersLead"]</p>
+    </section>
+</div>
 
-            <p class="text-muted">
-                @Localizer["AllPartnersWillShow"]
-            </p>
-
+@if (partners.Any())
+{
+    @* ============ Two crossed sponsor tapes, running in opposite directions ============ *@
+    <div class="cp-tapes" aria-hidden="true">
+        <div class="tg-marquee tg-marquee--ink cp-tape cp-tape--a" data-marquee style="--speed:46s">
+            <div class="tg-marquee__track">
+                @for (int r = 0; r < reps; r++)
+                {
+                    foreach (var p in partners)
+                    {
+                        <span class="tg-marquee__item cp-mq__item">
+                            <span class="cp-mq__logo">
+                                <span class="cp-mq__initial">@Initial(p.Name)</span>
+                                <img src="@p.ImageUrl" alt="" draggable="false" data-hide-on-error />
+                            </span>
+                            @p.Name
+                        </span>
+                    }
+                }
+            </div>
         </div>
-    }
 
-</section>
+        <div class="tg-marquee tg-marquee--sun cp-tape cp-tape--b" data-marquee style="--speed:54s">
+            <div class="tg-marquee__track">
+                @for (int r = 0; r < reps; r++)
+                {
+                    foreach (var p in reversed)
+                    {
+                        <span class="tg-marquee__item cp-mq__item">
+                            <span class="cp-mq__logo">
+                                <span class="cp-mq__initial">@Initial(p.Name)</span>
+                                <img src="@p.ImageUrl" alt="" draggable="false" data-hide-on-error />
+                            </span>
+                            @p.Name
+                        </span>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    @* ============ Interactive sticker wall ============ *@
+    <div class="container-xl">
+        <section aria-labelledby="wallTitle">
+            <div class="cp-wall-head">
+                <h2 class="cp-wall-title" id="wallTitle">@Localizer["CPPartnersWall"]</h2>
+                <span class="tg-sticker tg-sticker--mint" style="--rot:3deg">
+                    <i class="bi bi-people-fill" aria-hidden="true"></i>@partners.Count
+                </span>
+            </div>
+
+            <ul class="cp-wall">
+                @for (int i = 0; i < partners.Count; i++)
+                {
+                    var partner = partners[i];
+                    var tileClass = "cp-tile"
+                        + (i % 7 == 0 ? " cp-tile--xl" : (i % 7 == 4 ? " cp-tile--wide" : ""))
+                        + (i % 5 == 2 ? " cp-tile--mint" : (i % 5 == 4 ? " cp-tile--lilac" : ""));
+                    var tileStyle = "--rot:" + rotations[i % rotations.Length] + ";--i:" + i;
+
+                    <li class="@tileClass" style="@tileStyle" data-tilt="14" data-spotlight>
+                        <span class="cp-tile__no" aria-hidden="true">@((i + 1).ToString("00"))</span>
+
+                        <div class="cp-tile__logo">
+                            <img src="@partner.ImageUrl"
+                                 alt=""
+                                 loading="lazy"
+                                 data-broken-parent />
+                            <span class="cp-tile__initial" aria-hidden="true">@Initial(partner.Name)</span>
+                        </div>
+
+                        <h3 class="cp-tile__name">@partner.Name</h3>
+                    </li>
+                }
+            </ul>
+        </section>
+    </div>
+}
+else
+{
+    <div class="container-xl">
+        <div class="tg-empty cp-empty">
+            <span class="tg-empty__icon"><i class="bi bi-people" aria-hidden="true"></i></span>
+            <h5>@Localizer["AllNoPartners"]</h5>
+            <p class="text-muted mb-0">@Localizer["AllPartnersWillShow"]</p>
+        </div>
+    </div>
+}

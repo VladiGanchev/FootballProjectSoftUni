@@ -1,69 +1,160 @@
-﻿@page
+@page
 @model LoginModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
     ViewData["Title"] = "Log in";
+    ViewData["FullWidth"] = true;
+
+    // 4-3-3 vs 4-3-3 on the decorative pitch (same shape as the landing page so the ball path matches)
+    var home = new (int X, int Y)[] { (5, 50), (18, 18), (17, 39), (17, 61), (18, 82), (31, 30), (29, 50), (31, 70), (43, 20), (46, 50), (43, 80) };
+    var away = new (int X, int Y)[] { (95, 50), (82, 22), (83, 42), (83, 58), (82, 78), (69, 28), (71, 50), (69, 72), (57, 25), (55, 50), (57, 75) };
 }
 
-<div class="auth-wrap">
-    <div class="auth-card">
-        <div class="auth-head text-center">
-            <div class="auth-logo">
-                <i class="bi bi-trophy-fill"></i>
-            </div>
-            <h1 class="auth-title mb-1">@Localizer["LoginLogin"]</h1>
-            <p class="auth-subtitle mb-0">@Localizer["LoginWelcomeBack"]</p>
-        </div>
+<section class="auth-split auth-split--login">
 
-        <hr class="auth-hr" />
+    @* ============ LEFT HALF: live pitch ============ *@
+    <div class="auth-pitch">
+        <div class="auth-pitch__inner">
 
-        <form id="account" method="post" class="auth-form">
-            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+            <p class="auth-slogan" data-split>
+                <span class="auth-slogan__l1">@Localizer["AuthLoginSlogan1"]</span>
+                <span class="auth-slogan__l2">@Localizer["AuthLoginSlogan2"]</span>
+            </p>
 
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control auth-input" autocomplete="username" aria-required="true" placeholder="Email" />
-                <label asp-for="Input.Email" class="form-label">
-                    <i class="bi bi-envelope-fill me-2"></i>@Localizer["LoginEmail"]
-                </label>
-                <span asp-validation-for="Input.Email" class="text-danger small"></span>
-            </div>
+            <p class="auth-pitch__lead">@Localizer["HeroTagline"]</p>
 
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control auth-input" autocomplete="current-password" aria-required="true" placeholder="Password" />
-                <label asp-for="Input.Password" class="form-label">
-                    <i class="bi bi-lock-fill me-2"></i>@Localizer["LoginPassword"]
-                </label>
-                <span asp-validation-for="Input.Password" class="text-danger small"></span>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="form-check">
-                    <input class="form-check-input" asp-for="Input.RememberMe" />
-                    <label asp-for="Input.RememberMe" class="form-check-label">
-                        @Html.DisplayNameFor(m => m.Input.RememberMe)
-                    </label>
+            <div class="auth-stage" aria-hidden="true">
+                <div class="hm-field auth-turf">
+                    <svg class="tg-pitch-lines" viewBox="0 0 100 64" preserveAspectRatio="none">
+                        <rect x="2" y="2" width="96" height="60" rx="1" />
+                        <line x1="50" y1="2" x2="50" y2="62" />
+                        <circle cx="50" cy="32" r="8" />
+                        <rect x="2" y="17" width="13" height="30" />
+                        <rect x="2" y="25" width="5" height="14" />
+                        <rect x="85" y="17" width="13" height="30" />
+                        <rect x="93" y="25" width="5" height="14" />
+                    </svg>
+                    @foreach (var p in home)
+                    {
+                        <span class="hm-dot hm-dot--home" style="left:@(p.X)%;top:@(p.Y)%"></span>
+                    }
+                    @foreach (var p in away)
+                    {
+                        <span class="hm-dot hm-dot--away" style="left:@(p.X)%;top:@(p.Y)%"></span>
+                    }
+                    <span class="hm-ball"></span>
                 </div>
 
-                <a id="forgot-password" class="auth-link" asp-page="./ForgotPassword">
-                    @Localizer["LoginForgotPass"]
-                </a>
+                <span class="tg-sticker auth-float auth-float--a" style="--rot:-6deg">@Localizer["HomeHeadline1"]</span>
+                <span class="tg-sticker tg-sticker--coral auth-float auth-float--b" style="--rot:5deg">@Localizer["HomeHeadline2"]</span>
+                <span class="tg-sticker tg-sticker--mint auth-float auth-float--c" style="--rot:-3deg">@Localizer["HomeHeadline3"]</span>
             </div>
-
-            <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary auth-btn">
-                <i class="bi bi-box-arrow-in-right me-2"></i>@Localizer["LoginLogin"]
-            </button>
-
-            <div class="text-center mt-3">
-                <span class="text-muted">@Localizer["LoginNoAccount"]</span>
-                <a class="auth-link ms-1" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">
-                    @Localizer["LoginRegister"]
-                </a>
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+
+    @* ============ RIGHT HALF: the form ============ *@
+    <div class="auth-side">
+        <div class="auth-side__inner">
+            <nav class="tg-switch auth-switch" aria-label="@Localizer["LGLogin"] / @Localizer["LGRegister"]">
+                <span class="is-active" aria-current="page">
+                    <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>@Localizer["LGLogin"]
+                </span>
+                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">
+                    <i class="bi bi-person-plus-fill" aria-hidden="true"></i>@Localizer["LGRegister"]
+                </a>
+            </nav>
+
+            <div class="auth-card" data-reveal>
+                <span class="tg-sticker tg-sticker--coral auth-card__kicker" style="--rot:5deg">
+                    <i class="bi bi-stopwatch-fill" aria-hidden="true"></i>@Localizer["HomeTicketKickoff"]
+                </span>
+
+                <h1 class="auth-card__title">@Localizer["LoginLogin"]</h1>
+                <p class="auth-card__sub">@Localizer["LoginWelcomeBack"]</p>
+
+                <form id="account" method="post" class="auth-form">
+                    <div asp-validation-summary="ModelOnly" class="auth-summary alert alert-danger" role="alert"></div>
+
+                    @if (Model.NotConfirmed)
+                    {
+                        <a class="btn btn-outline-dark auth-btn" asp-page="./ResendEmailConfirmation" asp-route-email="@Model.Input.Email">
+                            <i class="bi bi-envelope-arrow-up-fill" aria-hidden="true"></i>
+                            <span>@Localizer["RECSend"]</span>
+                        </a>
+                    }
+
+                    <div class="auth-field">
+                        <label asp-for="Input.Email" class="auth-label">@Localizer["LoginEmail"]</label>
+                        <div class="auth-input-wrap">
+                            <i class="bi bi-envelope-fill auth-input-icon" aria-hidden="true"></i>
+                            <input asp-for="Input.Email" class="form-control auth-input" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                        </div>
+                        <span asp-validation-for="Input.Email" class="auth-error text-danger"></span>
+                    </div>
+
+                    <div class="auth-field">
+                        <label asp-for="Input.Password" class="auth-label">@Localizer["LoginPassword"]</label>
+                        <div class="auth-input-wrap">
+                            <i class="bi bi-lock-fill auth-input-icon" aria-hidden="true"></i>
+                            <input asp-for="Input.Password" class="form-control auth-input auth-input--pw" autocomplete="current-password" aria-required="true" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+                            <button type="button" class="auth-eye" data-auth-toggle aria-pressed="false" aria-label="@Localizer["AuthShowPassword"]" title="@Localizer["AuthShowPassword"]">
+                                <i class="bi bi-eye-fill" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Input.Password" class="auth-error text-danger"></span>
+                    </div>
+
+                    <div class="auth-row">
+                        <div class="form-check">
+                            <input class="form-check-input" asp-for="Input.RememberMe" />
+                            <label asp-for="Input.RememberMe" class="form-check-label">
+                                @Html.DisplayNameFor(m => m.Input.RememberMe)
+                            </label>
+                        </div>
+
+                        <a id="forgot-password" class="auth-link" asp-page="./ForgotPassword">
+                            @Localizer["LoginForgotPass"]
+                        </a>
+                    </div>
+
+                    <button id="login-submit" type="submit" class="btn btn-primary btn-lg auth-btn">
+                        <span>@Localizer["LoginLogin"]</span>
+                        <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    </button>
+                </form>
+
+                <div class="auth-foot">
+                    <span>@Localizer["LoginNoAccount"]</span>
+                    <a class="auth-foot__link" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">
+                        @Localizer["LoginRegister"]<i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    </a>
+                </div>
+
+                <div class="auth-foot">
+                    <span>@Localizer["LoginNoLink"]</span>
+                    <a class="auth-foot__link" asp-page="./ResendEmailConfirmation">
+                        @Localizer["LoginNoLinkSend"]<i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelectorAll('[data-auth-toggle]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var input = btn.parentElement.querySelector('input');
+                if (!input) { return; }
+                var show = input.type === 'password';
+                input.type = show ? 'text' : 'password';
+                btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+                var icon = btn.querySelector('i');
+                if (icon) { icon.className = show ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'; }
+            });
+        });
+    </script>
 }

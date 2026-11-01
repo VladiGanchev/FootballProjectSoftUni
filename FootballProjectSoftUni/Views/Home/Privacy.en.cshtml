@@ -1,0 +1,140 @@
+@* Privacy Policy in English. The Bulgarian version is Privacy.cshtml: a change goes into both files. *@
+@{
+    ViewData["Title"] = "Privacy Policy";
+}
+
+<article class="tg-legal">
+    <header class="tg-page-head">
+        <div>
+            <h1 class="tg-page-head__title">Privacy Policy</h1>
+            <p class="tg-page-head__sub">Last updated: 01.11.2026</p>
+        </div>
+    </header>
+
+    <section>
+        <h2>1. Who processes your data</h2>
+        <p>The controller of your personal data is:</p>
+        <partial name="_LegalOperator" />
+        <p>For questions and requests about your personal data, write through "Contact the organisers" in your profile or to the e-mail address above.</p>
+    </section>
+
+    <section>
+        <h2>2. What data we collect</h2>
+        <ul>
+            <li><strong>Account:</strong> first name, last name, e-mail and password (we keep only an encrypted fingerprint of the password, not the password itself).</li>
+            <li><strong>Coach:</strong> the name you enter and your years of experience. <strong>Referee:</strong> name, date of birth (to check the age) and years of experience.</li>
+            <li><strong>Team:</strong> the team name and the players' names entered by the coach.</li>
+            <li>
+                <strong>Payments:</strong> amount, status, dates, the payment identifiers at Stripe, the language of the payment,
+                and when and from which IP address the participation declaration was accepted. Card details are entered directly
+                at Stripe and never reach us.
+            </li>
+            <li><strong>Activity on the website:</strong> ratings of and comments on referees, messages to the organisers, notifications.</li>
+            <li><strong>Pictures</strong> from the tournaments in the gallery.</li>
+            <li>
+                <strong>Technical data:</strong> cookies (see section 7); the IP address used to limit sign-in attempts (kept only
+                in the server's memory for a few minutes); the server logs at the hosting provider.
+            </li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>3. What we use it for and on what legal basis</h2>
+        <ul>
+            <li>
+                Account, entering tournaments, running them and the messages about them (e-mail confirmation, password reset,
+                payment, reminder, cancellation, change of date) – <em>performance of the contract</em> (Art. 6(1)(b) GDPR).
+            </li>
+            <li>
+                Payments, refunds and accounting records – <em>the contract</em> and a <em>legal obligation</em> under accounting
+                and tax law (Art. 6(1)(b) and (c)).
+            </li>
+            <li>
+                E-mails about new tournaments – <em>your consent</em> (Art. 6(1)(a)). You give it with a tick when registering or
+                in "My Profile", and you can withdraw it at any time – in your profile or with the link in every such e-mail.
+            </li>
+            <li>
+                Results and rankings, the names of coaches and referees (for signed-in users), ratings and comments, pictures
+                from the tournaments – our <em>legitimate interest</em> in presenting the tournaments (Art. 6(1)(f)). You can
+                object (section 8).
+            </li>
+            <li>Protection against abuse (limiting sign-in attempts, locking accounts after wrong passwords) – <em>legitimate interest</em>.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>4. Who sees the data</h2>
+        <ul>
+            <li><strong>All visitors:</strong> team names, results, rankings and the pictures in the gallery.</li>
+            <li><strong>Signed-in users:</strong> also the coaches' names in the rankings, the referees' names, and the ratings of and comments on them (with the author's name).</li>
+            <li><strong>The organisers:</strong> the data needed to run the tournaments and to answer messages.</li>
+            <li>
+                <strong>Processors acting for us:</strong> Stripe (payments; Stripe Payments Europe, Ltd., Ireland), Google
+                (sending e-mails through Gmail) and the hosting provider where the website and its database are kept. Stripe and
+                Google may also process data in the USA – based on the EU–US Data Privacy Framework or standard contractual clauses.
+            </li>
+            <li>We do not sell data or use it for advertising. We give it to public authorities only when the law requires it.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>5. How long we keep it</h2>
+        <ul>
+            <li>
+                Your account and the data linked to it – until you delete the account. Deleting it removes the account, its
+                roles, the players, your messages, ratings and comments; the team name stays only in tournaments already
+                played and in the rankings.
+            </li>
+            <li>Payments – as long as accounting and tax law require, also after the account is deleted.</li>
+            <li>Pictures – until you ask for them to be taken down or until the tournament is deleted.</li>
+            <li>Technical records of sent e-mails – up to 24 hours after sending.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>6. Security</h2>
+        <p>
+            The website works only over a secure connection (HTTPS), passwords are stored encrypted, and access to the data is
+            limited to the organisers.
+        </p>
+    </section>
+
+    <section>
+        <h2>7. Cookies</h2>
+        <p>The website uses only necessary cookies – no analytics or advertising cookies – so it does not ask for consent to them:</p>
+        <ul>
+            <li><code>.AspNetCore.Identity.Application</code> – keeps you signed in;</li>
+            <li><code>.AspNetCore.Antiforgery.*</code> – protects the forms against forgery;</li>
+            <li><code>.AspNetCore.Culture</code> – the language you chose (1 year);</li>
+            <li><code>.AspNetCore.Mvc.CookieTempDataProvider</code> – short messages between two pages.</li>
+        </ul>
+        <p>Stripe's payment page uses its own cookies under Stripe's rules.</p>
+    </section>
+
+    <section>
+        <h2>8. Your rights</h2>
+        <p>
+            You have the right to access your data, to have it corrected, to have it erased (you can delete your account
+            yourself in "My Profile"), to restrict processing, to data portability, to object to processing based on legitimate
+            interest (for example a picture or your name in the rankings), and to withdraw your consent at any time. Write
+            through "Contact the organisers" or to the e-mail address above – we answer within one month.
+        </p>
+        <p>
+            You also have the right to lodge a complaint with the Bulgarian Commission for Personal Data Protection: 2 Prof.
+            Tsvetan Lazarov Blvd., 1592 Sofia, <a href="https://www.cpdp.bg" target="_blank" rel="noopener">cpdp.bg</a>.
+        </p>
+    </section>
+
+    <section>
+        <h2>9. Children</h2>
+        <p>
+            Accounts can be created by persons aged 18 or over. The names of players under 18 are entered by the coach with
+            their parents' consent and are not shown publicly. We remove a picture of a child at a parent's request.
+        </p>
+    </section>
+
+    <section>
+        <h2>10. Changes</h2>
+        <p>We may change this policy. The current version is always on this page.</p>
+    </section>
+</article>

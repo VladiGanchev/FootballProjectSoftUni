@@ -1,0 +1,155 @@
+@model ChangePictureViewModel
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+
+@{
+    // One page for both: a city's picture and a partner's logo.
+    var logo = Model.IsLogo;
+    var title = Localizer[logo ? "CPChangePartnerLogo" : "CPChangeCityPicture"].Value;
+
+    ViewData["Title"] = title;
+    ViewData["FullWidth"] = true;
+
+    var selected = Model.Items.FirstOrDefault(i => i.Id == Model.SelectedId);
+    var defaultName = Localizer[logo ? "APPartnerName" : "AddCityName"].Value;
+}
+
+<div class="container-xl cp-page">
+    <header class="cp-studio__head">
+        <h1 class="cp-mega cp-mega--sm" data-split>@title</h1>
+        <p class="cp-lead">@Localizer[logo ? "CPChangePartnerLogoSub" : "CPChangeCityPictureSub"]</p>
+    </header>
+
+    <form asp-controller="@Model.Controller" asp-action="ChangePicture" asp-route-id=""
+          method="post" enctype="multipart/form-data" class="cp-studio__grid">
+
+        <div class="tg-form-card cp-studio__form">
+
+            <div class="cp-fstep">
+                <span class="cp-fstep__no" aria-hidden="true">01</span>
+                <div class="cp-fstep__body">
+                    <label for="pictureOwner" class="form-label">@Localizer[logo ? "DPSelectPartner" : "DeleteSelectCity"]</label>
+                    <select name="id" id="pictureOwner" class="form-select form-select-lg">
+                        <option value="">-- @Localizer[logo ? "DPSelectPartner" : "DeleteSelectCity"] --</option>
+                        @foreach (var item in Model.Items)
+                        {
+                            <option value="@item.Id" data-img="@item.ImageUrl" selected="@(item.Id == Model.SelectedId)">@item.Name</option>
+                        }
+                    </select>
+                    @Html.ValidationMessage("id", new { @class = "text-danger small" })
+                </div>
+            </div>
+
+            <div class="cp-fstep">
+                <span class="cp-fstep__no" aria-hidden="true">02</span>
+                <div class="cp-fstep__body">
+                    <label for="image" class="form-label">@Localizer[logo ? "PicNewLogo" : "PicNew"]</label>
+                    <partial name="_PicturePicker" model='new PicturePickerViewModel { Required = true, Hint = Localizer[logo ? "CPLogoHint" : "CPImageHint"].Value }' />
+                </div>
+            </div>
+
+            <div class="tg-form-actions">
+                <button class="btn btn-primary btn-lg" type="submit">
+                    <i class="bi bi-check-circle-fill" aria-hidden="true"></i>@Localizer["PicSave"]
+                </button>
+                <a asp-controller="@Model.Controller" asp-action="All" class="btn btn-outline-dark btn-lg">
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>@Localizer["DCCancel"]
+                </a>
+            </div>
+        </div>
+
+        @* Live preview: the current picture of the chosen city / partner, or the new one once a file is chosen *@
+        <aside class="cp-studio__preview" aria-label="@Localizer["CPPreview"]">
+            <span class="tg-sticker tg-sticker--coral cp-pin" style="--rot:-5deg">
+                <i class="bi bi-eye-fill" aria-hidden="true"></i>@Localizer["CPPreview"]
+            </span>
+
+            @if (logo)
+            {
+                <div class="cp-logo-card" data-cp-preview data-tilt="12">
+                    <span class="cp-logo-card__no" aria-hidden="true">01</span>
+                    <div class="cp-logo-card__stage">
+                        <div class="cp-logo-card__empty">
+                            <i class="bi bi-image" aria-hidden="true"></i>
+                            <span>@Localizer["CPPreviewEmpty"]</span>
+                        </div>
+                        <img data-cp-preview-img alt="" hidden />
+                    </div>
+                    <div class="cp-logo-card__name" data-cp-preview-name data-default="@defaultName">@(selected?.Name ?? defaultName)</div>
+                </div>
+            }
+            else
+            {
+                <figure class="cp-polaroid" data-cp-preview data-tilt="10">
+                    <span class="cp-tape cp-tape--l" aria-hidden="true"></span>
+                    <span class="cp-tape cp-tape--r" aria-hidden="true"></span>
+
+                    <span class="cp-polaroid__img">
+                        <span class="cp-polaroid__empty">
+                            <i class="bi bi-camera" aria-hidden="true"></i>
+                            <span>@Localizer["CPPreviewEmpty"]</span>
+                        </span>
+                        <img data-cp-preview-img alt="" hidden />
+                    </span>
+
+                    <figcaption class="cp-polaroid__cap">
+                        <span class="cp-polaroid__name" data-cp-preview-name data-default="@defaultName">@(selected?.Name ?? defaultName)</span>
+                        <span class="cp-polaroid__go">@Localizer["AllTournaments"]<i class="bi bi-arrow-right" aria-hidden="true"></i></span>
+                    </figcaption>
+                </figure>
+            }
+        </aside>
+
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/picture-picker.js" asp-append-version="true"></script>
+
+    <script>
+        (function () {
+            var select = document.getElementById('pictureOwner');
+            var picker = document.querySelector('[data-picture-picker]');
+            var box = document.querySelector('[data-cp-preview]');
+            var img = document.querySelector('[data-cp-preview-img]');
+            var nameEl = document.querySelector('[data-cp-preview-name]');
+            if (!select || !picker || !box || !img || !nameEl) { return; }
+
+            var chosen = null; // the newly chosen file, as a data: URL
+
+            function option() {
+                var o = select.options[select.selectedIndex];
+                return o && o.value ? o : null;
+            }
+
+            function hide() {
+                img.hidden = true;
+                img.removeAttribute('src');
+                box.classList.remove('is-loaded');
+            }
+
+            function show() {
+                var o = option();
+                var url = chosen || (o ? o.getAttribute('data-img') : '');
+                nameEl.textContent = o ? o.text : nameEl.getAttribute('data-default');
+
+                if (!url) { hide(); return; }
+                if (img.getAttribute('src') !== url) { img.src = url; }
+            }
+
+            img.addEventListener('load', function () {
+                img.hidden = false;
+                box.classList.remove('is-loaded');
+                void box.offsetWidth;
+                box.classList.add('is-loaded');
+            });
+            img.addEventListener('error', hide);
+
+            select.addEventListener('change', show);
+            picker.addEventListener('picture:chosen', function (e) { chosen = e.detail.url; show(); });
+            picker.addEventListener('picture:cleared', function () { chosen = null; show(); });
+
+            show();
+        })();
+    </script>
+}

@@ -1,5 +1,6 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Email;
 using FootballProjectSoftUni.Core.Contracts.Notification;
+using FootballProjectSoftUni.Core.Extensions;
 using FootballProjectSoftUni.Core.Models.Notification;
 using FootballProjectSoftUni.Infrastructure.Data;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using X.PagedList;
@@ -16,12 +18,12 @@ namespace FootballProjectSoftUni.Core.Services.Notification
     public class NotificationService : INotificationService
     {
         private readonly ApplicationDbContext data;
-        private readonly IEmailService emailService;
+        private readonly IEmailQueue emailQueue;
 
-        public NotificationService(ApplicationDbContext _data, IEmailService _emailService)
+        public NotificationService(ApplicationDbContext _data, IEmailQueue _emailQueue)
         {
             data = _data;
-            emailService = _emailService;
+            emailQueue = _emailQueue;
         }
         public async Task<IPagedList<NotificationViewModel>> AllNotificationsAsync(string userId, int pageNumber, int pageSize)
         {
@@ -43,10 +45,10 @@ namespace FootballProjectSoftUni.Core.Services.Notification
                             : n.ContactMessage.User.FirstName + " " + n.ContactMessage.User.LastName)
                         : null
                 })
-                .ToPagedListAsync(pageNumber, pageSize);
+                .ToPagedListAsync(Paging.ValidPage(pageNumber), pageSize);
         }
 
-        public async Task CreateNotificationForCityCoachesAsync(int cityId, string message)
+        public async Task CreateNotificationForCityCoachesAsync(int cityId, Func<string, AnnouncementText> textFor, string unsubscribeUrl)
         {
             var coachIds = await data.TournamentsParticipants
                 .Where(tp => tp.Role == "Coach" &&
@@ -58,28 +60,89 @@ namespace FootballProjectSoftUni.Core.Services.Notification
             if (!coachIds.Any())
                 return;
 
-            var userEmails = await data.Users
-                .Where(u => coachIds.Contains(u.Id))
-                .Select(u => u.Email)
+            // The language of each coach's latest payment; Bulgarian for coaches who never paid.
+            var payments = await data.TournamentJoinPayments
+                .Where(p => coachIds.Contains(p.UserId))
+                .Select(p => new { p.UserId, p.Culture, p.CreatedOnUtc })
                 .ToListAsync();
 
-            var notifications = coachIds.Select(coachId => new FootballProjectSoftUni.Infrastructure.Data.Models.Notification
+            var englishUsers = payments
+                .GroupBy(p => p.UserId)
+                .Where(g => g.OrderByDescending(p => p.CreatedOnUtc).First().Culture == "en")
+                .Select(g => g.Key)
+                .ToHashSet();
+
+            await AnnounceAsync(coachIds, englishUsers, textFor, unsubscribeUrl);
+        }
+
+        public async Task CreateNotificationForTournamentParticipantsAsync(int tournamentId, Func<string, AnnouncementText> textFor)
+        {
+            var participantIds = await data.TournamentsParticipants
+                .Where(tp => tp.TournamentId == tournamentId)
+                .Select(tp => tp.ParticipantId)
+                .Distinct()
+                .ToListAsync();
+
+            if (!participantIds.Any())
+                return;
+
+            // As the reminder: coaches who paid for this tournament in English get English,
+            // everybody else (e.g. the referee) Bulgarian.
+            var englishUsers = (await data.TournamentJoinPayments
+                .Where(p => p.TournamentId == tournamentId && p.Status == "Paid" && p.Culture == "en")
+                .Select(p => p.UserId)
+                .Distinct()
+                .ToListAsync())
+                .ToHashSet();
+
+            await AnnounceAsync(participantIds, englishUsers, textFor);
+        }
+
+        /// <param name="unsubscribeUrl">Set for an advertisement (a new tournament): see the e-mail loop below.</param>
+        private async Task AnnounceAsync(List<string> userIds, ISet<string> englishUsers, Func<string, AnnouncementText> textFor, string? unsubscribeUrl = null)
+        {
+            // Only existing accounts (a deleted user can't get a notification).
+            var users = await data.Users
+                .Where(u => userIds.Contains(u.Id))
+                .Select(u => new { u.Id, u.Email, u.NewTournamentEmails, u.SecurityStamp })
+                .ToListAsync();
+
+            var bulgarian = textFor("bg");
+            var english = textFor("en");
+
+            var announcements = users
+                .Select(u => (u.Id, u.Email, u.NewTournamentEmails, u.SecurityStamp, Text: englishUsers.Contains(u.Id) ? english : bulgarian))
+                .ToList();
+
+            await data.Notifications.AddRangeAsync(announcements.Select(a => new FootballProjectSoftUni.Infrastructure.Data.Models.Notification
             {
-                UserId = coachId,
-                Message = message,
+                UserId = a.Id,
+                Message = a.Text.Notification,
                 CreatedOn = DateTime.UtcNow,
                 IsRead = false
-            }).ToList();
-
-            await data.Notifications.AddRangeAsync(notifications);
+            }));
             await data.SaveChangesAsync();
 
-            string subject = "Нов Турнир!";
-            string content = message;
-
-            foreach (var email in userEmails)
+            // Sent in the background: one failing address doesn't stop (or repeat) the others.
+            foreach (var announcement in announcements.Where(a => !string.IsNullOrWhiteSpace(a.Email)))
             {
-                await emailService.SendAsync(email, subject, content);
+                var html = announcement.Text.EmailHtml;
+
+                // An advertisement (a new tournament) is e-mailed only to those who asked for it, each time with
+                // their own link that turns it off without signing in. The notification on the site goes to everybody.
+                if (unsubscribeUrl != null)
+                {
+                    var key = UnsubscribeKey.For(announcement.Id, announcement.SecurityStamp);
+                    if (!announcement.NewTournamentEmails || key == null)
+                    {
+                        continue;
+                    }
+
+                    var link = $"{unsubscribeUrl}?u={Uri.EscapeDataString(announcement.Id)}&k={Uri.EscapeDataString(key)}";
+                    html = html.Replace(AnnouncementText.UnsubscribeLinkPlaceholder, WebUtility.HtmlEncode(link));
+                }
+
+                emailQueue.Enqueue(announcement.Email!, announcement.Text.Subject, html);
             }
         }
 

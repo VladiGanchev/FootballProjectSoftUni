@@ -1,5 +1,6 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Email;
 using FootballProjectSoftUni.Core.Contracts.Notification;
+using FootballProjectSoftUni.Core.Contracts.TournamentReminder;
 using FootballProjectSoftUni.Core.Services.TournamentReminder;
 using FootballProjectSoftUni.Infrastructure.Data.Enums;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
@@ -15,29 +16,40 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 {
     public class TournamentReminderServiceTests : UnitTestsBase
     {
-        private class FakeEmailService : IEmailService
+        private class FakeEmailService : IEmailQueue
         {
             public List<(string to, string subject, string body)> Sent { get; } = new();
-            public Task SendAsync(string to, string subject, string htmlBody)
-            {
-                Sent.Add((to, subject, htmlBody));
-                return Task.CompletedTask;
-            }
+            public void Enqueue(string to, string subject, string htmlBody) => Sent.Add((to, subject, htmlBody));
+        }
+
+        private class FakeReminderTexts : IReminderTexts
+        {
+            public ReminderText For(string culture, string? city, DateTime start) =>
+                new ReminderText($"subject-{culture}", $"note-{culture}-{city}", $"email-{culture}");
         }
 
         private class FakeNotificationService : INotificationService
         {
             public List<(string userId, string message)> Created { get; } = new();
 
+            public string? FailFor { get; set; }
+
             public Task CreateNotificationForUserAsync(string userId, string message)
             {
+                if (userId == FailFor)
+                {
+                    throw new InvalidOperationException("Database error.");
+                }
+
                 Created.Add((userId, message));
                 return Task.CompletedTask;
             }
 
             public Task<IPagedList<FootballProjectSoftUni.Core.Models.Notification.NotificationViewModel>> AllNotificationsAsync(string userId, int pageNumber, int pageSize)
                 => throw new NotImplementedException();
-            public Task CreateNotificationForCityCoachesAsync(int cityId, string message)
+            public Task CreateNotificationForCityCoachesAsync(int cityId, Func<string, FootballProjectSoftUni.Core.Models.Notification.AnnouncementText> textFor, string unsubscribeUrl)
+                => throw new NotImplementedException();
+            public Task CreateNotificationForTournamentParticipantsAsync(int tournamentId, Func<string, FootballProjectSoftUni.Core.Models.Notification.AnnouncementText> textFor)
                 => throw new NotImplementedException();
             public Task<int> GetUnreadCountAsync(string userId)
                 => throw new NotImplementedException();
@@ -52,7 +64,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         {
             var fakeEmail = new FakeEmailService();
             var fakeNotif = new FakeNotificationService();
-            var service = new TournamentReminderService(_data, fakeNotif, fakeEmail);
+            var service = new TournamentReminderService(_data, fakeNotif, fakeEmail, new FakeReminderTexts());
 
             var start = DateTime.Now.AddHours(24);
 
@@ -93,8 +105,8 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             Assert.That(fakeNotif.Created.Any(x => x.userId == "u2"), Is.True);
 
             Assert.That(fakeEmail.Sent.Count, Is.EqualTo(2));
-            Assert.That(fakeEmail.Sent.Any(x => x.to == "u1@test.com" && x.subject == "Напомняне за турнир"), Is.True);
-            Assert.That(fakeEmail.Sent.Any(x => x.to == "u2@test.com" && x.subject == "Напомняне за турнир"), Is.True);
+            Assert.That(fakeEmail.Sent.Any(x => x.to == "u1@test.com" && x.subject == "subject-bg"), Is.True);
+            Assert.That(fakeEmail.Sent.Any(x => x.to == "u2@test.com" && x.subject == "subject-bg"), Is.True);
 
             var updated = await _data.Tournaments.FirstAsync(t => t.Id == 8001);
             Assert.That(updated.ReminderSent, Is.True);
@@ -105,7 +117,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         {
             var fakeEmail = new FakeEmailService();
             var fakeNotif = new FakeNotificationService();
-            var service = new TournamentReminderService(_data, fakeNotif, fakeEmail);
+            var service = new TournamentReminderService(_data, fakeNotif, fakeEmail, new FakeReminderTexts());
 
             var start = DateTime.Now.AddHours(26);
 
@@ -142,7 +154,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         {
             var fakeEmail = new FakeEmailService();
             var fakeNotif = new FakeNotificationService();
-            var service = new TournamentReminderService(_data, fakeNotif, fakeEmail);
+            var service = new TournamentReminderService(_data, fakeNotif, fakeEmail, new FakeReminderTexts());
 
             var start = DateTime.Now.AddHours(24);
 
@@ -176,7 +188,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         {
             var fakeEmail = new FakeEmailService();
             var fakeNotif = new FakeNotificationService();
-            var service = new TournamentReminderService(_data, fakeNotif, fakeEmail);
+            var service = new TournamentReminderService(_data, fakeNotif, fakeEmail, new FakeReminderTexts());
 
             var start = DateTime.Now.AddHours(24);
 
@@ -213,7 +225,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         {
             var fakeEmail = new FakeEmailService();
             var fakeNotif = new FakeNotificationService();
-            var service = new TournamentReminderService(_data, fakeNotif, fakeEmail);
+            var service = new TournamentReminderService(_data, fakeNotif, fakeEmail, new FakeReminderTexts());
 
             var start = DateTime.Now.AddHours(24);
 
@@ -248,6 +260,88 @@ namespace FootballProjectSoftUni.Tests.UnitTests
 
             var updated = await _data.Tournaments.FirstAsync(t => t.Id == 8005);
             Assert.That(updated.ReminderSent, Is.True);
+        }
+
+        private async Task AddReminderTournamentAsync(int id, DateTime start, params string[] participants)
+        {
+            await _data.Tournaments.AddAsync(new Tournament
+            {
+                Id = id,
+                StartDate = start,
+                EndDate = start.AddHours(2),
+                CreatedOn = DateTime.Now,
+                Description = "T",
+                OrganiserId = "org",
+                ImageUrl = "img",
+                Status = TournamentStatus.Upcoming
+            });
+
+            foreach (var userId in participants)
+            {
+                if (!await _data.Users.AnyAsync(u => u.Id == userId))
+                {
+                    await _data.Users.AddAsync(new ApplicationUser { Id = userId, Email = userId + "@test.com", FirstName = "A", LastName = "B", UserName = userId });
+                }
+
+                await _data.TournamentsParticipants.AddAsync(new TournamentParticipant { ParticipantId = userId, TournamentId = id, Role = "Coach" });
+            }
+
+            await _data.SaveChangesAsync();
+        }
+
+        [Test]
+        public async Task WhenOneParticipantFails_TheOthersAreStillReminded_AndNobodyGetsItTwice()
+        {
+            var fakeEmail = new FakeEmailService();
+            var fakeNotif = new FakeNotificationService { FailFor = "r-1" };
+            var service = new TournamentReminderService(_data, fakeNotif, fakeEmail, new FakeReminderTexts());
+            await AddReminderTournamentAsync(8101, DateTime.Now.AddHours(20), "r-1", "r-2", "r-3");
+
+            await service.Send24HourRemindersAsync();
+            await service.Send24HourRemindersAsync();   // next run (or a retry) must not repeat anything
+
+            Assert.That(fakeNotif.Created.Select(n => n.userId), Is.EquivalentTo(new[] { "r-2", "r-3" }));
+            Assert.That(fakeEmail.Sent.Select(e => e.to), Is.EquivalentTo(new[] { "r-1@test.com", "r-2@test.com", "r-3@test.com" }));
+        }
+
+        [Test]
+        public async Task CoachesWhoPaidInEnglish_GetTheReminderInEnglish()
+        {
+            var fakeEmail = new FakeEmailService();
+            var service = new TournamentReminderService(_data, new FakeNotificationService(), fakeEmail, new FakeReminderTexts());
+            await AddReminderTournamentAsync(8102, DateTime.Now.AddHours(20), "bg-coach", "en-coach");
+            await _data.TournamentJoinPayments.AddAsync(new TournamentJoinPayment { Id = 8202, TournamentId = 8102, UserId = "en-coach", Amount = 10, Currency = "eur", Status = "Paid", Culture = "en" });
+            await _data.SaveChangesAsync();
+
+            await service.Send24HourRemindersAsync();
+
+            Assert.That(fakeEmail.Sent.Single(e => e.to == "en-coach@test.com").subject, Is.EqualTo("subject-en"));
+            Assert.That(fakeEmail.Sent.Single(e => e.to == "bg-coach@test.com").subject, Is.EqualTo("subject-bg"));
+        }
+
+        [Test]
+        public async Task MissedWindow_TheReminderStillGoesOutBeforeTheStart()
+        {
+            // The site was asleep 23-25 hours before the start: 5 hours before, the reminder still goes out.
+            var fakeEmail = new FakeEmailService();
+            var service = new TournamentReminderService(_data, new FakeNotificationService(), fakeEmail, new FakeReminderTexts());
+            await AddReminderTournamentAsync(8103, DateTime.Now.AddHours(5), "late-1");
+
+            await service.Send24HourRemindersAsync();
+
+            Assert.That(fakeEmail.Sent.Count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task AlreadyStartedTournament_GetsNoReminder()
+        {
+            var fakeEmail = new FakeEmailService();
+            var service = new TournamentReminderService(_data, new FakeNotificationService(), fakeEmail, new FakeReminderTexts());
+            await AddReminderTournamentAsync(8104, DateTime.Now.AddHours(-1), "started-1");
+
+            await service.Send24HourRemindersAsync();
+
+            Assert.IsEmpty(fakeEmail.Sent);
         }
     }
 }

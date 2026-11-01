@@ -109,7 +109,8 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             var startIndex = (pageNumber - 1) * pageSize;
             var endIndex = startIndex + pageSize - 1;
 
-            var expectedCities = await _data.Cities.OrderBy(c => c.Id)
+            // The cities page is alphabetical, so pages are built from cities ordered by name.
+            var expectedCities = await _data.Cities.OrderBy(c => c.Name)
                                                     .Skip(startIndex)
                                                     .Take(pageSize)
                                                     .ToListAsync();
@@ -117,6 +118,23 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             Assert.AreEqual(expectedCities.Count(), citiesOnPage.Count());
             Assert.IsTrue(expectedCities.Select(c => c.Name).SequenceEqual(citiesOnPage.Select(c => c.Name)));
             Assert.IsTrue(expectedCities.Select(c => c.ImageUrl).SequenceEqual(citiesOnPage.Select(c => c.ImageUrl)));
+        }
+
+        [TestCase(0)]
+        [TestCase(-1)]
+        [TestCase(int.MaxValue)]
+        public void AllCitiesAsync_WithAPageThatCantExist_ShouldNotThrow(int page)
+        {
+            Assert.DoesNotThrowAsync(() => _cityService.AllCitiesAsync(page));
+        }
+
+        [Test]
+        public async Task AllCitiesAsync_WithPageZero_ShouldShowTheFirstPage()
+        {
+            var firstPage = await _cityService.AllCitiesAsync(1);
+            var pageZero = await _cityService.AllCitiesAsync(0);
+
+            Assert.That(pageZero.Select(c => c.Id), Is.EqualTo(firstPage.Select(c => c.Id)));
         }
 
         [Test]
@@ -136,6 +154,25 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             Assert.IsFalse(await _cityService.DeleteCityAsync(30));
 
 
+        }
+
+        [Test]
+        public async Task ChangeCityImageAsync_StoresTheNewPicture_AndReturnsTheOldOne()
+        {
+            var city = new City { Name = "Пловдив-тест", ImageUrl = "https://example.com/old.jpg" };
+            await _data.Cities.AddAsync(city);
+            await _data.SaveChangesAsync();
+
+            var old = await _cityService.ChangeCityImageAsync(city.Id, "/images/covers/cities/new.jpg");
+
+            Assert.That(old, Is.EqualTo("https://example.com/old.jpg"));
+            Assert.That((await _data.Cities.AsNoTracking().FirstAsync(c => c.Id == city.Id)).ImageUrl, Is.EqualTo("/images/covers/cities/new.jpg"));
+        }
+
+        [Test]
+        public async Task ChangeCityImageAsync_ReturnsNull_WhenCityNotFound()
+        {
+            Assert.IsNull(await _cityService.ChangeCityImageAsync(99999, "/images/covers/cities/new.jpg"));
         }
 
         [Test]

@@ -1,0 +1,158 @@
+@* Terms and Conditions in English. The Bulgarian version is Terms.cshtml: a change goes into both files. *@
+@{
+    ViewData["Title"] = "Terms and Conditions";
+}
+
+<article class="tg-legal">
+    <header class="tg-page-head">
+        <div>
+            <h1 class="tg-page-head__title">Terms and Conditions</h1>
+            <p class="tg-page-head__sub">Last updated: 01.11.2026</p>
+        </div>
+    </header>
+
+    <section>
+        <h2>1. Who we are</h2>
+        <p>The website tournamentgalaxy.bg ("Tournament Galaxy", "the platform") is run by:</p>
+        <partial name="_LegalOperator" />
+    </section>
+
+    <section>
+        <h2>2. What we offer</h2>
+        <p>
+            Tournament Galaxy is a platform for amateur football tournaments: cities and tournaments, team registration for
+            a participation fee, referees, results, rankings and pictures from the tournaments. These terms govern the use
+            of the website and taking part in the tournaments. You accept them when you register and every time you enter
+            a tournament.
+        </p>
+    </section>
+
+    <section>
+        <h2>3. Account</h2>
+        <ul>
+            <li>Accounts can be created by persons aged 18 or over, with a real e-mail address that you confirm.</li>
+            <li>You are responsible for your password and for what is done from your account.</li>
+            <li>You can delete your account at any time in "My Profile". What is kept afterwards is described in the <a asp-action="Privacy">Privacy Policy</a>.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>4. Coaches and teams</h2>
+        <ul>
+            <li>A coach enters a team of 6 to 10 players. A coach can take part in only one active tournament at a time.</li>
+            <li>
+                When entering a tournament, the coach confirms that the players know about it and agree to take part (for
+                players under 18, their parents or guardians agree as well), that to the best of the coach's knowledge the
+                players are in good health, and that the team will follow the rules.
+            </li>
+            <li>The players' names are not shown publicly.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>5. Participation fee and payment</h2>
+        <ul>
+            <li>The participation fee is shown with each tournament, in euro, and is the final price.</li>
+            <li>Payment is made by card through Stripe. Card details are entered directly at Stripe and never reach us.</li>
+            <li>The team is entered right after the payment succeeds, and you get a notification.</li>
+            <li>If the tournament fills up or starts while you are paying, the amount is refunded automatically.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>6. Right of withdrawal and refunds</h2>
+        <ul>
+            <li>
+                Taking part in a tournament is a leisure service on a specific date. The statutory 14-day right of
+                withdrawal from distance contracts therefore does not apply.
+            </li>
+            <li>
+                You can leave a tournament until it starts ("Participations → As coach"), but the fee is not refunded
+                automatically. You can write to us and ask for a refund.
+            </li>
+            <li>
+                The fee is refunded in full and automatically to the card it was paid with when: the organisers cancel the
+                tournament before it starts; fewer than 8 teams are entered when it is due to start and it is cancelled
+                automatically; the payment went through but the team could not be entered.
+            </li>
+            <li>
+                If the organisers change the date of a tournament, you will be notified. If you cannot take part on the new
+                date, write to us before the start and we will refund the fee.
+            </li>
+            <li>How long a refund takes to appear on the card depends on the bank (usually 5–10 working days).</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>7. How the tournaments run</h2>
+        <ul>
+            <li>Tournaments are played as knockouts; every match has a winner.</li>
+            <li>Teams follow the tournament rules and the instructions of the organisers and referees. The results are entered by the organisers.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>8. Prizes</h2>
+        <p>
+            The prize money is shown with each tournament. After the final, the organisers contact the coaches of the teams
+            in the top three places to pay out the prizes. Prizes are taxed as the law requires.
+        </p>
+    </section>
+
+    <section>
+        <h2>9. Referees, ratings and comments</h2>
+        <ul>
+            <li>Persons aged 18 or over with at least 2 years of experience can become referees.</li>
+            <li>Users can rate referees and comment on them. Comments must be relevant and respectful.</li>
+            <li>
+                Insults, defamation, threats, discriminatory content, advertising, other people's personal data (for example
+                phone numbers and addresses) and anything else that is illegal are not allowed.
+            </li>
+            <li>
+                Anybody can report a comment with the "Report" button below it. The organisers review the reports and remove
+                comments that break these rules; the author gets a notification with the reason.
+            </li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>10. Pictures</h2>
+        <p>
+            The organisers may publish pictures from the tournaments in the website's gallery. If you are in a picture and
+            want it taken down, write to us and we will remove it. We remove a picture of a child at a parent's request.
+        </p>
+    </section>
+
+    <section>
+        <h2>11. Liability</h2>
+        <ul>
+            <li>Taking part is at your own risk, as described in the declaration when entering a tournament.</li>
+            <li>
+                The organisers are not liable for damage unless it was caused intentionally or by gross negligence, or where
+                the law does not allow liability to be limited.
+            </li>
+            <li>We are not liable for the website being temporarily unavailable because of maintenance or technical problems.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>12. Complaints and disputes</h2>
+        <ul>
+            <li>Send complaints and questions through "Contact the organisers" in your profile or to the e-mail address above. We answer within 14 days.</li>
+            <li>
+                If we cannot agree, you can turn to the Bulgarian Commission for Consumer Protection
+                (<a href="https://kzp.bg" target="_blank" rel="noopener">kzp.bg</a>) and its general conciliation committees
+                for out-of-court settlement of the dispute.
+            </li>
+            <li>Bulgarian law applies. Disputes are settled by the competent Bulgarian court.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>13. Changes to these terms</h2>
+        <p>
+            We may change these terms. We will notify you on the website of important changes. Changes do not affect
+            registrations that have already been paid.
+        </p>
+    </section>
+</article>

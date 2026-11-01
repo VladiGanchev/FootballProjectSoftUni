@@ -28,7 +28,7 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
 
         public string CreatedOn { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = RequireErrorMessage)]
+        // The picture is uploaded as a file (not typed in); the site fills in its address.
         public string ImageUrl { get; set; } = string.Empty;
 
         public string Status { get; set; } = string.Empty;
@@ -54,7 +54,7 @@ namespace FootballProjectSoftUni.Core.Models.Tournament
         public decimal ThirdPlacePrize { get; set; }
 
         [Required(ErrorMessage = RequireErrorMessage)]
-        [Range(0, double.MaxValue, ErrorMessage = "Participation fee must be a positive number.")]
+        [Range(MinParticipationFee, double.MaxValue, ErrorMessage = "The participation fee must be at least {1} €.")]
         public decimal ParticipationFee { get; set; }
     }
 }

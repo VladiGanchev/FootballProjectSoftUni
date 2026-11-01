@@ -139,7 +139,7 @@
     <value>Край</value>
   </data>
   <data name="ATCLeaveTournament" xml:space="preserve">
-    <value>Напусни тирнир</value>
+    <value>Напусни турнир</value>
   </data>
   <data name="ATCNoTournament" xml:space="preserve">
     <value>Няма турнири</value>
@@ -515,7 +515,7 @@
 Име на партньор</value>
   </data>
   <data name="APImage" xml:space="preserve">
-    <value>URL на изображението</value>
+    <value>Лого</value>
   </data>
   <data name="APAP" xml:space="preserve">
     <value>Добави партньор</value>
@@ -722,7 +722,7 @@
     <value>Старт</value>
   </data>
   <data name="ATImage" xml:space="preserve">
-    <value>Изображение</value>
+    <value>Снимка</value>
   </data>
   <data name="ATDesc" xml:space="preserve">
     <value>Описание</value>
@@ -905,7 +905,7 @@
     <value>Като Рефер</value>
   </data>
   <data name="DAsCoach" xml:space="preserve">
-    <value>Като Tреньор</value>
+    <value>Като Треньор</value>
   </data>
   <data name="LayoutContact" xml:space="preserve">
     <value>Свържи се с организаторите</value>
@@ -944,13 +944,13 @@
     <value>Успешно плащане ⚽</value>
   </data>
   <data name="PaymentSuccessBody" xml:space="preserve">
-    <value />
+    <value>&lt;p&gt;Здравей!&lt;/p&gt;&lt;p&gt;Плащането на таксата от &lt;b&gt;{1} €&lt;/b&gt; е успешно. Отборът &lt;b&gt;{0}&lt;/b&gt; е записан за турнира в &lt;b&gt;{2}&lt;/b&gt; на {3}.&lt;/p&gt;&lt;p&gt;Ден преди началото ще ти изпратим напомняне. Успех на терена! ⚽&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;</value>
   </data>
   <data name="RefundSuccessSubject" xml:space="preserve">
-    <value />
+    <value>Върнахме ти парите ⚽</value>
   </data>
   <data name="RefundSuccessBody" xml:space="preserve">
-    <value />
+    <value>&lt;p&gt;Здравей!&lt;/p&gt;&lt;p&gt;Върнахме &lt;b&gt;{0} €&lt;/b&gt; по картата, с която плати таксата за турнира в &lt;b&gt;{1}&lt;/b&gt; на {2}.&lt;/p&gt;&lt;p&gt;Обикновено сумата се вижда по сметката до 5–10 работни дни, в зависимост от банката.&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;</value>
   </data>
   <data name="ATFirstPlacePrize" xml:space="preserve">
     <value>1-во място:</value>
@@ -989,18 +989,18 @@
     <value>⏳ Плащането е получено. Изчакваме потвърждение… (ако до 10-15 сек не се обнови, рефрешни страницата)</value>
   </data>
   <data name="TournamentDeclaration" xml:space="preserve">
-    <value>С настоящото декларирам, че доброволно желая да участвам във футболен турнир, организиран чрез платформата Tournament Galaxy.
+    <value>С настоящото декларирам, че като треньор записвам отбора си за футболен турнир, организиран чрез платформата Tournament Galaxy.
 
-1. Декларирам, че съм в добро физическо и здравословно състояние, което ми позволява да участвам в спортни дейности, включително футболни срещи.
-2. Осъзнавам и приемам рисковете, свързани с участието във футболен турнир, включително, но не само: физически наранявания, травми, инциденти и други неблагоприятни събития.
-3. Доброволно поемам всички рискове, свързани с участието ми в турнира, както по време на мачовете, така и извън тях.
-4. Освобождавам от отговорност организаторите, техните представители, партньори и служители от всякаква отговорност за вреди, наранявания, загуби или щети, възникнали в резултат на моето участие, доколкото това е допустимо от приложимото законодателство.
-5. Декларирам, че ще спазвам правилата на турнира, както и указанията на организаторите и съдиите.
-6. Съгласявам се личните ми данни да бъдат обработвани за целите на организацията на турнира и плащането.
-7. Декларирам, че съм прочел/а и разбрал/а настоящата декларация и я приемам доброволно.</value>
+1. Играчите в отбора ми знаят за участието и са съгласни да участват, а за непълнолетните играчи са съгласни и родителите или настойниците им.
+2. Доколкото ми е известно, всички, които ще играят за отбора, са в добро физическо и здравословно състояние, което им позволява да участват във футболни срещи.
+3. Знам и приемам, че участието във футболен турнир носи рискове, включително физически наранявания, травми и инциденти.
+4. Организаторите не отговарят за вреди, възникнали при участието, освен ако са причинени умишлено или поради груба небрежност, както и в случаите, в които законът не позволява отговорността да бъде ограничена.
+5. Отборът ще спазва правилата на турнира и указанията на организаторите и съдиите.
+6. Знам, че таксата за участие не подлежи на 14-дневно право на отказ, защото участието е в събитие на конкретна дата, и че тя се връща само в случаите, описани в Общите условия (например при отмяна на турнира).
+7. Приемам Общите условия и съм запознат/а с Политиката за поверителност.</value>
   </data>
   <data name="DDeclaration" xml:space="preserve">
-    <value>Декларация за съгласие</value>
+    <value>Декларация за участие</value>
   </data>
   <data name="DAccept" xml:space="preserve">
     <value>Съгласен/съгласна съм с декларацията</value>
@@ -1012,6 +1012,1574 @@
     <value>Стани рефер</value>
   </data>
   <data name="NoCity" xml:space="preserve">
-    <value>No cities found</value>
+    <value>Няма открити градове</value>
+  </data>
+  <data name="HeroEyebrow" xml:space="preserve">
+    <value>Платформа за футболни турнири</value>
+  </data>
+  <data name="HeroTagline" xml:space="preserve">
+    <value>Организирай, записвай се и следи футболни турнири из цяла България — отбори, мачове, класиране и плащания на едно място.</value>
+  </data>
+  <data name="HeroBrowseCities" xml:space="preserve">
+    <value>Разгледай градовете</value>
+  </data>
+  <data name="HeroCreateAccount" xml:space="preserve">
+    <value>Създай акаунт</value>
+  </data>
+  <data name="IndexHowTitle" xml:space="preserve">
+    <value>Как работи</value>
+  </data>
+  <data name="IndexHowSubtitle" xml:space="preserve">
+    <value>От регистрация до финал за три стъпки</value>
+  </data>
+  <data name="IndexStep1Title" xml:space="preserve">
+    <value>Избери град</value>
+  </data>
+  <data name="IndexStep1Text" xml:space="preserve">
+    <value>Намери турнир в твоя град и виж датите, наградите и таксата за участие.</value>
+  </data>
+  <data name="IndexStep2Title" xml:space="preserve">
+    <value>Регистрирай отбора</value>
+  </data>
+  <data name="IndexStep2Text" xml:space="preserve">
+    <value>Добави играчите си, приеми декларацията и плати сигурно през Stripe.</value>
+  </data>
+  <data name="IndexStep3Title" xml:space="preserve">
+    <value>Играй и следи резултатите</value>
+  </data>
+  <data name="IndexStep3Text" xml:space="preserve">
+    <value>Получавай известия за мачовете и следи схемата и победителите.</value>
+  </data>
+  <data name="IndexCtaTitle" xml:space="preserve">
+    <value>Готов ли си за следващия турнир?</value>
+  </data>
+  <data name="IndexCtaText" xml:space="preserve">
+    <value>Създай акаунт безплатно и запиши отбора си за броени минути.</value>
+  </data>
+  <data name="FooterTagline" xml:space="preserve">
+    <value>Платформа за турнири, мачове и класиране на футболни състезания.</value>
+  </data>
+  <data name="FooterExplore" xml:space="preserve">
+    <value>Навигация</value>
+  </data>
+  <data name="FooterSupport" xml:space="preserve">
+    <value>Поддръжка</value>
+  </data>
+  <data name="AuthShowPassword" xml:space="preserve">
+    <value>Покажи/скрий паролата</value>
+  </data>
+  <data name="AuthPasswordHint" xml:space="preserve">
+    <value>Поне 8 символа, с главна и малка буква, цифра и специален символ.</value>
+  </data>
+  <data name="AuthCheckSpam" xml:space="preserve">
+    <value>Не виждаш имейла? Провери и в папка „Спам“.</value>
+  </data>
+  <data name="ErrOopsTitle" xml:space="preserve">
+    <value>Нещо се обърка</value>
+  </data>
+  <data name="ErrOopsText" xml:space="preserve">
+    <value>Възникна грешка при обработката на заявката. Моля, опитай отново по-късно.</value>
+  </data>
+  <data name="Err401Title" xml:space="preserve">
+    <value>Достъпът е отказан</value>
+  </data>
+  <data name="Err401Text" xml:space="preserve">
+    <value>Нямаш права за достъп до тази страница.</value>
+  </data>
+  <data name="Err404Title" xml:space="preserve">
+    <value>Страницата не е намерена</value>
+  </data>
+  <data name="Err404Text" xml:space="preserve">
+    <value>Провери адреса – страницата, която търсиш, не съществува.</value>
+  </data>
+  <data name="ErrGoBack" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="ErrRequestId" xml:space="preserve">
+    <value>ID на заявката</value>
+  </data>
+  <data name="ErrCopy" xml:space="preserve">
+    <value>Копирай</value>
+  </data>
+  <data name="ErrCopied" xml:space="preserve">
+    <value>Копирано</value>
+  </data>
+  <data name="ATNoRefereeTournaments" xml:space="preserve">
+    <value>Няма турнири за съдийство</value>
+  </data>
+  <data name="IPickReferee" xml:space="preserve">
+    <value>-- избери рефер --</value>
+  </data>
+  <data name="ISubjectPlaceholder" xml:space="preserve">
+    <value>Напр. Покана за турнир...</value>
+  </data>
+  <data name="IMessagePlaceholder" xml:space="preserve">
+    <value>Напиши текста на поканата...</value>
+  </data>
+  <data name="CBackToReferees" xml:space="preserve">
+    <value>Обратно към рефери</value>
+  </data>
+  <data name="ContactSub" xml:space="preserve">
+    <value>Имаш въпрос или предложение? Пиши ни и ще отговорим възможно най-скоро.</value>
+  </data>
+  <data name="ContactSideTitle" xml:space="preserve">
+    <value>Как работи</value>
+  </data>
+  <data name="ContactStep1" xml:space="preserve">
+    <value>Изпрати съобщение до организаторите.</value>
+  </data>
+  <data name="ContactStep2" xml:space="preserve">
+    <value>Получаваш известие, когато отговорим.</value>
+  </data>
+  <data name="ContactStep3" xml:space="preserve">
+    <value>Следи разговора в Известия.</value>
+  </data>
+  <data name="MsgCompose" xml:space="preserve">
+    <value>Ново съобщение</value>
+  </data>
+  <data name="MsgBack" xml:space="preserve">
+    <value>Назад към известията</value>
+  </data>
+  <data name="NotifPageTitle" xml:space="preserve">
+    <value>Известия и съобщения</value>
+  </data>
+  <data name="NotifNew" xml:space="preserve">
+    <value>Ново</value>
+  </data>
+  <data name="NotifDeleteConfirm" xml:space="preserve">
+    <value>Сигурен ли си, че искаш да изтриеш това известие?</value>
+  </data>
+  <data name="PayTitle" xml:space="preserve">
+    <value>Плащания</value>
+  </data>
+  <data name="PaySub" xml:space="preserve">
+    <value>Преглед на всички плащания и връщане на суми.</value>
+  </data>
+  <data name="PayTotalOrders" xml:space="preserve">
+    <value>Общо поръчки</value>
+  </data>
+  <data name="PayTotalPaid" xml:space="preserve">
+    <value>Платена сума</value>
+  </data>
+  <data name="PayTotalRefunded" xml:space="preserve">
+    <value>Върнати плащания</value>
+  </data>
+  <data name="PayStatusPaid" xml:space="preserve">
+    <value>Платено</value>
+  </data>
+  <data name="PayStatusRefunded" xml:space="preserve">
+    <value>Върнато</value>
+  </data>
+  <data name="PayStatusPending" xml:space="preserve">
+    <value>Изчакващо</value>
+  </data>
+  <data name="PayRefundConfirm" xml:space="preserve">
+    <value>Сигурен ли си, че искаш да върнеш това плащане (refund)?</value>
+  </data>
+  <data name="CPAddCitySub" xml:space="preserve">
+    <value>Добавете нов град към платформата, за да могат да се създават турнири в него.</value>
+  </data>
+  <data name="CPAddPartnerSub" xml:space="preserve">
+    <value>Добавете партньор, чието лого ще се показва на стената с партньори.</value>
+  </data>
+  <data name="CPUpdateLeadersSub" xml:space="preserve">
+    <value>Отчетете победа на отбор в избрания град. Тя се добавя към класацията на лидерите.</value>
+  </data>
+  <data name="CPDeletePickCity" xml:space="preserve">
+    <value>Изберете град за изтриване. Ще трябва да потвърдите на следващата стъпка.</value>
+  </data>
+  <data name="CPDeletePickPartner" xml:space="preserve">
+    <value>Изберете партньор за изтриване. Ще трябва да потвърдите на следващата стъпка.</value>
+  </data>
+  <data name="CPPreview" xml:space="preserve">
+    <value>Преглед</value>
+  </data>
+  <data name="CPPreviewEmpty" xml:space="preserve">
+    <value>Избери снимка, за да видиш преглед.</value>
+  </data>
+  <data name="CPCityNameHint" xml:space="preserve">
+    <value>Името на града, както ще се показва на картата.</value>
+  </data>
+  <data name="CPImageHint" xml:space="preserve">
+    <value>JPG, PNG, WEBP или GIF до 8 MB. Най-добре е хоризонтална снимка.</value>
+  </data>
+  <data name="CPLogoHint" xml:space="preserve">
+    <value>PNG, JPG, WEBP или GIF до 8 MB. Най-добре е PNG с прозрачен фон.</value>
+  </data>
+  <data name="TNTitle" xml:space="preserve">
+    <value>Турнири</value>
+  </data>
+  <data name="TNStatusUpcoming" xml:space="preserve">
+    <value>Предстоящ</value>
+  </data>
+  <data name="TNStatusStarted" xml:space="preserve">
+    <value>В ход</value>
+  </data>
+  <data name="TNStatusFinished" xml:space="preserve">
+    <value>Приключил</value>
+  </data>
+  <data name="TNRound" xml:space="preserve">
+    <value>Рунд {0}</value>
+  </data>
+  <data name="TNTbd" xml:space="preserve">
+    <value>Предстои</value>
+  </data>
+  <data name="TNNoReferee" xml:space="preserve">
+    <value>Все още няма рефер</value>
+  </data>
+  <data name="TNPrizePool" xml:space="preserve">
+    <value>Награден фонд</value>
+  </data>
+  <data name="TNAddSub" xml:space="preserve">
+    <value>Попълнете данните, за да създадете нов турнир.</value>
+  </data>
+  <data name="TNSecGeneral" xml:space="preserve">
+    <value>Основна информация</value>
+  </data>
+  <data name="TNSecSchedule" xml:space="preserve">
+    <value>График</value>
+  </data>
+  <data name="TNSecPrizes" xml:space="preserve">
+    <value>Награди и такса</value>
+  </data>
+  <data name="TNSecLocation" xml:space="preserve">
+    <value>Локация</value>
+  </data>
+  <data name="TNDateHint" xml:space="preserve">
+    <value>Формат: дд/ММ/гггг ЧЧ:мм</value>
+  </data>
+  <data name="TNImageHint" xml:space="preserve">
+    <value>JPG, PNG, WEBP или GIF до 8 MB.</value>
+  </data>
+  <data name="TNWinnerHint" xml:space="preserve">
+    <value>Попълва се автоматично от резултата на финала. За да го смениш, поправи резултата на финала.</value>
+  </data>
+  <data name="TNEnterResultSub" xml:space="preserve">
+    <value>Въведи крайния резултат от мача.</value>
+  </data>
+  <data name="TNClose" xml:space="preserve">
+    <value>Затвори</value>
+  </data>
+  <data name="TNPrev" xml:space="preserve">
+    <value>Предишна снимка</value>
+  </data>
+  <data name="TNNext" xml:space="preserve">
+    <value>Следваща снимка</value>
+  </data>
+  <data name="TNDropHint" xml:space="preserve">
+    <value>Плъзни снимки тук или кликни за избор</value>
+  </data>
+  <data name="TNSelectedCount" xml:space="preserve">
+    <value>Избрани файлове: {0}</value>
+  </data>
+  <data name="HomeSeason" xml:space="preserve">
+    <value>Сезон</value>
+  </data>
+  <data name="HomeHeadline1" xml:space="preserve">
+    <value>Играй.</value>
+  </data>
+  <data name="HomeHeadline2" xml:space="preserve">
+    <value>Побеждавай.</value>
+  </data>
+  <data name="HomeHeadline3" xml:space="preserve">
+    <value>Повтори.</value>
+  </data>
+  <data name="HomeCitiesTitle" xml:space="preserve">
+    <value>Избери своя град</value>
+  </data>
+  <data name="HomeCitiesSub" xml:space="preserve">
+    <value>Турнири се играят в цяла България. Плъзни и избери къде да е следващият ти мач.</value>
+  </data>
+  <data name="HomeSeeAll" xml:space="preserve">
+    <value>Виж всички</value>
+  </data>
+  <data name="HomeTicketLabel" xml:space="preserve">
+    <value>Билет за следващия турнир</value>
+  </data>
+  <data name="HomeTicketGate" xml:space="preserve">
+    <value>Вход</value>
+  </data>
+  <data name="HomeTicketGateValue" xml:space="preserve">
+    <value>Всеки град</value>
+  </data>
+  <data name="HomeTicketKickoff" xml:space="preserve">
+    <value>Начален удар</value>
+  </data>
+  <data name="HomeTicketKickoffValue" xml:space="preserve">
+    <value>Съвсем скоро</value>
+  </data>
+  <data name="HomeTicketAdmit" xml:space="preserve">
+    <value>Вход за един отбор</value>
+  </data>
+  <data name="TabInbox" xml:space="preserve">
+    <value>Известия</value>
+  </data>
+  <data name="CPCitiesLead" xml:space="preserve">
+    <value>Избери град и виж турнирите и лидерите в него.</value>
+  </data>
+  <data name="CPSwipe" xml:space="preserve">
+    <value>Плъзни</value>
+  </data>
+  <data name="CPPage" xml:space="preserve">
+    <value>Страница</value>
+  </data>
+  <data name="CPStandings" xml:space="preserve">
+    <value>Класиране</value>
+  </data>
+  <data name="CPWin" xml:space="preserve">
+    <value>Победа</value>
+  </data>
+  <data name="CPPartnersLead" xml:space="preserve">
+    <value>Клубовете, марките и хората, които правят турнирите възможни.</value>
+  </data>
+  <data name="CPPartnersWall" xml:space="preserve">
+    <value>Стената на партньорите</value>
+  </data>
+  <data name="CPRedCard" xml:space="preserve">
+    <value>Червен картон</value>
+  </data>
+  <data name="AuthLoginSlogan1" xml:space="preserve">
+    <value>Обратно</value>
+  </data>
+  <data name="AuthLoginSlogan2" xml:space="preserve">
+    <value>на терена</value>
+  </data>
+  <data name="AuthRegisterSlogan1" xml:space="preserve">
+    <value>Облечи</value>
+  </data>
+  <data name="AuthRegisterSlogan2" xml:space="preserve">
+    <value>екипа</value>
+  </data>
+  <data name="AuthJerseyName" xml:space="preserve">
+    <value>Твоето име</value>
+  </data>
+  <data name="AuthPlayerCard" xml:space="preserve">
+    <value>Състезателна карта</value>
+  </data>
+  <data name="AuthSecPlayer" xml:space="preserve">
+    <value>Данни за играча</value>
+  </data>
+  <data name="AuthSecAccess" xml:space="preserve">
+    <value>Достъп до профила</value>
+  </data>
+  <data name="AuthLostKey" xml:space="preserve">
+    <value>Загубен ключ от съблекалнята?</value>
+  </data>
+  <data name="AuthPassSent" xml:space="preserve">
+    <value>Пасът е подаден!</value>
+  </data>
+  <data name="AuthNewSeason" xml:space="preserve">
+    <value>Нова парола, нов сезон</value>
+  </data>
+  <data name="AuthGoal" xml:space="preserve">
+    <value>Гооол!</value>
+  </data>
+  <data name="AuthStepInbox" xml:space="preserve">
+    <value>Поща</value>
+  </data>
+  <data name="AuthStepDone" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="ErrOffside" xml:space="preserve">
+    <value>Офсайд!</value>
+  </data>
+  <data name="ErrFlagUp" xml:space="preserve">
+    <value>Флагът е вдигнат</value>
+  </data>
+  <data name="ErrYou" xml:space="preserve">
+    <value>Ти</value>
+  </data>
+  <data name="ErrRedCard" xml:space="preserve">
+    <value>Червен картон</value>
+  </data>
+  <data name="ErrRedCardNote" xml:space="preserve">
+    <value>Без пропуск не се влиза на терена.</value>
+  </data>
+  <data name="ErrMinute" xml:space="preserve">
+    <value>Минута</value>
+  </data>
+  <data name="ErrOffence" xml:space="preserve">
+    <value>Нарушение</value>
+  </data>
+  <data name="ErrDecision" xml:space="preserve">
+    <value>Решение</value>
+  </data>
+  <data name="ErrVar" xml:space="preserve">
+    <value>VAR проверка</value>
+  </data>
+  <data name="ErrVarChecking" xml:space="preserve">
+    <value>Проверка в ход</value>
+  </data>
+  <data name="ErrVarNote" xml:space="preserve">
+    <value>Съдиите преглеждат повторението – опитай отново след малко.</value>
+  </data>
+  <data name="TNProgramme" xml:space="preserve">
+    <value>Програма на турнира</value>
+  </data>
+  <data name="TNFinal" xml:space="preserve">
+    <value>Финал</value>
+  </data>
+  <data name="TNSemiFinal" xml:space="preserve">
+    <value>Полуфинал</value>
+  </data>
+  <data name="TNQuarterFinal" xml:space="preserve">
+    <value>Четвъртфинал</value>
+  </data>
+  <data name="TNRoundOf16" xml:space="preserve">
+    <value>1/8-финал</value>
+  </data>
+  <data name="TNDragHint" xml:space="preserve">
+    <value>Плъзни, за да разгледаш схемата</value>
+  </data>
+  <data name="TNGoalPlus" xml:space="preserve">
+    <value>Добави гол</value>
+  </data>
+  <data name="TNGoalMinus" xml:space="preserve">
+    <value>Махни гол</value>
+  </data>
+  <data name="TNPosterLive" xml:space="preserve">
+    <value>Постерът се обновява, докато пишеш</value>
+  </data>
+  <data name="MsgSideSticker" xml:space="preserve">
+    <value>Без офсайд в пощата!</value>
+  </data>
+  <data name="MsgAirmail" xml:space="preserve">
+    <value>Въздушна поща</value>
+  </data>
+  <data name="MsgPostTo" xml:space="preserve">
+    <value>До:</value>
+  </data>
+  <data name="PayFilterAll" xml:space="preserve">
+    <value>Всички</value>
+  </data>
+  <data name="PaySearch" xml:space="preserve">
+    <value>Търси по №, потребител, турнир…</value>
+  </data>
+  <data name="PayNoMatch" xml:space="preserve">
+    <value>Няма плащания по този филтър.</value>
+  </data>
+  <data name="PayTotalPending" xml:space="preserve">
+    <value>Изчакващи плащания</value>
+  </data>
+  <data name="TpRefTitle2" xml:space="preserve">
+    <value>на сезона</value>
+  </data>
+  <data name="TpRefSub" xml:space="preserve">
+    <value>Колекционерски карти на всички съдии. Оцени ги със звезди и прочети какво казват отборите.</value>
+  </data>
+  <data name="TpRefTop" xml:space="preserve">
+    <value>Рефер №1</value>
+  </data>
+  <data name="TpTierGold" xml:space="preserve">
+    <value>Златна</value>
+  </data>
+  <data name="TpTierSilver" xml:space="preserve">
+    <value>Сребърна</value>
+  </data>
+  <data name="TpTierBronze" xml:space="preserve">
+    <value>Бронзова</value>
+  </data>
+  <data name="TpTierNew" xml:space="preserve">
+    <value>Нова</value>
+  </data>
+  <data name="TpPosRef" xml:space="preserve">
+    <value>РЕФ</value>
+  </data>
+  <data name="TpPosCoach" xml:space="preserve">
+    <value>ТРН</value>
+  </data>
+  <data name="TpPosFan" xml:space="preserve">
+    <value>ФЕН</value>
+  </data>
+  <data name="TpFutTrn" xml:space="preserve">
+    <value>ТУР</value>
+  </data>
+  <data name="TpFutExp" xml:space="preserve">
+    <value>ОПТ</value>
+  </data>
+  <data name="TpFutAge" xml:space="preserve">
+    <value>ВЪЗ</value>
+  </data>
+  <data name="TpHello" xml:space="preserve">
+    <value>Здравей,</value>
+  </data>
+  <data name="TpJtTitle" xml:space="preserve">
+    <value>Събери отбора</value>
+  </data>
+  <data name="TpJtMin" xml:space="preserve">
+    <value>Нужни са поне 6 играчи</value>
+  </data>
+  <data name="TpJtReady" xml:space="preserve">
+    <value>Готови за мача!</value>
+  </data>
+  <data name="TpDecSign" xml:space="preserve">
+    <value>Отметни, за да подпишеш</value>
+  </data>
+  <data name="TpDecSigned" xml:space="preserve">
+    <value>Подписано</value>
+  </data>
+  <data name="TpDecSignature" xml:space="preserve">
+    <value>Подпис</value>
+  </data>
+  <data name="TpToday" xml:space="preserve">
+    <value>Днес</value>
+  </data>
+  <data name="TpContractLabel" xml:space="preserve">
+    <value>Трансферен договор</value>
+  </data>
+  <data name="TpLiveHint" xml:space="preserve">
+    <value>Картата се обновява, докато пишеш.</value>
+  </data>
+  <data name="TpExperience" xml:space="preserve">
+    <value>Опит</value>
+  </data>
+  <data name="TpRole" xml:space="preserve">
+    <value>Роля</value>
+  </data>
+  <data name="ERDrawNotAllowed" xml:space="preserve">
+    <value>Равенство не е позволено. Моля, въведи победител.</value>
+  </data>
+  <data name="ERNegativeGoals" xml:space="preserve">
+    <value>Головете не могат да са отрицателни.</value>
+  </data>
+  <data name="ERMatchNotFound" xml:space="preserve">
+    <value>Мачът не е намерен.</value>
+  </data>
+  <data name="JoinFailedRefundNotification" xml:space="preserve">
+    <value>Плащането ти беше прието, но отборът не можа да бъде записан за турнира (например турнирът вече е пълен). Сумата се възстановява автоматично по картата ти.</value>
+  </data>
+  <data name="LeaveTournamentConfirm" xml:space="preserve">
+    <value>Сигурен ли си, че искаш да напуснеш турнира? Таксата за участие не се връща автоматично – ако искаш парите си, свържи се с организаторите. Ако се върнеш в същия турнир, няма да плащаш отново.</value>
+  </data>
+  <data name="ConfirmRefereeText" xml:space="preserve">
+    <value>Ще бъдеш записан като рефер за този турнир като</value>
+  </data>
+  <data name="GenericErrorMessage" xml:space="preserve">
+    <value>Нещо се обърка. Моля, опитай отново по-късно.</value>
+  </data>
+  <data name="RefundStripeError" xml:space="preserve">
+    <value>Stripe отказа връщането на сумата. Провери плащането в Stripe Dashboard.</value>
+  </data>
+  <data name="PaymentStartError" xml:space="preserve">
+    <value>Плащането не можа да започне. Моля, опитай отново след малко.</value>
+  </data>
+  <data name="CPTitle" xml:space="preserve">
+    <value>Смени паролата</value>
+  </data>
+  <data name="CPSub" xml:space="preserve">
+    <value>Въведи сегашната си парола и избери нова.</value>
+  </data>
+  <data name="CPCurrent" xml:space="preserve">
+    <value>Сегашна парола</value>
+  </data>
+  <data name="CPSubmit" xml:space="preserve">
+    <value>Запази новата парола</value>
+  </data>
+  <data name="CPChanged" xml:space="preserve">
+    <value>Паролата ти е сменена успешно.</value>
+  </data>
+  <data name="CPWrongCurrent" xml:space="preserve">
+    <value>Сегашната парола е грешна.</value>
+  </data>
+  <data name="FaqLink" xml:space="preserve">
+    <value>Често задавани въпроси</value>
+  </data>
+  <data name="FaqTitle" xml:space="preserve">
+    <value>Често задавани въпроси</value>
+  </data>
+  <data name="FaqSub" xml:space="preserve">
+    <value>Всичко, което трябва да знаеш за турнирите, отборите и плащанията. Не намираш отговор? Пиши ни.</value>
+  </data>
+  <data name="FaqSearch" xml:space="preserve">
+    <value>Търси въпрос…</value>
+  </data>
+  <data name="FaqAll" xml:space="preserve">
+    <value>Всички</value>
+  </data>
+  <data name="FaqNoResults" xml:space="preserve">
+    <value>Няма въпроси, които да отговарят на търсенето.</value>
+  </data>
+  <data name="FaqStillTitle" xml:space="preserve">
+    <value>Не намери отговор?</value>
+  </data>
+  <data name="FaqStillText" xml:space="preserve">
+    <value>Организаторите отговарят на всяко съобщение. Отговора ще видиш в известията си.</value>
+  </data>
+  <data name="FaqStillLogin" xml:space="preserve">
+    <value>Влез в профила си, за да ни пишеш.</value>
+  </data>
+  <data name="FaqCatAccount" xml:space="preserve">
+    <value>Акаунт</value>
+  </data>
+  <data name="FaqCatTournaments" xml:space="preserve">
+    <value>Турнири</value>
+  </data>
+  <data name="FaqCatTeams" xml:space="preserve">
+    <value>Отбори и треньори</value>
+  </data>
+  <data name="FaqCatPayments" xml:space="preserve">
+    <value>Плащания</value>
+  </data>
+  <data name="FaqCatReferees" xml:space="preserve">
+    <value>Рефери</value>
+  </data>
+  <data name="FaqCatMatches" xml:space="preserve">
+    <value>Мачове и класиране</value>
+  </data>
+  <data name="FaqCatContact" xml:space="preserve">
+    <value>Известия и контакт</value>
+  </data>
+  <data name="FaqQ1" xml:space="preserve">
+    <value>Как да си направя акаунт?</value>
+  </data>
+  <data name="FaqA1" xml:space="preserve">
+    <value>Натисни „Регистриране“ горе вдясно и въведи име, фамилия, имейл и парола. Паролата трябва да е поне 8 символа и да съдържа главна и малка буква, цифра и специален символ.</value>
+  </data>
+  <data name="FaqQ2" xml:space="preserve">
+    <value>Забравих си паролата. Какво да направя?</value>
+  </data>
+  <data name="FaqA2" xml:space="preserve">
+    <value>На страницата за вход натисни „Забравена парола?“ и въведи имейла си. Ще получиш писмо с линк, от който задаваш нова парола. Ако писмото не пристигне, провери и папка „Спам“.</value>
+  </data>
+  <data name="FaqQ3" xml:space="preserve">
+    <value>Как да сменя паролата си?</value>
+  </data>
+  <data name="FaqA3" xml:space="preserve">
+    <value>Отвори „Моят профил“ и натисни „Смени паролата“. Въвеждаш сегашната парола и новата.</value>
+  </data>
+  <data name="FaqQ4" xml:space="preserve">
+    <value>Как да сменя езика на сайта?</value>
+  </data>
+  <data name="FaqA4" xml:space="preserve">
+    <value>От бутона с глобуса в горното меню избери „Български“ или „English“. Изборът се запомня.</value>
+  </data>
+  <data name="FaqQ5" xml:space="preserve">
+    <value>Как да намеря турнир близо до мен?</value>
+  </data>
+  <data name="FaqA5" xml:space="preserve">
+    <value>Отвори „Градове“, избери своя град и натисни „Турнири“. Там са текущите и предстоящите турнири, а в раздел „Приключили“ – вече изиграните.</value>
+  </data>
+  <data name="FaqQ6" xml:space="preserve">
+    <value>Колко отбора могат да участват в един турнир?</value>
+  </data>
+  <data name="FaqA6" xml:space="preserve">
+    <value>До 16 отбора. Когато турнирът се напълни, записването спира автоматично.</value>
+  </data>
+  <data name="FaqQ7" xml:space="preserve">
+    <value>Мога ли да участвам в няколко турнира едновременно?</value>
+  </data>
+  <data name="FaqA7" xml:space="preserve">
+    <value>Като треньор можеш да участваш само в един активен турнир. За да се запишеш за друг, първо напусни текущия или изчакай да приключи.</value>
+  </data>
+  <data name="FaqQ8" xml:space="preserve">
+    <value>Мога ли да се откажа от турнир?</value>
+  </data>
+  <data name="FaqA8" xml:space="preserve">
+    <value>Да. От „Участия → Като треньор“ натисни „Напусни турнир“. Това е възможно само преди турнирът да е започнал. Напускането не връща автоматично таксата – за връщане на сумата се свържи с организаторите.</value>
+  </data>
+  <data name="FaqQ9" xml:space="preserve">
+    <value>Как да запиша отбор за турнир?</value>
+  </data>
+  <data name="FaqA9" xml:space="preserve">
+    <value>Отвори турнира и натисни „Присъедини се“. Ако още не си треньор, първо попълваш кратка форма с името си и годините опит. След това въвеждаш име на отбора и играчите, приемаш декларацията и плащаш таксата.</value>
+  </data>
+  <data name="FaqQ10" xml:space="preserve">
+    <value>Колко играчи трябва да има отборът?</value>
+  </data>
+  <data name="FaqA10" xml:space="preserve">
+    <value>Между 6 и 10 играчи. Името на отбора трябва да е между 3 и 15 символа и да не се повтаря с друг отбор.</value>
+  </data>
+  <data name="FaqQ11" xml:space="preserve">
+    <value>Мога ли да бъда и треньор, и рефер?</value>
+  </data>
+  <data name="FaqA11" xml:space="preserve">
+    <value>Не. Един акаунт е или треньор, или рефер. От ролята си можеш да се откажеш в „Моят профил“.</value>
+  </data>
+  <data name="FaqQ12" xml:space="preserve">
+    <value>Как се плаща таксата за участие?</value>
+  </data>
+  <data name="FaqA12" xml:space="preserve">
+    <value>След като приемеш декларацията, се пренасочваш към защитената страница на Stripe и плащаш с банкова карта. Отборът се записва за турнира веднага след успешното плащане и получаваш известие.</value>
+  </data>
+  <data name="FaqQ13" xml:space="preserve">
+    <value>Безопасно ли е плащането?</value>
+  </data>
+  <data name="FaqA13" xml:space="preserve">
+    <value>Да. Плащането се обработва изцяло от Stripe – една от най-големите платежни системи в света. Сайтът не вижда и не съхранява данните на картата ти.</value>
+  </data>
+  <data name="FaqQ14" xml:space="preserve">
+    <value>Платих, но отборът ми не е записан. Какво става?</value>
+  </data>
+  <data name="FaqA14" xml:space="preserve">
+    <value>Ако след плащането отборът не може да бъде записан (например турнирът се е напълнил междувременно), сумата се възстановява автоматично по картата ти и получаваш известие. Ако не виждаш нито записване, нито известие, пиши ни.</value>
+  </data>
+  <data name="FaqQ15" xml:space="preserve">
+    <value>Мога ли да си върна парите?</value>
+  </data>
+  <data name="FaqA15" xml:space="preserve">
+    <value>Връщанията се правят от организаторите. Ако напуснеш турнир, таксата не се връща автоматично – пиши ни през „Свържи се с организаторите“ и посочи отбора и турнира. Ако после се върнеш в същия турнир, не плащаш отново. Когато сумата бъде върната, ще получиш имейл. Ако турнир бъде отменен (например защото не са се събрали достатъчно отбори), таксата се връща автоматично по картата, с която си платил.</value>
+  </data>
+  <data name="FaqQ16" xml:space="preserve">
+    <value>Ще бъда ли таксуван два пъти, ако натисна „Плати“ отново?</value>
+  </data>
+  <data name="FaqA16" xml:space="preserve">
+    <value>Не. Ако вече имаш започнато плащане, сайтът те връща към него, а ако вече си платил за турнира, второ плащане не е възможно.</value>
+  </data>
+  <data name="FaqQ17" xml:space="preserve">
+    <value>Как да стана рефер?</value>
+  </data>
+  <data name="FaqA17" xml:space="preserve">
+    <value>Отвори турнир, който още няма рефер, и натисни „Стани рефер“. Трябва да си навършил 18 години и да имаш поне 2 години опит. Можеш да съдийстваш само един турнир в даден момент.</value>
+  </data>
+  <data name="FaqQ18" xml:space="preserve">
+    <value>Как да оценя рефер?</value>
+  </data>
+  <data name="FaqA18" xml:space="preserve">
+    <value>В страницата „Рефери“ избери от 1 до 5 звезди под картата на рефера и натисни „Запази“. От „Коментари“ можеш да оставиш и мнение.</value>
+  </data>
+  <data name="FaqQ19" xml:space="preserve">
+    <value>Как работи схемата на турнира?</value>
+  </data>
+  <data name="FaqA19" xml:space="preserve">
+    <value>Турнирите се играят на директни елиминации: 1/8-финал, четвъртфинал, полуфинал и финал. Победителят от всеки мач продължава напред. Ако са записани по-малко от 16 отбора, тези без съперник в първия кръг продължават директно напред. Схемата е в „Детайли за турнира“.</value>
+  </data>
+  <data name="FaqQ20" xml:space="preserve">
+    <value>Може ли мач да завърши наравно?</value>
+  </data>
+  <data name="FaqA20" xml:space="preserve">
+    <value>Не. Всеки мач трябва да има победител, който продължава в следващия кръг.</value>
+  </data>
+  <data name="FaqQ21" xml:space="preserve">
+    <value>Кой въвежда резултатите?</value>
+  </data>
+  <data name="FaqA21" xml:space="preserve">
+    <value>Резултатите се въвеждат от организаторите след всеки мач и се появяват веднага в схемата на турнира.</value>
+  </data>
+  <data name="FaqQ22" xml:space="preserve">
+    <value>Какво са „Лидери“ на града?</value>
+  </data>
+  <data name="FaqA22" xml:space="preserve">
+    <value>Класиране на отборите в даден град според броя на победите им там. Отвори „Градове“ и натисни „Лидери“ при избрания град.</value>
+  </data>
+  <data name="FaqQ23" xml:space="preserve">
+    <value>Какви известия ще получавам?</value>
+  </data>
+  <data name="FaqA23" xml:space="preserve">
+    <value>Известие получаваш при успешно плащане, при нов турнир в град, в който вече си играл, около 24 часа преди началото на турнира ти и когато организаторите ти отговорят. Част от известията идват и на имейл.</value>
+  </data>
+  <data name="FaqQ24" xml:space="preserve">
+    <value>Как да предложа турнир в моя град?</value>
+  </data>
+  <data name="FaqA24" xml:space="preserve">
+    <value>Влез в профила си и ни пиши през „Свържи се с организаторите“ (линкът е най-долу на всяка страница). Отговора ще видиш в известията си.</value>
+  </data>
+  <data name="FaqQ25" xml:space="preserve">
+    <value>Къде мога да видя снимки от турнирите?</value>
+  </data>
+  <data name="FaqA25" xml:space="preserve">
+    <value>Отвори „Градове → Турнири → Приключили“ и натисни „Галерия“ при съответния турнир.</value>
+  </data>
+  <data name="LoginLockedOut" xml:space="preserve">
+    <value>Твърде много неуспешни опита за вход. Профилът е временно заключен – опитай отново след 15 минути.</value>
+  </data>
+  <data name="LoginInvalid" xml:space="preserve">
+    <value>Грешен имейл или парола.</value>
+  </data>
+  <data name="RefundDone" xml:space="preserve">
+    <value>Връщането на сумата е пуснато успешно.</value>
+  </data>
+  <data name="RefundDoneTeamRemoved" xml:space="preserve">
+    <value>Сумата е върната и отборът е премахнат от турнира.</value>
+  </data>
+  <data name="RefundTournamentStarted" xml:space="preserve">
+    <value>Турнирът вече е започнал – връщане на суми не е възможно.</value>
+  </data>
+  <data name="RefundStartedShort" xml:space="preserve">
+    <value>Започнал</value>
+  </data>
+  <data name="CTRegistrationClosed" xml:space="preserve">
+    <value>Записването е затворено</value>
+  </data>
+  <data name="Err429Title" xml:space="preserve">
+    <value>Твърде много опити</value>
+  </data>
+  <data name="Err429Wait" xml:space="preserve">
+    <value>Изчакай 1 минута</value>
+  </data>
+  <data name="Err429Text" xml:space="preserve">
+    <value>Направени са твърде много опити за вход или регистрация за кратко време. Изчакай около минута и опитай отново.</value>
+  </data>
+  <data name="SMBecomeCoachFirst" xml:space="preserve">
+    <value>Трябва първо да станеш треньор, за да запишеш отбор.</value>
+  </data>
+  <data name="SMTournamentNotFound" xml:space="preserve">
+    <value>Турнирът не е намерен.</value>
+  </data>
+  <data name="SMTournamentFinished" xml:space="preserve">
+    <value>Турнирът вече е приключил.</value>
+  </data>
+  <data name="SMTournamentStarted" xml:space="preserve">
+    <value>Турнирът вече е започнал и записването е затворено.</value>
+  </data>
+  <data name="SMAlreadyInTournament" xml:space="preserve">
+    <value>Вече участваш в друг турнир. Напусни го, за да се запишеш в нов.</value>
+  </data>
+  <data name="SMTournamentFull" xml:space="preserve">
+    <value>Турнирът е пълен – максималният брой отбори е достигнат.</value>
+  </data>
+  <data name="SMAlreadyCoachInTournament" xml:space="preserve">
+    <value>Вече участваш в този турнир като треньор.</value>
+  </data>
+  <data name="SMRefereeCannotBeCoach" xml:space="preserve">
+    <value>Не можеш да участваш като треньор, защото си съдия в този турнир.</value>
+  </data>
+  <data name="SMTeamNameTaken" xml:space="preserve">
+    <value>Вече има отбор с това име.</value>
+  </data>
+  <data name="SMAlreadyHaveTeam" xml:space="preserve">
+    <value>Вече имаш отбор.</value>
+  </data>
+  <data name="SMMinPlayers" xml:space="preserve">
+    <value>Трябва да въведеш поне 6 играчи.</value>
+  </data>
+  <data name="SMCoachNotFound" xml:space="preserve">
+    <value>Треньорският профил не е намерен.</value>
+  </data>
+  <data name="SMAlreadyPaid" xml:space="preserve">
+    <value>Вече си платил таксата за този турнир.</value>
+  </data>
+  <data name="SMPaymentProcessing" xml:space="preserve">
+    <value>Плащането ти за този турнир вече се обработва.</value>
+  </data>
+  <data name="SMDeclarationRequired" xml:space="preserve">
+    <value>Трябва да приемете декларацията.</value>
+  </data>
+  <data name="SMFeeMissing" xml:space="preserve">
+    <value>Таксата за участие не е зададена. Свържи се с организатора.</value>
+  </data>
+  <data name="SMTeamNotFound" xml:space="preserve">
+    <value>Отборът не е намерен.</value>
+  </data>
+  <data name="SMTeamNotYours" xml:space="preserve">
+    <value>Този отбор не е твой.</value>
+  </data>
+  <data name="SMRefereeTournamentStarted" xml:space="preserve">
+    <value>Не можеш да станеш съдия на турнир, който вече е започнал.</value>
+  </data>
+  <data name="SMRefereeSlotTaken" xml:space="preserve">
+    <value>Този турнир вече си има съдия.</value>
+  </data>
+  <data name="SMCoachCannotBeReferee" xml:space="preserve">
+    <value>Не можеш да си съдия, защото участваш в този турнир като треньор.</value>
+  </data>
+  <data name="SMRefereeElsewhere" xml:space="preserve">
+    <value>Вече си съдия в друг турнир. Напусни го, за да станеш съдия на нов.</value>
+  </data>
+  <data name="SMCoachCannotBecomeReferee" xml:space="preserve">
+    <value>Не можеш да станеш съдия, защото вече си регистриран като треньор.</value>
+  </data>
+  <data name="SMRatingRange" xml:space="preserve">
+    <value>Оценката трябва да е от 1 до 5.</value>
+  </data>
+  <data name="SMAlreadyCoach" xml:space="preserve">
+    <value>Вече си регистриран като треньор.</value>
+  </data>
+  <data name="SMRefereeCannotBecomeCoach" xml:space="preserve">
+    <value>Не можеш да станеш треньор, защото вече си регистриран като съдия.</value>
+  </data>
+  <data name="SMCoachStillPlaying" xml:space="preserve">
+    <value>Не можеш да спреш да си треньор, докато отборът ти участва в турнир.</value>
+  </data>
+  <data name="SMOrderNotFound" xml:space="preserve">
+    <value>Плащането не е намерено.</value>
+  </data>
+  <data name="SMRefundOnlyPaid" xml:space="preserve">
+    <value>Може да се възстановят само платени поръчки.</value>
+  </data>
+  <data name="SMAlreadyRefunded" xml:space="preserve">
+    <value>Тази поръчка вече е възстановена (или възстановяването е започнало).</value>
+  </data>
+  <data name="SMRefundNoPaymentIntent" xml:space="preserve">
+    <value>Липсват данни за плащането в Stripe за тази поръчка.</value>
+  </data>
+  <data name="SMInvalidDate" xml:space="preserve">
+    <value>Невалидна дата, форматът трябва да е {0}.</value>
+  </data>
+  <data name="SMMinAge18" xml:space="preserve">
+    <value>Трябва да си навършил 18 години, за да станеш съдия.</value>
+  </data>
+  <data name="SMChooseReferee" xml:space="preserve">
+    <value>Моля, изберете рефер.</value>
+  </data>
+  <data name="SMEnterSubject" xml:space="preserve">
+    <value>Моля, въведете тема.</value>
+  </data>
+  <data name="SMEnterMessage" xml:space="preserve">
+    <value>Моля, въведете съобщение.</value>
+  </data>
+  <data name="SMInviteSent" xml:space="preserve">
+    <value>Поканата беше изпратена успешно!</value>
+  </data>
+  <data name="SMCommentEmpty" xml:space="preserve">
+    <value>Коментарът не може да е празен.</value>
+  </data>
+  <data name="SMCommentTooLong" xml:space="preserve">
+    <value>Коментарът може да е най-много {0} символа.</value>
+  </data>
+  <data name="SMCommentWait" xml:space="preserve">
+    <value>Изчакай малко преди да публикуваш нов коментар.</value>
+  </data>
+  <data name="TDTitle" xml:space="preserve">
+    <value>Изтриване на турнир</value>
+  </data>
+  <data name="TDConfirm" xml:space="preserve">
+    <value>Изтрий турнира</value>
+  </data>
+  <data name="TDConfirmRefund" xml:space="preserve">
+    <value>Изтрий и върни парите</value>
+  </data>
+  <data name="TDPaidWarning" xml:space="preserve">
+    <value>Платили отбори: {0} (общо {1} €). Парите им ще бъдат върнати автоматично и ще получат известие. Това действие не може да бъде върнато.</value>
+  </data>
+  <data name="TDFinishedNote" xml:space="preserve">
+    <value>Турнирът е приключил – таксите за участие не се връщат, а плащанията остават в историята. Това действие не може да бъде върнато.</value>
+  </data>
+  <data name="TDRunningBlocked" xml:space="preserve">
+    <value>Турнирът тече в момента и не може да бъде изтрит до {0}.</value>
+  </data>
+  <data name="TDDeleted" xml:space="preserve">
+    <value>Турнирът беше изтрит.</value>
+  </data>
+  <data name="TDDeletedRefunded" xml:space="preserve">
+    <value>Турнирът беше изтрит. Върнати пари на отбори: {0}.</value>
+  </data>
+  <data name="TDRefundsFailed" xml:space="preserve">
+    <value>Турнирът не беше изтрит, защото парите на тези отбори не можаха да бъдат върнати: {0}. Отборите с успешно върнати пари вече са извън турнира. Опитай отново.</value>
+  </data>
+  <data name="TDDeleteFailed" xml:space="preserve">
+    <value>Турнирът не можа да бъде изтрит заради грешка в базата. Опитай отново.</value>
+  </data>
+  <data name="DCRunningBlocked" xml:space="preserve">
+    <value>В този град има турнир, който тече в момента. Градът не може да бъде изтрит до {0}.</value>
+  </data>
+  <data name="DCPaidWarning" xml:space="preserve">
+    <value>В турнирите, които още не са започнали, платилите отбори са {0} (общо {1} €). Парите им ще бъдат върнати автоматично и ще получат известие.</value>
+  </data>
+  <data name="DCDeleted" xml:space="preserve">
+    <value>Градът беше изтрит.</value>
+  </data>
+  <data name="DCDeletedRefunded" xml:space="preserve">
+    <value>Градът беше изтрит. Върнати пари на отбори: {0}.</value>
+  </data>
+  <data name="DCRefundsFailed" xml:space="preserve">
+    <value>Градът не беше изтрит, защото парите на тези отбори не можаха да бъдат върнати: {0}. Отборите с успешно върнати пари вече са извън турнирите. Опитай отново.</value>
+  </data>
+  <data name="DCDeleteFailed" xml:space="preserve">
+    <value>Градът не можа да бъде изтрит заради грешка в базата. Нищо от града не беше изтрито – опитай отново.</value>
+  </data>
+  <data name="TournamentCanceledRefundNotification" xml:space="preserve">
+    <value>Турнирът в {0} на {1} беше отменен. Таксата от {2} € ще бъде върната по картата, с която платихте.</value>
+  </data>
+  <data name="TournamentCanceledNotification" xml:space="preserve">
+    <value>Турнирът в {0} на {1} беше отменен.</value>
+  </data>
+  <data name="TournamentCanceledSubject" xml:space="preserve">
+    <value>Турнирът е отменен</value>
+  </data>
+  <data name="TournamentCanceledEmailBody" xml:space="preserve">
+    <value>&lt;p&gt;Турнирът в &lt;b&gt;{0}&lt;/b&gt; на {1} беше отменен.&lt;/p&gt;&lt;p&gt;Таксата от &lt;b&gt;{2} €&lt;/b&gt; ще бъде върната по картата, с която платихте. Обикновено парите се виждат по сметката до 5–10 работни дни.&lt;/p&gt;</value>
+  </data>
+  <data name="PayDeletedTournament" xml:space="preserve">
+    <value>Изтрит турнир</value>
+  </data>
+  <data name="LoginTwoFactorUnsupported" xml:space="preserve">
+    <value>Двуфакторният вход не се поддържа. Свържи се с организаторите.</value>
+  </data>
+  <data name="DATitle" xml:space="preserve">
+    <value>Изтриване на акаунта</value>
+  </data>
+  <data name="DASub" xml:space="preserve">
+    <value>Това действие е окончателно и не може да бъде върнато.</value>
+  </data>
+  <data name="DAOpen" xml:space="preserve">
+    <value>Изтрий акаунта</value>
+  </data>
+  <data name="DADeletedTitle" xml:space="preserve">
+    <value>Ще бъдат изтрити:</value>
+  </data>
+  <data name="DADeletedList" xml:space="preserve">
+    <value>акаунтът ти (име, имейл, парола), известията, разговорите с организаторите, профилът ти на треньор или рефер, играчите в отбора ти, оценките и коментарите, които си писал, както и оценките и коментарите за теб като рефер.</value>
+  </data>
+  <data name="DAKeptTitle" xml:space="preserve">
+    <value>Остават:</value>
+  </data>
+  <data name="DAKeptList" xml:space="preserve">
+    <value>плащанията (счетоводни записи, които по закон се пазят) и името на отбора ти в историята на изиграните турнири – без треньор и без играчи.</value>
+  </data>
+  <data name="DAPassword" xml:space="preserve">
+    <value>Въведи паролата си за потвърждение</value>
+  </data>
+  <data name="DASubmit" xml:space="preserve">
+    <value>Изтрий акаунта завинаги</value>
+  </data>
+  <data name="DADeleted" xml:space="preserve">
+    <value>Акаунтът ти беше изтрит. Съжаляваме, че си тръгваш!</value>
+  </data>
+  <data name="DABlockedOrganizer" xml:space="preserve">
+    <value>Акаунтът на организатора не може да бъде изтрит.</value>
+  </data>
+  <data name="DABlockedCoachUpcoming" xml:space="preserve">
+    <value>Отборът ти е записан в турнир в {0} на {1}. Първо напусни турнира, после изтрий акаунта.</value>
+  </data>
+  <data name="DABlockedCoachRunning" xml:space="preserve">
+    <value>Отборът ти участва в турнир, който тече в момента. Ще можеш да изтриеш акаунта след края му ({0}).</value>
+  </data>
+  <data name="DABlockedRefereeUpcoming" xml:space="preserve">
+    <value>Ти си рефер на турнир в {0} на {1}. Първо напусни турнира, после изтрий акаунта.</value>
+  </data>
+  <data name="DABlockedRefereeRunning" xml:space="preserve">
+    <value>Ти си рефер на турнир, който тече в момента. Ще можеш да изтриеш акаунта след края му ({0}).</value>
+  </data>
+  <data name="DAWrongPassword" xml:space="preserve">
+    <value>Грешна парола.</value>
+  </data>
+  <data name="TDInvalidDate" xml:space="preserve">
+    <value>Избери валидна дата и час.</value>
+  </data>
+  <data name="TDEndBeforeStart" xml:space="preserve">
+    <value>Краят на турнира трябва да е след началото му.</value>
+  </data>
+  <data name="BRInvalidBirthdate" xml:space="preserve">
+    <value>Избери валидна дата на раждане.</value>
+  </data>
+  <data name="MBRequired" xml:space="preserve">
+    <value>Полето е задължително.</value>
+  </data>
+  <data name="MBInvalidValue" xml:space="preserve">
+    <value>Стойността „{0}“ е невалидна.</value>
+  </data>
+  <data name="MBInvalid" xml:space="preserve">
+    <value>Невалидна стойност.</value>
+  </data>
+  <data name="MBNumber" xml:space="preserve">
+    <value>Въведи число.</value>
+  </data>
+  <data name="RefundSuccessBodyShort" xml:space="preserve">
+    <value>&lt;p&gt;Здравей!&lt;/p&gt;&lt;p&gt;Върнахме &lt;b&gt;{0} €&lt;/b&gt; по картата, с която плати таксата за участие.&lt;/p&gt;&lt;p&gt;Обикновено сумата се вижда по сметката до 5–10 работни дни, в зависимост от банката.&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;</value>
+  </data>
+  <data name="TNBye" xml:space="preserve">
+    <value>без съперник</value>
+  </data>
+  <data name="TournamentCanceledLowTeamsNotification" xml:space="preserve">
+    <value>Турнирът в {0} на {1} беше отменен, защото не се събраха достатъчно отбори (нужни са поне 8).</value>
+  </data>
+  <data name="TournamentCanceledLowTeamsRefundNotification" xml:space="preserve">
+    <value>Турнирът в {0} на {1} беше отменен, защото не се събраха достатъчно отбори (нужни са поне 8). Таксата от {2} € ще бъде върната по картата, с която платихте.</value>
+  </data>
+  <data name="TournamentCanceledLowTeamsEmailBody" xml:space="preserve">
+    <value>&lt;p&gt;Здравей!&lt;/p&gt;&lt;p&gt;Турнирът в &lt;b&gt;{0}&lt;/b&gt; на {1} беше отменен, защото не се събраха достатъчно отбори (нужни са поне 8).&lt;/p&gt;&lt;p&gt;Таксата от &lt;b&gt;{2} €&lt;/b&gt; ще бъде върната по картата, с която плати. Обикновено сумата се вижда по сметката до 5–10 работни дни.&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;</value>
+  </data>
+  <data name="AdminLowTeamsWarningSubject" xml:space="preserve">
+    <value>Турнир с малко отбори ⚠️</value>
+  </data>
+  <data name="AdminLowTeamsWarning" xml:space="preserve">
+    <value>Внимание: турнирът в {0} на {1} има само {2} записани отбора. Ако до началото не станат поне {3}, той ще бъде отменен автоматично и парите ще бъдат върнати. Ако искаш да го запазиш, промени датата му.</value>
+  </data>
+  <data name="AdminAutoCanceledSubject" xml:space="preserve">
+    <value>Турнир отменен автоматично</value>
+  </data>
+  <data name="AdminAutoCanceled" xml:space="preserve">
+    <value>Турнирът в {0} на {1} беше отменен автоматично: записаха се само {2} отбора. Върнати пари на отбори: {3}.</value>
+  </data>
+  <data name="AdminAutoCancelFailed" xml:space="preserve">
+    <value>Автоматичната отмяна на турнира в {0} на {1} не успя: парите на тези отбори не можаха да бъдат върнати: {2}. Сайтът опитва отново на всеки 5 минути; можеш да ги върнеш и ръчно от Stripe Dashboard.</value>
+  </data>
+  <data name="FaqQ26" xml:space="preserve">
+    <value>Какво става, ако не се запишат достатъчно отбори?</value>
+  </data>
+  <data name="FaqA26" xml:space="preserve">
+    <value>Турнирът се провежда при поне 8 записани отбора. Ако в момента на старта са по-малко, той се отменя автоматично и всички платили получават парите си обратно по картата, с която са платили. Ще получиш известие и имейл.</value>
+  </data>
+  <data name="LeftTournamentNoRefund" xml:space="preserve">
+    <value>Напусна турнира. Таксата не се връща автоматично – ако искаш парите си, свържи се с организаторите. Ако се върнеш в същия турнир, няма да плащаш отново.</value>
+  </data>
+  <data name="LeaveNotAllowed" xml:space="preserve">
+    <value>Не можеш да напуснеш този турнир – вече е започнал или отборът ти не участва в него.</value>
+  </data>
+  <data name="RejoinedWithPaidFee" xml:space="preserve">
+    <value>Отборът ти е записан отново в турнира. Използвахме таксата, която вече си платил.</value>
+  </data>
+  <data name="PayTeamLeft" xml:space="preserve">
+    <value>Отборът напусна</value>
+  </data>
+  <data name="PayTeamLeftHint" xml:space="preserve">
+    <value>Отборът напусна турнира. Таксата не е върната автоматично – треньорът може да поиска връщане.</value>
+  </data>
+  <data name="SMRefundInProgress" xml:space="preserve">
+    <value>Връщането на предишното ти плащане още се обработва – опитай отново след няколко минути.</value>
+  </data>
+  <data name="RefereeLeaveConfirm" xml:space="preserve">
+    <value>Сигурен ли си, че искаш да се откажеш от съдийството на този турнир?</value>
+  </data>
+  <data name="RefereeLeaveNotAllowed" xml:space="preserve">
+    <value>Не можеш да напуснеш този турнир – вече е започнал или не си негов рефер.</value>
+  </data>
+  <data name="RateSelfNotAllowed" xml:space="preserve">
+    <value>Не можеш да оценяваш себе си.</value>
+  </data>
+  <data name="CommentSelfNotAllowed" xml:space="preserve">
+    <value>Не можеш да коментираш себе си.</value>
+  </data>
+  <data name="RefereeNotFound" xml:space="preserve">
+    <value>Реферът не е намерен.</value>
+  </data>
+  <data name="SMRefereeStopRunning" xml:space="preserve">
+    <value>Не можеш да спреш да бъдеш рефер, докато турнирът ти тече. Ще можеш след края му.</value>
+  </data>
+  <data name="SMRefereeStopUpcoming" xml:space="preserve">
+    <value>Не можеш да спреш да бъдеш рефер, докато си записан за предстоящ турнир. Първо напусни турнира.</value>
+  </data>
+  <data name="ErrFormExpiredTitle" xml:space="preserve">
+    <value>Формата изтече</value>
+  </data>
+  <data name="ErrFormExpiredText" xml:space="preserve">
+    <value>Страницата е стояла отворена твърде дълго или междувременно си влязъл или излязъл от профила си в друг раздел. Нищо не беше записано – отвори формата наново и опитай пак.</value>
+  </data>
+  <data name="ErrFormExpiredRetry" xml:space="preserve">
+    <value>Отвори формата наново</value>
+  </data>
+  <data name="ReminderSubject" xml:space="preserve">
+    <value>Напомняне за турнир ⚽</value>
+  </data>
+  <data name="ReminderNotification" xml:space="preserve">
+    <value>Напомняне: на {0} в {1} имаш участие в турнир в {2}.</value>
+  </data>
+  <data name="ReminderEmailBody" xml:space="preserve">
+    <value>&lt;p&gt;Здравей!&lt;/p&gt;&lt;p&gt;Напомняме ти, че на &lt;b&gt;{0}&lt;/b&gt; в &lt;b&gt;{1}&lt;/b&gt; имаш участие в турнир в &lt;b&gt;{2}&lt;/b&gt;.&lt;/p&gt;&lt;p&gt;Успех! ⚽&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;</value>
+  </data>
+  <data name="ReminderUnknownCity" xml:space="preserve">
+    <value>неизвестен град</value>
+  </data>
+  <data name="EmailConfirmSubject" xml:space="preserve">
+    <value>Потвърди имейла си</value>
+  </data>
+  <data name="EmailConfirmBody" xml:space="preserve">
+    <value>&lt;p&gt;Здравей!&lt;/p&gt;&lt;p&gt;Благодарим ти за регистрацията в Tournament Galaxy. Потвърди имейла си от &lt;a href="{0}"&gt;този линк&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Ако регистрацията не е направена от теб, просто игнорирай това писмо.&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;</value>
+  </data>
+  <data name="PasswordResetSubject" xml:space="preserve">
+    <value>Смяна на паролата</value>
+  </data>
+  <data name="PasswordResetBody" xml:space="preserve">
+    <value>&lt;p&gt;Здравей!&lt;/p&gt;&lt;p&gt;Получихме заявка за нова парола за профила ти в Tournament Galaxy. Можеш да си зададеш нова парола от &lt;a href="{0}"&gt;този линк&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Ако заявката не е направена от теб, просто игнорирай това писмо – паролата ти остава същата.&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;</value>
+  </data>
+  <data name="NewTournamentSubject" xml:space="preserve">
+    <value>Нов турнир в {0} ⚽</value>
+  </data>
+  <data name="NewTournamentNotification" xml:space="preserve">
+    <value>Нов турнир в {0} с начало {1}. Запиши отбора си!</value>
+  </data>
+  <data name="NewTournamentEmailBody" xml:space="preserve">
+    <value>&lt;p&gt;Здравей!&lt;/p&gt;&lt;p&gt;Създаден е нов турнир в &lt;b&gt;{0}&lt;/b&gt; с начало {1}.&lt;/p&gt;&lt;p&gt;&lt;a href="{2}"&gt;Виж турнирите в града&lt;/a&gt; и запиши отбора си. Успех! ⚽&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;&lt;p style="font-size:12px;color:#777"&gt;Получаваш този имейл, защото поиска известия за нови турнири. &lt;a href="{3}"&gt;Отпиши се&lt;/a&gt; или ги изключи от профила си.&lt;/p&gt;</value>
+  </data>
+  <data name="CETitle" xml:space="preserve">
+    <value>Потвърждение на имейла</value>
+  </data>
+  <data name="CEConfirmedTitle" xml:space="preserve">
+    <value>Имейлът е потвърден</value>
+  </data>
+  <data name="CEConfirmedText" xml:space="preserve">
+    <value>Благодарим ти! Имейлът ти е потвърден.</value>
+  </data>
+  <data name="CEFailedTitle" xml:space="preserve">
+    <value>Линкът не е валиден</value>
+  </data>
+  <data name="CEFailedText" xml:space="preserve">
+    <value>Линкът е непълен или вече е изтекъл. Провери дали е копиран изцяло.</value>
+  </data>
+  <data name="CEToSite" xml:space="preserve">
+    <value>Към сайта</value>
+  </data>
+  <data name="TDStartInPast" xml:space="preserve">
+    <value>Началото трябва да е в бъдещето.</value>
+  </data>
+  <data name="TDDatesLocked" xml:space="preserve">
+    <value>Турнирът е започнал – датите му вече не могат да се променят.</value>
+  </data>
+  <data name="TEditSaved" xml:space="preserve">
+    <value>Промените са запазени.</value>
+  </data>
+  <data name="TEditSavedMoved" xml:space="preserve">
+    <value>Промените са запазени. Участниците получиха известие и имейл за новата дата.</value>
+  </data>
+  <data name="TournamentMovedSubject" xml:space="preserve">
+    <value>Нова дата на турнира ⚽</value>
+  </data>
+  <data name="TournamentMovedNotification" xml:space="preserve">
+    <value>Турнирът в {0} е преместен от {1} на {2}.</value>
+  </data>
+  <data name="TournamentMovedEmailBody" xml:space="preserve">
+    <value>&lt;p&gt;Здравей!&lt;/p&gt;&lt;p&gt;Турнирът в &lt;b&gt;{0}&lt;/b&gt; е преместен от {1} на &lt;b&gt;{2}&lt;/b&gt;.&lt;/p&gt;&lt;p&gt;Записването ти остава в сила.&lt;/p&gt;&lt;p&gt;&lt;a href="{3}"&gt;Виж турнирите в града&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Tournament Galaxy&lt;/p&gt;</value>
+  </data>
+  <data name="The field {0} is required." xml:space="preserve">
+    <value>Полето е задължително.</value>
+  </data>
+  <data name="The field {0} must be between {2} and {1} symbols." xml:space="preserve">
+    <value>Трябва да е между {2} и {1} символа.</value>
+  </data>
+  <data name="Prize must be a positive number." xml:space="preserve">
+    <value>Наградата не може да е отрицателна.</value>
+  </data>
+  <data name="Second place prize must be a positive number." xml:space="preserve">
+    <value>Наградата не може да е отрицателна.</value>
+  </data>
+  <data name="Third place prize must be a positive number." xml:space="preserve">
+    <value>Наградата не може да е отрицателна.</value>
+  </data>
+  <data name="Participation fee must be a positive number." xml:space="preserve">
+    <value>Таксата не може да е отрицателна.</value>
+  </data>
+  <data name="Referee experience must be between {1} and {2} years." xml:space="preserve">
+    <value>Опитът трябва да е между {1} и {2} години.</value>
+  </data>
+  <data name="The coach experience must be between {1} and {2} years." xml:space="preserve">
+    <value>Опитът трябва да е между {1} и {2} години.</value>
+  </data>
+  <data name="The coach experience must be at least {1} year." xml:space="preserve">
+    <value>Опитът трябва да е поне {1} година.</value>
+  </data>
+  <data name="RCTitle" xml:space="preserve">
+    <value>Провери имейла си</value>
+  </data>
+  <data name="RCStepAccount" xml:space="preserve">
+    <value>Профил</value>
+  </data>
+  <data name="RCSentTo" xml:space="preserve">
+    <value>Пратихме линк за потвърждение на</value>
+  </data>
+  <data name="RCSent" xml:space="preserve">
+    <value>Пратихме ти линк за потвърждение.</value>
+  </data>
+  <data name="RCOpenIt" xml:space="preserve">
+    <value>Отвори го, за да активираш профила си – след това можеш да влезеш.</value>
+  </data>
+  <data name="RCResend" xml:space="preserve">
+    <value>Не е дошъл? Прати линка отново</value>
+  </data>
+  <data name="RECKicker" xml:space="preserve">
+    <value>Пасът не стигна?</value>
+  </data>
+  <data name="RECTitle" xml:space="preserve">
+    <value>Нов линк за потвърждение</value>
+  </data>
+  <data name="RECSub" xml:space="preserve">
+    <value>Въведи имейла от регистрацията и ще ти пратим нов линк.</value>
+  </data>
+  <data name="RECSend" xml:space="preserve">
+    <value>Прати линка</value>
+  </data>
+  <data name="RECDone" xml:space="preserve">
+    <value>Ако има непотвърден профил с този имейл, пратихме нов линк. Нов линк може да се поиска веднъж на 5 минути.</value>
+  </data>
+  <data name="LoginNotConfirmed" xml:space="preserve">
+    <value>Имейлът ти още не е потвърден. Отвори линка, който ти пратихме при регистрацията.</value>
+  </data>
+  <data name="LoginNoLink" xml:space="preserve">
+    <value>Не ти е дошъл линкът за потвърждение?</value>
+  </data>
+  <data name="LoginNoLinkSend" xml:space="preserve">
+    <value>Прати го отново</value>
+  </data>
+  <data name="CENewLink" xml:space="preserve">
+    <value>Прати нов линк</value>
+  </data>
+  <data name="Please enter a valid email address." xml:space="preserve">
+    <value>Въведи валиден имейл.</value>
+  </data>
+  <data name="IdDefaultError" xml:space="preserve">
+    <value>Нещо се обърка. Опитай отново.</value>
+  </data>
+  <data name="IdConcurrencyFailure" xml:space="preserve">
+    <value>Данните бяха променени междувременно. Опитай отново.</value>
+  </data>
+  <data name="IdPasswordMismatch" xml:space="preserve">
+    <value>Грешна парола.</value>
+  </data>
+  <data name="IdInvalidToken" xml:space="preserve">
+    <value>Линкът е невалиден или е изтекъл. Поискай нов.</value>
+  </data>
+  <data name="IdInvalidUserName" xml:space="preserve">
+    <value>„{0}“ не е валиден имейл.</value>
+  </data>
+  <data name="IdInvalidEmail" xml:space="preserve">
+    <value>„{0}“ не е валиден имейл.</value>
+  </data>
+  <data name="IdDuplicateUserName" xml:space="preserve">
+    <value>Вече има профил с имейл {0}.</value>
+  </data>
+  <data name="IdDuplicateEmail" xml:space="preserve">
+    <value>Вече има профил с имейл {0}.</value>
+  </data>
+  <data name="IdPasswordTooShort" xml:space="preserve">
+    <value>Паролата трябва да е поне {0} символа.</value>
+  </data>
+  <data name="IdPasswordRequiresUniqueChars" xml:space="preserve">
+    <value>Паролата трябва да съдържа поне {0} различни символа.</value>
+  </data>
+  <data name="IdPasswordRequiresNonAlphanumeric" xml:space="preserve">
+    <value>Паролата трябва да съдържа поне един специален символ (например ! @ # ?).</value>
+  </data>
+  <data name="IdPasswordRequiresDigit" xml:space="preserve">
+    <value>Паролата трябва да съдържа поне една цифра.</value>
+  </data>
+  <data name="IdPasswordRequiresLower" xml:space="preserve">
+    <value>Паролата трябва да съдържа поне една малка буква.</value>
+  </data>
+  <data name="IdPasswordRequiresUpper" xml:space="preserve">
+    <value>Паролата трябва да съдържа поне една главна буква.</value>
+  </data>
+  <data name="The password and confirmation password do not match." xml:space="preserve">
+    <value>Паролите не съвпадат.</value>
+  </data>
+  <data name="SMTooManyPlayers" xml:space="preserve">
+    <value>Отборът може да има най-много {0} играчи.</value>
+  </data>
+  <data name="SMPlayerNameTooLong" xml:space="preserve">
+    <value>Името на играч може да е най-много {0} символа.</value>
+  </data>
+  <data name="SMRefundAmountPositive" xml:space="preserve">
+    <value>Сумата за връщане трябва да е по-голяма от 0.</value>
+  </data>
+  <data name="SMRefundAmountTooHigh" xml:space="preserve">
+    <value>Сумата за връщане не може да е по-голяма от платената.</value>
+  </data>
+  <data name="GLSelectPictures" xml:space="preserve">
+    <value>Избери поне една снимка.</value>
+  </data>
+  <data name="GLTooManyFiles" xml:space="preserve">
+    <value>Наведнъж могат да се качат най-много {0} снимки.</value>
+  </data>
+  <data name="GLNotAllowed" xml:space="preserve">
+    <value>„{0}“ не е позволен файл. Може да се качват само снимки JPG, PNG, GIF и WEBP.</value>
+  </data>
+  <data name="GLEmpty" xml:space="preserve">
+    <value>„{0}“ е празен файл.</value>
+  </data>
+  <data name="GLTooLarge" xml:space="preserve">
+    <value>„{0}“ е твърде голям файл (най-много {1} MB).</value>
+  </data>
+  <data name="GLNotAnImage" xml:space="preserve">
+    <value>„{0}“ не е валидна снимка.</value>
+  </data>
+  <data name="GLSaveFailed" xml:space="preserve">
+    <value>Снимката „{0}“ не можа да бъде обработена. Нищо от това качване не е записано.</value>
+  </data>
+  <data name="GLUploaded" xml:space="preserve">
+    <value>Снимките са качени.</value>
+  </data>
+  <data name="GLDeleted" xml:space="preserve">
+    <value>Снимката е изтрита.</value>
+  </data>
+  <data name="GLFileNotFound" xml:space="preserve">
+    <value>Снимката не е намерена.</value>
+  </data>
+  <data name="PaymentCheckEmail" xml:space="preserve">
+    <value>Ако плащането е минало успешно, ще получиш потвърждение по имейл, а отборът ти ще се появи в турнира.</value>
+  </data>
+  <data name="PaymentCanceledMessage" xml:space="preserve">
+    <value>❌ Плащането беше отказано или прекъснато.</value>
+  </data>
+  <data name="The participation fee must be at least {1} €." xml:space="preserve">
+    <value>Таксата трябва да е поне {1} €.</value>
+  </data>
+  <data name="PicChoose" xml:space="preserve">
+    <value>Избери снимка</value>
+  </data>
+  <data name="PicNone" xml:space="preserve">
+    <value>Няма избран файл</value>
+  </data>
+  <data name="PicRequired" xml:space="preserve">
+    <value>Избери снимка.</value>
+  </data>
+  <data name="PicChooseAgain" xml:space="preserve">
+    <value>Избери снимката отново – браузърът не я пази, когато във формата има грешка.</value>
+  </data>
+  <data name="PicKeepCurrent" xml:space="preserve">
+    <value>Ако не избереш нова, остава сегашната снимка.</value>
+  </data>
+  <data name="PicNew" xml:space="preserve">
+    <value>Нова снимка</value>
+  </data>
+  <data name="PicNewLogo" xml:space="preserve">
+    <value>Ново лого</value>
+  </data>
+  <data name="PicSave" xml:space="preserve">
+    <value>Запази</value>
+  </data>
+  <data name="PicChanged" xml:space="preserve">
+    <value>Снимката на града е сменена.</value>
+  </data>
+  <data name="PicLogoChanged" xml:space="preserve">
+    <value>Логото на партньора е сменено.</value>
+  </data>
+  <data name="PicPickCity" xml:space="preserve">
+    <value>Избери град.</value>
+  </data>
+  <data name="PicPickPartner" xml:space="preserve">
+    <value>Избери партньор.</value>
+  </data>
+  <data name="PicChangeShort" xml:space="preserve">
+    <value>Смени снимка</value>
+  </data>
+  <data name="PicChangeLogoShort" xml:space="preserve">
+    <value>Смени лого</value>
+  </data>
+  <data name="CPChangeCityPicture" xml:space="preserve">
+    <value>Смени снимка на град</value>
+  </data>
+  <data name="CPChangeCityPictureSub" xml:space="preserve">
+    <value>Избери град и нова снимка за него. Старата снимка се изтрива от сайта.</value>
+  </data>
+  <data name="CPChangePartnerLogo" xml:space="preserve">
+    <value>Смени лого на партньор</value>
+  </data>
+  <data name="CPChangePartnerLogoSub" xml:space="preserve">
+    <value>Избери партньор и ново лого. Старото лого се изтрива от сайта.</value>
+  </data>
+  <data name="PrefEmailsTitle" xml:space="preserve">
+    <value>Имейли за нови турнири</value>
+  </data>
+  <data name="PrefEmailsText" xml:space="preserve">
+    <value>Имейл, когато има нов турнир в град, в който си играл/а. Известията в сайта получаваш винаги.</value>
+  </data>
+  <data name="PrefEmailsStateOn" xml:space="preserve">
+    <value>Включени</value>
+  </data>
+  <data name="PrefEmailsStateOff" xml:space="preserve">
+    <value>Изключени</value>
+  </data>
+  <data name="PrefEmailsTurnOn" xml:space="preserve">
+    <value>Включи имейлите</value>
+  </data>
+  <data name="PrefEmailsTurnOff" xml:space="preserve">
+    <value>Изключи имейлите</value>
+  </data>
+  <data name="PrefEmailsSavedOn" xml:space="preserve">
+    <value>Ще получаваш имейл за нови турнири.</value>
+  </data>
+  <data name="PrefEmailsSavedOff" xml:space="preserve">
+    <value>Няма да получаваш имейли за нови турнири.</value>
+  </data>
+  <data name="UnsubTitle" xml:space="preserve">
+    <value>Имейли за нови турнири</value>
+  </data>
+  <data name="UnsubQuestion" xml:space="preserve">
+    <value>Да спрем ли имейлите за нови турнири към този профил?</value>
+  </data>
+  <data name="UnsubButton" xml:space="preserve">
+    <value>Отпиши ме</value>
+  </data>
+  <data name="UnsubDone" xml:space="preserve">
+    <value>Готово – вече няма да получаваш имейли за нови турнири. Можеш да ги включиш отново от профила си.</value>
+  </data>
+  <data name="UnsubInvalid" xml:space="preserve">
+    <value>Този линк не е валиден или вече е остарял. Можеш да изключиш имейлите от профила си.</value>
+  </data>
+  <data name="UnsubToProfile" xml:space="preserve">
+    <value>Към профила</value>
+  </data>
+  <data name="RegNewTournamentEmails" xml:space="preserve">
+    <value>Искам имейл, когато има нов турнир в град, в който съм играл/а (по желание).</value>
+  </data>
+  <data name="RegAcceptA" xml:space="preserve">
+    <value>Приемам</value>
+  </data>
+  <data name="RegAcceptB" xml:space="preserve">
+    <value>и съм запознат/а с</value>
+  </data>
+  <data name="RegTermsLink" xml:space="preserve">
+    <value>Общите условия</value>
+  </data>
+  <data name="RegPrivacyLink" xml:space="preserve">
+    <value>Политиката за поверителност</value>
+  </data>
+  <data name="RegAcceptRequired" xml:space="preserve">
+    <value>Трябва да приемеш Общите условия.</value>
+  </data>
+  <data name="LegalTermsLink" xml:space="preserve">
+    <value>Общи условия</value>
+  </data>
+  <data name="LegalPrivacyLink" xml:space="preserve">
+    <value>Политика за поверителност</value>
+  </data>
+  <data name="LegalUpdated" xml:space="preserve">
+    <value>Последна промяна</value>
+  </data>
+  <data name="FooterLegal" xml:space="preserve">
+    <value>Правна информация</value>
+  </data>
+  <data name="TNRefereeAssigned" xml:space="preserve">
+    <value>Определен</value>
+  </data>
+  <data name="TGRemovalNote" xml:space="preserve">
+    <value>Ако си на някоя от снимките и искаш да бъде махната, пиши ни:</value>
+  </data>
+  <data name="TGRemovalWrite" xml:space="preserve">
+    <value>съобщение до организаторите</value>
+  </data>
+  <data name="CRReport" xml:space="preserve">
+    <value>Сигнализирай</value>
+  </data>
+  <data name="CRReportTitle" xml:space="preserve">
+    <value>Сигнал за коментар</value>
+  </data>
+  <data name="CRReportLead" xml:space="preserve">
+    <value>Сигнализирай коментар, който е обиден, клеветнически, дискриминационен или съдържа чужди лични данни. Организаторите ще го прегледат и ще ти отговорят в съобщенията.</value>
+  </data>
+  <data name="CRReason" xml:space="preserve">
+    <value>Какъв е проблемът? (по желание)</value>
+  </data>
+  <data name="CRSend" xml:space="preserve">
+    <value>Изпрати сигнала</value>
+  </data>
+  <data name="CRReportSubject" xml:space="preserve">
+    <value>Сигнал за коментар за рефер {0}</value>
+  </data>
+  <data name="CRReportBody" xml:space="preserve">
+    <value>Сигнал за коментар №{0} за рефер {1}.
+
+Автор: {2}, {3}
+Коментар: „{4}“
+
+Проблем: {5}</value>
+  </data>
+  <data name="CRReportSent" xml:space="preserve">
+    <value>Сигналът е изпратен. Ще ти отговорим в съобщенията.</value>
+  </data>
+  <data name="CRDelete" xml:space="preserve">
+    <value>Изтрий</value>
+  </data>
+  <data name="CRDeleteConfirm" xml:space="preserve">
+    <value>Да изтрия ли този коментар? Авторът ще получи известие.</value>
+  </data>
+  <data name="CRDeleted" xml:space="preserve">
+    <value>Коментарът е изтрит и авторът е уведомен.</value>
+  </data>
+  <data name="CRRemovedNotification" xml:space="preserve">
+    <value>Твоят коментар за рефер {0} от {1} беше премахнат, защото нарушава правилата за коментари в Общите условия.</value>
+  </data>
+  <data name="LegalCompanyId" xml:space="preserve">
+    <value>ЕИК</value>
+  </data>
+  <data name="LegalAddress" xml:space="preserve">
+    <value>Адрес</value>
+  </data>
+  <data name="LegalEmail" xml:space="preserve">
+    <value>Имейл</value>
+  </data>
+  <data name="LegalPhone" xml:space="preserve">
+    <value>Телефон</value>
+  </data>
+  <data name="LegalContactForm" xml:space="preserve">
+    <value>Регистрираните потребители могат да ни пишат и чрез „Свържи се с организаторите“.</value>
   </data>
 </root>

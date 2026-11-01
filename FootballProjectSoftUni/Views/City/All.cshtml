@@ -1,112 +1,223 @@
-﻿@using FootballProjectSoftUni.Core.Models.City
+@using FootballProjectSoftUni.Core.Models.City
+@using FootballProjectSoftUni.Extensions
 @using X.PagedList
 @model IPagedList<CityViewModel>
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
-
 @{
     ViewData["Title"] = "Cities";
+    ViewData["FullWidth"] = true;
+
+    var offset = (Model.PageNumber - 1) * Model.PageSize;
+    var pageCount = Math.Max(1, Model.PageCount);
 }
 
-<section class="container py-4">
+<div class="container-xl cp-page">
 
     @* Alerts *@
-    @if (TempData["ErrorMessage"] != null)
+    @if (TempData["ErrorMessage"] != null || TempData["PaymentMessage"] != null)
     {
-        <div class="alert alert-danger" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            @TempData["ErrorMessage"]
+        <div class="cp-alerts">
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger mb-0" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            @if (TempData["PaymentMessage"] != null)
+            {
+                var type = TempData["PaymentType"]?.ToString() ?? "info";
+                <div class="alert alert-@type mb-0" role="alert">
+                    <i class="bi bi-info-circle-fill me-2" aria-hidden="true"></i>
+                    @TempData["PaymentMessage"]
+                </div>
+            }
         </div>
     }
 
-    @if (TempData["PaymentMessage"] != null)
-    {
-        var type = TempData["PaymentType"]?.ToString() ?? "info";
-        <div class="alert alert-@type" role="alert">
-            <i class="bi bi-info-circle-fill me-2"></i>
-            @TempData["PaymentMessage"]
-        </div>
-    }
+    @* Poster hero + command bar *@
+    <section class="cp-hero" aria-labelledby="citiesTitle">
+        <div class="cp-hero__top">
 
-    @* Header + Search *@
-    <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-md-end gap-3 mb-4">
-        <form method="get" action="@Url.Action("Search")" class="city-search">
-            <div class="input-group">
-                <span class="input-group-text bg-white">
-                    <i class="bi bi-search"></i>
-                </span>
-                <input type="text"
-                       class="form-control"
-                       name="searchString"/>
-                <button class="btn btn-primary" type="submit">
-                    @Localizer["AllSearch"]
-                </button>
-            </div>
+            @if (User.IsAdmin())
+            {
+                <div class="cp-admin">
+                    <a asp-controller="City" asp-action="AddCity" class="btn btn-sun btn-sm">
+                        <i class="bi bi-plus-lg" aria-hidden="true"></i>@Localizer["DAddCity"]
+                    </a>
+                    <a asp-controller="City" asp-action="UpdateCityLeaders" class="btn btn-outline-dark btn-sm">
+                        <i class="bi bi-arrow-repeat" aria-hidden="true"></i>@Localizer["DUCL"]
+                    </a>
+                    <a asp-controller="City" asp-action="ChangePicture" class="btn btn-outline-dark btn-sm">
+                        <i class="bi bi-image-fill" aria-hidden="true"></i>@Localizer["PicChangeShort"]
+                    </a>
+                </div>
+            }
+        </div>
+
+        <h1 class="cp-mega" id="citiesTitle" data-split>
+            @Localizer["DCities"]
+            <sup class="cp-mega__sup">@Model.TotalItemCount</sup>
+        </h1>
+
+        <div class="cp-stamp" aria-hidden="true">
+            <svg viewBox="0 0 200 200" focusable="false">
+                <defs>
+                    <path id="cpStampPath" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0" />
+                </defs>
+                <text>
+                    <textPath href="#cpStampPath" textLength="492" lengthAdjust="spacing">Tournament Galaxy &#8226; @Localizer["DCities"] &#8226; @BgTime.Today.Year &#8226;</textPath>
+                </text>
+            </svg>
+            <i class="bi bi-geo-alt-fill"></i>
+        </div>
+
+        <p class="cp-lead">@Localizer["CPCitiesLead"]</p>
+
+        <form method="get" action="@Url.Action("Search")" class="cp-cmd" role="search">
+            <i class="bi bi-search cp-cmd__icon" aria-hidden="true"></i>
+            <input type="text"
+                   id="citySearch"
+                   class="cp-cmd__input"
+                   name="searchString"
+                   autocomplete="off"
+                   placeholder="@Localizer["AllSearch"]"
+                   aria-label="@Localizer["AllSearch"]"
+                   aria-keyshortcuts="/" />
+            <button class="btn btn-primary cp-cmd__go" type="submit" aria-label="@Localizer["AllSearch"]">
+                <span class="cp-cmd__go-text">@Localizer["AllSearch"]</span>
+                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </button>
         </form>
-    </div>
+    </section>
 
-    @* Grid *@
-    <div class="row g-4">
-        @foreach (var city in Model)
-        {
-            <div class="col-12 col-sm-6 col-lg-4">
-                <div class="city-card h-100">
+    @* Editorial index *@
+    @if (Model.Any())
+    {
+        <div class="cp-index-head">
+            <span>&#8470; &middot; @Localizer["UPLCity"]</span>
+            <span class="cp-index-head__swipe"><i class="bi bi-arrow-left-right" aria-hidden="true"></i>@Localizer["CPSwipe"]</span>
+            <span>@Localizer["CPPage"] @Model.PageNumber / @pageCount</span>
+        </div>
 
-                    <div class="city-cover">
-                        <img src="@city.ImageUrl" alt="City Image" />
-                        <div class="city-cover__overlay"></div>
-                        <div class="city-name">
-                            <h5 class="mb-0">@city.Name</h5>
-                        </div>
-                    </div>
+        <ol class="cp-index" data-hover-reveal aria-label="@Localizer["DCities"]">
+            @{ var n = 0; }
+            @foreach (var city in Model)
+            {
+                n++;
+                var no = (offset + n).ToString("00");
 
-                    <div class="city-actions p-3">
+                <li class="cp-row" data-name="@city.Name" data-reveal>
+                    <a class="cp-row__main"
+                       data-img="@city.ImageUrl"
+                       asp-controller="Tournament"
+                       asp-action="CityTournaments"
+                       asp-route-id="@city.Id">
+                        <span class="cp-row__num" aria-hidden="true">@no</span>
+                        <span class="cp-row__photo" aria-hidden="true">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <img src="@city.ImageUrl" alt="" loading="lazy" draggable="false" data-hide-on-error />
+                        </span>
+                        <span class="cp-row__name">@city.Name</span>
+                    </a>
+
+                    <div class="cp-row__actions">
                         <a asp-controller="Tournament"
                            asp-action="CityTournaments"
                            asp-route-id="@city.Id"
-                           class="btn btn-warning w-100 fw-bold city-btn">
-                            <i class="bi bi-trophy-fill me-2"></i>@Localizer["AllTournaments"]
+                           class="btn btn-primary btn-sm">
+                            <i class="bi bi-trophy-fill" aria-hidden="true"></i>@Localizer["AllTournaments"]
                         </a>
 
                         <a asp-controller="City"
                            asp-action="GetBestTeams"
                            asp-route-id="@city.Id"
-                           class="btn btn-outline-dark w-100 fw-bold city-btn mt-2">
-                            <i class="bi bi-bar-chart-fill me-2"></i>@Localizer["AllLeaders"]
+                           class="btn btn-sun btn-sm">
+                            <i class="bi bi-bar-chart-fill" aria-hidden="true"></i>@Localizer["AllLeaders"]
                         </a>
                     </div>
-                </div>
-            </div>
-        }
-    </div>
-
-    @* Pagination *@
-    <nav class="mt-4" aria-label="Page navigation">
-        <ul class="pagination justify-content-center tg-pagination">
-            @{
-                var nextPage = Model.PageNumber + 1;
-                var previousPage = Model.PageNumber - 1;
-            }
-
-            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-                <a class="page-link" href="@Url.Action("All", new { page = previousPage })" tabindex="-1">
-                    <i class="bi bi-chevron-left"></i>
-                </a>
-            </li>
-
-            @for (int i = 1; i <= Model.PageCount; i++)
-            {
-                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                    <a class="page-link" href="@Url.Action("All", new { page = i })">@i</a>
                 </li>
             }
+        </ol>
+    }
+    else
+    {
+        <div class="tg-empty cp-empty">
+            <span class="tg-empty__icon"><i class="bi bi-geo-alt" aria-hidden="true"></i></span>
+            <h5>@Localizer["NoCity"]</h5>
+        </div>
+    }
 
-            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-                <a class="page-link" href="@Url.Action("All", new { page = nextPage })">
-                    <i class="bi bi-chevron-right"></i>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    @* Pagination *@
+    @if (Model.PageCount > 1)
+    {
+        <nav class="cp-pager" aria-label="Page navigation">
+            <div class="cp-pager__label" aria-hidden="true">
+                <small>@Localizer["CPPage"]</small>
+                <b>@Model.PageNumber</b>
+                <span>/ @Model.PageCount</span>
+            </div>
 
-</section>
+            <ul class="pagination">
+                @{
+                    var nextPage = Model.PageNumber + 1;
+                    var previousPage = Model.PageNumber - 1;
+                }
+
+                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                    <a class="page-link" href="@Url.Action("All", new { page = previousPage })" tabindex="-1" aria-label="Previous">
+                        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                    </a>
+                </li>
+
+                @for (int i = 1; i <= Model.PageCount; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("All", new { page = i })" aria-current="@(i == Model.PageNumber ? "page" : null)">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                    <a class="page-link" href="@Url.Action("All", new { page = nextPage })" aria-label="Next">
+                        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var input = document.getElementById('citySearch');
+            if (!input) { return; }
+            var rows = Array.prototype.slice.call(document.querySelectorAll('.cp-row[data-name]'));
+
+            // "/" focuses the command bar (unless the visitor is already typing somewhere)
+            document.addEventListener('keydown', function (e) {
+                if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) { return; }
+                var t = e.target;
+                if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) { return; }
+                e.preventDefault();
+                input.focus();
+                input.select();
+            });
+
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') { input.blur(); }
+            });
+
+            // Live dim of rows on this page that do not match (Enter still searches all cities)
+            input.addEventListener('input', function () {
+                var q = input.value.trim().toLowerCase();
+                rows.forEach(function (row) {
+                    var name = (row.getAttribute('data-name') || '').toLowerCase();
+                    row.classList.toggle('is-dim', q.length > 0 && name.indexOf(q) !== 0);
+                });
+            });
+        })();
+    </script>
+}

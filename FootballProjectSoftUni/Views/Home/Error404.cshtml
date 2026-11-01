@@ -1,44 +1,69 @@
-﻿@{
+@inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
+@{
     ViewData["Title"] = "Page Not Found";
 }
 
-<section class="container py-5">
-
-    <div class="admin-form-card mx-auto text-center">
-
-        <div class="delete-icon mb-3">
-            <i class="bi bi-search"></i>
-        </div>
-
-        <h2 class="page-title text-danger mb-2">
-            404 - Page Not Found
-        </h2>
-
-        <p class="text-muted mb-4">
-            Oops, better check that URL. The page you are looking for does not exist.
-        </p>
-
-        <div class="notfound-image mb-4">
-            <img src="https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
-                 alt="Not Found"
-                 class="img-fluid rounded shadow-sm" />
-        </div>
-
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <a asp-controller="Home"
-               asp-action="Index"
-               class="btn btn-primary btn-lg tg-action-btn px-4">
-                <i class="bi bi-house-fill me-2"></i>
-                Go to Home
-            </a>
-
-            <button onclick="history.back()"
-                    class="btn btn-outline-secondary btn-lg px-4">
-                <i class="bi bi-arrow-left me-2"></i>
-                Go Back
-            </button>
-        </div>
-
+<section class="err-404">
+    <div class="err-404__top">
+        <span class="tg-kicker">404</span>
+        <span class="tg-sticker tg-sticker--coral" style="--rot:4deg">
+            <i class="bi bi-flag-fill" aria-hidden="true"></i>@Localizer["ErrFlagUp"]
+        </span>
     </div>
 
+    <h1 class="err-mega" data-split>@Localizer["ErrOffside"]</h1>
+
+    @* The broadcast graphic: "4" and "0" hold the line, the last "4" is caught beyond it *@
+    <div class="err-strip" aria-hidden="true">
+        <svg class="tg-pitch-lines" viewBox="0 0 100 40" preserveAspectRatio="none">
+            <rect x="1" y="2" width="98" height="36" />
+            <rect x="84" y="9" width="15" height="22" />
+            <rect x="94" y="15" width="5" height="10" />
+        </svg>
+
+        <span class="err-digit">4</span>
+        <span class="err-digit">0</span>
+        <span class="err-line"></span>
+        <span class="err-digit err-digit--off">4<span class="tg-sticker tg-sticker--white err-you">@Localizer["ErrYou"]</span></span>
+
+        <div class="err-flag">
+            <svg class="err-flag__svg" viewBox="0 0 120 170" focusable="false">
+                <defs>
+                    <pattern id="errFlagCheck" width="24" height="24" patternUnits="userSpaceOnUse">
+                        <rect width="24" height="24" fill="#ffc93c"></rect>
+                        <rect width="12" height="12" fill="#e5383b"></rect>
+                        <rect x="12" y="12" width="12" height="12" fill="#e5383b"></rect>
+                    </pattern>
+                </defs>
+                <g class="err-flag__cloth">
+                    <path d="M26 14 C50 6 70 22 108 12 L108 66 C72 76 52 60 26 68 Z" fill="url(#errFlagCheck)" stroke="#0d1f17" stroke-width="4" stroke-linejoin="round"></path>
+                </g>
+                <line x1="24" y1="8" x2="24" y2="160" stroke="#0d1f17" stroke-width="7" stroke-linecap="round"></line>
+                <circle cx="24" cy="8" r="6" fill="#0d1f17"></circle>
+                <rect x="13" y="126" width="22" height="36" rx="9" fill="#0d1f17"></rect>
+            </svg>
+        </div>
+    </div>
+
+    <div class="err-404__foot">
+        <div>
+            <h2 class="err-h2">@Localizer["Err404Title"]</h2>
+            <p class="err-lead">@Localizer["Err404Text"]</p>
+        </div>
+
+        <div class="err-actions">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg" data-magnetic>
+                <i class="bi bi-house-fill" aria-hidden="true"></i>
+                <span>@Localizer["DHome"]</span>
+            </a>
+            <button type="button" data-history-back class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                <span>@Localizer["ErrGoBack"]</span>
+            </button>
+            <a asp-controller="City" asp-action="All" class="err-chip-link">
+                <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+                <span>@Localizer["DCities"]</span>
+            </a>
+        </div>
+    </div>
 </section>

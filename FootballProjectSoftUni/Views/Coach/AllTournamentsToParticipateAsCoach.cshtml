@@ -1,4 +1,4 @@
-﻿@using FootballProjectSoftUni.Core.Models.Tournament
+@using FootballProjectSoftUni.Core.Models.Tournament
 @using FootballProjectSoftUni.Infrastructure.Data.Enums
 @model IEnumerable<TournamentViewModel>
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
@@ -6,103 +6,202 @@
 
 @{
     ViewData["Title"] = "Tournaments To Participate As Coach";
+
+    // Same status rules as before: Upcoming / Started / Finished
+    string State(TournamentViewModel t)
+    {
+        if (t.StartDate > BgTime.Now)
+        {
+            return nameof(TournamentStatus.Upcoming);
+        }
+
+        if (BgTime.Now > t.StartDate && BgTime.Now < t.EndDate)
+        {
+            return nameof(TournamentStatus.Started);
+        }
+
+        return nameof(TournamentStatus.Finished);
+    }
+
+    var list = Model != null ? Model.OrderBy(t => t.StartDate).ToList() : new List<TournamentViewModel>();
+    var upcomingCount = list.Count(t => State(t) == nameof(TournamentStatus.Upcoming));
+    var liveCount = list.Count(t => State(t) == nameof(TournamentStatus.Started));
 }
 
-<section class="container py-4">
+<header class="tp-fx-head">
+    <div>
+        <h1 class="tp-giant" data-split>@Localizer["DParticipate"]</h1>
+    </div>
 
-    @if (Model != null && Model.Any())
+    @if (list.Any())
     {
-        <div class="row g-4">
-            @foreach (var e in Model)
+        <dl class="tp-scoreboard">
+            <div>
+                <dt>@Localizer["TNTitle"]</dt>
+                <dd data-count="@list.Count">@list.Count</dd>
+            </div>
+            <div>
+                <dt>@Localizer["TNStatusUpcoming"]</dt>
+                <dd>@upcomingCount</dd>
+            </div>
+            <div class="is-live">
+                <dt>@Localizer["TNStatusStarted"]</dt>
+                <dd>@liveCount</dd>
+            </div>
+        </dl>
+    }
+</header>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>@TempData["ErrorMessage"]
+    </div>
+}
+
+@if (list.Any())
+{
+    @* ============ DATE STRIP ============ *@
+    <nav class="tp-strip" aria-label="@Localizer["TNTitle"]">
+        <div class="tp-strip__track" data-drag-scroll>
+            @{ var todayPlaced = false; }
+            @foreach (var e in list)
             {
-                <div class="col-12 col-sm-6 col-lg-4">
-                    <div class="tournament-card h-100">
+                if (!todayPlaced && e.StartDate.Date >= BgTime.Today)
+                {
+                    todayPlaced = true;
+                    <span class="tp-day tp-day--today" aria-hidden="true">
+                        <span class="tp-day__dow">@BgTime.Today.ToString("ddd")</span>
+                        <b class="tp-day__num">@BgTime.Today.ToString("dd")</b>
+                        <span class="tp-day__mon">@BgTime.Today.ToString("MMM")</span>
+                        <span class="tp-day__tag">@Localizer["TpToday"]</span>
+                    </span>
+                }
 
-                        <div class="tournament-cover">
-                            <img src="@e.ImageUrl" alt="Tournament Image" />
-                            <div class="tournament-cover__overlay"></div>
+                var st = State(e);
+                var dayClass = st == nameof(TournamentStatus.Started) ? "tp-day--live" : st == nameof(TournamentStatus.Finished) ? "tp-day--past" : string.Empty;
 
-                            <div class="tournament-top">
-                                <span class="badge tournament-pill">
-                                    <i class="bi bi-geo-alt-fill me-1"></i>@e.CityName
-                                </span>
-
-                                @{
-                                    string statusText;
-                                    string statusClass;
-
-                                    if (e.StartDate > DateTime.Now)
-                                    {
-                                        statusText = TournamentStatus.Upcoming.ToString();
-                                        statusClass = "status-upcoming";
-                                    }
-                                    else if (DateTime.Now > e.StartDate && DateTime.Now < e.EndDate)
-                                    {
-                                        statusText = TournamentStatus.Started.ToString();
-                                        statusClass = "status-started";
-                                    }
-                                    else
-                                    {
-                                        statusText = TournamentStatus.Finished.ToString();
-                                        statusClass = "status-finished";
-                                    }
-                                }
-
-                                <span class="badge tournament-status @statusClass">
-                                    <i class="bi bi-activity me-1"></i>@statusText
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="p-3">
-                            <div class="tournament-meta">
-                                <div class="tmeta">
-                                    <i class="bi bi-calendar-event me-2"></i>
-                                    <span><strong>@Localizer["ATCStart"]:</strong> @e.StartDate</span>
-                                </div>
-
-                                <div class="tmeta">
-                                    <i class="bi bi-calendar-x me-2"></i>
-                                    <span><strong>@Localizer["ATCEnd"]:</strong> @e.EndDate</span>
-                                </div>
-
-                                <div class="tmeta">
-                                    <i class="bi bi-people-fill me-2"></i>
-                                    <span><strong>@Localizer["ATCTeams"]:</strong> @($"{e.NumberOfTeams} / 16")</span>
-                                </div>
-                            </div>
-
-                            <a asp-controller="Tournament"
-                               asp-action="Details"
-                               asp-route-id="@e.Id"
-                               asp-route-information="@e.Information"
-                               class="btn btn-warning w-100 fw-bold city-btn mt-3">
-                                <i class="bi bi-info-circle me-2"></i>
-                                @Localizer["CTDetails"]
-                            </a>
-
-                            <a asp-controller="Coach"
-                               asp-action="LeaveTournament"
-                               asp-route-id="@e.Id"
-                               class="btn btn-warning w-100 fw-bold city-btn mt-3">
-                                <i class="bi bi-box-arrow-right me-2"></i>@Localizer["ATCLeaveTournament"]
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
+                <a class="tp-day @dayClass" href="#fx-@e.Id">
+                    <span class="tp-day__dow">@e.StartDate.ToString("ddd")</span>
+                    <b class="tp-day__num">@e.StartDate.ToString("dd")</b>
+                    <span class="tp-day__mon">@e.StartDate.ToString("MMM")</span>
+                    <span class="tp-day__tag">@e.CityName</span>
+                </a>
+            }
+            @if (!todayPlaced)
+            {
+                <span class="tp-day tp-day--today" aria-hidden="true">
+                    <span class="tp-day__dow">@BgTime.Today.ToString("ddd")</span>
+                    <b class="tp-day__num">@BgTime.Today.ToString("dd")</b>
+                    <span class="tp-day__mon">@BgTime.Today.ToString("MMM")</span>
+                    <span class="tp-day__tag">@Localizer["TpToday"]</span>
+                </span>
             }
         </div>
-    }
-    else
-    {
-        <div class="empty-state text-center">
-            <i class="bi bi-calendar2-x display-4 text-muted"></i>
-            <h5 class="mt-3">@Localizer["ATCNoTournament"]</h5>
-            <p class="text-muted mb-0">
-                @Localizer["ATCNotYet"]
-            </p>
-        </div>
-    }
+    </nav>
 
-</section>
+    @* ============ TICKETS ============ *@
+    <ol class="tp-fx-list">
+        @foreach (var e in list)
+        {
+            var st = State(e);
+            string statusText;
+            string statusClass;
+            string fxClass;
+
+            if (st == nameof(TournamentStatus.Upcoming))
+            {
+                statusText = Localizer["TNStatusUpcoming"].Value;
+                statusClass = "tg-chip--sky";
+                fxClass = "tp-fx--upcoming";
+            }
+            else if (st == nameof(TournamentStatus.Started))
+            {
+                statusText = Localizer["TNStatusStarted"].Value;
+                statusClass = "tg-chip--green tg-chip--live";
+                fxClass = "tp-fx--live";
+            }
+            else
+            {
+                statusText = Localizer["TNStatusFinished"].Value;
+                statusClass = "";
+                fxClass = "tp-fx--past";
+            }
+
+            var fillPct = Math.Min(100, (int)Math.Round(e.NumberOfTeams * 100.0 / 16));
+
+            <li class="tg-ticket tp-fx @fxClass" id="fx-@e.Id">
+
+                <div class="tp-fx__main">
+                    <div class="tp-fx__date" aria-hidden="true">
+                        <span>@e.StartDate.ToString("ddd")</span>
+                        <b>@e.StartDate.ToString("dd")</b>
+                        <span>@e.StartDate.ToString("MMM")</span>
+                    </div>
+
+                    <div class="tp-fx__img">
+                        <img src="@e.ImageUrl" alt="@e.CityName" loading="lazy" />
+                    </div>
+
+                    <div class="tp-fx__info">
+                        <span class="tg-chip @statusClass">@statusText</span>
+                        <h2 class="tp-fx__city">@e.CityName</h2>
+                        <div class="tp-fx__times">
+                            <span><i class="bi bi-calendar-event" aria-hidden="true"></i>@Localizer["ATCStart"] <b>@e.StartDate.ToString("dd.MM.yyyy HH:mm")</b></span>
+                            <span><i class="bi bi-calendar-x" aria-hidden="true"></i>@Localizer["ATCEnd"] <b>@e.EndDate.ToString("dd.MM.yyyy HH:mm")</b></span>
+                        </div>
+                        <div class="tp-fx__teams">
+                            <span>@Localizer["ATCTeams"]</span>
+                            <div class="tg-progress" role="progressbar" aria-label="@Localizer["ATCTeams"]" aria-valuemin="0" aria-valuemax="16" aria-valuenow="@e.NumberOfTeams">
+                                <span style="width:@fillPct%"></span>
+                            </div>
+                            <b>@e.NumberOfTeams / 16</b>
+                        </div>
+                    </div>
+
+                    @if (st == nameof(TournamentStatus.Finished))
+                    {
+                        <span class="tp-fx__used" aria-hidden="true">@Localizer["TNStatusFinished"]</span>
+                    }
+                </div>
+
+                <div class="tg-ticket__stub tp-fx__stub">
+                    <span class="tp-fx__role"><i class="bi bi-person-badge-fill" aria-hidden="true"></i>@Localizer["DAsCoach"]</span>
+
+                    <a asp-controller="Tournament"
+                       asp-action="Details"
+                       asp-route-id="@e.Id"
+                       asp-route-information="@e.Information"
+                       class="btn btn-primary btn-sm">
+                        <i class="bi bi-info-circle" aria-hidden="true"></i>
+                        @Localizer["CTDetails"]
+                    </a>
+
+                    @* Leaving is possible only before the start (the fee is not returned automatically). *@
+                    @if (BgTime.Now < e.StartDate)
+                    {
+                        <form asp-controller="Coach" asp-action="LeaveTournament" asp-route-id="@e.Id" method="post"
+                              class="tn-inline-form" data-confirm="@Localizer["LeaveTournamentConfirm"]">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-box-arrow-right" aria-hidden="true"></i>@Localizer["ATCLeaveTournament"]
+                            </button>
+                        </form>
+                    }
+
+                    <span class="tp-fx__code" aria-hidden="true">No. @e.Id.ToString("D4")</span>
+                </div>
+
+            </li>
+        }
+    </ol>
+}
+else
+{
+    <div class="tg-empty">
+        <span class="tg-empty__icon" aria-hidden="true"><i class="bi bi-calendar2-x"></i></span>
+        <h5>@Localizer["ATCNoTournament"]</h5>
+        <p class="text-muted mb-0">
+            @Localizer["ATCNotYet"]
+        </p>
+    </div>
+}

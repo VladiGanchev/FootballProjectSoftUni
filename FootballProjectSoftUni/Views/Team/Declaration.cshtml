@@ -1,4 +1,4 @@
-﻿@model FootballProjectSoftUni.Core.Models.Payment.TournamentDeclarationViewModel
+@model FootballProjectSoftUni.Core.Models.Payment.TournamentDeclarationViewModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 
@@ -6,45 +6,89 @@
     ViewData["Title"] = "Declaration";
 }
 
-<h2 class="mb-4">@Localizer["DDeclaration"]</h2>
+<div class="tp-contract-wrap">
+    <article class="tp-contract" id="tp-contract">
 
-<!-- Общи грешки -->
+        <header class="tp-contract__head">
+            <span class="tp-contract__brand">
+                <span class="tg-icon-tile tg-icon-tile--sm" aria-hidden="true"><i class="bi bi-file-earmark-text-fill"></i></span>
+                Tournament Galaxy
+            </span>
+            <span class="tp-contract__no">
+                № TG-@Model.TournamentId-@Model.TeamId<br />
+                @BgTime.Today.ToString("dd.MM.yyyy")
+            </span>
+        </header>
 
-<div asp-validation-summary="All" class="text-danger mb-3"></div>
+        <h1 class="tp-contract__title">@Localizer["DDeclaration"]</h1>
 
-<form asp-action="Declaration" asp-controller="Team" method="post">
-    @Html.AntiForgeryToken()
+        @* Stamp that lands when the document is signed *@
+        <div class="tp-stamp" aria-hidden="true">
+            <span><b>@Localizer["TpDecSigned"]</b>Tournament Galaxy<br />@BgTime.Today.Year</span>
+        </div>
 
-    
-    <input asp-for="TournamentId" type="hidden" />
-    <input asp-for="TeamId" type="hidden" />
-    <input asp-for="DeclarationText" type="hidden" />
+        @* General errors *@
+        <div asp-validation-summary="All" class="tp-valsum"></div>
 
-    <!-- Текст на декларацията -->
-    <div class="border rounded p-3 mb-3"
-         style="max-height: 350px; overflow-y: auto; background-color: #f8f9fa; white-space: pre-line;">
-        @Model.DeclarationText
-    </div>
+        <form asp-action="Declaration" asp-controller="Team" method="post">
+            @Html.AntiForgeryToken()
 
-    <!-- Checkbox -->
-    <div class="form-check mb-3">
-        <input type="checkbox" asp-for="AcceptLiabilityDeclaration" class="form-check-input" id="acceptCheckbox" />
-        <label asp-for="AcceptLiabilityDeclaration" class="form-check-label">
-            @Localizer["DAccept"]
-        </label>
-    </div>
+            <input asp-for="TournamentId" type="hidden" />
+            <input asp-for="TeamId" type="hidden" />
+            <input asp-for="DeclarationText" type="hidden" />
 
-    <!-- Бутон -->
-    <button type="submit" id="submitBtn" class="btn btn-primary" disabled>
-        @Localizer["DContinue"]
-    </button>
-    
+            @* Declaration text *@
+            <div class="tp-legal" tabindex="0" role="region" aria-label="@Localizer["DDeclaration"]">@Model.DeclarationText</div>
 
-</form>
+            @* Point 7 of the declaration accepts the Terms and refers to the Privacy Policy. *@
+            <p class="tp-legal-links">
+                <a asp-controller="Home" asp-action="Terms" target="_blank" rel="noopener">@Localizer["LegalTermsLink"]</a>
+                <span aria-hidden="true">&middot;</span>
+                <a asp-controller="Home" asp-action="Privacy" target="_blank" rel="noopener">@Localizer["LegalPrivacyLink"]</a>
+            </p>
+
+            @* Accept checkbox, styled as a big "sign" toggle *@
+            <label class="tp-signbox" for="acceptCheckbox">
+                <input type="checkbox" asp-for="AcceptLiabilityDeclaration" class="tp-signbox__input" id="acceptCheckbox" />
+                <span class="tp-signbox__ui" aria-hidden="true"></span>
+                <span class="tp-signbox__text">
+                    <span>@Localizer["DAccept"]</span>
+                    <span class="tp-signbox__state tp-signbox__state--off" aria-hidden="true"><i class="bi bi-pen-fill"></i> @Localizer["TpDecSign"]</span>
+                    <span class="tp-signbox__state tp-signbox__state--on" aria-hidden="true"><i class="bi bi-check-circle-fill"></i> @Localizer["TpDecSigned"]</span>
+                </span>
+            </label>
+            <span asp-validation-for="AcceptLiabilityDeclaration" class="text-danger small"></span>
+
+            @* Signature + date lines *@
+            <div class="tp-sigs" aria-hidden="true">
+                <div class="tp-sig">
+                    <svg class="tp-sig__ink" viewBox="0 0 220 60">
+                        <path d="M6 42 C 20 12, 34 8, 40 32 S 58 56, 70 30 S 92 4, 100 28 S 118 52, 132 30 C 140 18, 152 16, 158 30 S 176 44, 190 26 L 214 18" />
+                    </svg>
+                    <span class="tp-sig__line">@Localizer["TpDecSignature"]</span>
+                </div>
+                <div class="tp-sig">
+                    <span class="tp-sig__val">@BgTime.Today.ToString("dd.MM.yyyy")</span>
+                    <span class="tp-sig__line">@Localizer["IDate"]</span>
+                </div>
+            </div>
+
+            @* Submit *@
+            <div class="tg-form-actions">
+                <button type="submit" id="submitBtn" class="btn btn-accent btn-lg" disabled>
+                    @Localizer["DContinue"]
+                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </button>
+            </div>
+
+        </form>
+
+    </article>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const checkbox = document.getElementById("acceptCheckbox");
@@ -60,6 +104,18 @@
             checkbox.addEventListener("change", toggleButton);
         });
     </script>
-    
 
+    <script>
+        // Visual "signed" state for the contract (stamp + signature)
+        document.addEventListener("DOMContentLoaded", function () {
+            const checkbox = document.getElementById("acceptCheckbox");
+            const contract = document.getElementById("tp-contract");
+            if (!checkbox || !contract) { return; }
+
+            function sync() { contract.classList.toggle("is-signed", checkbox.checked); }
+
+            sync();
+            checkbox.addEventListener("change", sync);
+        });
+    </script>
 }

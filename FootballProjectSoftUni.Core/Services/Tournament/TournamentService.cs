@@ -1,4 +1,5 @@
 ﻿using FootballProjectSoftUni.Core.Contracts.Tournament;
+using FootballProjectSoftUni.Core.Extensions;
 using FootballProjectSoftUni.Core.Models.City;
 using FootballProjectSoftUni.Core.Models.Match;
 using FootballProjectSoftUni.Core.Models.Tournament;
@@ -23,6 +24,12 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
     {
         private readonly ApplicationDbContext data;
 
+        /// <summary>
+        /// A started (or finished) tournament keeps its dates: the start, the refunds and the reminders depend on them.
+        /// </summary>
+        public static bool DatesLocked(FootballProjectSoftUni.Infrastructure.Data.Models.Tournament tournament) =>
+            tournament.Status != TournamentStatus.Upcoming || BgTime.Now >= tournament.StartDate;
+
         public TournamentService(ApplicationDbContext _data)
         {
             data = _data;
@@ -37,6 +44,23 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
             if (tournament == null)
             {
                 return false;
+            }
+
+            // Payments are kept as financial records: remember what they were for, then unlink them.
+            var cityName = await data.TournamentsCities
+                .Where(tc => tc.TournamentId == id)
+                .Select(tc => tc.City.Name)
+                .FirstOrDefaultAsync();
+
+            var payments = await data.TournamentJoinPayments
+                .Where(p => p.TournamentId == id)
+                .ToListAsync();
+
+            foreach (var payment in payments)
+            {
+                payment.TournamentCity = cityName;
+                payment.TournamentStartDate = tournament.StartDate;
+                payment.TournamentId = null;
             }
 
             if (tournament.RefereeId != null)
@@ -107,11 +131,18 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 throw new ArgumentException("Invalid tournament ID");
             }
 
+            if (tournament.StartDate != start)
+            {
+                // A moved tournament gets its 24-hour reminder and its "too few teams" warning again, for the new date.
+                tournament.ReminderSent = false;
+                tournament.LowTeamsWarningSent = false;
+            }
+
+            // The winner is not edited here: it comes from the result of the final.
             tournament.Description = model.Description;
             tournament.StartDate = start;
             tournament.EndDate = end;
             tournament.ImageUrl = model.ImageUrl;
-            tournament.Winner = model.Winner;
             tournament.Prize = model.Prize;
             tournament.SecondPlacePrize = model.SecondPlacePrize;
             tournament.ThirdPlacePrize = model.ThirdPlacePrize;
@@ -147,13 +178,13 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
 
         public async Task<IPagedList<TournamentViewModel>> GetCityTournamentsAsync(int id, bool showPast, int? page)
         {
-            var pageNumber = page ?? 1;
+            var pageNumber = Paging.ValidPage(page);
             var pageSize = 9;
 
             var cityExists = await data.Cities.AnyAsync(x => x.Id == id);
             if (!cityExists) return null;
 
-            var now = DateTime.Now; // ако ползваш UTC навсякъде -> DateTime.UtcNow
+            var now = BgTime.Now;
 
             // базов query
             var query = data.TournamentsCities
@@ -264,7 +295,7 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
             {
                 StartDate = start,
                 EndDate = end,
-                CreatedOn = DateTime.Now,
+                CreatedOn = BgTime.Now,
                 Description = model.Description,
                 NumberOfTeams = 0,
                 ImageUrl = model.ImageUrl,
@@ -327,14 +358,16 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
             {
                 Id = tournament.Id,
                 Description = tournament.Description,
-                EndDate = tournament.EndDate.ToString(RequiredDateTimeFormat),
-                StartDate = tournament.StartDate.ToString(RequiredDateTimeFormat),
+                // Values for the date pickers of the edit form (the same in every language).
+                EndDate = tournament.EndDate.ToDateTimeInput(),
+                StartDate = tournament.StartDate.ToDateTimeInput(),
                 ImageUrl = tournament.ImageUrl,
                 CreatedOn = tournament.CreatedOn.ToString(RequiredDateTimeFormat),
                 Winner = tournament.Winner,
                 Prize = tournament.Prize,
                 SecondPlacePrize = tournament.SecondPlacePrize,
-                ThirdPlacePrize = tournament.ThirdPlacePrize
+                ThirdPlacePrize = tournament.ThirdPlacePrize,
+                DatesLocked = DatesLocked(tournament)
             };
         }
 
@@ -409,24 +442,80 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 .OrderBy(m => m.IndexInRound)
                 .ToListAsync();
 
-            foreach (var match in firstRoundMatches)
+            // First one team in every first-round match (positions 1, 3, 5 ... 15), then the second places
+            // (2, 4 ... 16). With 8-15 teams every team still gets into the second round: the ones without
+            // an opponent go through when the tournament starts.
+            var freeSlot = firstRoundMatches.FirstOrDefault(m => !m.Team1Id.HasValue);
+            if (freeSlot != null)
             {
-                if (!match.Team1Id.HasValue)
-                {
-                    match.Team1Id = teamId;
-                    await data.SaveChangesAsync();
-                    return;
-                }
+                freeSlot.Team1Id = teamId;
+                await data.SaveChangesAsync();
+                return;
+            }
 
-                if (!match.Team2Id.HasValue)
-                {
-                    match.Team2Id = teamId;
-                    await data.SaveChangesAsync();
-                    return;
-                }
+            freeSlot = firstRoundMatches.FirstOrDefault(m => !m.Team2Id.HasValue);
+            if (freeSlot != null)
+            {
+                freeSlot.Team2Id = teamId;
+                await data.SaveChangesAsync();
+                return;
             }
 
             throw new InvalidOperationException("No free slots in bracket.");
+        }
+
+        public async Task PrepareBracketForStartAsync(int tournamentId)
+        {
+            var firstRound = await data.Matches
+                .Where(m => m.TournamentId == tournamentId && m.Round == 1)
+                .OrderBy(m => m.IndexInRound)
+                .ToListAsync();
+
+            if (!firstRound.Any())
+            {
+                return;
+            }
+
+            var hasResults = await data.Matches.AnyAsync(m =>
+                m.TournamentId == tournamentId && (m.WinnerTeamId.HasValue || m.Team1Goals.HasValue || m.Team2Goals.HasValue));
+
+            // Brackets filled the old way (1 v 2, 3 v 4 ...) or after teams left can have first-round matches
+            // without any team; that leaves holes in later rounds. Spread the teams again, in the same order.
+            if (!hasResults && firstRound.Any(m => !m.Team1Id.HasValue && !m.Team2Id.HasValue))
+            {
+                var teams = firstRound
+                    .SelectMany(m => new[] { m.Team1Id, m.Team2Id })
+                    .Where(id => id.HasValue)
+                    .Select(id => id!.Value)
+                    .ToList();
+
+                foreach (var match in firstRound)
+                {
+                    match.Team1Id = null;
+                    match.Team2Id = null;
+                }
+
+                for (var i = 0; i < teams.Count && i < firstRound.Count * 2; i++)
+                {
+                    if (i < firstRound.Count)
+                    {
+                        firstRound[i].Team1Id = teams[i];
+                    }
+                    else
+                    {
+                        firstRound[i - firstRound.Count].Team2Id = teams[i];
+                    }
+                }
+            }
+
+            // A team without an opponent goes straight to the next round.
+            foreach (var match in firstRound.Where(m => !m.WinnerTeamId.HasValue && (m.Team1Id.HasValue != m.Team2Id.HasValue)))
+            {
+                match.WinnerTeamId = match.Team1Id ?? match.Team2Id;
+                await MoveWinnerToNextRoundAsync(match.Id);
+            }
+
+            await data.SaveChangesAsync();
         }
 
         public async Task MoveWinnerToNextRoundAsync(int matchId)
@@ -481,7 +570,7 @@ namespace FootballProjectSoftUni.Core.Services.Tournament
                 return;
             }
 
-            if (DateTime.Now >= tournament.StartDate)
+            if (BgTime.Now >= tournament.StartDate)
             {
                 return;
             }

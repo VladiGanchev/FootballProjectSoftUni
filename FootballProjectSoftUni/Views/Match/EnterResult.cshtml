@@ -1,91 +1,192 @@
-﻿@using FootballProjectSoftUni.Core.Models.Match
+@using FootballProjectSoftUni.Core.Models.Match
 @model EnterResultViewModel
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 
 @{
-    ViewBag.Title = @Localizer["EREnter"];
+    ViewBag.Title = Localizer["EREnter"].Value;
+    var goalsLabel = Localizer["ERGoals"].Value;
+    var plusLabel = Localizer["TNGoalPlus"].Value;
+    var minusLabel = Localizer["TNGoalMinus"].Value;
+
+    string Initials(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) { return "?"; }
+        var parts = name.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var value = parts.Length > 1
+            ? parts[0].Substring(0, 1) + parts[1].Substring(0, 1)
+            : parts[0].Substring(0, Math.Min(2, parts[0].Length));
+        return value.ToUpperInvariant();
+    }
+
+    string Tone(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) { return "tbd"; }
+        var tones = new[] { "sun", "coral", "mint", "lilac", "sky", "pitch", "white" };
+        int sum = 0;
+        foreach (var ch in name) { sum += ch; }
+        return tones[sum % tones.Length];
+    }
 }
 
-<section class="container py-4">
+<section class="tn-arena">
 
-    <div class="text-center mb-4">
-        <h2 class="page-title mb-1">
-            <i class="bi bi-clipboard-check-fill me-2"></i>
-            @ViewBag.Title
-        </h2>
-    </div>
+    <header class="tn-arena__head">
+        <span class="tg-kicker">@Localizer["DResult"]</span>
+        <h1 class="tn-arena__title" data-split>@ViewBag.Title</h1>
+        <p class="tn-arena__sub">@Localizer["TNEnterResultSub"]</p>
+    </header>
 
-    <div class="admin-form-card mx-auto" style="max-width: 760px;">
+    <form asp-action="EnterResult" method="post">
 
-        <form asp-action="EnterResult" method="post" class="admin-form">
+        <input type="hidden" asp-for="MatchId" />
+        <input type="hidden" asp-for="TournamentId" />
+        <input type="hidden" asp-for="Team1Id" />
+        <input type="hidden" asp-for="Team2Id" />
+        <input type="hidden" asp-for="Team1Name" />
+        <input type="hidden" asp-for="Team2Name" />
 
-            <input type="hidden" asp-for="MatchId" />
-            <input type="hidden" asp-for="TournamentId" />
-            <input type="hidden" asp-for="Team1Id" />
-            <input type="hidden" asp-for="Team2Id" />
-            <input type="hidden" asp-for="Team1Name" />
-            <input type="hidden" asp-for="Team2Name" />
+        <div asp-validation-summary="ModelOnly" class="tn-vsum alert alert-danger" role="alert"></div>
 
-            <div class="row g-4">
+        @* ---------- Jumbotron ---------- *@
+        <div class="tn-jumbo">
+            <div class="tn-jumbo__bar" aria-hidden="true">
+                <span class="tn-jumbo__tag"><i class="bi bi-broadcast"></i>FT</span>
+                <span class="tn-jumbo__clock">90:00</span>
+                <span>Tournament Galaxy</span>
+            </div>
 
-                <div class="col-12 col-md-6">
-                    <div class="result-team-card h-100">
-                        <div class="result-team-head">
-                            <div class="result-team-badge">
-                                <i class="bi bi-shield-fill"></i>
-                            </div>
-                            <h4 class="mb-0 fw-bold">@Model.Team1Name</h4>
-                        </div>
+            <div class="tn-jumbo__screen">
 
-                        <div class="mb-2">
-                            <label asp-for="Team1Goals" class="form-label fw-bold">
-                                <i class="bi bi-dribbble me-2"></i>@Localizer["ERGoals"]
-                            </label>
-                            <input asp-for="Team1Goals"
-                                   class="form-control tg-input"
-                                   type="number"
-                                   min="0" />
-                            <span asp-validation-for="Team1Goals" class="text-danger small"></span>
-                        </div>
+                @* Team 1 *@
+                <div class="tn-side">
+                    <span class="tn-crest tn-crest--lg tn-crest--@Tone(Model.Team1Name)" aria-hidden="true">@Initials(Model.Team1Name)</span>
+                    <h2 class="tn-side__name">@Model.Team1Name</h2>
+
+                    <label asp-for="Team1Goals" class="tn-side__label">@Localizer["ERGoals"]</label>
+                    <div class="tn-score">
+                        <button type="button"
+                                class="tn-score__btn tn-score__btn--minus"
+                                data-tn-step="-1"
+                                data-tn-target="Team1Goals"
+                                aria-label="@Model.Team1Name - @minusLabel">
+                            <i class="bi bi-dash-lg" aria-hidden="true"></i>
+                        </button>
+                        <input asp-for="Team1Goals"
+                               class="tn-score__input"
+                               type="number"
+                               inputmode="numeric"
+                               min="0"
+                               aria-label="@Model.Team1Name - @goalsLabel" />
+                        <button type="button"
+                                class="tn-score__btn tn-score__btn--plus"
+                                data-tn-step="1"
+                                data-tn-target="Team1Goals"
+                                aria-label="@Model.Team1Name - @plusLabel">
+                            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                        </button>
                     </div>
+                    <span asp-validation-for="Team1Goals" class="text-danger tn-side__err"></span>
                 </div>
 
-                <div class="col-12 col-md-6">
-                    <div class="result-team-card h-100">
-                        <div class="result-team-head">
-                            <div class="result-team-badge">
-                                <i class="bi bi-shield-fill"></i>
-                            </div>
-                            <h4 class="mb-0 fw-bold">@Model.Team2Name</h4>
-                        </div>
+                <div class="tn-jumbo__colon" aria-hidden="true">:</div>
 
-                        <div class="mb-2">
-                            <label asp-for="Team2Goals" class="form-label fw-bold">
-                                <i class="bi bi-dribbble me-2"></i>@Localizer["ERGoals"]
-                            </label>
-                            <input asp-for="Team2Goals"
-                                   class="form-control tg-input"
-                                   type="number"
-                                   min="0" />
-                            <span asp-validation-for="Team2Goals" class="text-danger small"></span>
-                        </div>
+                @* Team 2 *@
+                <div class="tn-side">
+                    <span class="tn-crest tn-crest--lg tn-crest--@Tone(Model.Team2Name)" aria-hidden="true">@Initials(Model.Team2Name)</span>
+                    <h2 class="tn-side__name">@Model.Team2Name</h2>
+
+                    <label asp-for="Team2Goals" class="tn-side__label">@Localizer["ERGoals"]</label>
+                    <div class="tn-score">
+                        <button type="button"
+                                class="tn-score__btn tn-score__btn--minus"
+                                data-tn-step="-1"
+                                data-tn-target="Team2Goals"
+                                aria-label="@Model.Team2Name - @minusLabel">
+                            <i class="bi bi-dash-lg" aria-hidden="true"></i>
+                        </button>
+                        <input asp-for="Team2Goals"
+                               class="tn-score__input"
+                               type="number"
+                               inputmode="numeric"
+                               min="0"
+                               aria-label="@Model.Team2Name - @goalsLabel" />
+                        <button type="button"
+                                class="tn-score__btn tn-score__btn--plus"
+                                data-tn-step="1"
+                                data-tn-target="Team2Goals"
+                                aria-label="@Model.Team2Name - @plusLabel">
+                            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                        </button>
                     </div>
+                    <span asp-validation-for="Team2Goals" class="text-danger tn-side__err"></span>
                 </div>
 
             </div>
 
-            <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold tg-action-btn mt-4">
-                <i class="bi bi-save2-fill me-2"></i>
-                @Localizer["ERSave"]
-            </button>
+            <div class="tn-jumbo__ticker" aria-hidden="true">
+                <span><b>@Model.Team1Name</b> vs <b>@Model.Team2Name</b></span>
+                <span>&#9733; @Localizer["DResult"]</span>
+                <span>&#9733; Tournament Galaxy</span>
+            </div>
+        </div>
 
-        </form>
+        <div class="tn-legs" aria-hidden="true"><span></span><span></span></div>
 
-    </div>
+        <div class="tn-arena__ground">
+            <div class="tn-arena__actions">
+                <button type="submit" class="btn btn-accent btn-lg">
+                    <i class="bi bi-save2-fill" aria-hidden="true"></i>@Localizer["ERSave"]
+                </button>
+
+                <button type="button" class="btn btn-outline-dark btn-lg" data-tn-back>
+                    @Localizer["DCCancel"]
+                </button>
+            </div>
+        </div>
+
+    </form>
 
 </section>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        (function () {
+            // Select the whole number on focus so a new score can be typed straight away.
+            var inputs = document.querySelectorAll('.tn-score__input');
+            for (var i = 0; i < inputs.length; i++) {
+                inputs[i].addEventListener('focus', function (ev) { ev.target.select(); });
+            }
+
+            // +/- steppers: only change the value of the matching score input (never below 0).
+            var steppers = document.querySelectorAll('[data-tn-step]');
+            for (var j = 0; j < steppers.length; j++) {
+                steppers[j].addEventListener('click', function (ev) {
+                    var btn = ev.currentTarget;
+                    var input = document.getElementById(btn.getAttribute('data-tn-target'));
+                    if (!input) { return; }
+                    var value = parseInt(input.value, 10);
+                    if (isNaN(value)) { value = 0; }
+                    value = Math.max(0, value + parseInt(btn.getAttribute('data-tn-step'), 10));
+                    input.value = value;
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                    input.classList.remove('is-bump');
+                    void input.offsetWidth;
+                    input.classList.add('is-bump');
+                });
+            }
+
+            // Cancel goes back to the tournament page the admin came from.
+            var back = document.querySelector('[data-tn-back]');
+            if (back) {
+                back.addEventListener('click', function () {
+                    if (window.history.length > 1) { window.history.back(); }
+                    else { back.style.display = 'none'; }
+                });
+            }
+        })();
+    </script>
 }

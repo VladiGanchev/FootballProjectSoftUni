@@ -376,3 +376,6 @@ logs/
 
 # Pictures of cities, tournaments and partners uploaded through the site: runtime data, like the gallery.
 /FootballProjectSoftUni/wwwroot/images/covers/
+
+# Six Labors (ImageSharp) license key: never in the public repo.
+sixlabors.lic

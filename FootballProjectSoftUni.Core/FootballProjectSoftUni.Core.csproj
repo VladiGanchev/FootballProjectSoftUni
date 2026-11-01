@@ -15,7 +15,11 @@
     <PackageReference Include="Hangfire.AspNetCore" Version="1.8.22" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.8.22" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.35" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.2.0" />
+    <!-- 3.1.12 until the free Six Labors community key arrives: 3.2.0 refuses Release builds without a key.
+         Its known advisories are in TIFF, HistogramEqualization and ICC parsing; the site decodes only
+         JPG/PNG/GIF/WEBP that passed the signature check, and only admins upload. Back to 3.2.0 with the key
+         (sixlabors.lic in this folder, git-ignored). -->
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
     <PackageReference Include="Stripe.net" Version="50.2.0" />
     <PackageReference Include="X.PagedList.Mvc.Core" Version="9.1.2" />
   </ItemGroup>

@@ -3,7 +3,7 @@
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "Search";
+    ViewData["Title"] = Localizer["SearchResults"].Value;
     ViewData["FullWidth"] = true;
 
     var currentSearch = Context.Request.Query["searchString"].ToString();
@@ -67,14 +67,14 @@
 
                 <li class="cp-row" data-name="@city.Name" data-reveal>
                     <a class="cp-row__main"
-                       data-img="@city.ImageUrl"
+                       data-img="@CoverPictureStore.Small(city.ImageUrl)"
                        asp-controller="Tournament"
                        asp-action="CityTournaments"
                        asp-route-id="@city.Id">
                         <span class="cp-row__num" aria-hidden="true">@no</span>
                         <span class="cp-row__photo" aria-hidden="true">
                             <i class="bi bi-geo-alt-fill"></i>
-                            <img src="@city.ImageUrl" alt="" loading="lazy" draggable="false" data-hide-on-error />
+                            <img src="@CoverPictureStore.Small(city.ImageUrl)" data-full="@city.ImageUrl" alt="" loading="lazy" draggable="false" data-hide-on-error />
                         </span>
                         <span class="cp-row__name">@city.Name</span>
                     </a>
@@ -83,14 +83,14 @@
                         <a asp-controller="Tournament"
                            asp-action="CityTournaments"
                            asp-route-id="@city.Id"
-                           class="btn btn-primary btn-sm">
+                           class="btn btn-primary btn-sm cp-row__go">
                             <i class="bi bi-trophy-fill" aria-hidden="true"></i>@Localizer["SearchTournaments"]
                         </a>
 
                         <a asp-controller="City"
                            asp-action="GetBestTeams"
                            asp-route-id="@city.Id"
-                           class="btn btn-sun btn-sm">
+                           class="btn btn-outline-dark btn-sm cp-row__leaders">
                             <i class="bi bi-bar-chart-fill" aria-hidden="true"></i>@Localizer["SearchLeaders"]
                         </a>
                     </div>

@@ -1,4 +1,5 @@
-﻿using FootballProjectSoftUni.Core.Extensions;
+﻿using FootballProjectSoftUni.Core.Contracts;
+using FootballProjectSoftUni.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,22 @@ using System.Threading.Tasks;
 
 namespace FootballProjectSoftUni.Core.Models.AdminPayments
 {
-    public class AdminPaymentViewModel
+    public class AdminPaymentViewModel : ITournamentModel
     {
-        public int Id { get; set; } 
+        public int Id { get; set; }
         public string UserId { get; set; } = null!;
+
+        /// <summary>Null when the account was deleted (the payment stays as an accounting record).</summary>
+        public string? UserName { get; set; }
+        public string? UserEmail { get; set; }
+
+        public string? TeamName { get; set; }
+
+        /// <summary>The tournament's name (for the link to it); empty when it was deleted.</summary>
+        public string Description { get; set; } = string.Empty;
+
+        /// <summary>The tournament's city: its current one, or the one saved when it was deleted.</summary>
+        public string? City { get; set; }
         /// <summary>Null when the tournament was deleted (the payment is kept as a record).</summary>
         public int? TournamentId { get; set; }
 

@@ -3,7 +3,7 @@
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "Log in";
+    ViewData["Title"] = Localizer["LoginLogin"].Value;
     ViewData["FullWidth"] = true;
 
     // 4-3-3 vs 4-3-3 on the decorative pitch (same shape as the landing page so the ball path matches)
@@ -118,7 +118,7 @@
                         </a>
                     </div>
 
-                    <button id="login-submit" type="submit" class="btn btn-primary btn-lg auth-btn">
+                    <button id="login-submit" type="submit" class="btn btn-accent btn-lg auth-btn">
                         <span>@Localizer["LoginLogin"]</span>
                         <i class="bi bi-arrow-right" aria-hidden="true"></i>
                     </button>

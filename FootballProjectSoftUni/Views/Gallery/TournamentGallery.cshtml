@@ -5,7 +5,7 @@
 
 
 @{
-    ViewBag.Title = "Tournament Gallery";
+    ViewBag.Title = Localizer["TGPictures"].Value;
     int tournamentId = ViewBag.TournamentId;
     bool isAdmin = User.Identity.IsAuthenticated && User.IsAdmin();
     bool hasImages = Model != null && Model.Any();

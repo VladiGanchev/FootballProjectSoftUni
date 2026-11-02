@@ -16,6 +16,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace FootballProjectSoftUni.Core.Services.Payment
 {
@@ -215,6 +216,26 @@ namespace FootballProjectSoftUni.Core.Services.Payment
             }
 
             return order.Id;
+        }
+
+        public async Task<JoinSummaryViewModel?> GetJoinSummaryAsync(int tournamentId, string userId, int teamId)
+        {
+            var summary = await context.Tournaments
+                .AsNoTracking()
+                .Where(t => t.Id == tournamentId)
+                .Select(t => new JoinSummaryViewModel
+                {
+                    Description = t.Description,
+                    CityName = t.TournamentCities.Select(tc => tc.City.Name).FirstOrDefault(),
+                    StartDate = t.StartDate,
+                    Fee = t.ParticipationFee,
+                    TeamName = context.Teams.Where(x => x.Id == teamId).Select(x => x.Name).FirstOrDefault() ?? string.Empty,
+                    // Same rule as ReusePaidOrderAsync: an earlier, not refunded payment still pays for the place.
+                    AlreadyPaid = context.TournamentJoinPayments.Any(o => o.TournamentId == tournamentId && o.UserId == userId && o.Status == "Paid")
+                })
+                .FirstOrDefaultAsync();
+
+            return summary;
         }
 
         public async Task ExpireOpenCheckoutsAsync(int tournamentId)
@@ -469,17 +490,50 @@ namespace FootballProjectSoftUni.Core.Services.Payment
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<ICollection<AdminPaymentViewModel>> GetAllTournamentJoinPaymentsAsync()
+        public async Task<AdminPaymentsPage> GetTournamentJoinPaymentsAsync(int? page, string? status, string? search)
         {
-            return await context.TournamentJoinPayments
-                .AsNoTracking()
-                .OrderByDescending(p => p.PaidOnUtc)
+            var payments = context.TournamentJoinPayments.AsNoTracking();
+
+            // Totals of all payments for the tiles, whatever is filtered below.
+            var totals = await payments
+                .GroupBy(p => p.Status)
+                .Select(g => new { Status = g.Key, Count = g.Count(), Sum = g.Sum(p => p.Amount) })
+                .ToListAsync();
+
+            var result = new AdminPaymentsPage
+            {
+                AllCount = totals.Sum(t => t.Count),
+                PaidCount = totals.Where(t => t.Status == "Paid").Sum(t => t.Count),
+                RefundedCount = totals.Where(t => t.Status == "Refunded").Sum(t => t.Count),
+                PendingCount = totals.Where(t => t.Status == "Pending").Sum(t => t.Count),
+                PaidTotal = totals.Where(t => t.Status == "Paid").Sum(t => t.Sum),
+            };
+
+            switch (status?.ToLowerInvariant())
+            {
+                case AdminPaymentsPage.Paid: payments = payments.Where(p => p.Status == "Paid"); break;
+                case AdminPaymentsPage.Refunded: payments = payments.Where(p => p.Status == "Refunded"); break;
+                case AdminPaymentsPage.Pending: payments = payments.Where(p => p.Status == "Pending"); break;
+                case AdminPaymentsPage.Other: payments = payments.Where(p => p.Status != "Paid" && p.Status != "Refunded" && p.Status != "Pending"); break;
+                default: status = null; break;
+            }
+            result.Status = status?.ToLowerInvariant();
+
+            var rows = payments
+                // Newest first; an unpaid order counts from when it was started.
+                .OrderByDescending(p => p.PaidOnUtc ?? p.CreatedOnUtc)
+                .ThenByDescending(p => p.Id)
                 .Select(p => new AdminPaymentViewModel
                 {
                     Id = p.Id,
                     UserId = p.UserId,
+                    UserName = context.Users.Where(u => u.Id == p.UserId).Select(u => u.FirstName + " " + u.LastName).FirstOrDefault(),
+                    UserEmail = context.Users.Where(u => u.Id == p.UserId).Select(u => u.Email).FirstOrDefault(),
                     TournamentId = p.TournamentId,
+                    Description = context.Tournaments.Where(t => t.Id == p.TournamentId).Select(t => t.Description).FirstOrDefault() ?? string.Empty,
+                    City = context.TournamentsCities.Where(tc => tc.TournamentId == p.TournamentId).Select(tc => tc.City.Name).FirstOrDefault() ?? p.TournamentCity,
                     TeamId = p.TeamId,
+                    TeamName = context.Teams.Where(t => t.Id == p.TeamId).Select(t => t.Name).FirstOrDefault(),
                     Amount = p.Amount,
                     Status = p.Status,
                     PaidOnUtc = p.PaidOnUtc,
@@ -491,8 +545,27 @@ namespace FootballProjectSoftUni.Core.Services.Payment
                         .Where(t => t.Id == p.TournamentId)
                         .Select(t => (DateTime?)t.StartDate)
                         .FirstOrDefault() ?? p.TournamentStartDate
-                })
-                .ToListAsync();
+                });
+
+            // Search: order number ("64" or "#64"), name, e-mail, team, city or tournament.
+            var term = search?.Trim();
+            if (!string.IsNullOrEmpty(term))
+            {
+                result.Search = term;
+                var text = term.ToLower();
+                int? orderId = int.TryParse(term.TrimStart('#'), out var n) ? n : null;
+
+                rows = rows.Where(r =>
+                    r.Id == orderId ||
+                    (r.UserName ?? string.Empty).ToLower().Contains(text) ||
+                    (r.UserEmail ?? string.Empty).ToLower().Contains(text) ||
+                    (r.TeamName ?? string.Empty).ToLower().Contains(text) ||
+                    (r.City ?? string.Empty).ToLower().Contains(text) ||
+                    r.Description.ToLower().Contains(text));
+            }
+
+            result.Payments = await rows.ToPagedListAsync(Paging.ValidPage(page), AdminPaymentsPage.PageSize);
+            return result;
         }
     }
 

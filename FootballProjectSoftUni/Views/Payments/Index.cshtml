@@ -1,20 +1,30 @@
 @using FootballProjectSoftUni.Core.Models.AdminPayments
-@model IEnumerable<AdminPaymentViewModel>
+@using FootballProjectSoftUni.Core.Extensions
+@using X.PagedList.Mvc.Core
+@model AdminPaymentsPage
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
     ViewData["Title"] = Localizer["PayTitle"].Value;
 
-    // UI only: KPI numbers computed from the model
-    var payments = Model?.ToList() ?? new List<AdminPaymentViewModel>();
-    var totalOrders = payments.Count;
-    var paidTotal = payments.Where(x => x.Status == "Paid").Sum(x => x.Amount);
-    var paidCount = payments.Count(x => x.Status == "Paid");
-    var refundedCount = payments.Count(x => x.Status == "Refunded");
-    var pendingCount = payments.Count(x => x.Status == "Pending");
-    var otherCount = totalOrders - paidCount - refundedCount - pendingCount;
-    var otherLabel = string.Join(", ", payments.Select(x => x.Status).Where(s => s != "Paid" && s != "Refunded" && s != "Pending").Distinct());
-    var inv = System.Globalization.CultureInfo.InvariantCulture;
+    var payments = Model.Payments;
+    string? status = Model.Status;
+    string? search = Model.Search;
+
+    // The stored statuses stay in English (the code relies on them); people see them translated.
+    string StatusLabel(string s) => s switch
+    {
+        "Paid" => Localizer["PayStatusPaid"].Value,
+        "Refunded" => Localizer["PayStatusRefunded"].Value,
+        "Pending" => Localizer["PayStatusPending"].Value,
+        "Expired" => Localizer["PayStatusExpired"].Value,
+        "RefundPending" => Localizer["PayStatusRefundPending"].Value,
+        "RefundFailed" => Localizer["PayStatusRefundFailed"].Value,
+        _ => s
+    };
+
+    string Pill(string? value) => value == status ? "is-active" : string.Empty;
+    string? Current(string? value) => value == status ? "page" : null;
 }
 
 <section class="msg-pay">
@@ -46,7 +56,7 @@
         </div>
     }
 
-    @if (Model == null || !Model.Any())
+    @if (Model.AllCount == 0)
     {
         <div class="tg-empty">
             <span class="tg-empty__icon" aria-hidden="true"><i class="bi bi-wallet2"></i></span>
@@ -56,295 +66,276 @@
     }
     else
     {
-        @* ===== Bento: scoreboard + KPI tiles ===== *@
+        @* ===== Bento: scoreboard + KPI tiles (totals of all payments) ===== *@
         <div class="msg-bento">
             <article class="msg-kpi msg-kpi--board tg-card tg-card--ink" data-spotlight>
                 <span class="msg-kpi__label"><i class="bi bi-cash-coin me-1" aria-hidden="true"></i>@Localizer["PayTotalPaid"]</span>
-                <div class="msg-money">@paidTotal.ToString("N2") <small>€</small></div>
+                <div class="msg-money">@Model.PaidTotal.ToString("N2") <small>€</small></div>
 
                 <div class="msg-split">
                     <div class="msg-split__head">
                         <span>@Localizer["IStatus"]</span>
-                        <span><b>@paidCount</b> / @totalOrders</span>
+                        <span><b>@Model.PaidCount</b> / @Model.AllCount</span>
                     </div>
                     <div class="msg-split__bar" aria-hidden="true">
-                        @if (paidCount > 0)
+                        @if (Model.PaidCount > 0)
                         {
-                            <span class="msg-split__seg msg-c-paid" style="--n:@paidCount" title="@Localizer["PayStatusPaid"]: @paidCount"></span>
+                            <span class="msg-split__seg msg-c-paid" style="--n:@Model.PaidCount" title="@Localizer["PayStatusPaid"]: @Model.PaidCount"></span>
                         }
-                        @if (refundedCount > 0)
+                        @if (Model.RefundedCount > 0)
                         {
-                            <span class="msg-split__seg msg-c-refunded" style="--n:@refundedCount" title="@Localizer["PayStatusRefunded"]: @refundedCount"></span>
+                            <span class="msg-split__seg msg-c-refunded" style="--n:@Model.RefundedCount" title="@Localizer["PayStatusRefunded"]: @Model.RefundedCount"></span>
                         }
-                        @if (pendingCount > 0)
+                        @if (Model.PendingCount > 0)
                         {
-                            <span class="msg-split__seg msg-c-pending" style="--n:@pendingCount" title="@Localizer["PayStatusPending"]: @pendingCount"></span>
+                            <span class="msg-split__seg msg-c-pending" style="--n:@Model.PendingCount" title="@Localizer["PayStatusPending"]: @Model.PendingCount"></span>
                         }
-                        @if (otherCount > 0)
+                        @if (Model.OtherCount > 0)
                         {
-                            <span class="msg-split__seg msg-c-other" style="--n:@otherCount" title="@otherLabel: @otherCount"></span>
+                            <span class="msg-split__seg msg-c-other" style="--n:@Model.OtherCount" title="@Localizer["PayStatusOther"]: @Model.OtherCount"></span>
                         }
                     </div>
                     <ul class="msg-split__legend">
-                        <li><span class="msg-swatch msg-c-paid" aria-hidden="true"></span>@Localizer["PayStatusPaid"] <b>@paidCount</b></li>
-                        <li><span class="msg-swatch msg-c-refunded" aria-hidden="true"></span>@Localizer["PayStatusRefunded"] <b>@refundedCount</b></li>
-                        <li><span class="msg-swatch msg-c-pending" aria-hidden="true"></span>@Localizer["PayStatusPending"] <b>@pendingCount</b></li>
-                        @if (otherCount > 0)
+                        <li><span class="msg-swatch msg-c-paid" aria-hidden="true"></span>@Localizer["PayStatusPaid"] <b>@Model.PaidCount</b></li>
+                        <li><span class="msg-swatch msg-c-refunded" aria-hidden="true"></span>@Localizer["PayStatusRefunded"] <b>@Model.RefundedCount</b></li>
+                        <li><span class="msg-swatch msg-c-pending" aria-hidden="true"></span>@Localizer["PayStatusPending"] <b>@Model.PendingCount</b></li>
+                        @if (Model.OtherCount > 0)
                         {
-                            <li><span class="msg-swatch msg-c-other" aria-hidden="true"></span>@otherLabel <b>@otherCount</b></li>
+                            <li><span class="msg-swatch msg-c-other" aria-hidden="true"></span>@Localizer["PayStatusOther"] <b>@Model.OtherCount</b></li>
                         }
                     </ul>
                 </div>
             </article>
 
-            <button type="button" class="msg-kpi msg-kpi--orders tg-card tg-card--sun" data-pay-jump="all" aria-controls="msgPayDesk" data-tilt="6">
+            <a class="msg-kpi msg-kpi--orders tg-card tg-card--sun" asp-action="Index" asp-fragment="msgPayDesk" data-tilt="6">
                 <i class="bi bi-receipt msg-kpi__icon" aria-hidden="true"></i>
-                <span class="msg-kpi__num" data-count="@totalOrders">@totalOrders</span>
+                <span class="msg-kpi__num" data-count="@Model.AllCount">@Model.AllCount</span>
                 <span class="msg-kpi__label">@Localizer["PayTotalOrders"]</span>
-            </button>
+            </a>
 
-            <button type="button" class="msg-kpi msg-kpi--refunded tg-card tg-card--coral" data-pay-jump="refunded" aria-controls="msgPayDesk" data-tilt="6">
+            <a class="msg-kpi msg-kpi--refunded tg-card tg-card--coral" asp-action="Index" asp-route-status="@AdminPaymentsPage.Refunded" asp-fragment="msgPayDesk" data-tilt="6">
                 <i class="bi bi-arrow-counterclockwise msg-kpi__icon" aria-hidden="true"></i>
-                <span class="msg-kpi__num" data-count="@refundedCount">@refundedCount</span>
+                <span class="msg-kpi__num" data-count="@Model.RefundedCount">@Model.RefundedCount</span>
                 <span class="msg-kpi__label">@Localizer["PayTotalRefunded"]</span>
-            </button>
+            </a>
 
-            <button type="button" class="msg-kpi msg-kpi--pending tg-card tg-card--lilac" data-pay-jump="pending" aria-controls="msgPayDesk" data-tilt="4">
+            <a class="msg-kpi msg-kpi--pending tg-card tg-card--lilac" asp-action="Index" asp-route-status="@AdminPaymentsPage.Pending" asp-fragment="msgPayDesk" data-tilt="4">
                 <i class="bi bi-hourglass-split msg-kpi__icon" aria-hidden="true"></i>
-                <span class="msg-kpi__num" data-count="@pendingCount">@pendingCount</span>
+                <span class="msg-kpi__num" data-count="@Model.PendingCount">@Model.PendingCount</span>
                 <span class="msg-kpi__label">@Localizer["PayTotalPending"]</span>
-            </button>
+            </a>
         </div>
 
-        @* ===== Desk: filter pills + search + dense table ===== *@
-        <div class="msg-desk tg-card tg-card--pop" id="msgPayDesk" data-pay-desk>
+        @* ===== Desk: status filter + search (in all payments, on the server) + one page of the list ===== *@
+        <div class="msg-desk tg-card tg-card--pop" id="msgPayDesk">
             <div class="msg-desk__bar">
-                <div class="tg-switch msg-desk__filters" role="group" aria-label="@Localizer["IStatus"]">
-                    <button type="button" class="is-active" data-pay-filter="all" aria-pressed="true">
-                        @Localizer["PayFilterAll"]<span class="msg-pill-n">@totalOrders</span>
-                    </button>
-                    <button type="button" data-pay-filter="paid" aria-pressed="false">
-                        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>@Localizer["PayStatusPaid"]<span class="msg-pill-n">@paidCount</span>
-                    </button>
-                    <button type="button" data-pay-filter="refunded" aria-pressed="false">
-                        <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>@Localizer["PayStatusRefunded"]<span class="msg-pill-n">@refundedCount</span>
-                    </button>
-                    <button type="button" data-pay-filter="pending" aria-pressed="false">
-                        <i class="bi bi-hourglass-split" aria-hidden="true"></i>@Localizer["PayStatusPending"]<span class="msg-pill-n">@pendingCount</span>
-                    </button>
-                </div>
+                <nav class="tg-switch msg-desk__filters" aria-label="@Localizer["IStatus"]">
+                    <a asp-action="Index" asp-route-q="@search" asp-fragment="msgPayDesk" class="@Pill(null)" aria-current="@Current(null)">
+                        @Localizer["PayFilterAll"]<span class="msg-pill-n">@Model.AllCount</span>
+                    </a>
+                    <a asp-action="Index" asp-route-status="@AdminPaymentsPage.Paid" asp-route-q="@search" asp-fragment="msgPayDesk" class="@Pill(AdminPaymentsPage.Paid)" aria-current="@Current(AdminPaymentsPage.Paid)">
+                        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>@Localizer["PayStatusPaid"]<span class="msg-pill-n">@Model.PaidCount</span>
+                    </a>
+                    <a asp-action="Index" asp-route-status="@AdminPaymentsPage.Refunded" asp-route-q="@search" asp-fragment="msgPayDesk" class="@Pill(AdminPaymentsPage.Refunded)" aria-current="@Current(AdminPaymentsPage.Refunded)">
+                        <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>@Localizer["PayStatusRefunded"]<span class="msg-pill-n">@Model.RefundedCount</span>
+                    </a>
+                    <a asp-action="Index" asp-route-status="@AdminPaymentsPage.Pending" asp-route-q="@search" asp-fragment="msgPayDesk" class="@Pill(AdminPaymentsPage.Pending)" aria-current="@Current(AdminPaymentsPage.Pending)">
+                        <i class="bi bi-hourglass-split" aria-hidden="true"></i>@Localizer["PayStatusPending"]<span class="msg-pill-n">@Model.PendingCount</span>
+                    </a>
+                    @if (Model.OtherCount > 0)
+                    {
+                        <a asp-action="Index" asp-route-status="@AdminPaymentsPage.Other" asp-route-q="@search" asp-fragment="msgPayDesk" class="@Pill(AdminPaymentsPage.Other)" aria-current="@Current(AdminPaymentsPage.Other)">
+                            @Localizer["PayStatusOther"]<span class="msg-pill-n">@Model.OtherCount</span>
+                        </a>
+                    }
+                </nav>
 
-                <label class="msg-search">
+                <form class="msg-search" method="get" asp-action="Index" asp-fragment="msgPayDesk" role="search">
+                    @if (status != null)
+                    {
+                        <input type="hidden" name="status" value="@status" />
+                    }
                     <i class="bi bi-search" aria-hidden="true"></i>
-                    <span class="visually-hidden">@Localizer["PaySearch"]</span>
-                    <input type="search" class="form-control msg-search__input" placeholder="@Localizer["PaySearch"]" autocomplete="off" data-pay-search />
-                </label>
+                    <label for="payQ" class="visually-hidden">@Localizer["PaySearch"]</label>
+                    <input id="payQ" type="search" name="q" value="@search" class="form-control msg-search__input" placeholder="@Localizer["PaySearch"]" autocomplete="off" />
+                    <button type="submit" class="btn btn-primary btn-sm msg-search__go">@Localizer["PaySearchGo"]</button>
+                </form>
 
-                <span class="msg-desk__shown" aria-live="polite"><span data-pay-shown>@totalOrders</span> / @totalOrders</span>
+                <span class="msg-desk__shown">
+                    @Localizer["PayShown", payments.TotalItemCount, Model.AllCount]
+                    @if (search != null)
+                    {
+                        <a asp-action="Index" asp-route-status="@status" asp-fragment="msgPayDesk" class="msg-desk__clear">@Localizer["PaySearchClear"]</a>
+                    }
+                </span>
             </div>
 
             <div class="msg-desk__scroll">
-                <table class="table table-hover align-middle mb-0 msg-paytable">
-                    <thead>
-                        <tr>
-                            <th scope="col">@Localizer["IOrder"]</th>
-                            <th scope="col">@Localizer["IUser"]</th>
-                            <th scope="col">@Localizer["ITournament"]</th>
-                            <th scope="col">@Localizer["ITeam"]</th>
-                            <th scope="col">@Localizer["IAmount"]</th>
-                            <th scope="col">@Localizer["IStatus"]</th>
-                            <th scope="col">@Localizer["IPaidOn"]</th>
-                            <th scope="col" class="text-center">@Localizer["IAction"]</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @foreach (var p in payments)
-                        {
-                            var st = (p.Status ?? string.Empty).ToLowerInvariant();
-                            var chipClass = st switch
-                            {
-                                "paid" => "tg-chip--green",
-                                "refunded" => "tg-chip--coral",
-                                "pending" => "tg-chip--sun",
-                                "refundpending" => "tg-chip--sky",
-                                "refundfailed" => "tg-chip--coral",
-                                _ => ""
-                            };
-                            var chipIcon = st switch
-                            {
-                                "paid" => "bi-check-circle-fill",
-                                "refunded" => "bi-arrow-counterclockwise",
-                                "pending" => "bi-hourglass-split",
-                                "refundpending" => "bi-arrow-repeat",
-                                "refundfailed" => "bi-x-octagon-fill",
-                                _ => "bi-circle"
-                            };
-                            var chipLabel = st switch
-                            {
-                                "paid" => Localizer["PayStatusPaid"].Value,
-                                "refunded" => Localizer["PayStatusRefunded"].Value,
-                                "pending" => Localizer["PayStatusPending"].Value,
-                                _ => p.Status
-                            };
-                            var group = st switch
-                            {
-                                "paid" => "paid",
-                                "refunded" => "refunded",
-                                "pending" => "pending",
-                                _ => "other"
-                            };
-                            var search = string.Join(" ", "#" + p.Id, p.UserId, p.TournamentId, p.TeamId, p.Amount.ToString("0.00", inv), chipLabel, p.Status).ToLowerInvariant();
-
-                            <tr data-pay-row data-status="@group" data-search="@search">
-                                <th scope="row" class="msg-pay-id">#@p.Id</th>
-
-                                <td data-label="@Localizer["IUser"]">
-                                    <span class="msg-ref msg-ref--user" title="@p.UserId">
-                                        <i class="bi bi-person-fill" aria-hidden="true"></i>
-                                        <span>@p.UserId</span>
-                                    </span>
-                                </td>
-
-                                <td data-label="@Localizer["ITournament"]">
-                                    @if (p.TournamentDeleted)
-                                    {
-                                        @* The tournament was deleted; the payment stays as a record. *@
-                                        <span class="msg-ref" title="@Localizer["PayDeletedTournament"]">
-                                            <i class="bi bi-trophy" aria-hidden="true"></i>
-                                            <span>@Localizer["PayDeletedTournament"] · @p.DeletedTournamentCity @p.TournamentStartDate?.ToString("dd.MM.yyyy")</span>
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="msg-ref">
-                                            <i class="bi bi-trophy-fill" aria-hidden="true"></i>
-                                            <span>@p.TournamentId</span>
-                                        </span>
-                                    }
-                                </td>
-
-                                <td data-label="@Localizer["ITeam"]">
-                                    <span class="msg-ref">
-                                        <i class="bi bi-shield-fill" aria-hidden="true"></i>
-                                        <span>@(p.TeamId?.ToString() ?? "—")</span>
-                                    </span>
-                                </td>
-
-                                <td data-label="@Localizer["IAmount"]">
-                                    <span class="msg-amount">@p.Amount.ToString("N2") €</span>
-                                </td>
-
-                                <td data-label="@Localizer["IStatus"]">
-                                    <span class="tg-chip @chipClass">
-                                        <i class="bi @chipIcon" aria-hidden="true"></i>
-                                        @chipLabel
-                                    </span>
-
-                                    @if (p.TeamLeft)
-                                    {
-                                        @* Paid, but the team left: the coach may ask for the money back. *@
-                                        <span class="tg-chip" title="@Localizer["PayTeamLeftHint"]">
-                                            <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
-                                            @Localizer["PayTeamLeft"]
-                                        </span>
-                                    }
-                                </td>
-
-                                <td data-label="@Localizer["IPaidOn"]">
-                                    <span class="msg-pay-date">@(p.PaidOnUtc.HasValue ? BgTime.FromUtc(p.PaidOnUtc.Value).ToString("dd.MM.yyyy HH:mm") : "-")</span>
-                                </td>
-
-                                <td class="msg-pay-action text-md-center" data-label="@Localizer["IAction"]">
-                                    @if (p.CanRefund)
-                                    {
-                                        <form asp-action="Refund"
-                                              method="post"
-                                              data-confirm="@Localizer["PayRefundConfirm"]">
-                                            @Html.AntiForgeryToken()
-
-                                            <input type="hidden" name="orderId" value="@p.Id" />
-
-                                            <button type="submit" class="btn btn-sm btn-outline-danger msg-refund">
-                                                <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
-                                                @Localizer["IRefund"]
-                                            </button>
-                                        </form>
-                                    }
-                                    else if (p.Status == "Paid")
-                                    {
-                                        <span class="msg-pay-none" title="@Localizer["RefundTournamentStarted"]">
-                                            <i class="bi bi-lock-fill" aria-hidden="true"></i> @Localizer["RefundStartedShort"]
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="msg-pay-none">—</span>
-                                    }
-                                </td>
+                @if (!payments.Any())
+                {
+                    <div class="msg-desk__none">
+                        <i class="bi bi-search" aria-hidden="true"></i>@Localizer["PayNoMatch"]
+                    </div>
+                }
+                else
+                {
+                    <table class="table table-hover align-middle mb-0 msg-paytable">
+                        <thead>
+                            <tr>
+                                <th scope="col">@Localizer["IOrder"]</th>
+                                <th scope="col">@Localizer["IUser"]</th>
+                                <th scope="col">@Localizer["ITournament"]</th>
+                                <th scope="col">@Localizer["ITeam"]</th>
+                                <th scope="col">@Localizer["IAmount"]</th>
+                                <th scope="col">@Localizer["IStatus"]</th>
+                                <th scope="col">@Localizer["IPaidOn"]</th>
+                                <th scope="col" class="text-center">@Localizer["IAction"]</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
 
-                <div class="msg-desk__none" data-pay-none hidden>
-                    <i class="bi bi-search" aria-hidden="true"></i>@Localizer["PayNoMatch"]
-                </div>
+                        <tbody>
+                            @foreach (var p in payments)
+                            {
+                                var st = (p.Status ?? string.Empty).ToLowerInvariant();
+                                var chipClass = st switch
+                                {
+                                    "paid" => "tg-chip--green",
+                                    "refunded" => "tg-chip--coral",
+                                    "pending" => "tg-chip--sun",
+                                    "refundpending" => "tg-chip--sky",
+                                    "refundfailed" => "tg-chip--coral",
+                                    _ => ""
+                                };
+                                var chipIcon = st switch
+                                {
+                                    "paid" => "bi-check-circle-fill",
+                                    "refunded" => "bi-arrow-counterclockwise",
+                                    "pending" => "bi-hourglass-split",
+                                    "refundpending" => "bi-arrow-repeat",
+                                    "refundfailed" => "bi-x-octagon-fill",
+                                    "expired" => "bi-clock-history",
+                                    _ => "bi-circle"
+                                };
+
+                                <tr>
+                                    <th scope="row" class="msg-pay-id">#@p.Id</th>
+
+                                    <td data-label="@Localizer["IUser"]">
+                                        @if (p.UserName != null)
+                                        {
+                                            <span class="msg-who">
+                                                <span class="msg-who__name">@p.UserName</span>
+                                                <a class="msg-who__mail" href="mailto:@p.UserEmail">@p.UserEmail</a>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            @* The account was deleted; the payment stays as an accounting record. *@
+                                            <span class="msg-pay-none" title="@p.UserId">@Localizer["PayDeletedUser"]</span>
+                                        }
+                                    </td>
+
+                                    <td data-label="@Localizer["ITournament"]">
+                                        @if (p.TournamentDeleted)
+                                        {
+                                            @* The tournament was deleted; the payment stays as a record. *@
+                                            <span class="msg-ref">
+                                                <i class="bi bi-trophy" aria-hidden="true"></i>
+                                                <span>@Localizer["PayDeletedTournament"] · @p.City @p.TournamentStartDate?.ToString("dd.MM.yyyy")</span>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <a class="msg-ref" asp-controller="Tournament" asp-action="Details" asp-route-id="@p.TournamentId" asp-route-information="@p.GetInformation()">
+                                                <i class="bi bi-trophy-fill" aria-hidden="true"></i>
+                                                <span>@p.City · @p.TournamentStartDate?.ToString("dd.MM.yyyy")</span>
+                                            </a>
+                                        }
+                                    </td>
+
+                                    <td data-label="@Localizer["ITeam"]">
+                                        <span class="msg-ref">
+                                            <i class="bi bi-shield-fill" aria-hidden="true"></i>
+                                            <span>@(p.TeamName ?? "—")</span>
+                                        </span>
+                                    </td>
+
+                                    <td data-label="@Localizer["IAmount"]">
+                                        <span class="msg-amount">@p.Amount.ToString("N2") €</span>
+                                    </td>
+
+                                    <td data-label="@Localizer["IStatus"]">
+                                        <span class="tg-chip @chipClass">
+                                            <i class="bi @chipIcon" aria-hidden="true"></i>
+                                            @StatusLabel(p.Status ?? string.Empty)
+                                        </span>
+
+                                        @if (p.TeamLeft)
+                                        {
+                                            @* Paid, but the team left: the coach may ask for the money back. *@
+                                            <span class="tg-chip" title="@Localizer["PayTeamLeftHint"]">
+                                                <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+                                                @Localizer["PayTeamLeft"]
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td data-label="@Localizer["IPaidOn"]">
+                                        <span class="msg-pay-date">@(p.PaidOnUtc.HasValue ? BgTime.FromUtc(p.PaidOnUtc.Value).ToString("dd.MM.yyyy HH:mm") : "-")</span>
+                                    </td>
+
+                                    <td class="msg-pay-action text-md-center" data-label="@Localizer["IAction"]">
+                                        @if (p.CanRefund)
+                                        {
+                                            <form asp-action="Refund"
+                                                  method="post"
+                                                  data-confirm="@Localizer["PayRefundConfirm"]">
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden" name="orderId" value="@p.Id" />
+                                                <input type="hidden" name="page" value="@payments.PageNumber" />
+                                                <input type="hidden" name="status" value="@status" />
+                                                <input type="hidden" name="q" value="@search" />
+
+                                                <button type="submit" class="btn btn-sm btn-outline-dark msg-refund">
+                                                    <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
+                                                    @Localizer["IRefund"]
+                                                </button>
+                                            </form>
+                                        }
+                                        else if (p.Status == "Paid")
+                                        {
+                                            <span class="msg-pay-none" title="@Localizer["RefundTournamentStarted"]">
+                                                <i class="bi bi-lock-fill" aria-hidden="true"></i> @Localizer["RefundStartedShort"]
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="msg-pay-none">—</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
             </div>
+
+            @if (payments.PageCount > 1)
+            {
+                <nav class="tn-pager msg-desk__pager" aria-label="@Localizer["PayTitle"]">
+                    @Html.PagedListPager(
+                        payments,
+                        page => Url.Action("Index", new { page, status, q = search }) + "#msgPayDesk",
+                        new PagedListRenderOptions
+                        {
+                            LiElementClasses = new[] { "page-item" },
+                            PageClasses = new[] { "page-link" }
+                        }
+                    )
+                </nav>
+            }
         </div>
     }
 
 </section>
-
-@section Scripts {
-    <script>
-        // UI only: client-side status pills + quick search over the rendered rows.
-        (function () {
-            var desk = document.querySelector('[data-pay-desk]');
-            if (!desk) { return; }
-
-            var pills = desk.querySelectorAll('[data-pay-filter]');
-            var input = desk.querySelector('[data-pay-search]');
-            var rows = desk.querySelectorAll('[data-pay-row]');
-            var shown = desk.querySelector('[data-pay-shown]');
-            var none = desk.querySelector('[data-pay-none]');
-            var current = 'all';
-            var each = function (list, fn) { Array.prototype.forEach.call(list, fn); };
-
-            function apply() {
-                var q = input ? input.value.trim().toLowerCase() : '';
-                var n = 0;
-                each(rows, function (r) {
-                    var ok = (current === 'all' || r.getAttribute('data-status') === current) &&
-                             (!q || (r.getAttribute('data-search') || '').indexOf(q) !== -1);
-                    r.hidden = !ok;
-                    if (ok) { n++; }
-                });
-                if (shown) { shown.textContent = n; }
-                if (none) { none.hidden = n > 0; }
-            }
-
-            function setFilter(value) {
-                current = value;
-                each(pills, function (b) {
-                    var on = b.getAttribute('data-pay-filter') === value;
-                    b.classList.toggle('is-active', on);
-                    b.setAttribute('aria-pressed', on ? 'true' : 'false');
-                });
-                apply();
-            }
-
-            each(pills, function (b) {
-                b.addEventListener('click', function () { setFilter(b.getAttribute('data-pay-filter')); });
-            });
-            if (input) { input.addEventListener('input', apply); }
-
-            each(document.querySelectorAll('[data-pay-jump]'), function (tile) {
-                tile.addEventListener('click', function () {
-                    setFilter(tile.getAttribute('data-pay-jump'));
-                    desk.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                });
-            });
-        })();
-    </script>
-}

@@ -6,7 +6,7 @@
 
 
 @{
-    ViewBag.Title = "Tournament Details";
+    ViewBag.Title = Model.Description;
     ViewData["FullWidth"] = true;
 
     var eur = new System.Globalization.CultureInfo("de-DE");
@@ -64,22 +64,9 @@
         }
     }
 
-    // Title: the last word gets the sun highlighter.
+    // Title: the description, white on the green poster; a long one is set like text, smaller.
     var desc = (Model.Description ?? string.Empty).Trim();
-    int lastSpace = desc.LastIndexOf(' ');
-    string titleHead = lastSpace > 0 ? desc.Substring(0, lastSpace) : string.Empty;
-    string titleTail = lastSpace > 0 ? desc.Substring(lastSpace + 1) : desc;
-    string titleSize = desc.Length > 90 ? "is-xl" : (desc.Length > 42 ? "is-long" : string.Empty);
-
-    // Marquee under the poster: participants, or the programme sections when nobody has joined yet.
-    var marquee = teams.Count > 0
-        ? new List<string>(teams)
-        : new List<string> { Localizer["DParticipants"].Value, Localizer["TNPrizePool"].Value, Localizer["DSchema"].Value };
-    var marqueeItems = new List<string>();
-    while (marqueeItems.Count < 8)
-    {
-        marqueeItems.AddRange(marquee);
-    }
+    string titleSize = desc.Length > 70 ? "is-xl" : (desc.Length > 28 ? "is-long" : string.Empty);
 
     string Label(string key) => Localizer[key].Value.TrimEnd(':', ' ', '.');
 
@@ -149,7 +136,7 @@
             @statusText
         </span>
 
-        <h1 class="tn-hero__title @titleSize" data-split>@titleHead <span class="tn-hl">@titleTail</span></h1>
+        <h1 class="tn-hero__title @titleSize" data-split>@desc</h1>
 
         <div class="tn-hero__dates">
             <div class="tn-hero__date">
@@ -171,15 +158,6 @@
                 <span class="tg-sticker tn-hero__champ" style="--rot:3deg">
                     <i class="bi bi-trophy-fill" aria-hidden="true"></i>@Localizer["DWinner2"]: @Model.Winner
                 </span>
-            }
-        </div>
-    </div>
-
-    <div class="tg-marquee tg-marquee--sun tn-hero__marquee" data-marquee aria-hidden="true">
-        <div class="tg-marquee__track">
-            @foreach (var item in marqueeItems)
-            {
-                <span class="tg-marquee__item">@item</span>
             }
         </div>
     </div>
@@ -271,8 +249,18 @@
                     <a asp-controller="Tournament"
                        asp-action="Edit"
                        asp-route-id="@Model.Id"
-                       class="btn btn-sun">
+                       class="btn btn-accent">
                         <i class="bi bi-pencil-square" aria-hidden="true"></i>@Localizer["DEdit"]
+                    </a>
+                }
+                else if (statusKey == "upcoming")
+                {
+                    @* Guests too: the sign-in page brings them back to the registration. *@
+                    <a asp-controller="Team"
+                       asp-action="JoinTeam"
+                       asp-route-id="@Model.Id"
+                       class="btn btn-accent">
+                        <i class="bi bi-people-fill" aria-hidden="true"></i>@Localizer["CTJoin"]
                     </a>
                 }
             </div>

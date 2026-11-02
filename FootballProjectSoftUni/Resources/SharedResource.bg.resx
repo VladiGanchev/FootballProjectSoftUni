@@ -196,13 +196,13 @@
     <value>Избери град</value>
   </data>
   <data name="FPBackToLogin" xml:space="preserve">
-    <value>Назад към Вход</value>
+    <value>Назад към входа</value>
   </data>
   <data name="FPCBackToLogin" xml:space="preserve">
-    <value>Назад към Вход</value>
+    <value>Назад към входа</value>
   </data>
   <data name="FPCCheckEmail" xml:space="preserve">
-    <value>Проверете имейла си</value>
+    <value>Провери имейла си</value>
   </data>
   <data name="FPCLogin" xml:space="preserve">
     <value>Вход</value>
@@ -211,19 +211,19 @@
     <value>Нулиране на парола</value>
   </data>
   <data name="FPCPassResetSuccess" xml:space="preserve">
-    <value>Паролата ви е сменена успешно.</value>
+    <value>Паролата ти е сменена успешно.</value>
   </data>
   <data name="FPCSentEmail" xml:space="preserve">
-    <value>Изпратихме ви инструкции за нулиране на паролата ви. Моля, проверете входящата си поща.</value>
+    <value>Изпратихме ти инструкции за нулиране на паролата. Провери входящата си поща.</value>
   </data>
   <data name="FPEmail" xml:space="preserve">
     <value>Имейл</value>
   </data>
   <data name="FPEnterEmail" xml:space="preserve">
-    <value>Въведете имейл адреса си, за да получите инструкции за нулиране на паролата</value>
+    <value>Въведи имейл адреса си, за да получиш инструкции за нулиране на паролата</value>
   </data>
   <data name="FPFP" xml:space="preserve">
-    <value>Забравена Парола</value>
+    <value>Забравена парола</value>
   </data>
   <data name="FPResetPass" xml:space="preserve">
     <value>Нулиране на парола</value>
@@ -343,7 +343,7 @@
     <value>Повтори парола</value>
   </data>
   <data name="RegisterCreate" xml:space="preserve">
-    <value>Създайте своя акаунт</value>
+    <value>Създай своя акаунт</value>
   </data>
   <data name="RegisterEmail" xml:space="preserve">
     <value>Имейл</value>
@@ -370,10 +370,10 @@
     <value>Последно съобщение</value>
   </data>
   <data name="RPBackToLogin" xml:space="preserve">
-    <value>Обратно към Вход</value>
+    <value>Обратно към входа</value>
   </data>
   <data name="RPChooseNewPass" xml:space="preserve">
-    <value>Изберете нова парола за вашия акаунт</value>
+    <value>Избери нова парола за акаунта си</value>
   </data>
   <data name="RPConfirmPassword" xml:space="preserve">
     <value>Повтори парола</value>
@@ -400,13 +400,13 @@
     <value>Напиши отговор и го изпрати към подателя на съобщението.</value>
   </data>
   <data name="RYourResponse" xml:space="preserve">
-    <value>Вашият отговор</value>
+    <value>Твоят отговор</value>
   </data>
   <data name="SearchLeaders" xml:space="preserve">
     <value>Лидери</value>
   </data>
   <data name="SearchNoCity" xml:space="preserve">
-    <value>Няма град, който да отговаря на критериите ви за търсене.</value>
+    <value>Няма град, който да отговаря на търсенето ти.</value>
   </data>
   <data name="SearchResults" xml:space="preserve">
     <value>Резултати от търсенето</value>
@@ -415,7 +415,7 @@
     <value>Турнири</value>
   </data>
   <data name="CMessage" xml:space="preserve">
-    <value>Вашето съобщение</value>
+    <value>Твоето съобщение</value>
   </data>
   <data name="CSend" xml:space="preserve">
     <value>Изпрати</value>
@@ -439,7 +439,7 @@
     <value>Тема</value>
   </data>
   <data name="SWhenSend" xml:space="preserve">
-    <value>Когато изпратите съобщение, ще се появи тук.</value>
+    <value>Когато изпратиш съобщение, ще се появи тук.</value>
   </data>
   <data name="SNo" xml:space="preserve">
     <value>Нямате изпратени съобщения</value>
@@ -460,7 +460,7 @@
     <value>Само администратори могат да изтриват снимки.</value>
   </data>
   <data name="UPUP" xml:space="preserve">
-    <value>Kачи снимки за турнира</value>
+    <value>Качи снимки за турнира</value>
   </data>
   <data name="UPOneOrMore" xml:space="preserve">
     <value>Качи една или повече снимки към турнира.</value>
@@ -493,16 +493,16 @@
     <value>Нямате изпратени съобщения</value>
   </data>
   <data name="AllWhen" xml:space="preserve">
-    <value>Когато изпратите съобщение, ще се появи тук.</value>
+    <value>Когато изпратиш съобщение, ще се появи тук.</value>
   </data>
   <data name="AllSentTo" xml:space="preserve">
     <value>Изпратено към:</value>
   </data>
   <data name="AllIncomingNotifications" xml:space="preserve">
-    <value>Входящи нотификации</value>
+    <value>Входящи известия</value>
   </data>
   <data name="AllNoNotifications" xml:space="preserve">
-    <value>Нямате нотификации</value>
+    <value>Нямаш известия</value>
   </data>
   <data name="AllWhenYouHave" xml:space="preserve">
     <value>Когато има нови събития, ще ги виждате тук.</value>
@@ -536,7 +536,7 @@
     <value>Потвърди изтриването</value>
   </data>
   <data name="DPSelectPartner" xml:space="preserve">
-    <value>Изберете партньор</value>
+    <value>Избери партньор</value>
   </data>
   <data name="DPDeletePartner" xml:space="preserve">
     <value>Изтрий партньор</value>
@@ -569,7 +569,7 @@
     <value>Платено на</value>
   </data>
   <data name="IRefund" xml:space="preserve">
-    <value>Refund</value>
+    <value>Върни парите</value>
   </data>
   <data name="IReferee" xml:space="preserve">
     <value>Рефер</value>
@@ -668,7 +668,7 @@
     <value>Средна оценка</value>
   </data>
   <data name="RCount" xml:space="preserve">
-    <value>Брой Турнири</value>
+    <value>Брой турнири</value>
   </data>
   <data name="RExp" xml:space="preserve">
     <value>Опит (години)</value>
@@ -875,37 +875,37 @@
     <value>Рефери</value>
   </data>
   <data name="DAdmin" xml:space="preserve">
-    <value>Админ Панел</value>
+    <value>Админ панел</value>
   </data>
   <data name="DAddTournament" xml:space="preserve">
-    <value>Добави Турнир</value>
+    <value>Добави турнир</value>
   </data>
   <data name="DAddCity" xml:space="preserve">
-    <value>Добави Град</value>
+    <value>Добави град</value>
   </data>
   <data name="DDeleteCity" xml:space="preserve">
-    <value>Изтрий Град</value>
+    <value>Изтрий град</value>
   </data>
   <data name="DAddPartner" xml:space="preserve">
-    <value>Добави Партньор</value>
+    <value>Добави партньор</value>
   </data>
   <data name="DDeletePartner" xml:space="preserve">
-    <value>Изтрий Партньор</value>
+    <value>Изтрий партньор</value>
   </data>
   <data name="DUCL" xml:space="preserve">
-    <value>Актуализирай Лидери</value>
+    <value>Актуализирай лидерите</value>
   </data>
   <data name="DRefund" xml:space="preserve">
-    <value>Refund</value>
+    <value>Плащания</value>
   </data>
   <data name="DParticipate" xml:space="preserve">
     <value>Участия</value>
   </data>
   <data name="DAsReferee" xml:space="preserve">
-    <value>Като Рефер</value>
+    <value>Като рефер</value>
   </data>
   <data name="DAsCoach" xml:space="preserve">
-    <value>Като Треньор</value>
+    <value>Като треньор</value>
   </data>
   <data name="LayoutContact" xml:space="preserve">
     <value>Свържи се с организаторите</value>
@@ -914,7 +914,7 @@
     <value>Все още няма снимки</value>
   </data>
   <data name="LPProfile" xml:space="preserve">
-    <value>Моят Профил</value>
+    <value>Моят профил</value>
   </data>
   <data name="LGLogOut" xml:space="preserve">
     <value>Изход</value>
@@ -986,7 +986,7 @@
     <value>✅ Плащането е успешно! Отборът е регистриран.</value>
   </data>
   <data name="PaymentPendingMessage" xml:space="preserve">
-    <value>⏳ Плащането е получено. Изчакваме потвърждение… (ако до 10-15 сек не се обнови, рефрешни страницата)</value>
+    <value>⏳ Плащането е получено. Изчакваме потвърждение от Stripe…</value>
   </data>
   <data name="TournamentDeclaration" xml:space="preserve">
     <value>С настоящото декларирам, че като треньор записвам отбора си за футболен турнир, организиран чрез платформата Tournament Galaxy.
@@ -1177,19 +1177,19 @@
     <value>Сигурен ли си, че искаш да върнеш това плащане (refund)?</value>
   </data>
   <data name="CPAddCitySub" xml:space="preserve">
-    <value>Добавете нов град към платформата, за да могат да се създават турнири в него.</value>
+    <value>Добави нов град към платформата, за да могат да се създават турнири в него.</value>
   </data>
   <data name="CPAddPartnerSub" xml:space="preserve">
-    <value>Добавете партньор, чието лого ще се показва на стената с партньори.</value>
+    <value>Добави партньор, чието лого ще се показва на стената с партньори.</value>
   </data>
   <data name="CPUpdateLeadersSub" xml:space="preserve">
-    <value>Отчетете победа на отбор в избрания град. Тя се добавя към класацията на лидерите.</value>
+    <value>Отчети победа на отбор в избрания град. Тя се добавя към класацията на лидерите.</value>
   </data>
   <data name="CPDeletePickCity" xml:space="preserve">
-    <value>Изберете град за изтриване. Ще трябва да потвърдите на следващата стъпка.</value>
+    <value>Избери град за изтриване. Ще трябва да потвърдиш на следващата стъпка.</value>
   </data>
   <data name="CPDeletePickPartner" xml:space="preserve">
-    <value>Изберете партньор за изтриване. Ще трябва да потвърдите на следващата стъпка.</value>
+    <value>Избери партньор за изтриване. Ще трябва да потвърдиш на следващата стъпка.</value>
   </data>
   <data name="CPPreview" xml:space="preserve">
     <value>Преглед</value>
@@ -1231,7 +1231,7 @@
     <value>Награден фонд</value>
   </data>
   <data name="TNAddSub" xml:space="preserve">
-    <value>Попълнете данните, за да създадете нов турнир.</value>
+    <value>Попълни данните, за да създадеш нов турнир.</value>
   </data>
   <data name="TNSecGeneral" xml:space="preserve">
     <value>Основна информация</value>
@@ -1453,7 +1453,7 @@
     <value>Всички</value>
   </data>
   <data name="PaySearch" xml:space="preserve">
-    <value>Търси по №, потребител, турнир…</value>
+    <value>Име, имейл, отбор, град или № на поръчка</value>
   </data>
   <data name="PayNoMatch" xml:space="preserve">
     <value>Няма плащания по този филтър.</value>
@@ -1852,7 +1852,7 @@
     <value>Плащането ти за този турнир вече се обработва.</value>
   </data>
   <data name="SMDeclarationRequired" xml:space="preserve">
-    <value>Трябва да приемете декларацията.</value>
+    <value>Трябва да приемеш декларацията.</value>
   </data>
   <data name="SMFeeMissing" xml:space="preserve">
     <value>Таксата за участие не е зададена. Свържи се с организатора.</value>
@@ -1909,13 +1909,13 @@
     <value>Трябва да си навършил 18 години, за да станеш съдия.</value>
   </data>
   <data name="SMChooseReferee" xml:space="preserve">
-    <value>Моля, изберете рефер.</value>
+    <value>Избери рефер.</value>
   </data>
   <data name="SMEnterSubject" xml:space="preserve">
-    <value>Моля, въведете тема.</value>
+    <value>Въведи тема.</value>
   </data>
   <data name="SMEnterMessage" xml:space="preserve">
-    <value>Моля, въведете съобщение.</value>
+    <value>Въведи съобщение.</value>
   </data>
   <data name="SMInviteSent" xml:space="preserve">
     <value>Поканата беше изпратена успешно!</value>
@@ -2581,5 +2581,80 @@
   </data>
   <data name="LegalContactForm" xml:space="preserve">
     <value>Регистрираните потребители могат да ни пишат и чрез „Свържи се с организаторите“.</value>
+  </data>
+  <data name="CTCountOne" xml:space="preserve">
+    <value>турнир</value>
+  </data>
+  <data name="CTCountMany" xml:space="preserve">
+    <value>турнира</value>
+  </data>
+  <data name="DSumTitle" xml:space="preserve">
+    <value>Какво плащаш</value>
+  </data>
+  <data name="DSumTournament" xml:space="preserve">
+    <value>Турнир</value>
+  </data>
+  <data name="DSumWhenWhere" xml:space="preserve">
+    <value>Къде и кога</value>
+  </data>
+  <data name="DSumTeam" xml:space="preserve">
+    <value>Отбор</value>
+  </data>
+  <data name="DSumFee" xml:space="preserve">
+    <value>Такса за участие</value>
+  </data>
+  <data name="DSumAlreadyPaid" xml:space="preserve">
+    <value>Вече е платена</value>
+  </data>
+  <data name="DPay" xml:space="preserve">
+    <value>Плати {0}</value>
+  </data>
+  <data name="DJoinPaid" xml:space="preserve">
+    <value>Запиши отбора</value>
+  </data>
+  <data name="TitleError" xml:space="preserve">
+    <value>Грешка</value>
+  </data>
+  <data name="TitleAccessDenied" xml:space="preserve">
+    <value>Нямаш достъп</value>
+  </data>
+  <data name="TitleNotFound" xml:space="preserve">
+    <value>Страницата не е намерена</value>
+  </data>
+  <data name="TitleCityTournaments" xml:space="preserve">
+    <value>Турнири в {0}</value>
+  </data>
+  <data name="PayStatusExpired" xml:space="preserve">
+    <value>Изтекло</value>
+  </data>
+  <data name="PayStatusRefundPending" xml:space="preserve">
+    <value>Връщане в процес</value>
+  </data>
+  <data name="PayStatusRefundFailed" xml:space="preserve">
+    <value>Неуспешно връщане</value>
+  </data>
+  <data name="PayStatusOther" xml:space="preserve">
+    <value>Други</value>
+  </data>
+  <data name="PayDeletedUser" xml:space="preserve">
+    <value>Изтрит профил</value>
+  </data>
+  <data name="PaySearchGo" xml:space="preserve">
+    <value>Търси</value>
+  </data>
+  <data name="PaySearchClear" xml:space="preserve">
+    <value>Изчисти търсенето</value>
+  </data>
+  <data name="PayShown" xml:space="preserve">
+    <value>Показани {0} от {1}</value>
+  </data>
+  <data name="PaymentSlowMessage" xml:space="preserve">
+    <value>⏳ Потвърждението от Stripe се бави. Ще получиш известие и имейл веднага щом дойде.</value>
+  </data>
+  <data name="HomeCitiesPrev" xml:space="preserve">
+    <value>Предишен град</value>
+  </data>
+  <data name="HomeCitiesNext" xml:space="preserve">
+    <value>Следващ град</value>
   </data>
 </root>

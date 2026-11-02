@@ -82,6 +82,23 @@ using (var scope = app.Services.CreateScope())
     scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
 }
 
+// Pictures uploaded before the lists used small copies get theirs, in the background (the site doesn't wait).
+_ = Task.Run(async () =>
+{
+    try
+    {
+        var made = await app.Services.GetRequiredService<FootballProjectSoftUni.Core.Services.Gallery.CoverPictureStore>().CreateMissingSmallCopiesAsync();
+        if (made > 0)
+        {
+            app.Logger.LogInformation("Made {Count} small copies of pictures for the lists.", made);
+        }
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogWarning(ex, "The small copies of pictures could not be made; the lists show the pictures themselves.");
+    }
+});
+
 using (var scope = app.Services.CreateScope())
 {
     var recurringJobs = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
@@ -150,7 +167,18 @@ app.Use(async (context, next) =>
 });
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+
+// Browsers keep the site's files so that the next pages open faster (see StaticFileCache).
+// Compression is left to IIS, which already sends everything compressed on the live site.
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.CacheControl = FootballProjectSoftUni.Core.Extensions.StaticFileCache.For(
+            ctx.Context.Request.Path.Value ?? string.Empty,
+            ctx.Context.Request.QueryString.HasValue);
+    }
+});
 app.UseCookiePolicy();
 
 var supportedCultures = new[] { new CultureInfo("bg"), new CultureInfo("en") };

@@ -35,7 +35,7 @@
                     <a asp-controller="City" asp-action="All" class="btn btn-primary btn-lg" data-magnetic>
                         @Localizer["HeroBrowseCities"]<i class="bi bi-arrow-right"></i>
                     </a>
-                    <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-sun btn-lg" data-magnetic>
+                    <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-accent btn-lg" data-magnetic>
                         @Localizer["HeroCreateAccount"]
                     </a>
                 </div>
@@ -91,7 +91,7 @@
             <a asp-controller="City" asp-action="All" class="btn btn-outline-dark">@Localizer["HomeSeeAll"]<i class="bi bi-arrow-right"></i></a>
         </div>
     </div>
-    @await Component.InvokeAsync("CityStripComponent", new { take = 12 })
+    @await Component.InvokeAsync("CityStripComponent")
 </section>
 
 @* ============ BENTO ============ *@

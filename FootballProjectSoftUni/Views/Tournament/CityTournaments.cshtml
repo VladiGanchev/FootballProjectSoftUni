@@ -11,11 +11,11 @@
 
 
 @{
-    ViewData["Title"] = "City Tournaments";
+    ViewData["Title"] = ViewBag.CityName is string titleCity ? Localizer["TitleCityTournaments", titleCity].Value : Localizer["TNTitle"].Value;
     var cityId = ViewBag.CityId as int? ?? 0;
     bool showPast = ViewBag.ShowPast != null && (bool)ViewBag.ShowPast;
 
-    var cityName = Model?.FirstOrDefault()?.CityName;
+    var cityName = ViewBag.CityName as string;
     bool hasCity = !string.IsNullOrWhiteSpace(cityName);
     bool isSignedIn = SignInManager.IsSignedIn(User);
     bool isAdmin = isSignedIn && User.IsAdmin();
@@ -82,7 +82,7 @@
             <span class="tg-sticker tg-sticker--coral tn-board__count" style="--rot:5deg">
                 <i class="bi bi-ticket-perforated-fill" aria-hidden="true"></i>
                 <span class="tg-num" data-count="@total">@total</span>
-                @Localizer["TNTitle"]
+                @(total == 1 ? Localizer["CTCountOne"] : Localizer["CTCountMany"])
             </span>
         </div>
 
@@ -140,7 +140,7 @@
 
                 <section class="tn-month" aria-labelledby="@monthId">
                     <header class="tn-month__head">
-                        <span class="tn-month__num" aria-hidden="true">@month.Month.ToString("MM")</span>
+                        <span class="tn-month__num" data-num="@month.Month.ToString("MM")" aria-hidden="true"></span>
                         <h2 class="tn-month__name" id="@monthId">@Up(month.Month.ToString("MMMM", culture))</h2>
                         <span class="tn-month__year">@month.Month.Year</span>
                         <span class="tn-month__count">
@@ -190,7 +190,7 @@
                                             <i class="bi bi-trophy-fill"></i>
                                             @if (!string.IsNullOrWhiteSpace(e.ImageUrl))
                                             {
-                                                <img src="@e.ImageUrl" alt="" loading="lazy" data-hide-on-error />
+                                                <img src="@CoverPictureStore.Small(e.ImageUrl)" data-full="@e.ImageUrl" alt="" loading="lazy" data-hide-on-error />
                                             }
                                         </div>
 
@@ -246,7 +246,7 @@
                                                     <a asp-controller="Gallery"
                                                        asp-action="UploadPictures"
                                                        asp-route-id="@e.Id"
-                                                       class="btn btn-sm btn-sun">
+                                                       class="btn btn-sm btn-outline-dark">
                                                         <i class="bi bi-cloud-upload-fill" aria-hidden="true"></i>@Localizer["CTUpload"]
                                                     </a>
 
@@ -258,10 +258,10 @@
                                                     </a>
                                                 }
                                             }
-                                            else if (isSignedIn)
+                                            else
                                             {
-                                                @* Current/Upcoming actions *@
-                                                if (User.IsAdmin())
+                                                @* Current/Upcoming actions. Guests also get "Join": the sign-in page brings them back to it. *@
+                                                if (isAdmin)
                                                 {
                                                     <a asp-controller="Tournament"
                                                        asp-action="Edit"
@@ -297,7 +297,7 @@
                                                         <i class="bi bi-people-fill" aria-hidden="true"></i>@Localizer["CTJoin"]
                                                     </a>
 
-                                                    if (e.RefereeId == null)
+                                                    if (isSignedIn && e.RefereeId == null)
                                                     {
                                                         <a asp-controller="Referee"
                                                            asp-action="BecomeReferee"

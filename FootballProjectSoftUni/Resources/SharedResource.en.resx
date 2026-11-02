@@ -896,7 +896,7 @@
     <value>Update City Leaders</value>
   </data>
   <data name="DRefund" xml:space="preserve">
-    <value>Refund</value>
+    <value>Payments</value>
   </data>
   <data name="DParticipate" xml:space="preserve">
     <value>Participation</value>
@@ -986,7 +986,7 @@
     <value>✅ Payment successful! The team has been registered.</value>
   </data>
   <data name="PaymentPendingMessage" xml:space="preserve">
-    <value>⏳ Payment received. Waiting for confirmation… (if it doesn't update in 10-15 seconds, refresh the page)</value>
+    <value>⏳ Payment received. Waiting for confirmation from Stripe…</value>
   </data>
   <data name="TournamentDeclaration" xml:space="preserve">
     <value>I hereby declare that, as a coach, I am entering my team in a football tournament organised through the Tournament Galaxy platform.
@@ -1453,7 +1453,7 @@
     <value>All</value>
   </data>
   <data name="PaySearch" xml:space="preserve">
-    <value>Search by #, user, tournament…</value>
+    <value>Name, e-mail, team, city or order no.</value>
   </data>
   <data name="PayNoMatch" xml:space="preserve">
     <value>No payments match this filter.</value>
@@ -2581,5 +2581,80 @@ Problem: {5}</value>
   </data>
   <data name="LegalContactForm" xml:space="preserve">
     <value>Registered users can also write to us through "Contact the organisers".</value>
+  </data>
+  <data name="CTCountOne" xml:space="preserve">
+    <value>tournament</value>
+  </data>
+  <data name="CTCountMany" xml:space="preserve">
+    <value>tournaments</value>
+  </data>
+  <data name="DSumTitle" xml:space="preserve">
+    <value>What you are paying for</value>
+  </data>
+  <data name="DSumTournament" xml:space="preserve">
+    <value>Tournament</value>
+  </data>
+  <data name="DSumWhenWhere" xml:space="preserve">
+    <value>Where and when</value>
+  </data>
+  <data name="DSumTeam" xml:space="preserve">
+    <value>Team</value>
+  </data>
+  <data name="DSumFee" xml:space="preserve">
+    <value>Participation fee</value>
+  </data>
+  <data name="DSumAlreadyPaid" xml:space="preserve">
+    <value>Already paid</value>
+  </data>
+  <data name="DPay" xml:space="preserve">
+    <value>Pay {0}</value>
+  </data>
+  <data name="DJoinPaid" xml:space="preserve">
+    <value>Register the team</value>
+  </data>
+  <data name="TitleError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="TitleAccessDenied" xml:space="preserve">
+    <value>Access denied</value>
+  </data>
+  <data name="TitleNotFound" xml:space="preserve">
+    <value>Page not found</value>
+  </data>
+  <data name="TitleCityTournaments" xml:space="preserve">
+    <value>Tournaments in {0}</value>
+  </data>
+  <data name="PayStatusExpired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="PayStatusRefundPending" xml:space="preserve">
+    <value>Refund in progress</value>
+  </data>
+  <data name="PayStatusRefundFailed" xml:space="preserve">
+    <value>Refund failed</value>
+  </data>
+  <data name="PayStatusOther" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="PayDeletedUser" xml:space="preserve">
+    <value>Deleted account</value>
+  </data>
+  <data name="PaySearchGo" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="PaySearchClear" xml:space="preserve">
+    <value>Clear search</value>
+  </data>
+  <data name="PayShown" xml:space="preserve">
+    <value>Showing {0} of {1}</value>
+  </data>
+  <data name="PaymentSlowMessage" xml:space="preserve">
+    <value>⏳ The confirmation from Stripe is taking longer. You will get a notification and an e-mail as soon as it arrives.</value>
+  </data>
+  <data name="HomeCitiesPrev" xml:space="preserve">
+    <value>Previous city</value>
+  </data>
+  <data name="HomeCitiesNext" xml:space="preserve">
+    <value>Next city</value>
   </data>
 </root>

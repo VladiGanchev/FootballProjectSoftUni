@@ -361,11 +361,28 @@ namespace FootballProjectSoftUni.Controllers
             }
             else
             {
+                // Stripe's confirmation hasn't arrived yet: the page asks PaymentStatus every few seconds.
                 TempData["PaymentMessage"] = localizer["PaymentPendingMessage"].Value;
                 TempData["PaymentType"] = "info";
+                TempData["PaymentPendingOrder"] = orderId;
             }
 
             return RedirectToAction(nameof(All));
+        }
+
+        /// <summary>Whether the signed-in user's order is paid yet (asked by the page after the payment).</summary>
+        [HttpGet]
+        public async Task<IActionResult> PaymentStatus(int orderId)
+        {
+            var order = await tournamentJoinPaymentService.GetTournametJoinPaymentOrder(orderId);
+
+            // Only the person who paid learns the state of an order.
+            if (order == null || order.UserId != User.Id())
+            {
+                return NotFound();
+            }
+
+            return Json(new { paid = order.Status == "Paid" });
         }
 
         [HttpGet]

@@ -3,7 +3,7 @@
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
-    ViewBag.Title = "Update City Leaders";
+    ViewBag.Title = Localizer["DUCL"].Value;
     ViewData["FullWidth"] = true;
 }
 
@@ -68,7 +68,7 @@
                     <span asp-validation-for="TeamId" class="text-danger small"></span>
                 </div>
 
-                <button type="submit" class="btn btn-sun btn-lg cp-sb__go">
+                <button type="submit" class="btn btn-accent btn-lg cp-sb__go">
                     <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>@Localizer["UPLAddWin"]
                 </button>
             </div>

@@ -3,19 +3,31 @@
 
 @if (Model.Any())
 {
-    <div class="hm-strip" data-drag-scroll>
-        @{ int i = 0; }
-        @foreach (var city in Model)
-        {
-            <a class="hm-polaroid" style="--rot:@(i % 2 == 0 ? "-2.5deg" : "2deg")"
-               asp-controller="Tournament" asp-action="CityTournaments" asp-route-id="@city.Id">
-                <span class="hm-polaroid__img">
-                    <img src="@city.ImageUrl" alt="@city.Name" loading="lazy" draggable="false" data-hide-on-error />
-                </span>
-                <span class="hm-polaroid__name">@city.Name</span>
-                <span class="hm-polaroid__go">@Localizer["AllTournaments"] <i class="bi bi-arrow-right"></i></span>
-            </a>
-            i++;
-        }
+    @* Every city; the script turns the strip into an endless loop in both directions (drag, swipe, trackpad,
+       Shift + wheel, the arrow buttons or the keyboard). Without the script it is an ordinary scrolling strip. *@
+    <div class="hm-strip-wrap">
+        <button type="button" class="hm-strip__arrow hm-strip__arrow--prev" data-loop-prev aria-label="@Localizer["HomeCitiesPrev"]" hidden>
+            <i class="bi bi-arrow-left" aria-hidden="true"></i>
+        </button>
+
+        <div class="hm-strip" data-loop>
+            @{ int i = 0; }
+            @foreach (var city in Model)
+            {
+                <a class="hm-polaroid" style="--rot:@(i % 2 == 0 ? "-2.5deg" : "2deg")"
+                   asp-controller="Tournament" asp-action="CityTournaments" asp-route-id="@city.Id">
+                    <span class="hm-polaroid__img">
+                        <img src="@CoverPictureStore.Small(city.ImageUrl)" data-full="@city.ImageUrl" alt="@city.Name" loading="lazy" draggable="false" data-hide-on-error />
+                    </span>
+                    <span class="hm-polaroid__name">@city.Name</span>
+                    <span class="hm-polaroid__go">@Localizer["AllTournaments"] <i class="bi bi-arrow-right"></i></span>
+                </a>
+                i++;
+            }
+        </div>
+
+        <button type="button" class="hm-strip__arrow hm-strip__arrow--next" data-loop-next aria-label="@Localizer["HomeCitiesNext"]" hidden>
+            <i class="bi bi-arrow-right" aria-hidden="true"></i>
+        </button>
     </div>
 }

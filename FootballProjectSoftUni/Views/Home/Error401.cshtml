@@ -1,6 +1,6 @@
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 @{
-    ViewData["Title"] = "Access Denied";
+    ViewData["Title"] = Localizer["TitleAccessDenied"].Value;
     bool anonymous = User.Identity?.IsAuthenticated != true;
 }
 

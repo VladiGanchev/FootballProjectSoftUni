@@ -3,7 +3,9 @@
 
 
 @{
-    ViewData["Title"] = "Declaration";
+    ViewData["Title"] = Localizer["DDeclaration"].Value;
+    var summary = ViewBag.Summary as FootballProjectSoftUni.Core.Models.Payment.JoinSummaryViewModel;
+    string Money(decimal amount) => amount.ToString("N2") + " €";
 }
 
 <div class="tp-contract-wrap">
@@ -26,6 +28,30 @@
         <div class="tp-stamp" aria-hidden="true">
             <span><b>@Localizer["TpDecSigned"]</b>Tournament Galaxy<br />@BgTime.Today.Year</span>
         </div>
+
+        @* What the coach is paying for, before going to Stripe. *@
+        @if (summary != null)
+        {
+            <h2 class="visually-hidden">@Localizer["DSumTitle"]</h2>
+            <dl class="tp-order">
+                <div class="tp-order__row">
+                    <dt>@Localizer["DSumTournament"]</dt>
+                    <dd>@summary.Description</dd>
+                </div>
+                <div class="tp-order__row">
+                    <dt>@Localizer["DSumWhenWhere"]</dt>
+                    <dd>@(summary.CityName != null ? summary.CityName + " · " : "")@summary.StartDate.ToString("dd.MM.yyyy · HH:mm")</dd>
+                </div>
+                <div class="tp-order__row">
+                    <dt>@Localizer["DSumTeam"]</dt>
+                    <dd>@summary.TeamName</dd>
+                </div>
+                <div class="tp-order__row tp-order__row--total">
+                    <dt>@Localizer["DSumFee"]</dt>
+                    <dd>@(summary.AlreadyPaid ? Localizer["DSumAlreadyPaid"].Value : Money(summary.Fee))</dd>
+                </div>
+            </dl>
+        }
 
         @* General errors *@
         <div asp-validation-summary="All" class="tp-valsum"></div>
@@ -76,7 +102,18 @@
             @* Submit *@
             <div class="tg-form-actions">
                 <button type="submit" id="submitBtn" class="btn btn-accent btn-lg" disabled>
-                    @Localizer["DContinue"]
+                    @if (summary?.AlreadyPaid == true)
+                    {
+                        @Localizer["DJoinPaid"]
+                    }
+                    else if (summary != null)
+                    {
+                        @Localizer["DPay", Money(summary.Fee)]
+                    }
+                    else
+                    {
+                        @Localizer["DContinue"]
+                    }
                     <i class="bi bi-arrow-right" aria-hidden="true"></i>
                 </button>
             </div>

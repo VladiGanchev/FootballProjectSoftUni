@@ -5,7 +5,7 @@
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "Cities";
+    ViewData["Title"] = Localizer["DCities"].Value;
     ViewData["FullWidth"] = true;
 
     var offset = (Model.PageNumber - 1) * Model.PageSize;
@@ -29,9 +29,15 @@
             @if (TempData["PaymentMessage"] != null)
             {
                 var type = TempData["PaymentType"]?.ToString() ?? "info";
-                <div class="alert alert-@type mb-0" role="alert">
+                var pendingOrder = TempData["PaymentPendingOrder"] as int?;
+
+                @* A payment Stripe hasn't confirmed yet: the page checks it by itself and shows the result. *@
+                <div class="alert alert-@type mb-0" role="@(pendingOrder.HasValue ? "status" : "alert")"
+                     data-payment-poll="@(pendingOrder.HasValue ? Url.Action("PaymentStatus", "City", new { orderId = pendingOrder }) : null)"
+                     data-paid-text="@(pendingOrder.HasValue ? Localizer["PaymentSuccessMessage"].Value : null)"
+                     data-slow-text="@(pendingOrder.HasValue ? Localizer["PaymentSlowMessage"].Value : null)">
                     <i class="bi bi-info-circle-fill me-2" aria-hidden="true"></i>
-                    @TempData["PaymentMessage"]
+                    <span data-payment-text>@TempData["PaymentMessage"]</span>
                 </div>
             }
         </div>
@@ -44,7 +50,7 @@
             @if (User.IsAdmin())
             {
                 <div class="cp-admin">
-                    <a asp-controller="City" asp-action="AddCity" class="btn btn-sun btn-sm">
+                    <a asp-controller="City" asp-action="AddCity" class="btn btn-accent btn-sm">
                         <i class="bi bi-plus-lg" aria-hidden="true"></i>@Localizer["DAddCity"]
                     </a>
                     <a asp-controller="City" asp-action="UpdateCityLeaders" class="btn btn-outline-dark btn-sm">
@@ -111,14 +117,14 @@
 
                 <li class="cp-row" data-name="@city.Name" data-reveal>
                     <a class="cp-row__main"
-                       data-img="@city.ImageUrl"
+                       data-img="@CoverPictureStore.Small(city.ImageUrl)"
                        asp-controller="Tournament"
                        asp-action="CityTournaments"
                        asp-route-id="@city.Id">
                         <span class="cp-row__num" aria-hidden="true">@no</span>
                         <span class="cp-row__photo" aria-hidden="true">
                             <i class="bi bi-geo-alt-fill"></i>
-                            <img src="@city.ImageUrl" alt="" loading="lazy" draggable="false" data-hide-on-error />
+                            <img src="@CoverPictureStore.Small(city.ImageUrl)" data-full="@city.ImageUrl" alt="" loading="lazy" draggable="false" data-hide-on-error />
                         </span>
                         <span class="cp-row__name">@city.Name</span>
                     </a>
@@ -127,14 +133,14 @@
                         <a asp-controller="Tournament"
                            asp-action="CityTournaments"
                            asp-route-id="@city.Id"
-                           class="btn btn-primary btn-sm">
+                           class="btn btn-primary btn-sm cp-row__go">
                             <i class="bi bi-trophy-fill" aria-hidden="true"></i>@Localizer["AllTournaments"]
                         </a>
 
                         <a asp-controller="City"
                            asp-action="GetBestTeams"
                            asp-route-id="@city.Id"
-                           class="btn btn-sun btn-sm">
+                           class="btn btn-outline-dark btn-sm cp-row__leaders">
                             <i class="bi bi-bar-chart-fill" aria-hidden="true"></i>@Localizer["AllLeaders"]
                         </a>
                     </div>
@@ -191,6 +197,34 @@
 
 @section Scripts {
     <script>
+        // After a payment: ask every 3 seconds (for up to a minute) whether Stripe has confirmed it.
+        (function () {
+            var box = document.querySelector('[data-payment-poll]');
+            if (!box || !window.fetch) { return; }
+            var url = box.getAttribute('data-payment-poll');
+            var text = box.querySelector('[data-payment-text]');
+            var tries = 0;
+
+            function show(kind, message) {
+                box.classList.remove('alert-info');
+                box.classList.add('alert-' + kind);
+                text.textContent = message;
+            }
+
+            function check() {
+                tries++;
+                fetch(url, { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (s) {
+                        if (s && s.paid) { show('success', box.getAttribute('data-paid-text')); return; }
+                        if (tries < 20) { setTimeout(check, 3000); } else { show('info', box.getAttribute('data-slow-text')); }
+                    })
+                    .catch(function () { if (tries < 20) { setTimeout(check, 3000); } else { show('info', box.getAttribute('data-slow-text')); } });
+            }
+
+            setTimeout(check, 2000);
+        })();
+
         (function () {
             var input = document.getElementById('citySearch');
             if (!input) { return; }

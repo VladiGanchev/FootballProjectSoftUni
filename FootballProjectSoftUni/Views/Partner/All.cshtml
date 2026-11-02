@@ -4,13 +4,11 @@
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "Our Partners";
+    ViewData["Title"] = Localizer["DPartners"].Value;
     ViewData["FullWidth"] = true;
 
     var partners = Model?.ToList() ?? new List<PartnerViewModel>();
     // repeat logos so each tape is long enough for a seamless loop
-    var reps = partners.Count == 0 ? 0 : Math.Max(1, (int)Math.Ceiling(10.0 / partners.Count));
-    var reversed = Enumerable.Reverse(partners).ToList();
     var rotations = new[] { "-2deg", "1.5deg", "-1deg", "2.5deg", "-2.5deg", "1deg", "0deg" };
 
     string Initial(string name) => string.IsNullOrWhiteSpace(name) ? "?" : name.Trim()[0].ToString().ToUpperInvariant();
@@ -35,7 +33,7 @@
             @if (User.IsAdmin())
             {
                 <div class="cp-admin">
-                    <a asp-controller="Partner" asp-action="AddPartner" class="btn btn-sun btn-sm">
+                    <a asp-controller="Partner" asp-action="AddPartner" class="btn btn-accent btn-sm">
                         <i class="bi bi-plus-lg" aria-hidden="true"></i>@Localizer["DAddPartner"]
                     </a>
                     <a asp-controller="Partner" asp-action="DeletePartner" class="btn btn-outline-dark btn-sm">
@@ -62,45 +60,6 @@
 
 @if (partners.Any())
 {
-    @* ============ Two crossed sponsor tapes, running in opposite directions ============ *@
-    <div class="cp-tapes" aria-hidden="true">
-        <div class="tg-marquee tg-marquee--ink cp-tape cp-tape--a" data-marquee style="--speed:46s">
-            <div class="tg-marquee__track">
-                @for (int r = 0; r < reps; r++)
-                {
-                    foreach (var p in partners)
-                    {
-                        <span class="tg-marquee__item cp-mq__item">
-                            <span class="cp-mq__logo">
-                                <span class="cp-mq__initial">@Initial(p.Name)</span>
-                                <img src="@p.ImageUrl" alt="" draggable="false" data-hide-on-error />
-                            </span>
-                            @p.Name
-                        </span>
-                    }
-                }
-            </div>
-        </div>
-
-        <div class="tg-marquee tg-marquee--sun cp-tape cp-tape--b" data-marquee style="--speed:54s">
-            <div class="tg-marquee__track">
-                @for (int r = 0; r < reps; r++)
-                {
-                    foreach (var p in reversed)
-                    {
-                        <span class="tg-marquee__item cp-mq__item">
-                            <span class="cp-mq__logo">
-                                <span class="cp-mq__initial">@Initial(p.Name)</span>
-                                <img src="@p.ImageUrl" alt="" draggable="false" data-hide-on-error />
-                            </span>
-                            @p.Name
-                        </span>
-                    }
-                }
-            </div>
-        </div>
-    </div>
-
     @* ============ Interactive sticker wall ============ *@
     <div class="container-xl">
         <section aria-labelledby="wallTitle">
@@ -124,7 +83,7 @@
                         <span class="cp-tile__no" aria-hidden="true">@((i + 1).ToString("00"))</span>
 
                         <div class="cp-tile__logo">
-                            <img src="@partner.ImageUrl"
+                            <img src="@CoverPictureStore.Small(partner.ImageUrl)" data-full="@partner.ImageUrl"
                                  alt=""
                                  loading="lazy"
                                  data-broken-parent />

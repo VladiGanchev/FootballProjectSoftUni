@@ -261,7 +261,7 @@
 .auth-consents .form-check-label { font-size: .88rem; line-height: 1.45; }
 .auth-consents a { color: var(--tg-pitch); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 .auth-link { color: var(--tg-pitch); font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; text-decoration-color: rgba(var(--tg-coral-rgb), .55); }
-.auth-link:hover { color: var(--tg-coral); }
+.auth-link:hover { color: var(--tg-coral-ink); }
 
 .auth-hint {
     display: flex;
@@ -381,13 +381,13 @@
     display: grid;
     place-content: center;
     text-align: center;
-    color: var(--tg-coral);
-    border: 3px solid var(--tg-coral);
+    color: var(--tg-coral-ink);
+    border: 3px solid var(--tg-coral-ink);
     border-radius: 50%;
     transform: rotate(-14deg);
     pointer-events: none;
 }
-.auth-stamp::before { content: ""; position: absolute; inset: 5px; border: 1.5px dashed var(--tg-coral); border-radius: 50%; }
+.auth-stamp::before { content: ""; position: absolute; inset: 5px; border: 1.5px dashed var(--tg-coral-ink); border-radius: 50%; }
 .auth-stamp b { font-family: var(--tg-display); font-weight: 900; font-size: 1.35rem; line-height: 1; letter-spacing: -.04em; }
 .auth-stamp small { font-size: .55rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
 
@@ -566,6 +566,10 @@
 }
 
 @media (max-width: 575.98px) {
+    /* The form comes into view sooner: a smaller slogan, no tagline. */
+    .auth-pitch { padding-bottom: 6.25rem; }
+    .auth-slogan { margin: .6rem 0 .4rem; font-size: clamp(1.9rem, 9vw, 2.4rem); }
+    .auth-pitch__lead { display: none; }
     .auth-grid-2 { grid-template-columns: minmax(0, 1fr); }
     .auth-reg__head { padding-right: 0; gap: 1rem; }
     .auth-stamp { display: none; }
@@ -636,12 +640,12 @@
     margin: 0;
     font-family: var(--tg-display);
     font-weight: 900;
-    font-size: clamp(2.7rem, 10vw, 8.5rem);
+    font-size: clamp(2.7rem, 10vw, 6rem);
     line-height: .9;
     letter-spacing: -.06em;
     text-transform: uppercase;
 }
-.err-mega--md { font-size: clamp(2.3rem, 5.4vw, 4.8rem); font-size: min(4.8rem, 11cqw); }
+.err-mega--md { font-size: clamp(2.3rem, 5.4vw, 3.5rem); font-size: min(4.8rem, 11cqw); }
 .err-var__copy, .err-401__copy { min-width: 0; container-type: inline-size; }
 .err-mega--red { color: var(--tg-red); }
 .err-h2 { margin: 0 0 .6rem; font-family: var(--tg-display); font-weight: 800; font-size: clamp(1.15rem, 2.4vw, 1.6rem); line-height: 1.05; letter-spacing: -.035em; text-transform: uppercase; }

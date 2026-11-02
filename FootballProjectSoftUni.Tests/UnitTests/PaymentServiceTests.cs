@@ -22,10 +22,11 @@ namespace FootballProjectSoftUni.Tests.UnitTests
         {
             var service = new PaymentService(_data, Options.Create(new StripeSettings { Currency = "EUR" }), new HttpContextAccessor());
 
-            var result = await service.GetAllTournamentJoinPaymentsAsync();
+            var result = await service.GetTournamentJoinPaymentsAsync(null, null, null);
 
-            Assert.IsNotNull(result);
-            Assert.IsEmpty(result);
+            Assert.IsNotNull(result.Payments);
+            Assert.IsEmpty(result.Payments);
+            Assert.That(result.AllCount, Is.EqualTo(0));
         }
 
         [Test]
@@ -59,7 +60,7 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             );
             await _data.SaveChangesAsync();
 
-            var result = (await service.GetAllTournamentJoinPaymentsAsync()).ToList();
+            var result = (await service.GetTournamentJoinPaymentsAsync(null, null, null)).Payments.ToList();
 
             Assert.That(result.Count, Is.EqualTo(2));
             Assert.That(result[0].Id, Is.EqualTo(2));
@@ -499,10 +500,105 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             await _data.TournamentsTeams.AddAsync(new TournamentTeam { TournamentId = 81005, TeamId = 7 });
             await _data.SaveChangesAsync();
 
-            var payments = await CheckoutService().GetAllTournamentJoinPaymentsAsync();
+            var payments = (await CheckoutService().GetTournamentJoinPaymentsAsync(null, null, null)).Payments;
 
             Assert.IsFalse(payments.Single(p => p.Id == 81105).TeamLeft);
             Assert.IsTrue(payments.Single(p => p.Id == 81106).TeamLeft);
+        }
+
+        // ---------- Admin "Payments" list: names, filter, search, pages ----------
+
+        private async Task AddAdminListDataAsync()
+        {
+            await _data.Users.AddAsync(new ApplicationUser { Id = "pay-ivan", UserName = "ivan@pay.test", Email = "ivan@pay.test", FirstName = "Ivan", LastName = "Petrov" });
+            await _data.Tournaments.AddAsync(new Tournament { Id = 82001, StartDate = DateTime.Now.AddDays(5), EndDate = DateTime.Now.AddDays(6), CreatedOn = DateTime.Now, Description = "Autumn cup", OrganiserId = "org" });
+            await _data.TournamentsCities.AddAsync(new TournamentCity { TournamentId = 82001, CityId = 3 });
+            await _data.Teams.AddAsync(new Team { Id = 82001, Name = "Lions", CoachId = "pay-ivan" });
+            await _data.TournamentJoinPayments.AddRangeAsync(
+                new FootballProjectSoftUni.Infrastructure.Data.Models.TournamentJoinPayment { Id = 82101, UserId = "pay-ivan", TournamentId = 82001, TeamId = 82001, Amount = 10m, Currency = "eur", Status = "Paid", PaidOnUtc = new DateTime(2026, 10, 1) },
+                new FootballProjectSoftUni.Infrastructure.Data.Models.TournamentJoinPayment { Id = 82102, UserId = "pay-ivan", TournamentId = 82001, TeamId = 82001, Amount = 10m, Currency = "eur", Status = "Expired", CreatedOnUtc = new DateTime(2026, 9, 1) },
+                // The account was deleted; the tournament too (its city was saved).
+                new FootballProjectSoftUni.Infrastructure.Data.Models.TournamentJoinPayment { Id = 82103, UserId = "gone", TournamentId = null, TournamentCity = "Бургас", Amount = 5m, Currency = "eur", Status = "Refunded", PaidOnUtc = new DateTime(2026, 8, 1) });
+            await _data.SaveChangesAsync();
+        }
+
+        [Test]
+        public async Task AdminPayments_ShowNameEmailTeamAndCity_OrNothingForADeletedAccount()
+        {
+            await AddAdminListDataAsync();
+
+            var rows = (await CheckoutService().GetTournamentJoinPaymentsAsync(null, null, null)).Payments.ToList();
+            var paid = rows.Single(r => r.Id == 82101);
+            var deleted = rows.Single(r => r.Id == 82103);
+
+            Assert.That(paid.UserName, Is.EqualTo("Ivan Petrov"));
+            Assert.That(paid.UserEmail, Is.EqualTo("ivan@pay.test"));
+            Assert.That(paid.TeamName, Is.EqualTo("Lions"));
+            Assert.That(paid.City, Is.EqualTo("Варна"));
+            Assert.That(paid.Description, Is.EqualTo("Autumn cup"));
+            Assert.That(deleted.UserName, Is.Null);
+            Assert.That(deleted.City, Is.EqualTo("Бургас"));
+            Assert.That(rows.Select(r => r.Id), Is.EqualTo(new[] { 82101, 82102, 82103 }), "newest first, an unpaid order by when it was started");
+        }
+
+        [Test]
+        public async Task AdminPayments_TotalsCountEverything_FilterNarrowsTheList()
+        {
+            await AddAdminListDataAsync();
+            var service = CheckoutService();
+
+            var all = await service.GetTournamentJoinPaymentsAsync(null, null, null);
+            Assert.That(all.AllCount, Is.EqualTo(3));
+            Assert.That(all.PaidCount, Is.EqualTo(1));
+            Assert.That(all.RefundedCount, Is.EqualTo(1));
+            Assert.That(all.OtherCount, Is.EqualTo(1));
+            Assert.That(all.PaidTotal, Is.EqualTo(10m));
+
+            var other = await service.GetTournamentJoinPaymentsAsync(null, "other", null);
+            Assert.That(other.Payments.Select(p => p.Id), Is.EqualTo(new[] { 82102 }));
+            Assert.That(other.Status, Is.EqualTo("other"));
+            Assert.That(other.AllCount, Is.EqualTo(3), "the tiles keep the totals of all payments");
+
+            var unknown = await service.GetTournamentJoinPaymentsAsync(null, "whatever", null);
+            Assert.That(unknown.Status, Is.Null);
+            Assert.That(unknown.Payments.Count, Is.EqualTo(3));
+        }
+
+        [Test]
+        public async Task AdminPayments_SearchByNameEmailTeamCityOrOrderNumber()
+        {
+            await AddAdminListDataAsync();
+            var service = CheckoutService();
+
+            async Task<int[]> Find(string q) => (await service.GetTournamentJoinPaymentsAsync(null, null, q)).Payments.Select(p => p.Id).ToArray();
+
+            Assert.That(await Find("petrov"), Is.EqualTo(new[] { 82101, 82102 }));
+            Assert.That(await Find("IVAN@PAY"), Is.EqualTo(new[] { 82101, 82102 }));
+            Assert.That(await Find("lions"), Is.EqualTo(new[] { 82101, 82102 }));
+            Assert.That(await Find("бургас"), Is.EqualTo(new[] { 82103 }));
+            Assert.That(await Find("#82103"), Is.EqualTo(new[] { 82103 }));
+            Assert.That(await Find("nobody"), Is.Empty);
+        }
+
+        [Test]
+        public async Task AdminPayments_ShowTwentyFivePerPage()
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                await _data.TournamentJoinPayments.AddAsync(new FootballProjectSoftUni.Infrastructure.Data.Models.TournamentJoinPayment
+                {
+                    Id = 83000 + i, UserId = "u", Amount = 1m, Currency = "eur", Status = "Paid", PaidOnUtc = new DateTime(2026, 1, 1).AddDays(i)
+                });
+            }
+            await _data.SaveChangesAsync();
+
+            var first = await CheckoutService().GetTournamentJoinPaymentsAsync(1, null, null);
+            var second = await CheckoutService().GetTournamentJoinPaymentsAsync(2, null, null);
+
+            Assert.That(first.Payments.Count, Is.EqualTo(25));
+            Assert.That(first.Payments.PageCount, Is.EqualTo(2));
+            Assert.That(second.Payments.Count, Is.EqualTo(5));
+            Assert.That(first.Payments[0].Id, Is.EqualTo(83029));
         }
 
         [Test]
@@ -516,6 +612,67 @@ namespace FootballProjectSoftUni.Tests.UnitTests
             Assert.IsFalse(new AdminPaymentViewModel { Status = "Paid", TournamentStartDate = past }.CanRefund);
             Assert.IsFalse(new AdminPaymentViewModel { Status = "Refunded", TournamentStartDate = future }.CanRefund);
             Assert.IsFalse(new AdminPaymentViewModel { Status = "Pending", TournamentStartDate = future }.CanRefund);
+        }
+
+        // ---------- Summary before payment ----------
+
+        private async Task AddJoinTournamentAsync(int id, decimal fee)
+        {
+            await _data.Tournaments.AddAsync(new Tournament
+            {
+                Id = id,
+                StartDate = new DateTime(2030, 5, 10, 18, 30, 0),
+                EndDate = new DateTime(2030, 5, 11, 18, 30, 0),
+                CreatedOn = DateTime.Now,
+                Description = "Spring cup",
+                ParticipationFee = fee,
+                OrganiserId = "org"
+            });
+            await _data.TournamentsCities.AddAsync(new TournamentCity { TournamentId = id, CityId = 3 });
+            await _data.Teams.AddAsync(new Team { Id = id, Name = "Mravkite", CoachId = "coach-sum" });
+            await _data.SaveChangesAsync();
+        }
+
+        [Test]
+        public async Task JoinSummary_ShowsTournamentTeamAndFee()
+        {
+            await AddJoinTournamentAsync(70001, 12.50m);
+
+            var summary = await CheckoutService().GetJoinSummaryAsync(70001, "coach-sum", 70001);
+
+            Assert.That(summary, Is.Not.Null);
+            Assert.That(summary!.Description, Is.EqualTo("Spring cup"));
+            Assert.That(summary.CityName, Is.EqualTo("Варна"));
+            Assert.That(summary.StartDate, Is.EqualTo(new DateTime(2030, 5, 10, 18, 30, 0)));
+            Assert.That(summary.TeamName, Is.EqualTo("Mravkite"));
+            Assert.That(summary.Fee, Is.EqualTo(12.50m));
+            Assert.That(summary.AlreadyPaid, Is.False);
+        }
+
+        [Test]
+        public async Task JoinSummary_EarlierPaidFee_MeansNoNewCharge()
+        {
+            await AddJoinTournamentAsync(70002, 10m);
+
+            // Somebody else's payment and this coach's refunded one don't count.
+            await _data.TournamentJoinPayments.AddRangeAsync(
+                new FootballProjectSoftUni.Infrastructure.Data.Models.TournamentJoinPayment { Id = 70002, UserId = "other", TournamentId = 70002, Amount = 10m, Currency = "eur", Status = "Paid" },
+                new FootballProjectSoftUni.Infrastructure.Data.Models.TournamentJoinPayment { Id = 70003, UserId = "coach-sum", TournamentId = 70002, Amount = 10m, Currency = "eur", Status = "Refunded" });
+            await _data.SaveChangesAsync();
+
+            Assert.That((await CheckoutService().GetJoinSummaryAsync(70002, "coach-sum", 70002))!.AlreadyPaid, Is.False);
+
+            await _data.TournamentJoinPayments.AddAsync(
+                new FootballProjectSoftUni.Infrastructure.Data.Models.TournamentJoinPayment { Id = 70004, UserId = "coach-sum", TournamentId = 70002, Amount = 10m, Currency = "eur", Status = "Paid" });
+            await _data.SaveChangesAsync();
+
+            Assert.That((await CheckoutService().GetJoinSummaryAsync(70002, "coach-sum", 70002))!.AlreadyPaid, Is.True);
+        }
+
+        [Test]
+        public async Task JoinSummary_UnknownTournament_IsNull()
+        {
+            Assert.That(await CheckoutService().GetJoinSummaryAsync(79999, "coach-sum", 1), Is.Null);
         }
     }
 }

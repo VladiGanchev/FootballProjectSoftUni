@@ -3,7 +3,7 @@
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = Localizer["RegisterRegister"].Value;
     ViewData["FullWidth"] = true;
 }
 
@@ -166,7 +166,7 @@
                             </div>
                         </div>
 
-                        <button id="registerSubmit" type="submit" class="btn btn-primary btn-lg auth-btn">
+                        <button id="registerSubmit" type="submit" class="btn btn-accent btn-lg auth-btn">
                             <i class="bi bi-pen-fill" aria-hidden="true"></i>
                             <span>@Localizer["RegisterRegister"]</span>
                         </button>

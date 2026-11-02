@@ -3,7 +3,7 @@
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "City Leaders";
+    ViewData["Title"] = Localizer["GBTLeaders"].Value;
     ViewData["FullWidth"] = true;
 
     var teams = Model ?? new List<BestTeamViewModel>();
@@ -35,7 +35,7 @@
             </a>
             @if (User.IsAdmin())
             {
-                <a asp-controller="City" asp-action="UpdateCityLeaders" class="btn btn-sun">
+                <a asp-controller="City" asp-action="UpdateCityLeaders" class="btn btn-outline-dark">
                     <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>@Localizer["DUCL"]
                 </a>
             }

@@ -3,7 +3,7 @@
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
-    ViewBag.Title = "Delete City";
+    ViewBag.Title = Localizer["DeleteDeleteCity"].Value;
     ViewData["FullWidth"] = true;
 
     var isRunning = Model.Deletion?.IsRunning == true;

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FootballProjectSoftUni.Components
 {
     /// <summary>
-    /// Read-only strip of cities shown on the landing page.
+    /// Read-only strip of all cities shown on the landing page (it goes round endlessly, see data-loop in site.js).
     /// Uses the existing city service; it does not change any data.
     /// </summary>
     public class CityStripComponent : ViewComponent
@@ -16,11 +16,11 @@ namespace FootballProjectSoftUni.Components
             cityService = _cityService;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int take = 12)
+        public async Task<IViewComponentResult> InvokeAsync()
         {
             var cities = await cityService.AllCitiesAsync();
 
-            return View(cities.Take(take).ToList());
+            return View(cities.ToList());
         }
     }
 }

@@ -11,6 +11,10 @@
     string ctrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
     string act = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty;
     string Tab(bool on) => on ? "is-active" : string.Empty;
+
+    // Browser tab: "Cities · Tournament Galaxy" - which page is open, also among several tabs and in the history.
+    string pageTitle = (ViewData["Title"]?.ToString() ?? string.Empty).Trim().TrimEnd('.', ',', ' ');
+    string fullTitle = pageTitle.Length == 0 || pageTitle == "Tournament Galaxy" ? "Tournament Galaxy" : pageTitle + " · Tournament Galaxy";
 }
 
 <!DOCTYPE html>
@@ -18,12 +22,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tournament Galaxy</title>
+    <title>@fullTitle</title>
     <meta name="description" content="Tournament Galaxy е платформа за турнири, мачове, класиране и управление на футболни състезания." />
     <link rel="canonical" href="https://tournamentgalaxy.bg/" />
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#f5f1e8" />
-    <meta property="og:title" content="Tournament Galaxy" />
+    <meta property="og:title" content="@fullTitle" />
     <meta property="og:description" content="Платформа за турнири, мачове, класиране и управление на футболни състезания." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://tournamentgalaxy.bg/" />
@@ -59,6 +63,9 @@
             document.addEventListener('error', function (e) {
                 var img = e.target;
                 if (!img || img.tagName !== 'IMG') { return; }
+                // A small copy that isn't there (yet): the picture itself instead.
+                var full = img.getAttribute('data-full');
+                if (full && img.getAttribute('src') !== full) { img.setAttribute('src', full); return; }
                 if (img.hasAttribute('data-hide-on-error')) { img.style.display = 'none'; }
                 if (img.hasAttribute('data-broken-parent') && img.parentElement) { img.parentElement.classList.add('is-broken'); }
             }, true);
@@ -67,6 +74,29 @@
             document.addEventListener('submit', function (e) {
                 var question = e.target.getAttribute && e.target.getAttribute('data-confirm');
                 if (question && !window.confirm(question)) { e.preventDefault(); }
+            });
+
+            // A form is sent once: after sending, its buttons rest for a few seconds (a double click used to send
+            // it twice - for the sign-in form that ended on "the form expired"). Not when the sending was stopped
+            // (the browser's checks, "Are you sure?" answered with No).
+            document.addEventListener('submit', function (e) {
+                var form = e.target;
+                if (e.defaultPrevented || !form.querySelectorAll) { return; }
+                setTimeout(function () {
+                    if (e.defaultPrevented) { return; }
+                    form.querySelectorAll('button[type=submit], button:not([type]), input[type=submit]').forEach(function (b) {
+                        if (b.disabled) { return; }
+                        b.disabled = true;
+                        b.setAttribute('data-busy', '');
+                        setTimeout(function () { b.disabled = false; b.removeAttribute('data-busy'); }, 8000);
+                    });
+                }, 0);
+            });
+
+            // Back on a page kept by the browser (Back button): its buttons work again.
+            window.addEventListener('pageshow', function (e) {
+                if (!e.persisted) { return; }
+                document.querySelectorAll('[data-busy]').forEach(function (b) { b.disabled = false; b.removeAttribute('data-busy'); });
             });
 
             document.addEventListener('click', function (e) {
@@ -149,7 +179,7 @@
 
                 <div class="col-6 col-lg-3 offset-lg-1">
                     <div class="tg-footer-title">@Localizer["FooterExplore"]</div>
-                    <ul class="list-unstyled tg-footer-nav d-grid gap-2 mb-0">
+                    <ul class="list-unstyled tg-footer-nav d-grid mb-0">
                         <li><a asp-area="" asp-controller="Home" asp-action="Index">@Localizer["DHome"]</a></li>
                         <li><a asp-area="" asp-controller="City" asp-action="All">@Localizer["DCities"]</a></li>
                         <li><a asp-area="" asp-controller="Partner" asp-action="All">@Localizer["DPartners"]</a></li>
@@ -157,15 +187,16 @@
                     </ul>
                 </div>
 
-                <div class="col-6 col-lg-3">
-                    @if (signedIn && !User.IsAdmin())
-                    {
+                @if (signedIn && !User.IsAdmin())
+                {
+                    @* A row of its own on phones: the button doesn't fit in half the width. *@
+                    <div class="col-12 col-sm-6 col-lg-3">
                         <div class="tg-footer-title">@Localizer["FooterSupport"]</div>
                         <a asp-controller="ContactMessage" asp-action="Create" class="tg-footer-link">
                             <i class="bi bi-chat-dots-fill"></i>@Localizer["LayoutContact"]
                         </a>
-                    }
-                </div>
+                    </div>
+                }
             </div>
 
             <div class="tg-footer-giant" aria-hidden="true">Tournament Galaxy</div>

@@ -6,7 +6,7 @@
 
 
 @{
-    ViewData["Title"] = "Tournaments To Referee";
+    ViewData["Title"] = Localizer["DParticipate"].Value;
 
     // Same status rules as before: Upcoming / Started / Finished
     string State(TournamentViewModel t)
@@ -151,7 +151,7 @@ else
                     </div>
 
                     <div class="tp-fx__img">
-                        <img src="@e.ImageUrl" alt="@e.CityName" loading="lazy" />
+                        <img src="@CoverPictureStore.Small(e.ImageUrl)" data-full="@e.ImageUrl" alt="@e.CityName" loading="lazy" />
                     </div>
 
                     <div class="tp-fx__info">
@@ -193,7 +193,7 @@ else
                     {
                         <form asp-controller="Referee" asp-action="LeaveTournament" asp-route-id="@e.Id" method="post"
                               class="tn-inline-form" data-confirm="@Localizer["RefereeLeaveConfirm"]">
-                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <button type="submit" class="btn btn-outline-dark btn-sm">
                                 <i class="bi bi-box-arrow-left" aria-hidden="true"></i>
                                 @Localizer["ATLeave"]
                             </button>

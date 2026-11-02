@@ -84,14 +84,14 @@
         </div>
         @if (SignInManager.IsSignedIn(User))
         {
-            <a asp-controller="ContactMessage" asp-action="Create" class="btn btn-sun btn-lg">
+            <a asp-controller="ContactMessage" asp-action="Create" class="btn btn-accent btn-lg">
                 <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>@Localizer["LayoutContact"]
             </a>
         }
         else
         {
             <div class="faq-cta__guest">
-                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-sun btn-lg">
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-accent btn-lg">
                     <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>@Localizer["LGLogin"]
                 </a>
                 <small>@Localizer["FaqStillLogin"]</small>

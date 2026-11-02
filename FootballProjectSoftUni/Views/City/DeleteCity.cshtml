@@ -3,7 +3,7 @@
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "Delete City";
+    ViewData["Title"] = Localizer["DeleteDeleteCity"].Value;
     ViewData["FullWidth"] = true;
 }
 
@@ -70,7 +70,7 @@
                        aria-disabled="true"
                        tabindex="-1"
                        class="btn btn-danger btn-lg disabled">
-                        <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                        <i class="bi bi-trash3-fill" aria-hidden="true"></i>
                         @Localizer["DeleteDeleteCity"]
                     </a>
                     <a asp-action="All" class="btn btn-outline-dark btn-lg">

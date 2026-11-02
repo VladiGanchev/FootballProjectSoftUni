@@ -27,12 +27,14 @@
 
     --tg-coral: #ff5a36;
     --tg-coral-rgb: 255, 90, 54;
+    --tg-coral-ink: #c8391a;                       /* coral for text on light backgrounds (readable: 4.6:1 on paper) */
     --tg-sun: #ffc93c;
     --tg-sun-rgb: 255, 201, 60;
     --tg-sky: #3d7bff;
     --tg-sky-rgb: 61, 123, 255;
     --tg-red: #e5383b;
     --tg-red-rgb: 229, 56, 59;
+    --tg-red-ink: #cc2f33;                         /* red for text on light backgrounds (5.2:1 on white) */
     --tg-mint: #c9f2d9;
     --tg-lilac: #e3dcff;
 
@@ -53,8 +55,8 @@
 }
 
 /* ---------- 2. Base ---------- */
-html { font-size: 15px; scroll-behavior: smooth; }
-@media (min-width: 768px) { html { font-size: 16px; } }
+/* 16px everywhere: easier to read on phones, and iPhones don't zoom into form fields of at least 16px. */
+html { font-size: 16px; scroll-behavior: smooth; }
 html, body { min-height: 100%; }
 
 body, .tg-body {
@@ -81,7 +83,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--tg-ink); font-weight: 700; letter-spacing:
 .tg-display { font-family: var(--tg-display); font-weight: 800; letter-spacing: -.03em; line-height: 1; }
 
 a { color: var(--tg-pitch); text-decoration: none; font-weight: 600; }
-a:hover { color: var(--tg-coral); }
+a:hover { color: var(--tg-coral-ink); }
 hr { border-color: var(--tg-line-2); opacity: 1; }
 ::selection { background: var(--tg-sun); color: var(--tg-ink); }
 :focus-visible { outline: 3px solid var(--tg-coral); outline-offset: 3px; border-radius: 6px; }
@@ -244,10 +246,10 @@ input[type="file"]::file-selector-button { background: var(--tg-ink); color: #ff
 .btn-outline-dark:hover, .btn-outline-secondary:hover, .btn-outline-primary:hover, .btn-outline-success:hover, .btn-ghost:hover { --tg-btn-bg: var(--tg-sun); --tg-btn-fg: var(--tg-ink); border-color: var(--tg-ink); }
 .btn-outline-warning { --tg-btn-bg: var(--tg-surface); --tg-btn-fg: var(--tg-ink); border-color: var(--tg-ink); }
 .btn-outline-warning:hover { --tg-btn-bg: var(--tg-coral); }
-.btn-outline-danger { --tg-btn-bg: var(--tg-surface); --tg-btn-fg: var(--tg-red); border-color: var(--tg-ink); }
+.btn-outline-danger { --tg-btn-bg: var(--tg-surface); --tg-btn-fg: var(--tg-red-ink); border-color: var(--tg-ink); }
 .btn-outline-danger:hover { --tg-btn-bg: var(--tg-red); --tg-btn-fg: #fff; border-color: var(--tg-ink); }
 .btn-link { box-shadow: none; border: 0; background: none; color: var(--tg-pitch); padding: .3rem .4rem; }
-.btn-link:hover { box-shadow: none; transform: none; color: var(--tg-coral); background: none; }
+.btn-link:hover { box-shadow: none; transform: none; color: var(--tg-coral-ink); background: none; }
 .btn:disabled, .btn.disabled { opacity: .45; transform: none; box-shadow: none; }
 .btn-close:focus { box-shadow: 0 0 0 .2rem rgba(var(--tg-coral-rgb), .35); }
 
@@ -284,7 +286,7 @@ input[type="file"]::file-selector-button { background: var(--tg-ink); color: #ff
 .tg-logo svg { width: 26px; height: 26px; transition: transform .7s var(--tg-spring); }
 .navbar-brand:hover .tg-logo svg { transform: rotate(144deg); }
 .tg-wordmark { font-family: var(--tg-display); font-weight: 800; font-size: .95rem; letter-spacing: -.03em; line-height: .95; text-transform: uppercase; }
-.tg-wordmark b { display: block; color: var(--tg-coral); font-weight: 800; }
+.tg-wordmark b { display: block; color: var(--tg-coral-ink); font-weight: 800; }
 
 .tg-menu { position: relative; gap: .15rem; margin: 0 auto; }
 .tg-nav-indicator {
@@ -412,13 +414,15 @@ input[type="file"]::file-selector-button { background: var(--tg-ink); color: #ff
 }
 .tg-footer-giant { font-family: var(--tg-display); font-weight: 900; font-size: min(5.4rem, 5.6vw); line-height: .9; letter-spacing: -.05em; text-transform: uppercase; color: rgba(255, 255, 255, .1); white-space: nowrap; padding: 1rem 0 1.5rem; }
 .tg-footer-title { font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--tg-sun); margin-bottom: 1rem; }
-.tg-footer-nav a { color: #fff; font-weight: 600; transition: color .15s, padding-left .2s; }
+/* Links at least 44px tall: easy to tap on a phone. */
+.tg-footer-nav a { display: inline-flex; align-items: center; min-height: 44px; color: #fff; font-weight: 600; transition: color .15s, padding-left .2s; }
 .tg-footer-nav a:hover { color: var(--tg-sun); padding-left: 6px; }
 .tg-footer-link { display: inline-flex; align-items: center; gap: .5rem; color: var(--tg-ink) !important; background: var(--tg-sun); font-weight: 800; padding: .75rem 1.2rem; border: var(--tg-bw) solid var(--tg-ink); border-radius: var(--tg-pill); box-shadow: var(--tg-pop); transition: transform .18s var(--tg-ease), box-shadow .18s; }
 .tg-footer-link:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--tg-ink); }
 .tg-footer hr { border-color: rgba(255, 255, 255, .2); }
 .tg-footer .tg-logo { background: var(--tg-ink); }
-.tg-footer .tg-wordmark { color: #fff; }
+.tg-footer .tg-wordmark { color: #fff; font-size: 1.2rem; }
+.tg-footer .tg-wordmark b { color: var(--tg-sun); }
 
 /* ---------- 6. Kit ---------- */
 .tg-page { padding-top: 2.5rem; padding-bottom: 1rem; }
@@ -441,8 +445,8 @@ input[type="file"]::file-selector-button { background: var(--tg-ink); color: #ff
     color: var(--tg-ink);
 }
 .tg-page-head__eyebrow::before, .tg-kicker::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--tg-coral); }
-.tg-page-head__title { font-family: var(--tg-display); font-weight: 800; font-size: clamp(2.2rem, 6vw, 4.6rem); line-height: .95; letter-spacing: -.045em; text-transform: uppercase; margin: 0; }
-.tg-page-head__title em, .tg-display em { font-style: normal; color: var(--tg-coral); }
+.tg-page-head__title { font-family: var(--tg-display); font-weight: 800; font-size: clamp(2.2rem, 6vw, 3.5rem); line-height: .95; letter-spacing: -.045em; text-transform: uppercase; margin: 0; }
+.tg-page-head__title em, .tg-display em { font-style: normal; color: var(--tg-coral-ink); }
 .tg-page-head__sub { color: var(--tg-ink-2); font-size: 1.05rem; margin: 1rem 0 0; max-width: 58ch; line-height: 1.6; }
 .tg-page-head__actions { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
 
@@ -544,8 +548,8 @@ input[type="file"]::file-selector-button { background: var(--tg-ink); color: #ff
 .tg-legal a { color: var(--tg-pitch); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 .tg-legal code { padding: .05rem .3rem; font-size: .85em; color: var(--tg-ink); background: rgba(0, 0, 0, .05); border-radius: 4px; overflow-wrap: anywhere; }
 .tg-legal__operator { display: grid; gap: .2rem; margin: 0 0 1rem; padding: .9rem 1.1rem; font-style: normal; background: var(--tg-surface); border: var(--tg-bw) solid var(--tg-ink); border-radius: 14px; }
-.tg-footer-legal { display: flex; flex-wrap: wrap; gap: .4rem 1.25rem; }
-.tg-footer-legal a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.tg-footer-legal { display: flex; flex-wrap: wrap; column-gap: 1.25rem; }
+.tg-footer-legal a { display: inline-flex; align-items: center; min-height: 44px; color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 
 /* Picture field (_PicturePicker): the button is the label of a file input that stays in the page, only invisible */
 .tg-picker { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: .6rem .9rem; }
@@ -655,6 +659,10 @@ input[type="file"]::file-selector-button { background: var(--tg-ink); color: #ff
 ::view-transition-new(root) { animation: tg-vt-in .35s var(--tg-ease) both; }
 @keyframes tg-vt-out { to { opacity: 0; transform: translateY(-8px); } }
 @keyframes tg-vt-in { from { opacity: 0; transform: translateY(12px); } }
+
+/* A few seconds after the page opens (site.js) decorative loops end where they started, so nothing keeps moving
+   next to the text (WCAG 2.2.2). Loading spinners keep spinning. */
+.tg-still *:not(.spinner-border):not(.spinner-grow), .tg-still *::before, .tg-still *::after { animation-iteration-count: 1 !important; }
 
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }

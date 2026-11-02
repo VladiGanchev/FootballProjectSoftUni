@@ -51,6 +51,9 @@ namespace FootballProjectSoftUni.Tests.Mocks
         public Task<int?> ReusePaidOrderAsync(int tournamentId, string userId, int teamId) =>
             throw new NotImplementedException();
 
+        public Task<JoinSummaryViewModel?> GetJoinSummaryAsync(int tournamentId, string userId, int teamId) =>
+            throw new NotImplementedException();
+
         public Task<string> CreateTournamentJoinCheckoutAsync(int tournamentId, string userId, int? teamId, bool liabilityDeclarationAccepted, string declarationTextSnapshot) =>
             throw new NotImplementedException();
 
@@ -60,7 +63,7 @@ namespace FootballProjectSoftUni.Tests.Mocks
         public Task<AdminPaymentViewModel?> GetPaymentAsync(int orderId) =>
             throw new NotImplementedException();
 
-        public Task<ICollection<AdminPaymentViewModel>> GetAllTournamentJoinPaymentsAsync() =>
+        public Task<AdminPaymentsPage> GetTournamentJoinPaymentsAsync(int? page, string? status, string? search) =>
             throw new NotImplementedException();
     }
 }

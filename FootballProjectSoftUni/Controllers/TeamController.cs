@@ -172,6 +172,8 @@ namespace FootballProjectSoftUni.Controllers
                 DeclarationText = localizer["TournamentDeclaration"].Value
             };
 
+            ViewBag.Summary = await paymentService.GetJoinSummaryAsync(tournamentId, userId, ownTeamId.Value);
+
             return View(model);
         }
 
@@ -190,6 +192,8 @@ namespace FootballProjectSoftUni.Controllers
 
             if (!ModelState.IsValid)
             {
+                var teamId = await teamService.GetCoachTeamIdAsync(userId);
+                ViewBag.Summary = teamId.HasValue ? await paymentService.GetJoinSummaryAsync(model.TournamentId, userId, teamId.Value) : null;
                 return View(model);
             }
 

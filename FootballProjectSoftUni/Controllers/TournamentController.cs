@@ -67,6 +67,7 @@ namespace FootballProjectSoftUni.Controllers
 
             ViewBag.ShowPast = showPast;
             ViewBag.CityId = id;
+            ViewBag.CityName = city.Name;
 
             return View(tournaments);
         }

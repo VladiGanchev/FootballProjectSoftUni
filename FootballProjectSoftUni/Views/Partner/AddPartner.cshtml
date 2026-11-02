@@ -2,7 +2,7 @@
 @inject IStringLocalizer<FootballProjectSoftUni.SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "Add Partner";
+    ViewData["Title"] = Localizer["DAddPartner"].Value;
     ViewData["FullWidth"] = true;
 }
 
@@ -36,7 +36,7 @@
             </div>
 
             <div class="tg-form-actions">
-                <button type="submit" class="btn btn-primary btn-lg">
+                <button type="submit" class="btn btn-accent btn-lg">
                     <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>@Localizer["APAP"]
                 </button>
                 <a asp-action="All" class="btn btn-outline-dark btn-lg">

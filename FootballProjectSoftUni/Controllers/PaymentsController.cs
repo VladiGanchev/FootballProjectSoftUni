@@ -28,25 +28,28 @@ namespace FootballProjectSoftUni.Controllers
             this.localizer = localizer;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? page, string? status, string? q)
         {
             if (User.IsAdmin() == false)
             {
                 return Unauthorized();
             }
 
-            var payments = await paymentService.GetAllTournamentJoinPaymentsAsync();
+            var payments = await paymentService.GetTournamentJoinPaymentsAsync(page, status, q);
             return View(payments);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Refund(int orderId)
+        public async Task<IActionResult> Refund(int orderId, int? page, string? status, string? q)
         {
             if (User.IsAdmin() == false)
             {
                 return Unauthorized();
             }
+
+            // Back to the same page of the list, with the same filter and search.
+            IActionResult BackToList() => RedirectToAction("Index", new { page, status, q });
 
             try
             {
@@ -55,7 +58,7 @@ namespace FootballProjectSoftUni.Controllers
                 if (payment != null && payment.TournamentStartDate.HasValue && BgTime.Now >= payment.TournamentStartDate.Value)
                 {
                     TempData["Error"] = localizer["RefundTournamentStarted"].Value;
-                    return RedirectToAction("Index");
+                    return BackToList();
                 }
 
                 var refunded = await paymentService.RefundTournamentJoinAsync(orderId, amount: null, reason: "requested_by_customer");
@@ -63,7 +66,7 @@ namespace FootballProjectSoftUni.Controllers
                 if (!refunded)
                 {
                     TempData["Error"] = localizer["RefundStripeError"].Value;
-                    return RedirectToAction("Index");
+                    return BackToList();
                 }
 
                 // The money is returned, so the team no longer takes part in the tournament.
@@ -91,7 +94,7 @@ namespace FootballProjectSoftUni.Controllers
                 TempData["Error"] = localizer["GenericErrorMessage"].Value;
             }
 
-            return RedirectToAction("Index"); 
+            return BackToList(); 
         }
     }
 }

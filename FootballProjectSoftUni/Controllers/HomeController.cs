@@ -6,9 +6,11 @@ using FootballProjectSoftUni.Extensions;
 using FootballProjectSoftUni.Infrastructure.Data.Models;
 using FootballProjectSoftUni.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -68,6 +70,18 @@ namespace FootballProjectSoftUni.Controllers
         {
             if (statusCode == 400 && HttpContext.Items.ContainsKey(AntiforgeryFailureMarker.ItemKey))
             {
+                // The sign-in form sent twice (a double click): the first one signed the person in, so the token of
+                // the second one, made for a guest, no longer matches. Nothing to explain - carry on, signed in.
+                var original = HttpContext.Features.Get<IStatusCodeReExecuteFeature>();
+                if (User.Identity?.IsAuthenticated == true && original != null
+                    && string.Equals(original.OriginalPath, "/Identity/Account/Login", StringComparison.OrdinalIgnoreCase))
+                {
+                    var returnUrl = QueryHelpers.ParseQuery(original.OriginalQueryString)
+                        .FirstOrDefault(q => string.Equals(q.Key, "returnUrl", StringComparison.OrdinalIgnoreCase)).Value.ToString();
+
+                    return LocalRedirect(Url.IsLocalUrl(returnUrl) ? returnUrl : "/");
+                }
+
                 // Back to the form (a fresh copy with a new token), when it came from this site.
                 var referer = Request.Headers["Referer"].ToString();
                 var refererUri = Uri.TryCreate(referer, UriKind.Absolute, out var uri) && uri.Host == Request.Host.Host

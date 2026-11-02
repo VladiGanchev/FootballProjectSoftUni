@@ -140,7 +140,92 @@
         m.appendChild(clone);
     });
 
+    /* Endless strip (data-loop): a copy of the cards on each side, and whenever the strip comes to rest in a copy
+       it jumps back by exactly one set - the same picture, so it goes round in both directions without an end.
+       It only moves when the visitor moves it (drag, swipe, trackpad, Shift + wheel, arrows, keyboard). */
+    $$('[data-loop]').forEach(function (strip) {
+        var cards = $$(':scope > *', strip);
+        if (cards.length < 2) { return; }
+
+        function copies() {
+            return cards.map(function (card) {
+                var c = card.cloneNode(true);
+                c.setAttribute('aria-hidden', 'true');
+                c.setAttribute('tabindex', '-1');
+                c.classList.add('is-copy');
+                return c;
+            });
+        }
+        var before = copies(), after = copies();
+        before.forEach(function (c) { strip.insertBefore(c, cards[0]); });
+        after.forEach(function (c) { strip.appendChild(c); });
+
+        var setWidth = 0, start = 0;
+        function measure() {
+            setWidth = after[0].offsetLeft - cards[0].offsetLeft;
+            start = cards[0].offsetLeft - parseFloat(getComputedStyle(strip).paddingLeft || 0);
+        }
+        measure();
+        strip.scrollLeft = start;
+
+        // While the mouse drags it, the strip follows; a jump moves the drag's starting point with it.
+        var down = false, startX = 0, startLeft = 0, moved = false;
+        function wrap() {
+            if (!setWidth) { return; }
+            var shift = 0;
+            if (strip.scrollLeft < start - setWidth / 2) { shift = setWidth; }
+            else if (strip.scrollLeft > start + setWidth / 2) { shift = -setWidth; }
+            if (shift) { strip.scrollLeft += shift; startLeft += shift; }
+        }
+
+        var idle;
+        strip.addEventListener('scroll', function () {
+            // Close to the real ends: jump now; otherwise wait until the strip stops (momentum, smooth scrolling).
+            if (strip.scrollLeft < setWidth * .25 || strip.scrollLeft > setWidth * 1.75) { wrap(); return; }
+            clearTimeout(idle);
+            idle = setTimeout(wrap, 150);
+        }, { passive: true });
+        window.addEventListener('resize', function () {
+            var offset = strip.scrollLeft - start;
+            measure();
+            strip.scrollLeft = start + offset;
+        });
+
+        strip.addEventListener('pointerdown', function (ev) {
+            if (ev.pointerType !== 'mouse') { return; }
+            down = true; moved = false;
+            startX = ev.clientX; startLeft = strip.scrollLeft;
+        });
+        window.addEventListener('pointermove', function (ev) {
+            if (!down) { return; }
+            var dx = ev.clientX - startX;
+            if (Math.abs(dx) > 4) { moved = true; strip.classList.add('is-dragging'); }
+            strip.scrollLeft = startLeft - dx;
+        });
+        window.addEventListener('pointerup', function () {
+            down = false;
+            setTimeout(function () { strip.classList.remove('is-dragging'); }, 0);
+        });
+        strip.addEventListener('click', function (ev) { if (moved) { ev.preventDefault(); ev.stopPropagation(); moved = false; } }, true);
+
+        // Arrow buttons: one card at a time.
+        var wrapEl = strip.parentElement;
+        var step = function () { return cards[1].offsetLeft - cards[0].offsetLeft; };
+        [['[data-loop-prev]', -1], ['[data-loop-next]', 1]].forEach(function (b) {
+            var btn = wrapEl && wrapEl.querySelector(b[0]);
+            if (!btn) { return; }
+            btn.hidden = false;
+            btn.addEventListener('click', function () {
+                strip.scrollBy({ left: b[1] * step(), behavior: reduce ? 'auto' : 'smooth' });
+            });
+        });
+    });
+
     if (reduce) { return; }
+
+    /* Decorative loops end after a few seconds (.tg-still in site.css): they catch the eye on arrival, then the page
+       stays calm for reading. */
+    setTimeout(function () { document.documentElement.classList.add('tg-still'); }, 6000);
 
     /* Spotlight */
     $$('[data-spotlight]').forEach(function (el) {

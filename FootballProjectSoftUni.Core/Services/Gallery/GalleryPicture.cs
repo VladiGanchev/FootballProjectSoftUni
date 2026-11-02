@@ -18,6 +18,9 @@ namespace FootballProjectSoftUni.Core.Services.Gallery
     {
         public const int MaxSide = 1920;
 
+        /// <summary>The longer side of the small copy shown in lists.</summary>
+        public const int SmallSide = 640;
+
         // Checked before the picture is opened: a small file can unpack into gigabytes of pixels.
         public const long MaxPixels = 50_000_000;
 
@@ -124,6 +127,22 @@ namespace FootballProjectSoftUni.Core.Services.Gallery
             }
 
             await image.SaveAsync(path, EncoderFor(path));
+        }
+
+        /// <summary>
+        /// A small copy (at most <see cref="SmallSide"/> px) of a picture already saved by <see cref="SaveAsync"/>,
+        /// for lists, where the picture is shown a few hundred pixels wide: a fraction of the download on a phone.
+        /// </summary>
+        public static async Task SaveSmallCopyAsync(string path, string smallPath)
+        {
+            using var image = await Image.LoadAsync(path);
+
+            if (image.Width > SmallSide || image.Height > SmallSide)
+            {
+                image.Mutate(x => x.Resize(new ResizeOptions { Mode = ResizeMode.Max, Size = new Size(SmallSide, SmallSide) }));
+            }
+
+            await image.SaveAsync(smallPath, EncoderFor(smallPath));
         }
 
         private static IImageEncoder EncoderFor(string path) => Path.GetExtension(path).ToLowerInvariant() switch

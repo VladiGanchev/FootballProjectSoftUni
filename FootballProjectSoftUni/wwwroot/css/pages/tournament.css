@@ -101,7 +101,7 @@
 .tn-board__title {
     font-family: var(--tg-display);
     font-weight: 900;
-    font-size: clamp(2.6rem, 10.5vw, 7.8rem);
+    font-size: clamp(2.6rem, 10.5vw, 4rem);
     line-height: .9;
     letter-spacing: -.055em;
     text-transform: uppercase;
@@ -225,7 +225,6 @@
     font-size: clamp(1.05rem, 2.1vw, 1.4rem);
     line-height: 1.1;
     letter-spacing: -.035em;
-    text-transform: uppercase;
     overflow-wrap: anywhere;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -280,6 +279,7 @@
     position: relative;
     isolation: isolate;
     overflow: hidden;
+    border-bottom: var(--tg-bw) solid var(--tg-ink);
     margin-top: -90px;
     padding-top: calc(90px + clamp(1.75rem, 4vw, 3rem));
     color: #fff;
@@ -339,15 +339,15 @@
     color: #fff;
     font-family: var(--tg-display);
     font-weight: 900;
-    font-size: clamp(2.3rem, 7.2vw, 6.4rem);
+    font-size: clamp(2.3rem, 7.2vw, 4.25rem);
     line-height: .92;
     letter-spacing: -.055em;
-    text-transform: uppercase;
     overflow-wrap: anywhere;
 }
-.tn-hero__title.is-long { max-width: 24ch; font-size: clamp(1.9rem, 5vw, 4.4rem); }
-.tn-hero__title.is-xl { max-width: 34ch; font-size: clamp(1.5rem, 3.4vw, 2.9rem); line-height: 1; }
-.tn-hero__title .tn-hl { color: var(--tg-ink); }
+/* A longer description reads as text: the site's text font, smaller, normal spacing. */
+.tn-hero__title.is-long, .tn-hero__title.is-xl { font-family: var(--tg-font); font-weight: 800; line-height: 1.15; letter-spacing: -.02em; }
+.tn-hero__title.is-long { max-width: 30ch; font-size: clamp(1.7rem, 4vw, 2.6rem); }
+.tn-hero__title.is-xl { max-width: 46ch; font-size: clamp(1.25rem, 2.6vw, 1.75rem); line-height: 1.3; }
 .tn-hero__dates { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; margin-top: clamp(1.75rem, 4vw, 2.75rem); }
 .tn-hero__date { display: flex; flex-direction: column; gap: .3rem; }
 .tn-hero__date .tn-micro { color: rgba(255, 255, 255, .72); }
@@ -355,8 +355,6 @@
 .tn-hero__time { color: var(--tg-sun); font-weight: 800; font-variant-numeric: tabular-nums; }
 .tn-hero__arrow { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--tg-coral); color: var(--tg-ink); border: var(--tg-bw) solid var(--tg-ink); box-shadow: 3px 3px 0 var(--tg-ink); font-size: 1.15rem; }
 .tn-hero__champ { margin-left: auto; font-size: .9rem; white-space: normal; }
-.tn-hero__marquee { --speed: 40s; border-bottom-width: 0; }
-.tn-hero__marquee .tg-marquee__item { font-size: clamp(.95rem, 2vw, 1.3rem); }
 
 @keyframes tn-sweep { from { transform: rotate(calc(var(--a) - 9deg)); } to { transform: rotate(calc(var(--a) + 9deg)); } }
 
@@ -418,7 +416,7 @@
     padding-bottom: .9rem;
     border-bottom: var(--tg-bw) solid var(--tg-ink);
 }
-.tn-block__no { font-family: var(--tg-display); font-weight: 900; font-size: clamp(2.3rem, 5vw, 3.5rem); line-height: .8; letter-spacing: -.07em; color: var(--tg-coral); }
+.tn-block__no { font-family: var(--tg-display); font-weight: 900; font-size: clamp(2.3rem, 5vw, 3.5rem); line-height: .8; letter-spacing: -.07em; color: var(--tg-coral-ink); }
 .tn-block__title { margin: 0; font-family: var(--tg-display); font-weight: 800; font-size: clamp(1.25rem, 2.8vw, 2rem); line-height: 1; letter-spacing: -.045em; text-transform: uppercase; }
 .tn-block__aside { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-left: auto; }
 .tn-block__hint { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem; font-weight: 700; color: var(--tg-muted); }
@@ -541,7 +539,7 @@
 .tn-match__row.is-winner .tn-match__name { font-weight: 900; }
 .tn-match__row.is-winner .tn-match__goals { background: var(--tg-coral); color: var(--tg-ink); }
 .tn-match__row.is-loser .tn-match__name { color: var(--tg-muted); }
-.tn-match__row.is-loser .tn-crest { opacity: .45; filter: grayscale(1); }
+.tn-match__row.is-loser .tn-crest { opacity: .7; filter: grayscale(1); }
 .tn-match__row.is-tbd .tn-match__name { color: var(--tg-muted); font-weight: 600; font-style: italic; }
 .tn-match__win { font-size: .7rem; margin-left: .25rem; }
 .tn-match__enter {
@@ -658,7 +656,6 @@
     font-size: clamp(1.35rem, 3.2vw, 2.15rem);
     line-height: .98;
     letter-spacing: -.05em;
-    text-transform: uppercase;
     overflow-wrap: anywhere;
     display: -webkit-box;
     -webkit-line-clamp: 5;
@@ -689,7 +686,7 @@
 /* ---------- 5. Enter result: stadium jumbotron ---------- */
 .tn-arena { max-width: 980px; margin: 0 auto; }
 .tn-arena__head { text-align: center; margin-bottom: 2.25rem; }
-.tn-arena__title { margin: 0; font-family: var(--tg-display); font-weight: 900; font-size: clamp(2.1rem, 7vw, 4.6rem); line-height: .92; letter-spacing: -.055em; text-transform: uppercase; }
+.tn-arena__title { margin: 0; font-family: var(--tg-display); font-weight: 900; font-size: clamp(2.1rem, 7vw, 3.5rem); line-height: .92; letter-spacing: -.055em; text-transform: uppercase; }
 .tn-arena__sub { margin: 1rem auto 0; max-width: 46ch; color: var(--tg-ink-2); font-size: 1.05rem; }
 
 .tn-jumbo {
@@ -726,7 +723,7 @@
     background: radial-gradient(ellipse 80% 70% at 50% 0%, rgba(31, 157, 85, .38), transparent 70%), #07110c;
 }
 .tn-side { display: flex; flex-direction: column; align-items: center; gap: .8rem; min-width: 0; text-align: center; }
-.tn-side__name { max-width: 100%; margin: 0; color: #fff; font-family: var(--tg-display); font-weight: 800; font-size: clamp(.85rem, 2.4vw, 1.35rem); line-height: 1.1; letter-spacing: -.03em; text-transform: uppercase; overflow-wrap: anywhere; }
+.tn-side__name { max-width: 100%; margin: 0; color: #fff; font-family: var(--tg-display); font-weight: 800; font-size: clamp(.85rem, 2.4vw, 1.35rem); line-height: 1.1; letter-spacing: -.03em; overflow-wrap: anywhere; }
 .tn-side__label { font-size: .64rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: rgba(255, 255, 255, .6); margin: 0; }
 .tn-side__err { font-size: .82rem; font-weight: 700; }
 .tn-jumbo__colon { align-self: center; padding-top: 3.5rem; font-family: var(--tg-display); font-weight: 900; font-size: clamp(2.6rem, 8vw, 5rem); line-height: 1; color: var(--tg-sun); animation: tg-blink 1.6s infinite; }
@@ -774,7 +771,7 @@
 .tn-score__btn:hover { background: var(--tg-sun); transform: translateY(-2px); box-shadow: 0 6px 0 rgba(0, 0, 0, .55); }
 .tn-score__btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0, 0, 0, .55); }
 
-.tn-jumbo__ticker { display: flex; justify-content: center; gap: 1.5rem; padding: .8rem .6rem .35rem; font-family: var(--tg-display); font-weight: 800; font-size: .78rem; letter-spacing: .02em; text-transform: uppercase; color: rgba(255, 255, 255, .55); overflow: hidden; white-space: nowrap; }
+.tn-jumbo__ticker { display: flex; justify-content: center; gap: 1.5rem; padding: .8rem .6rem .35rem; font-family: var(--tg-display); font-weight: 800; font-size: .78rem; letter-spacing: .02em; color: rgba(255, 255, 255, .55); overflow: hidden; white-space: nowrap; }
 .tn-jumbo__ticker b { color: var(--tg-sun); font-weight: 800; }
 .tn-legs { display: flex; justify-content: center; gap: min(40%, 320px); height: 34px; }
 .tn-legs span { width: 18px; height: 100%; background: var(--tg-ink); border-radius: 0 0 4px 4px; }
@@ -786,7 +783,7 @@
 
 /* ---------- 6. Gallery: polaroid collage ---------- */
 .tn-gal-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1.5rem 2rem; margin-bottom: clamp(2rem, 5vw, 3rem); }
-.tn-gal-head__title { margin: 0; max-width: 14ch; font-family: var(--tg-display); font-weight: 900; font-size: clamp(2.4rem, 8vw, 6rem); line-height: .9; letter-spacing: -.055em; text-transform: uppercase; }
+.tn-gal-head__title { margin: 0; max-width: 14ch; font-family: var(--tg-display); font-weight: 900; font-size: clamp(2.4rem, 8vw, 3.75rem); line-height: .9; letter-spacing: -.055em; text-transform: uppercase; }
 .tn-gal-head__side { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
 .tn-gal-head__count { font-size: 1rem; padding: .55rem 1.1rem; }
 
@@ -836,6 +833,7 @@
 .tn-polaroid__del { position: absolute; top: -12px; right: -12px; z-index: 4; margin: 0; }
 .tn-polaroid__del .btn { width: 38px; height: 38px; padding: 0; border-radius: 50%; font-size: .9rem; }
 .tn-gal-note { display: flex; align-items: center; gap: .5rem; margin: 1.5rem 0 0; color: var(--tg-muted); font-weight: 600; font-size: .9rem; }
+.tn-gal-note a { color: var(--tg-ink); text-decoration: underline; text-underline-offset: 2px; }
 
 .tn-gal-empty { display: grid; justify-items: center; gap: 1rem; padding: clamp(2.5rem, 6vw, 4rem) 1rem; text-align: center; }
 .tn-gal-empty__frame { display: grid; place-items: center; width: 190px; padding: 10px 10px 42px; background: #fff; border: var(--tg-bw) solid var(--tg-ink); border-radius: 6px; box-shadow: var(--tg-pop); transform: rotate(-5deg); }
@@ -941,7 +939,9 @@
 @media (min-width: 992px) {
     .tn-month { grid-template-columns: 210px minmax(0, 1fr); gap: 2.5rem; }
     .tn-month__head { position: sticky; top: 100px; align-self: start; flex-direction: column; align-items: flex-start; gap: .7rem; padding: 0; border-bottom: 0; }
+    /* Decoration only (aria-hidden): the faint number is drawn by CSS, so it doesn't count as text to read. */
     .tn-month__num { display: block; font-family: var(--tg-display); font-weight: 900; font-size: 5rem; line-height: .8; letter-spacing: -.08em; color: rgba(13, 31, 23, .1); }
+    .tn-month__num::before { content: attr(data-num); }
     .tn-month__count { margin-left: 0; }
     .tn-tix__main { grid-template-columns: 150px minmax(0, 1fr); grid-template-areas: "thumb info" "thumb actions"; }
     .tn-tix__thumb { align-self: stretch; min-height: 150px; }

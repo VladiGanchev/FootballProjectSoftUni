@@ -28,15 +28,15 @@
     margin: 1.1rem 0 0;
     font-family: var(--tg-display);
     font-weight: 900;
-    font-size: clamp(2.9rem, 12.5vw, 10.5rem);
+    font-size: clamp(2.9rem, 12.5vw, 3.75rem);
     line-height: .86;
     letter-spacing: -.06em;
     text-transform: uppercase;
     overflow-wrap: break-word;
 }
-.cp-mega--md { font-size: clamp(2.1rem, 7vw, 5.8rem); line-height: .9; letter-spacing: -.05em; }
-.cp-mega--sm { font-size: clamp(1.9rem, 5.4vw, 4.4rem); line-height: .92; letter-spacing: -.045em; }
-.cp-mega--partners { font-size: clamp(2.4rem, 10.2vw, 9.2rem); }
+.cp-mega--md { font-size: clamp(2.1rem, 7vw, 3.5rem); line-height: .9; letter-spacing: -.05em; }
+.cp-mega--sm { font-size: clamp(1.9rem, 5.4vw, 3rem); line-height: .92; letter-spacing: -.045em; }
+.cp-mega--partners { font-size: clamp(2.4rem, 10.2vw, 3.75rem); }
 /* give Cyrillic accents/descenders (Й, Д, Щ) room inside the word-reveal masks */
 .cp-mega.tg-split .w { padding: .24em 0 .22em; margin: -.24em 0 -.22em; }
 
@@ -216,7 +216,7 @@
     min-width: 0;
     font-family: var(--tg-display);
     font-weight: 900;
-    font-size: clamp(1.9rem, 5.4vw, 4.6rem);
+    font-size: clamp(1.9rem, 5.4vw, 2.75rem);
     line-height: .95;
     letter-spacing: -.055em;
     text-transform: uppercase;
@@ -288,6 +288,10 @@
     .cp-row__name { padding: 1rem 1rem .25rem; font-size: clamp(1.45rem, 7vw, 2rem); hyphens: auto; }
     .cp-row__actions { padding: .8rem 1rem 1rem; }
     .cp-row__actions .btn { flex: 1 1 0; min-width: 0; padding-inline: .6rem; }
+    /* The card itself opens the tournaments; "Leaders" is a plain link, so each card has one clear action. */
+    .cp-row__actions .cp-row__go { display: none; }
+    .cp-row__actions .cp-row__leaders, .cp-row__actions .cp-row__leaders:hover { flex: none; min-height: 44px; padding: 0; color: var(--tg-ink); background: none; border-color: transparent; box-shadow: none; transform: none; text-decoration: underline; text-underline-offset: 3px; }
+    .cp-row__actions { padding: .25rem 1rem .5rem; }
 }
 
 /* ---------- 4. Pager, search echo, empty states ---------- */
@@ -444,7 +448,7 @@
     animation: tg-float 3.2s ease-in-out infinite;
 }
 
-.cp-step__team { margin: .35rem 0 .3rem; font-family: var(--tg-display); font-weight: 800; font-size: clamp(.8rem, 1.6vw, 1.2rem); line-height: 1.08; letter-spacing: -.03em; text-transform: uppercase; overflow-wrap: anywhere; color: var(--tg-ink); }
+.cp-step__team { margin: .35rem 0 .3rem; font-family: var(--tg-display); font-weight: 800; font-size: clamp(.8rem, 1.6vw, 1.2rem); line-height: 1.08; letter-spacing: -.03em; overflow-wrap: anywhere; color: var(--tg-ink); }
 .cp-step__coach { display: flex; align-items: center; justify-content: center; gap: .35rem; margin: 0 0 .75rem; font-size: .82rem; font-weight: 600; color: var(--tg-muted); overflow-wrap: anywhere; }
 .cp-step__wins { display: flex; flex-direction: column; align-items: center; gap: .15rem; padding-top: .7rem; border-top: var(--tg-bw) dashed var(--tg-line-2); }
 .cp-step__wins .tg-num { font-size: clamp(1.6rem, 3.2vw, 2.4rem); }
@@ -488,7 +492,7 @@
 .cp-pos--1 { background: var(--tg-ink); color: var(--tg-sun); }
 .cp-pos--2 { background: #dfe5ec; }
 .cp-pos--3 { background: #f2a66e; }
-.cp-league__team { display: inline-flex; align-items: center; gap: .5rem; font-family: var(--tg-display); font-weight: 700; font-size: 1rem; letter-spacing: -.02em; text-transform: uppercase; overflow-wrap: anywhere; }
+.cp-league__team { display: inline-flex; align-items: center; gap: .5rem; font-family: var(--tg-display); font-weight: 700; font-size: 1rem; letter-spacing: -.02em; overflow-wrap: anywhere; }
 .cp-league__coach { display: block; margin-top: .2rem; font-size: .8rem; font-weight: 600; color: var(--tg-muted); }
 .is-leader .cp-league__coach { color: var(--tg-ink-2); }
 .cp-league__wins { display: inline-flex; align-items: center; justify-content: flex-end; gap: .9rem; }
@@ -669,13 +673,8 @@
 .cp-warn > .bi { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: #fff; background: var(--tg-red); border: var(--tg-bw) solid var(--tg-ink); }
 
 /* ---------- 9. Partners: crossed tapes + sticker wall ---------- */
-.cp-tapes { position: relative; overflow: hidden; padding: clamp(2.5rem, 6vw, 4.5rem) 0; margin-bottom: 1.5rem; }
-.cp-tape { width: calc(100% + 160px); margin-left: -80px; }
-.cp-tape--a { position: relative; z-index: 2; transform: rotate(-3deg); box-shadow: 0 8px 0 rgba(13, 31, 23, .18); }
-.cp-tape--b { margin-top: -.6rem; transform: rotate(2.4deg); }
-.cp-tape--b .tg-marquee__track { animation-direction: reverse; }
 
-.cp-wall-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: .75rem 1rem; margin-bottom: 1.75rem; }
+.cp-wall-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: .75rem 1rem; margin: clamp(2.5rem, 6vw, 4rem) 0 1.75rem; }
 .cp-wall-title { margin: 0; font-family: var(--tg-display); font-weight: 800; font-size: clamp(1.6rem, 3.6vw, 2.6rem); line-height: 1; letter-spacing: -.045em; text-transform: uppercase; }
 
 .cp-wall { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); grid-auto-rows: 180px; grid-auto-flow: dense; gap: 1.4rem; }

@@ -4,7 +4,7 @@
 
 
 @{
-    ViewData["Title"] = "Referees";
+    ViewData["Title"] = Localizer["DReferees"].Value;
 
     string Initials(string name)
     {
@@ -256,7 +256,7 @@ else
                                     </div>
                                 </fieldset>
 
-                                <button type="submit" class="btn btn-sm btn-sun">
+                                <button type="submit" class="btn btn-sm btn-accent">
                                     <i class="bi bi-check-lg" aria-hidden="true"></i>
                                     @Localizer["RSave"]
                                 </button>
